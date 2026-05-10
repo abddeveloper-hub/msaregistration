@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Admin Setup</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body { display: flex; justify-content: center; align-items: center; min-height: 100dvh; margin: 0; padding: 1rem; background: var(--bg); color: white; }
+        .setup-box { background: var(--surface); padding: clamp(1.25rem, 6vw, 3rem); border-radius: 2rem; border: 1px solid var(--border); width: min(100%, 400px); text-align: center; }
+    </style>
+</head>
+<body>
+    <div class="setup-box">
+        <h2 class="view-title">Setup Master Admin</h2>
+        <p style="color:var(--text-dim); margin-bottom: 2rem;">Create the root admin account to access the system.</p>
+        
+        <div class="input-field"><input type="email" id="adminEmail" class="input" placeholder="Admin Email" required></div>
+        <div class="input-field"><input type="password" id="adminPass" class="input" placeholder="Admin Password" required></div>
+        
+        <button id="createAdminBtn" class="btn btn-main" style="width:100%; margin-top:1rem;">Create Admin</button>
+        <p id="msg" style="margin-top:1rem; font-weight:bold;"></p>
+        <a href="index.html" style="color:var(--primary); display:block; margin-top:1.5rem;">Return Home</a>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyD8HJ3MD69rHz9opfiS3irqmbdfggKl0iQ",
+            authDomain: "msa-registrtion.firebaseapp.com",
+            projectId: "msa-registrtion",
+            storageBucket: "msa-registrtion.firebasestorage.app",
+            messagingSenderId: "312011015482",
+            appId: "1:312011015482:web:4a56ddbccfcda4dbe57c03"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        document.getElementById('createAdminBtn').addEventListener('click', async () => {
+            const email = document.getElementById('adminEmail').value;
+            const pass = document.getElementById('adminPass').value;
+            const btn = document.getElementById('createAdminBtn');
+            const msg = document.getElementById('msg');
+            
+            if(!email || !pass) return msg.innerText = "Fill all fields!";
+            
+            btn.disabled = true;
+            btn.innerText = "Creating...";
+            
+            try {
+                const cred = await createUserWithEmailAndPassword(auth, email, pass);
+                await setDoc(doc(db, "users", cred.user.uid), {
+                    uid: cred.user.uid,
+                    email: email,
+                    fullName: "Master Admin",
+                    role: "admin",
+                    status: "admitted"
+                });
+                msg.style.color = "var(--success)";
+                msg.innerText = "Success! You can now log in from the public page.";
+            } catch (e) {
+                msg.style.color = "var(--error)";
+                msg.innerText = e.message;
+            }
+            btn.disabled = false;
+            btn.innerText = "Create Admin";
+        });
+    </script>
+</body>
+</html>

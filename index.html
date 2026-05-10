@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Muhyissunnah Dars Ukkuda | Official Portal</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="mobile.css">
+    
+    <!-- PWA Support -->
+    <meta name="theme-color" content="#0a0a0f">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/3665/3665930.png">
+    <link rel="manifest" href="manifest.json">
+    <script>
+        (function() {
+            const theme = localStorage.getItem("msaukkuda:theme") || "dark";
+            document.documentElement.dataset.theme = theme;
+            if (theme === "light") {
+                const metaTheme = document.querySelector('meta[name="theme-color"]');
+                if (metaTheme) metaTheme.setAttribute("content", "#f8f3e8");
+            }
+        })();
+    </script>
+</head>
+<body class="landing-page">
+    <header class="nav-wrapper">
+        <nav class="navbar" aria-label="Primary navigation">
+            <a class="brand-lockup" href="index.html" aria-label="Muhyissunnah Dars Ukkuda home">
+                <span class="brand-mark">MSA UKKUDA</span>
+                <span class="brand-text">
+                    <strong>Muhyissunnah Dars</strong>
+                    <span>Ukkuda Official Portal</span>
+                </span>
+            </a>
+
+            <div class="nav-actions">
+                <button id="themeToggleBtn" class="btn btn-ghost icon-btn" type="button" aria-label="Toggle color theme" title="Toggle color theme">
+                    <span id="themeToggleLabel">Dark</span>
+                </button>
+                <button id="installAppBtn" class="btn btn-ghost install-app-btn hidden" type="button">Download App</button>
+                <button id="navAdminBtn" class="btn btn-ghost" type="button">Admin</button>
+                <button id="navLoginBtn" class="btn btn-main" type="button">Sign In</button>
+                <button id="navLogoutBtn" class="btn btn-ghost btn-sm hidden" type="button">Log Out</button>
+            </div>
+        </nav>
+    </header>
+
+    <main id="mainContent">
+        <section class="hero-section" aria-labelledby="heroTitle">
+            <div class="hero-bg" aria-hidden="true"></div>
+            <div class="hero-inner">
+                <div class="hero-content">
+                    <div class="bismillah-mark" aria-hidden="true">&#65018;</div>
+                    <div class="pill-badge">Official Institutional Portal</div>
+                    <h1 id="heroTitle">Muhyissunnah Dars <span>Ukkuda</span></h1>
+                    <p class="hero-arabic" lang="ar" dir="rtl">&#1585;&#1614;&#1576;&#1616;&#1617; &#1586;&#1616;&#1583;&#1618;&#1606;&#1616;&#1610; &#1593;&#1616;&#1604;&#1618;&#1605;&#1611;&#1575;</p>
+                    <p class="hero-translation">"My Lord, increase me in knowledge" (20:114)</p>
+                    <p class="hero-lead">A polished digital campus for registration, admissions, attendance, marks, faculty workflow, and administrative oversight.</p>
+
+                    <div class="hero-actions">
+                        <button id="heroLoginBtn" class="btn btn-main" type="button">Enter Dashboard</button>
+                        <a class="btn btn-ghost" href="#portalAccess">Explore Portals</a>
+                    </div>
+
+                </div>
+
+            </div>
+        </section>
+
+        <section class="stats-strip" aria-label="Live portal statistics">
+            <div class="floating-stats-bar">
+                <div class="stat-item">
+                    <span class="stat-num" id="statEnrollment">0</span>
+                    <span class="stat-text">Enrollments</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-num" id="statInstitutions">0</span>
+                    <span class="stat-text">Institutions</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-num" id="statFaculty">0</span>
+                    <span class="stat-text">Faculty</span>
+                </div>
+            </div>
+        </section>
+
+        <section id="portalAccess" class="page-section" aria-labelledby="portalTitle">
+            <div class="section-heading-row">
+                <div>
+                    <p class="section-kicker">Role-based access</p>
+                    <h2 id="portalTitle" class="section-title">Choose the workspace that matches your role.</h2>
+                    <p class="section-lead">Each portal is tuned for the job at hand: fast registration for families, clear operational control for faculty, and complete institutional visibility for administrators.</p>
+                </div>
+            </div>
+
+            <div class="cards-grid">
+                <a id="studentCard" class="portal-card student" href="student.html">
+                    <span class="portal-card-top">
+                        <span class="portal-initial">ST</span>
+                        <span class="portal-status">Admissions</span>
+                    </span>
+                    <span>
+                        <h3>Student Portal</h3>
+                        <p>Register students, track approval status, view official ID details, and review marks, attendance, and remarks in one secure account.</p>
+                    </span>
+                    <span class="portal-card-footer">
+                        <span>Open student access</span>
+                        <span aria-hidden="true">-&gt;</span>
+                    </span>
+                </a>
+
+                <a id="facultyCard" class="portal-card faculty" href="teacher.html">
+                    <span class="portal-card-top">
+                        <span class="portal-initial">FC</span>
+                        <span class="portal-status">Academic</span>
+                    </span>
+                    <span>
+                        <h3>Faculty Portal</h3>
+                        <p>Approve applications, manage your enrolled students, record attendance, enter marks, and add academic remarks from a focused workspace.</p>
+                    </span>
+                    <span class="portal-card-footer">
+                        <span>Open faculty access</span>
+                        <span aria-hidden="true">-&gt;</span>
+                    </span>
+                </a>
+
+                <a id="adminCard" class="portal-card admin" href="admin.html">
+                    <span class="portal-card-top">
+                        <span class="portal-initial">AD</span>
+                        <span class="portal-status">Secure</span>
+                    </span>
+                    <span>
+                        <h3>Admin Root</h3>
+                        <p>Monitor system totals, institutions, faculty assignments, faculty approvals, global student records, and administrator access.</p>
+                    </span>
+                    <span class="portal-card-footer">
+                        <span>Open admin console</span>
+                        <span aria-hidden="true">-&gt;</span>
+                    </span>
+                </a>
+            </div>
+        </section>
+
+        <section class="page-section" aria-labelledby="featuresTitle">
+            <p class="section-kicker">New portal features</p>
+            <h2 id="featuresTitle" class="section-title">Built for daily institutional work.</h2>
+            <div class="feature-grid">
+                <article class="feature-card">
+                    <h3>Smart role memory</h3>
+                    <p>The portal remembers the last selected sign-in role and keeps student, faculty, and admin entry points clear and direct.</p>
+                    <div class="feature-meter" aria-hidden="true" style="--value: 88%;"><span></span></div>
+                </article>
+                <article class="feature-card">
+                    <h3>Cleaner authentication</h3>
+                    <p>Sign-in and account creation now include role locking, password visibility control, password strength feedback, and better keyboard handling.</p>
+                    <div class="feature-meter" aria-hidden="true" style="--value: 76%;"><span></span></div>
+                </article>
+                <article class="feature-card">
+                    <h3>Premium interface system</h3>
+                    <p>The shared CSS now supports polished dashboards, responsive cards, accessible focus states, refined tables, and a persistent light/dark theme.</p>
+                    <div class="feature-meter" aria-hidden="true" style="--value: 94%;"><span></span></div>
+                </article>
+            </div>
+        </section>
+
+        <section class="page-section" aria-labelledby="processTitle">
+            <p class="section-kicker">Admissions flow</p>
+            <h2 id="processTitle" class="section-title">From registration to academic records.</h2>
+            <div class="process-grid">
+                <article class="process-card">
+                    <span class="process-step">1</span>
+                    <h3>Create account</h3>
+                    <p>Families or faculty sign up with the correct role and continue into their workspace.</p>
+                </article>
+                <article class="process-card">
+                    <span class="process-step">2</span>
+                    <h3>Submit profile</h3>
+                    <p>Students and faculty complete the information required for institutional review.</p>
+                </article>
+                <article class="process-card">
+                    <span class="process-step">3</span>
+                    <h3>Approve and assign</h3>
+                    <p>Faculty and admins review applications, approve records, and assign campuses.</p>
+                </article>
+                <article class="process-card">
+                    <span class="process-step">4</span>
+                    <h3>Track academics</h3>
+                    <p>Attendance, marks, remarks, and ID details remain available in the secure portal.</p>
+                </article>
+            </div>
+        </section>
+    </main>
+
+    <nav class="mobile-entry-bar" aria-label="Mobile portal shortcuts">
+        <a id="mobileStudentLink" class="mobile-entry-item" href="student.html">
+            <span>ST</span>
+            <strong>Student</strong>
+        </a>
+        <a id="mobileFacultyLink" class="mobile-entry-item" href="teacher.html">
+            <span>FC</span>
+            <strong>Faculty</strong>
+        </a>
+        <a id="mobileAdminLink" class="mobile-entry-item" href="admin.html">
+            <span>AD</span>
+            <strong>Admin</strong>
+        </a>
+        <button id="mobileInstallBtn" class="mobile-entry-item" type="button" style="background:none; border:none; color:inherit;">
+            <span>📥</span>
+            <strong>Download</strong>
+        </button>
+    </nav>
+
+    <!-- PWA Installation Instructions Modal -->
+    <div id="pwaModal" class="auth-overlay" aria-hidden="true">
+        <div class="auth-modal" role="dialog" aria-modal="true" aria-labelledby="pwaTitle">
+            <div class="auth-modal-header">
+                <div>
+                    <h2 id="pwaTitle">Download Portal App</h2>
+                    <p>Access the MSA UKKUDA portal directly from your home screen.</p>
+                </div>
+                <button id="closePwaBtn" class="close-modal" type="button">X</button>
+            </div>
+            
+            <div id="pwaAndroidInst" class="hidden">
+                <p style="margin-bottom:1.5rem;">Tap the button below to install the app on your Android device.</p>
+                <button id="pwaInstallActionBtn" class="btn btn-main btn-block">Install App Now</button>
+            </div>
+
+            <div id="pwaIosInst" class="hidden">
+                <p>To install on your iPhone/iPad:</p>
+                <ol style="margin: 1.5rem 0; padding-left: 1.5rem; display: grid; gap: 0.75rem;">
+                    <li>Tap the <strong>Share</strong> button ( <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:inline; vertical-align:middle;"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8M16 6l-4-4-4 4M12 2v13"/></svg> ) in Safari.</li>
+                    <li>Scroll down and tap <strong>'Add to Home Screen'</strong>.</li>
+                    <li>Tap <strong>'Add'</strong> in the top right corner.</li>
+                </ol>
+            </div>
+
+            <div id="pwaGenericInst">
+                <p>Your browser doesn't support automatic installation. You can usually find an "Install" or "Add to Home Screen" option in your browser's menu (⋮ or ≡).</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="authModal" class="auth-overlay" aria-hidden="true">
+        <div class="auth-modal" role="dialog" aria-modal="true" aria-labelledby="authTitle">
+            <div class="auth-modal-header">
+                <div>
+                    <h2 id="authTitle">Welcome Back</h2>
+                    <p id="authSubtitle">Select your role to continue.</p>
+                </div>
+                <button id="closeAuthBtn" class="close-modal" type="button" aria-label="Close authentication dialog">X</button>
+            </div>
+
+            <div id="roleSelector" class="tab-nav" role="tablist" aria-label="Account role">
+                <button id="roleStudent" class="tab active" type="button" data-role="student">Student</button>
+                <button id="roleFaculty" class="tab" type="button" data-role="faculty">Faculty</button>
+            </div>
+
+            <div class="tab-nav" role="tablist" aria-label="Authentication mode">
+                <button id="tabSignIn" class="tab active" type="button">Sign In</button>
+                <button id="tabSignUp" class="tab" type="button">Create Account</button>
+            </div>
+
+            <form id="authForm" novalidate>
+                <div id="nameField" class="input-field hidden">
+                    <label class="label" for="authName">Full Name</label>
+                    <input type="text" id="authName" class="input" autocomplete="name" placeholder="Your name or family name">
+                </div>
+
+                <div class="input-field">
+                    <label class="label" for="authEmail">Email Address</label>
+                    <input type="email" id="authEmail" class="input" autocomplete="email" required placeholder="name@example.com">
+                </div>
+
+                <div class="input-field">
+                    <label class="label" for="authPassword">Password</label>
+                    <div class="password-row">
+                        <input type="password" id="authPassword" class="input" autocomplete="current-password" required placeholder="Enter password">
+                        <button id="passwordToggleBtn" class="password-toggle" type="button" aria-label="Show password">Show</button>
+                    </div>
+                </div>
+                <div id="passwordStrength" class="password-strength" data-score="0" aria-hidden="true"><span></span></div>
+
+                <p id="authError" class="auth-error hidden"></p>
+                <button type="submit" id="authSubmitBtn" class="btn btn-main btn-block">Sign In</button>
+            </form>
+        </div>
+    </div>
+
+    <script type="module" src="app.js?v=3"></script>
+
+    <!-- PWA Registration -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js').catch(err => console.log('SW Registration failed:', err));
+            });
+        }
+    </script>
+</body>
+</html>

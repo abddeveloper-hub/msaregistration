@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>🗑️ Firestore Purge Tool</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', sans-serif; background: #0a0f1a; color: #e2e8f0; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2rem; }
+        .card { background: #111827; border: 1px solid #1f2937; border-radius: 1.5rem; padding: 3rem; max-width: 700px; width: 100%; }
+        h1 { font-size: 1.8rem; margin-bottom: 0.5rem; color: #f87171; }
+        p { color: #94a3b8; font-size: 0.9rem; line-height: 1.6; }
+        .section { margin-top: 2rem; }
+        label { display: block; font-size: 0.8rem; color: #64748b; margin-bottom: 0.4rem; text-transform: uppercase; letter-spacing: 0.05em; }
+        input { width: 100%; padding: 0.85rem 1rem; background: #1f2937; border: 1px solid #374151; border-radius: 0.75rem; color: #e2e8f0; font-size: 0.95rem; outline: none; margin-bottom: 1rem; }
+        input:focus { border-color: #6366f1; }
+        button { width: 100%; padding: 1rem; border: none; border-radius: 0.75rem; font-size: 1rem; font-weight: 700; cursor: pointer; transition: all 0.2s; }
+        .btn-login { background: linear-gradient(135deg, #6366f1, #4f46e5); color: white; }
+        .btn-login:hover { opacity: 0.9; }
+        .btn-danger { background: linear-gradient(135deg, #ef4444, #b91c1c); color: white; margin-top: 1rem; }
+        .btn-danger:hover { opacity: 0.9; }
+        .btn-danger:disabled { opacity: 0.5; cursor: not-allowed; }
+        .btn-safe { background: linear-gradient(135deg, #f59e0b, #d97706); color: white; margin-top: 1rem; }
+        .btn-safe:hover { opacity: 0.9; }
+        .status-box { margin-top: 1.5rem; padding: 1.5rem; background: #0f172a; border-radius: 1rem; border: 1px solid #1e293b; font-size: 0.85rem; line-height: 2; min-height: 80px; }
+        .stat { display: flex; justify-content: space-between; margin-bottom: 0.5rem; }
+        .stat .val { font-weight: 700; }
+        .ok { color: #34d399; }
+        .warn { color: #f87171; }
+        .dim { color: #64748b; }
+        #log { margin-top: 1rem; padding: 1rem; background: #050a14; border-radius: 0.75rem; font-family: monospace; font-size: 0.75rem; max-height: 200px; overflow-y: auto; color: #94a3b8; white-space: pre-wrap; word-break: break-all; }
+        .hidden { display: none; }
+        .badge { display: inline-block; padding: 0.2rem 0.6rem; border-radius: 0.4rem; font-size: 0.7rem; font-weight: 700; }
+        .badge-red { background: rgba(239,68,68,0.15); color: #f87171; }
+        .badge-green { background: rgba(52,211,153,0.15); color: #34d399; }
+        hr { border: none; border-top: 1px solid #1f2937; margin: 2rem 0; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h1>🗑️ Firestore Purge Tool</h1>
+    <p>Directly delete seeded/dummy user records from your Firestore database. This tool works without any local server.</p>
+
+    <!-- LOGIN SECTION -->
+    <div class="section" id="loginSection">
+        <hr>
+        <div style="margin-bottom:1.5rem;">
+            <label>Admin Email</label>
+            <input type="email" id="adminEmail" placeholder="msaukkuda@registration.com">
+            <label>Admin Password</label>
+            <input type="password" id="adminPass" placeholder="••••••••">
+        </div>
+        <button class="btn-login" onclick="doLogin()">🔐 Sign In &amp; Scan Database</button>
+        <div id="loginError" style="color:#f87171; font-size:0.85rem; margin-top:1rem; display:none;"></div>
+    </div>
+
+    <!-- PURGE SECTION -->
+    <div class="section hidden" id="purgeSection">
+        <hr>
+        <div class="status-box" id="scanResults">Scanning Firestore...</div>
+
+        <button class="btn-danger" id="purgeAllBtn" onclick="purgeAll()" disabled>
+            🗑️ DELETE ALL Students & Legacy Data
+        </button>
+        <button class="btn-danger" id="purgeInstBtn" onclick="purgeInstitutions()" disabled style="background: linear-gradient(135deg, #f97316, #ea580c);">
+            🏢 DELETE ALL Institutions
+        </button>
+        <button class="btn-safe" id="purgeNoEmailBtn" onclick="purgeNoEmail()" disabled>
+            📧 Delete Records Without Email Only
+        </button>
+
+        <div id="log" class="hidden"></div>
+    </div>
+</div>
+
+<!-- Firebase Compat SDKs (work from file://) -->
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+
+<script>
+    const firebaseConfig = {
+        apiKey: "AIzaSyD8HJ3MD69rHz9opfiS3irqmbdfggKl0iQ",
+        authDomain: "msa-registrtion.firebaseapp.com",
+        projectId: "msa-registrtion",
+        storageBucket: "msa-registrtion.firebasestorage.app",
+        messagingSenderId: "312011015482",
+        appId: "1:312011015482:web:4a56ddbccfcda4dbe57c03"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+
+    let allInstitutions = [];
+
+    async function scanDatabase() {
+        const box = document.getElementById('scanResults');
+        box.innerHTML = '⏳ Loading data from Firestore...';
+        log('[SCAN] Starting full database scan...');
+
+        try {
+            // Users
+            const snap = await db.collection('users').get();
+            allDocs = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+            seededDocs = allDocs.filter(u => u.role !== 'admin' && u.role !== 'faculty');
+
+            // Institutions
+            const instSnap = await db.collection('institutions').get();
+            allInstitutions = instSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+
+            const admins = allDocs.filter(u => u.role === 'admin');
+            const faculties = allDocs.filter(u => u.role === 'faculty');
+
+            log(`[SCAN] Total Users: ${allDocs.length}`);
+            log(`[SCAN] Institutions: ${allInstitutions.length}`);
+            log(`[SCAN] Admin docs (SAFE): ${admins.length}`);
+            log(`[SCAN] Faculty docs (SAFE): ${faculties.length}`);
+            log(`[SCAN] Student/Legacy docs (TO DELETE): ${seededDocs.length}`);
+
+            box.innerHTML = `
+                <div class="stat"><span>Total Users in Firestore</span><span class="val">${allDocs.length}</span></div>
+                <div class="stat"><span>✅ Admin/Faculty (Safe)</span><span class="val ok">${admins.length + faculties.length}</span></div>
+                <div class="stat"><span>🗑️ Students & Legacy Records</span><span class="val warn">${seededDocs.length}</span></div>
+                <div class="stat"><span>🏢 Institutions</span><span class="val warn" style="color:#f97316;">${allInstitutions.length}</span></div>
+                <hr style="border-color:#1e293b; margin:1rem 0;">
+                <p style="font-size:0.8rem; color:#f59e0b;">⚠️ You can now delete all Student data and/or all Institution data separately.</p>
+            `;
+
+            document.getElementById('purgeAllBtn').disabled = seededDocs.length === 0;
+            document.getElementById('purgeInstBtn').disabled = allInstitutions.length === 0;
+
+            if (seededDocs.length === 0) {
+                document.getElementById('purgeAllBtn').innerText = '✅ No Student Records';
+            } else {
+                document.getElementById('purgeAllBtn').innerText = `🗑️ DELETE ${seededDocs.length} Students & Legacy Data`;
+            }
+
+            if (allInstitutions.length === 0) {
+                document.getElementById('purgeInstBtn').innerText = '✅ No Institutions';
+            } else {
+                document.getElementById('purgeInstBtn').innerText = `🏢 DELETE ${allInstitutions.length} Institutions`;
+            }
+
+        } catch(e) {
+            box.innerHTML = '<span class="warn">❌ Error: ' + e.message + '</span>';
+            log('[ERROR] ' + e.message);
+        }
+    }
+
+    async function purgeInstitutions() {
+        if (!confirm(`⚠️ DANGER!\n\nThis will permanently DELETE ALL ${allInstitutions.length} institutions from Firestore.\n\nThis CANNOT be undone. Are you sure?`)) return;
+        await batchDelete(allInstitutions, 'purgeInstBtn', 'institutions');
+    }
+
+    async function purgeAll() {
+        if (!confirm(`⚠️ DANGER!\n\nThis will permanently DELETE ${seededDocs.length} seeded records from Firestore.\n\nReal registrations (${allDocs.length - seededDocs.length} records) will NOT be touched.\n\nThis CANNOT be undone. Are you sure?`)) return;
+        await batchDelete(seededDocs, 'purgeAllBtn');
+    }
+
+    async function purgeNoEmail() {
+        const noEmailDocs = allDocs.filter(u => !u.email);
+        if (!confirm(`Delete ${noEmailDocs.length} records without an email field? This cannot be undone.`)) return;
+        await batchDelete(noEmailDocs, 'purgeNoEmailBtn');
+    }
+
+    async function batchDelete(docs, btnId, collectionName = 'users') {
+        const btn = document.getElementById(btnId);
+        btn.disabled = true;
+        btn.innerText = 'Deleting...';
+        log(`[DELETE] Starting deletion of ${docs.length} records from ${collectionName}...`);
+
+        let deleted = 0;
+
+        try {
+            // Delete sequentially to handle subcollections safely
+            for (const d of docs) {
+                if (collectionName === 'users') {
+                    const subcollections = ['marks', 'attendance', 'remarks'];
+                    for (const sub of subcollections) {
+                        const subSnap = await db.collection(`users/${d.id}/${sub}`).get();
+                        const deletePromises = subSnap.docs.map(subDoc => subDoc.ref.delete());
+                        await Promise.all(deletePromises);
+                    }
+                }
+                
+                await db.collection(collectionName).doc(d.id).delete();
+                deleted++;
+                
+                if (deleted % 10 === 0 || deleted === docs.length) {
+                    btn.innerText = `Deleting... (${deleted}/${docs.length})`;
+                    log(`[DELETE] Progress: ${deleted}/${docs.length} deleted.`);
+                }
+            }
+
+            log(`[DONE] ✅ Successfully deleted ${deleted} records and their subcollections from ${collectionName}.`);
+            alert(`✅ Done! Deleted ${deleted} records from ${collectionName}.`);
+            await scanDatabase(); // Refresh counts
+        } catch(e) {
+            log('[ERROR] ' + e.message);
+            alert('❌ Error during deletion: ' + e.message);
+            btn.disabled = false;
+        }
+    }
+</script>
+</body>
+</html>

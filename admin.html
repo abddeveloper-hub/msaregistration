@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Admin Dashboard | Muhyissunnah Dars Ukkuda</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="mobile.css">
+    <!-- PWA Support -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0a0a0f">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/3665/3665930.png">
+    <script>
+        (function() {
+            const theme = localStorage.getItem("msaukkuda:theme") || "dark";
+            document.documentElement.dataset.theme = theme;
+            if (theme === "light") {
+                const metaTheme = document.querySelector('meta[name="theme-color"]');
+                if (metaTheme) metaTheme.setAttribute("content", "#f8f3e8");
+            }
+        })();
+    </script>
+</head>
+<body>
+    <div id="adminLoginView" class="auth-view-container" style="display: flex; justify-content: center; align-items: center; min-height: 100vh; background: var(--bg);">
+        <div class="form-section" style="width:100%; max-width:400px;">
+            <div class="app-logo" style="margin-bottom: 2rem; color:var(--primary); justify-content:center;">
+                <div class="dot"></div>
+                Admin Root Access
+            </div>
+            <p style="text-align:center; color:var(--text-dim); margin-bottom:2rem;">Enter authorized credentials to continue.</p>
+            
+            <form id="adminLoginForm">
+                <div class="input-field">
+                    <label class="label">Root Email</label>
+                    <input type="email" id="adminAuthEmail" class="input" required placeholder="admin@example.com">
+                </div>
+                <div class="input-field">
+                    <label class="label">Secure Password</label>
+                    <input type="password" id="adminAuthPass" class="input" required placeholder="••••••••">
+                </div>
+                <p id="adminLoginError" style="color:var(--error); font-size:0.85rem; margin-bottom:1rem; text-align:center; display:none;"></p>
+                <button type="submit" id="adminLoginBtn" class="btn btn-main" style="width:100%;">Authenticate</button>
+            </form>
+            <a href="index.html" style="color:var(--text-dim); display:block; text-align:center; margin-top:1.5rem; font-size:0.85rem;">← Return to Public Site</a>
+        </div>
+    </div>
+
+    <div class="portal-layout hidden" id="adminDashboardView">
+        <!-- Mobile Top Bar -->
+        <div class="mobile-top-bar" style="display:none;">
+            <button class="menu-toggle" id="mobileMenuBtn" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="sidebarMenu">
+                <span></span><span></span><span></span>
+            </button>
+            <div class="app-logo" style="margin:0;">
+                <div class="dot"></div>
+                <span style="font-family: 'Cinzel', serif; font-size: 1.2rem;">MSA UKKUDA Admin</span>
+            </div>
+            <div style="width:40px;"></div>
+        </div>
+
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+        <aside class="sidebar" id="sidebarMenu">
+            <div style="font-family: 'Amiri', serif; font-size: 2rem; color: var(--gold-base); text-align: center; margin-bottom: 1rem;">﷽</div>
+            <div class="app-logo" style="justify-content: center; margin-bottom: 3rem;">
+                <div class="dot"></div>
+                <span style="font-family: 'Cinzel', serif;">MSA UKKUDA Admin</span>
+            </div>
+            
+            <nav id="adminNav" style="flex: 1; display: flex; flex-direction: column;">
+                <div class="nav-item active" data-target="viewOverview">Overview & Stats</div>
+                <div class="nav-item" data-target="viewInstitutions">Institutions</div>
+                <div class="nav-item" data-target="viewFaculties">Faculties</div>
+                <div class="nav-item" data-target="viewFacultyApps">Faculty Applications</div>
+                <div class="nav-item" data-target="viewStudents">Global Student Directory</div>
+                <div class="nav-item" data-target="viewAdmins">Manage Admins</div>
+            </nav>
+
+            <button id="logoutBtn" class="btn btn-ghost" style="margin-top: auto;">Log Out</button>
+            <button class="btn btn-ghost" style="margin-top: 1rem;" onclick="window.location.href='index.html'">Public Page</button>
+        </aside>
+
+        <main class="main-content">
+            <!-- 1. OVERVIEW -->
+            <div id="viewOverview" class="admin-section">
+                <h2 class="view-title" style="margin-bottom:2rem;">System Overview</h2>
+                
+                <div class="stats-grid">
+                    <div class="stat-card"><div class="stat-val" id="statTotStudents">0</div><div class="stat-lbl">Total Students</div></div>
+                    <div class="stat-card"><div class="stat-val" id="statTotFaculty">0</div><div class="stat-lbl">Active Faculty</div></div>
+                    <div class="stat-card"><div class="stat-val" id="statTotInst">0</div><div class="stat-lbl">Institutions</div></div>
+                    <div class="stat-card"><div class="stat-val" id="statSayyids" style="color:var(--secondary);">0</div><div class="stat-lbl">Sayyids</div></div>
+                    <div class="stat-card"><div class="stat-val" id="statHafizs" style="color:var(--success);">0</div><div class="stat-lbl">Hafizs</div></div>
+                    <div class="stat-card"><div class="stat-val" id="statOrphans" style="color:var(--accent);">0</div><div class="stat-lbl">Orphans</div></div>
+                </div>
+
+                <div class="form-section">
+                    <h3>Institution Progress Overview</h3>
+                    <table class="data-table">
+                        <thead><tr><th>Institution</th><th>Total Enrolled</th><th>Assigned Faculty</th></tr></thead>
+                        <tbody id="progressTableBody"></tbody>
+                    </table>
+                </div>
+
+
+            </div>
+
+            <!-- 2. INSTITUTIONS MANAGEMENT -->
+            <div id="viewInstitutions" class="admin-section hidden">
+                <h2 class="view-title" style="margin-bottom:2rem;">Manage Institutions</h2>
+                <div class="form-section">
+                    <h3>Add New Institution</h3>
+                    <div class="grid-2">
+                        <div class="input-field"><label class="label">Institution Name / Off-Campus</label><input type="text" id="instName" class="input"></div>
+                        <div class="input-field"><label class="label">Registration Number</label><input type="text" id="instRegNum" class="input"></div>
+                    </div>
+                    <button class="btn btn-main" id="addInstBtn">Create Institution</button>
+                </div>
+                <h3>Active Institutions</h3>
+                <table class="data-table">
+                    <thead><tr><th>Reg Number</th><th>Name</th><th>Assigned Faculty</th><th>Actions</th></tr></thead>
+                    <tbody id="instTableBody"></tbody>
+                </table>
+            </div>
+
+
+
+
+            <!-- 3. FACULTY MANAGEMENT (SEPARATED) -->
+            <div id="viewFaculties" class="admin-section hidden">
+                <h2 class="view-title" style="margin-bottom:2rem;">Manage Faculties</h2>
+                <div class="form-section">
+                    <h3>Directly Add Faculty</h3>
+                    <p style="font-size:0.8rem; color:var(--text-dim); margin-bottom:1rem;">Creates an account immediately. They can log in and update their profile later.</p>
+                    <div class="grid-3" style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:1rem;">
+                        <div class="input-field"><label class="label">Name</label><input type="text" id="newFacName" class="input"></div>
+                        <div class="input-field"><label class="label">Email</label><input type="email" id="newFacEmail" class="input"></div>
+                        <div class="input-field"><label class="label">Password</label><input type="password" id="newFacPass" class="input"></div>
+                    </div>
+                    <button class="btn btn-main" id="directAddFacBtn">Add Faculty</button>
+                </div>
+                <h3>Active Faculties</h3>
+                <table class="data-table">
+                    <thead><tr><th>Name</th><th>Email</th><th>Campus</th><th>Status</th><th>Actions</th></tr></thead>
+                    <tbody id="activeFacTableBody"></tbody>
+                </table>
+            </div>
+
+            <!-- 3. FACULTY APPLICATIONS -->
+            <div id="viewFacultyApps" class="admin-section hidden">
+                <h2 class="view-title" style="margin-bottom:2rem;">Faculty Applications</h2>
+                
+                <h3>Pending Faculty Applications</h3>
+                <table class="data-table">
+                    <thead><tr><th>Name</th><th>Email</th><th>Phone</th><th>Actions</th></tr></thead>
+                    <tbody id="pendingFacTableBody"></tbody>
+                </table>
+            </div>
+
+            <!-- 4. GLOBAL STUDENTS -->
+            <div id="viewStudents" class="admin-section hidden">
+                <h2 class="view-title" style="margin-bottom:2rem;">Global Student Directory</h2>
+                
+                <div class="form-section" style="padding:1rem 2rem; display:flex; gap:1rem; align-items:center;">
+                    <div class="input-field" style="margin:0; flex:1;"><input type="text" id="stuSearchInput" class="input" placeholder="Search by name, ID, or phone..."></div>
+                    <button id="downloadGlobalStudentListBtn" class="btn btn-ghost" style="white-space:nowrap;">📥 Download CSV</button>
+                </div>
+
+                <table class="data-table">
+                    <thead><tr><th>ID</th><th>Name</th><th>Campus</th><th>Status</th><th>Actions</th></tr></thead>
+                    <tbody id="globalStuTableBody"></tbody>
+                </table>
+            </div>
+
+            <!-- 5. MANAGE ADMINS -->
+            <div id="viewAdmins" class="admin-section hidden">
+                <h2 class="view-title" style="margin-bottom:2rem;">System Administrators</h2>
+                
+                <div class="form-section">
+                    <h3>Add Another Admin</h3>
+                    <div class="grid-2">
+                        <div class="input-field"><label class="label">Email Address</label><input type="email" id="newAdminEmail" class="input"></div>
+                        <div class="input-field"><label class="label">Password</label><input type="password" id="newAdminPass" class="input"></div>
+                    </div>
+                    <button class="btn btn-main" id="addAdminBtn">Create Admin User</button>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- Student Detail Modal -->
+    <div id="adminStudentModal" class="modal-overlay">
+        <div class="modal-content">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+                <h2 class="view-title" style="font-size:1.5rem; margin:0;">Student Full Report</h2>
+                <button class="btn btn-ghost" style="padding:0.5rem 1rem;" onclick="document.getElementById('adminStudentModal').classList.remove('active')">Close</button>
+            </div>
+            
+            <div id="adminModalBody" style="line-height:1.6; display:grid; grid-template-columns:1fr 1fr; gap:2rem;">
+                <!-- Content injected -->
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="admin.js?v=2"></script>
+    <!-- PWA Registration -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js').catch(err => console.log('SW Registration failed:', err));
+            });
+        }
+    </script>
+
+    <!-- Mobile Toggle Script -->
+    <script>
+        const menuBtn = document.getElementById('mobileMenuBtn');
+        const sidebar = document.querySelector('.sidebar');
+        const overlay = document.getElementById('sidebarOverlay');
+
+        function toggleMenu(forceOpen) {
+            const shouldOpen = typeof forceOpen === 'boolean' ? forceOpen : !sidebar.classList.contains('active');
+            sidebar.classList.toggle('active', shouldOpen);
+            overlay.classList.toggle('active', shouldOpen);
+            document.body.classList.toggle('drawer-open', shouldOpen);
+            menuBtn?.setAttribute('aria-expanded', String(shouldOpen));
+        }
+
+        menuBtn?.addEventListener('click', () => toggleMenu());
+        overlay?.addEventListener('click', () => toggleMenu(false));
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape') toggleMenu(false);
+        });
+        window.addEventListener('resize', () => {
+            if (window.innerWidth > 900) toggleMenu(false);
+        });
+        
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', () => {
+                if(window.innerWidth <= 900) toggleMenu(false);
+            });
+        });
+    </script>
+</body>
+</html>

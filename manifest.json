@@ -1,0 +1,23 @@
+{
+  "name": "MSA UKKUDA Islamic Portal",
+  "short_name": "MSA UKKUDA Portal",
+  "description": "Official Student and Faculty Portal for Muhyissunnah Dars Ukkuda",
+  "start_url": "/index.html",
+  "display": "standalone",
+  "background_color": "#0a0a0f",
+  "theme_color": "#0a0a0f",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/3665/3665930.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/3665/3665930.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

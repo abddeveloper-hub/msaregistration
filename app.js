@@ -1,0 +1,466 @@
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+import { getFirestore, doc, setDoc, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+import { firebaseConfig } from "./firebase-config.js";
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+const $ = (selector) => document.querySelector(selector);
+const $$ = (selector) => Array.from(document.querySelectorAll(selector));
+
+const statEnrollment = $("#statEnrollment");
+const statInstitutions = $("#statInstitutions");
+const statFaculty = $("#statFaculty");
+const authModal = $("#authModal");
+const navLoginBtn = $("#navLoginBtn");
+const heroLoginBtn = $("#heroLoginBtn");
+const closeAuthBtn = $("#closeAuthBtn");
+const navLogoutBtn = $("#navLogoutBtn");
+const navAdminBtn = $("#navAdminBtn");
+const themeToggleBtn = $("#themeToggleBtn");
+const themeToggleLabel = $("#themeToggleLabel");
+const installAppBtn = $("#installAppBtn");
+const studentCard = $("#studentCard");
+const facultyCard = $("#facultyCard");
+const mobileStudentLink = $("#mobileStudentLink");
+const mobileFacultyLink = $("#mobileFacultyLink");
+
+const tabSignIn = $("#tabSignIn");
+const tabSignUp = $("#tabSignUp");
+const roleStudent = $("#roleStudent");
+const roleFaculty = $("#roleFaculty");
+const roleSelector = $("#roleSelector");
+const nameFieldContainer = $("#nameField");
+const authTitle = $("#authTitle");
+const authSubtitle = $("#authSubtitle");
+const authSubmitBtn = $("#authSubmitBtn");
+const authError = $("#authError");
+const authForm = $("#authForm");
+const authName = $("#authName");
+const authEmail = $("#authEmail");
+const authPassword = $("#authPassword");
+const passwordToggleBtn = $("#passwordToggleBtn");
+const passwordStrength = $("#passwordStrength");
+
+let isSignUpMode = false;
+let selectedRole = localStorage.getItem("msaukkuda:lastRole") || "student";
+let userDocUnsubscribe = null;
+let deferredInstallPrompt = null;
+const pwaModal = $("#pwaModal");
+const closePwaBtn = $("#closePwaBtn");
+const mobileInstallBtn = $("#mobileInstallBtn");
+const pwaAndroidInst = $("#pwaAndroidInst");
+const pwaIosInst = $("#pwaIosInst");
+const pwaGenericInst = $("#pwaGenericInst");
+const pwaInstallActionBtn = $("#pwaInstallActionBtn");
+
+function setText(node, text) {
+    if (node) node.textContent = text;
+}
+
+function formatNumber(value) {
+    return new Intl.NumberFormat("en-IN").format(Number(value) || 0);
+}
+
+function animateStat(node, nextValue) {
+    if (!node) return;
+    const next = Number(nextValue) || 0;
+    const previous = Number(node.dataset.value || node.textContent.replace(/\D/g, "")) || 0;
+    node.dataset.value = String(next);
+
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches || previous === next) {
+        node.textContent = formatNumber(next);
+        return;
+    }
+
+    const start = performance.now();
+    const duration = 700;
+
+    const tick = (now) => {
+        const progress = Math.min((now - start) / duration, 1);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        const current = Math.round(previous + (next - previous) * eased);
+        node.textContent = formatNumber(current);
+        if (progress < 1) requestAnimationFrame(tick);
+    };
+
+    requestAnimationFrame(tick);
+}
+
+function isStudentApplication(data) {
+    if (!data || (data.role && data.role !== "student")) return false;
+    const status = String(data.status || "").trim().toLowerCase();
+    return Boolean(data.parentUid || data.campus || data.campusId || ["pending", "admitted", "rejected"].includes(status));
+}
+
+function loadPublicStats() {
+    if (!statEnrollment || !statInstitutions || !statFaculty) return;
+
+    onSnapshot(collection(db, "users"), (snap) => {
+        let students = 0;
+        let faculty = 0;
+
+        snap.forEach((entry) => {
+            const data = entry.data();
+            if (isStudentApplication(data)) students += 1;
+            if (data.role === "faculty") faculty += 1;
+        });
+
+        animateStat(statEnrollment, students);
+        animateStat(statFaculty, faculty);
+    }, (error) => {
+        console.warn("Unable to load public user stats:", error);
+    });
+
+    onSnapshot(collection(db, "institutions"), (snap) => {
+        animateStat(statInstitutions, snap.size);
+    }, (error) => {
+        console.warn("Unable to load institution stats:", error);
+    });
+}
+
+function applyTheme(theme) {
+    const nextTheme = theme === "light" ? "light" : "dark";
+    document.documentElement.dataset.theme = nextTheme;
+    localStorage.setItem("msaukkuda:theme", nextTheme);
+    setText(themeToggleLabel, nextTheme === "light" ? "Light" : "Dark");
+    themeToggleBtn?.setAttribute("aria-pressed", String(nextTheme === "light"));
+}
+
+function initTheme() {
+    const storedTheme = localStorage.getItem("msaukkuda:theme");
+    applyTheme(storedTheme || "dark");
+
+    themeToggleBtn?.addEventListener("click", () => {
+        const current = document.documentElement.dataset.theme === "light" ? "light" : "dark";
+        applyTheme(current === "light" ? "dark" : "light");
+    });
+}
+
+function showAuthError(message) {
+    if (!authError) return;
+    authError.textContent = message;
+    authError.classList.remove("hidden");
+}
+
+function clearAuthError() {
+    if (!authError) return;
+    authError.textContent = "";
+    authError.classList.add("hidden");
+}
+
+function friendlyAuthError(error) {
+    const code = error?.code || "";
+    const map = {
+        "auth/email-already-in-use": "An account already exists with this email. Please sign in instead.",
+        "auth/invalid-email": "Please enter a valid email address.",
+        "auth/invalid-credential": "The email or password is not correct.",
+        "auth/user-not-found": "No account was found for this email.",
+        "auth/wrong-password": "The email or password is not correct.",
+        "auth/weak-password": "Use a stronger password with at least 6 characters.",
+        "auth/network-request-failed": "Network connection failed. Please check your internet and try again."
+    };
+    return map[code] || error?.message || "Something went wrong. Please try again.";
+}
+
+function updatePasswordStrength() {
+    if (!passwordStrength || !authPassword) return;
+    const value = authPassword.value;
+    let score = 0;
+
+    if (value.length >= 6) score += 1;
+    if (value.length >= 10) score += 1;
+    if (/[a-z]/.test(value) && /[A-Z]/.test(value)) score += 1;
+    if (/\d/.test(value) || /[^A-Za-z0-9]/.test(value)) score += 1;
+
+    passwordStrength.dataset.score = String(Math.min(score, 4));
+}
+
+function updateAuthUI() {
+    if (!authModal) return;
+    const fixedRole = authModal.dataset.fixedRole === "true";
+
+    tabSignIn?.classList.toggle("active", !isSignUpMode);
+    tabSignUp?.classList.toggle("active", isSignUpMode);
+    roleStudent?.classList.toggle("active", selectedRole === "student");
+    roleFaculty?.classList.toggle("active", selectedRole === "faculty");
+    nameFieldContainer?.classList.toggle("hidden", !isSignUpMode);
+    passwordStrength?.classList.toggle("hidden", !isSignUpMode);
+
+    if (authName) authName.required = isSignUpMode;
+    if (authPassword) authPassword.autocomplete = isSignUpMode ? "new-password" : "current-password";
+    if (roleSelector) roleSelector.classList.toggle("hidden", fixedRole);
+
+    setText(authTitle, isSignUpMode ? "Create Account" : "Welcome Back");
+    setText(authSubtitle, fixedRole
+        ? `Sign ${isSignUpMode ? "up" : "in"} to your ${selectedRole} portal.`
+        : "Select your role to continue.");
+    setText(authSubmitBtn, isSignUpMode ? "Create Account" : "Sign In");
+    clearAuthError();
+    updatePasswordStrength();
+}
+
+function setRole(role) {
+    selectedRole = role === "faculty" ? "faculty" : "student";
+    localStorage.setItem("msaukkuda:lastRole", selectedRole);
+    updateAuthUI();
+}
+
+function openAuthModal(role = selectedRole, isFixed = false) {
+    if (!authModal) return;
+    setRole(role);
+    authModal.dataset.fixedRole = String(Boolean(isFixed));
+    authModal.classList.add("active");
+    authModal.setAttribute("aria-hidden", "false");
+    updateAuthUI();
+    window.setTimeout(() => authEmail?.focus(), 60);
+}
+
+function closeAuthModal() {
+    if (!authModal) return;
+    authModal.classList.remove("active");
+    authModal.setAttribute("aria-hidden", "true");
+    clearAuthError();
+}
+
+window.openAuthModal = openAuthModal;
+
+function initAuthUI() {
+    navLoginBtn?.addEventListener("click", () => openAuthModal(selectedRole, false));
+    heroLoginBtn?.addEventListener("click", () => openAuthModal(selectedRole, false));
+    studentCard?.addEventListener("click", (event) => {
+        event.preventDefault();
+        openAuthModal("student", true);
+    });
+    facultyCard?.addEventListener("click", (event) => {
+        event.preventDefault();
+        openAuthModal("faculty", true);
+    });
+    mobileStudentLink?.addEventListener("click", (event) => {
+        event.preventDefault();
+        openAuthModal("student", true);
+    });
+    mobileFacultyLink?.addEventListener("click", (event) => {
+        event.preventDefault();
+        openAuthModal("faculty", true);
+    });
+    const mobileAdminLink = $("#mobileAdminLink");
+    mobileAdminLink?.addEventListener("click", (event) => {
+        // Direct link to admin portal is preferred for root access
+        // No preventDefault here to allow normal navigation
+    });
+
+    closeAuthBtn?.addEventListener("click", closeAuthModal);
+    navAdminBtn?.addEventListener("click", () => window.location.href = "admin.html");
+
+    authModal?.addEventListener("click", (event) => {
+        if (event.target === authModal) closeAuthModal();
+    });
+
+    document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape" && authModal?.classList.contains("active")) {
+            closeAuthModal();
+        }
+    });
+
+    tabSignIn?.addEventListener("click", () => {
+        isSignUpMode = false;
+        updateAuthUI();
+    });
+
+    tabSignUp?.addEventListener("click", () => {
+        isSignUpMode = true;
+        updateAuthUI();
+    });
+
+    roleStudent?.addEventListener("click", () => setRole("student"));
+    roleFaculty?.addEventListener("click", () => setRole("faculty"));
+
+    passwordToggleBtn?.addEventListener("click", () => {
+        if (!authPassword) return;
+        const isHidden = authPassword.type === "password";
+        authPassword.type = isHidden ? "text" : "password";
+        passwordToggleBtn.textContent = isHidden ? "Hide" : "Show";
+        passwordToggleBtn.setAttribute("aria-label", isHidden ? "Hide password" : "Show password");
+    });
+
+    authPassword?.addEventListener("input", updatePasswordStrength);
+    updateAuthUI();
+}
+
+function initPwaInstall() {
+    window.addEventListener("beforeinstallprompt", (event) => {
+        event.preventDefault();
+        deferredInstallPrompt = event;
+        installAppBtn?.classList.remove("hidden");
+        // Also show in mobile bar if desired, but we have the download button there always now
+    });
+
+    const openPwaModal = () => {
+        if (!pwaModal) return;
+        pwaModal.classList.add("active");
+        pwaModal.setAttribute("aria-hidden", "false");
+
+        const isIos = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+        
+        pwaAndroidInst?.classList.add("hidden");
+        pwaIosInst?.classList.add("hidden");
+        pwaGenericInst?.classList.add("hidden");
+
+        if (deferredInstallPrompt) {
+            pwaAndroidInst?.classList.remove("hidden");
+        } else if (isIos) {
+            pwaIosInst?.classList.remove("hidden");
+        } else {
+            pwaGenericInst?.classList.remove("hidden");
+        }
+    };
+
+    const closePwaModal = () => {
+        pwaModal?.classList.remove("active");
+        pwaModal?.setAttribute("aria-hidden", "true");
+    };
+
+    installAppBtn?.addEventListener("click", () => {
+        if (deferredInstallPrompt) {
+            deferredInstallPrompt.prompt();
+            deferredInstallPrompt.userChoice.then(() => {
+                deferredInstallPrompt = null;
+                installAppBtn.classList.add("hidden");
+            });
+        } else {
+            openPwaModal();
+        }
+    });
+
+    mobileInstallBtn?.addEventListener("click", openPwaModal);
+    closePwaBtn?.addEventListener("click", closePwaModal);
+    pwaInstallActionBtn?.addEventListener("click", () => {
+        if (deferredInstallPrompt) {
+            deferredInstallPrompt.prompt();
+            deferredInstallPrompt.userChoice.then(() => {
+                deferredInstallPrompt = null;
+                closePwaModal();
+                installAppBtn?.classList.add("hidden");
+            });
+        }
+    });
+
+    pwaModal?.addEventListener("click", (e) => {
+        if (e.target === pwaModal) closePwaModal();
+    });
+}
+
+if (authForm) {
+    authForm.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        clearAuthError();
+
+        const email = authEmail?.value.trim() || "";
+        const password = authPassword?.value || "";
+        const fullName = authName?.value.trim() || "";
+
+        if (!email || !password) {
+            showAuthError("Email and password are required.");
+            return;
+        }
+
+        if (isSignUpMode && !fullName) {
+            showAuthError("Full name is required for account creation.");
+            return;
+        }
+
+        if (isSignUpMode && password.length < 6) {
+            showAuthError("Password must be at least 6 characters.");
+            return;
+        }
+
+        authSubmitBtn.disabled = true;
+        authSubmitBtn.textContent = "Processing...";
+
+        try {
+            if (isSignUpMode) {
+                const userCred = await createUserWithEmailAndPassword(auth, email, password);
+                const finalRole = email.toLowerCase() === "admin@msaukkuda.com" ? "admin" : selectedRole;
+
+                await setDoc(doc(db, "users", userCred.user.uid), {
+                    uid: userCred.user.uid,
+                    email,
+                    fullName,
+                    role: finalRole,
+                    status: finalRole === "admin" ? "admitted" : "unsubmitted",
+                    createdAt: new Date().toISOString()
+                });
+            } else {
+                await signInWithEmailAndPassword(auth, email, password);
+            }
+
+            authSubmitBtn.textContent = "Opening Portal...";
+            window.setTimeout(() => {
+                if (authSubmitBtn) {
+                    authSubmitBtn.disabled = false;
+                    updateAuthUI();
+                }
+            }, 4500);
+        } catch (error) {
+            showAuthError(friendlyAuthError(error));
+            authSubmitBtn.disabled = false;
+            authSubmitBtn.textContent = isSignUpMode ? "Create Account" : "Sign In";
+        }
+    });
+}
+
+navLogoutBtn?.addEventListener("click", () => signOut(auth));
+
+onAuthStateChanged(auth, async (user) => {
+    if (userDocUnsubscribe) {
+        userDocUnsubscribe();
+        userDocUnsubscribe = null;
+    }
+
+    if (!user) {
+        navLoginBtn?.classList.remove("hidden");
+        navLogoutBtn?.classList.add("hidden");
+        if (heroLoginBtn) {
+            heroLoginBtn.textContent = "Enter Dashboard";
+            heroLoginBtn.onclick = () => openAuthModal(selectedRole, false);
+        }
+        return;
+    }
+
+    navLoginBtn?.classList.add("hidden");
+    navLogoutBtn?.classList.remove("hidden");
+
+    userDocUnsubscribe = onSnapshot(doc(db, "users", user.uid), (snap) => {
+        if (!snap.exists()) return;
+        const data = snap.data();
+
+        const getTarget = () => {
+            if (data.role === "admin") return "admin.html";
+            if (data.role === "faculty") return "teacher.html";
+            return "student.html";
+        };
+
+        const redirectToPortal = () => {
+            window.location.href = getTarget();
+        };
+
+        if (heroLoginBtn) {
+            heroLoginBtn.onclick = redirectToPortal;
+            heroLoginBtn.textContent = "Enter Portal";
+        }
+
+        if (authModal?.classList.contains("active")) {
+            redirectToPortal();
+        }
+    }, (error) => {
+        console.warn("Unable to load signed-in user profile:", error);
+    });
+});
+
+initTheme();
+initPwaInstall();
+initAuthUI();
+loadPublicStats();

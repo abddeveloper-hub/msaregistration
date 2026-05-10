@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Student Portal | Muhyissunnah Dars Ukkuda</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="mobile.css">
+    <!-- PWA Support -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0a0a0f">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/3665/3665930.png">
+    <script>
+        (function() {
+            const theme = localStorage.getItem("msaukkuda:theme") || "dark";
+            document.documentElement.dataset.theme = theme;
+            if (theme === "light") {
+                const metaTheme = document.querySelector('meta[name="theme-color"]');
+                if (metaTheme) metaTheme.setAttribute("content", "#f8f3e8");
+            }
+        })();
+    </script>
+</head>
+<body>
+    <div class="portal-layout">
+        <!-- Mobile Top Bar -->
+        <div class="mobile-top-bar" style="display:none;">
+            <button class="menu-toggle" id="mobileMenuBtn" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="sidebarMenu">
+                <span></span><span></span><span></span>
+            </button>
+            <div class="app-logo" style="margin:0;">
+                <div class="dot"></div>
+                <span style="font-family: 'Cinzel', serif; font-size: 1.2rem;">MSA UKKUDA Portal</span>
+            </div>
+            <div style="width:40px;"></div> <!-- Spacer -->
+        </div>
+
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebarMenu">
+            <div style="font-family: 'Amiri', serif; font-size: 2rem; color: var(--gold-base); text-align: center; margin-bottom: 1rem;">﷽</div>
+            <div class="app-logo" style="justify-content: center; margin-bottom: 3rem;">
+                <div class="dot"></div>
+                <span style="font-family: 'Cinzel', serif;">MSA UKKUDA Portal</span>
+            </div>
+            
+            <nav style="flex: 1; display: flex; flex-direction: column; gap: 0.5rem;">
+                <div class="nav-item active" id="navHome">My Students</div>
+                <div class="nav-item" id="navNewStudent">Add New Student</div>
+            </nav>
+
+            <button id="installAppBtn" class="btn btn-ghost" style="margin-top: auto;">Download App</button>
+            <button id="logoutBtn" class="btn btn-ghost" style="margin-top: 1rem;">Log Out</button>
+            <button id="homeBtn" class="btn btn-ghost" style="margin-top: 1rem;" onclick="window.location.href='index.html'">Public Page</button>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            
+            <!-- VIEW: Dashboard (List of Students) -->
+            <div id="viewAccountDashboard">
+                <div class="view-header">
+                    <h2 class="view-title">My Registered Students</h2>
+                    <p class="view-desc">Manage all student applications registered under this email.</p>
+                </div>
+                
+                <div id="studentListContainer" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; margin-top: 2rem;">
+                    <!-- Injected via JS -->
+                </div>
+
+                <div id="studentsLoadingMsg" class="status-banner" style="margin-top: 2rem;">
+                    <h3>Loading students...</h3>
+                    <p>Your registered student applications will appear here.</p>
+                </div>
+
+                <div id="noStudentsMsg" class="status-banner hidden" style="margin-top: 2rem;">
+                    <h3>No students registered yet</h3>
+                    <p>Click the button below to register your first student.</p>
+                    <button class="btn btn-main" onclick="showNewStudentForm()" style="margin-top: 1rem;">Register Now</button>
+                </div>
+            </div>
+
+            <!-- VIEW: Registration Form -->
+            <div id="viewRegistration" class="hidden">
+                <div class="view-header">
+                    <h2 class="view-title">Student Registration</h2>
+                    <p class="view-desc">Register a new student for the 2026 academic year.</p>
+                </div>
+
+                <form id="registrationForm">
+                    <!-- Personal Info -->
+                    <div class="form-section">
+                        <h3>Personal Information</h3>
+                        <div class="grid-2">
+                            <div class="input-field"><label class="label">Full Name of Student</label><input type="text" id="stuName" class="input" required></div>
+                            <div class="input-field"><label class="label">Student Identifier (e.g. Nickname)</label><input type="text" id="stuUsername" class="input" required placeholder="To help you identify this student"></div>
+                            <div class="input-field"><label class="label">Date of Birth</label><input type="date" id="stuDob" class="input" required></div>
+                            <div class="input-field"><label class="label">Blood Group</label><input type="text" id="stuBlood" class="input" required placeholder="e.g. O+"></div>
+                            <div class="input-field"><label class="label">Phone Number</label><input type="tel" id="stuPhone" class="input" required></div>
+                            <div class="input-field"><label class="label">Aadhar Number</label><input type="text" id="stuAadhar" class="input" required></div>
+                            <div class="input-field">
+                                <label class="label">Photo (URL or select below)</label>
+                                <input type="file" id="stuPhotoFile" class="input" accept="image/*">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Family & Location -->
+                    <div class="form-section">
+                        <h3>Family & Residence</h3>
+                        <div class="grid-2">
+                            <div class="input-field"><label class="label">Father's Name</label><input type="text" id="stuFatherName" class="input" required></div>
+                            <div class="input-field"><label class="label">Father's Phone Number</label><input type="tel" id="stuFatherPhone" class="input" required></div>
+                        </div>
+                        <div class="input-field"><label class="label">Full Address</label><textarea id="stuAddress" class="input" rows="3" required></textarea></div>
+                        
+                        <div class="grid-3" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.5rem;">
+                            <div class="input-field">
+                                <label class="label">Are you a Sayyid?</label>
+                                <select id="stuSayyid" class="input"><option value="no">No</option><option value="yes">Yes</option></select>
+                            </div>
+                            <div class="input-field">
+                                <label class="label">Are you a Hafiz?</label>
+                                <select id="stuHafiz" class="input"><option value="no">No</option><option value="yes">Yes</option></select>
+                            </div>
+                            <div class="input-field">
+                                <label class="label">Are you an Orphan?</label>
+                                <select id="stuOrphan" class="input"><option value="no">No</option><option value="yes">Yes</option></select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Education Details -->
+                    <div class="form-section">
+                        <h3>Educational Background</h3>
+                        <div class="input-field" style="margin-bottom: 2rem; border-bottom: 1px solid var(--border); padding-bottom: 1rem;">
+                            <label class="label">Dars Education</label>
+                            <select id="stuDarsType" class="input" style="margin-bottom: 1rem;">
+                                <option value="new">First time joining Dars (New)</option>
+                                <option value="existing">Have studied Dars previously</option>
+                            </select>
+                            <input type="text" id="stuDarsDetails" class="input hidden" placeholder="How much madrasa have you studied? / Previous institution">
+                        </div>
+
+                        <div class="input-field">
+                            <label class="label">Schooling Level</label>
+                            <select id="stuSchoolLevel" class="input">
+                                <option value="" disabled selected>Select Level</option>
+                                <option value="below10">Below 10th Standard</option>
+                                <option value="sslc">Passed SSLC (10th)</option>
+                                <option value="puc">Passed PUC (12th)</option>
+                                <option value="degree">Enrolled in / Passed Degree</option>
+                            </select>
+                        </div>
+                        
+                        <!-- Dynamic School Fields -->
+                        <div id="schoolFieldsContainer" class="grid-2 hidden" style="margin-top: 1rem;">
+                            <!-- Injected by JS based on selection -->
+                        </div>
+                    </div>
+
+                    <!-- Institutional Details -->
+                    <div class="form-section">
+                        <h3>Enrollment Preferences</h3>
+                        <div class="grid-2">
+                            <div class="input-field">
+                                <label class="label">Select Off-Campus (Institution)</label>
+                                <select id="stuCampus" class="input" required>
+                                    <option value="" disabled selected>Loading institutions...</option>
+                                </select>
+                            </div>
+                            <div class="input-field">
+                                <label class="label">Target Batch</label>
+                                <select id="stuBatch" class="input" required>
+                                    <option value="" disabled selected>Select Batch</option>
+                                    <option value="Batch 1">Batch 1</option>
+                                    <option value="Batch 2">Batch 2</option>
+                                    <option value="Batch 3">Batch 3</option>
+                                    <option value="Batch 4">Batch 4</option>
+                                    <option value="Batch 5">Batch 5</option>
+                                    <option value="Batch 6">Batch 6</option>
+                                    <option value="Batch 7">Batch 7</option>
+                                    <option value="Batch 8">Batch 8</option>
+                                    <option value="Batch 9">Batch 9</option>
+                                    <option value="Batch 10">Batch 10</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit" id="submitRegBtn" class="btn btn-main" style="width: 100%;">Submit Registration</button>
+                    <button type="button" class="btn btn-ghost" onclick="showAccountDashboard()" style="width: 100%; margin-top: 1rem;">Cancel</button>
+                </form>
+            </div>
+
+            <!-- VIEW: Student Detail (Admitted or Pending) -->
+            <div id="viewStudentDetail" class="hidden">
+                <div class="view-header" style="display:flex; justify-content:space-between; align-items:center;">
+                    <div>
+                        <h2 class="view-title" id="detailStudentName">Student Details</h2>
+                        <p class="view-desc" id="detailStudentStatus">Status: Pending Approval</p>
+                    </div>
+                    <button class="btn btn-ghost" onclick="showAccountDashboard()">← Back to List</button>
+                </div>
+
+                <div id="pendingStatusSection" class="status-banner hidden">
+                    <svg width="64" height="64" fill="none" stroke="var(--accent)" viewBox="0 0 24 24" style="margin-bottom: 1rem;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <h3>Application Under Review</h3>
+                    <p>This student application is currently being reviewed by the administration.</p>
+                    <button id="editProfileBtn" class="btn btn-ghost" style="margin: 2rem auto 0; width: auto; padding: 0.75rem 2rem;">Edit Application</button>
+                </div>
+
+                <div id="admittedDetailSection" class="hidden">
+                    <!-- Performance Overview -->
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 2rem;">
+                        <div class="card" style="text-align: center; padding: 1.5rem; border: 1px solid var(--border); background: var(--glass-heavy);">
+                            <h4 style="font-size: 0.8rem; text-transform: uppercase; color: var(--text-dim); margin-bottom: 0.5rem;">Attendance</h4>
+                            <div id="attPercentage" style="font-size: 2.5rem; font-weight: 800; color: var(--success);">0%</div>
+                            <p style="font-size: 0.8rem; margin-top: 0.5rem;" id="attCount">0/0 sessions</p>
+                        </div>
+                        <div class="card" style="text-align: center; padding: 1.5rem; border: 1px solid var(--border); background: var(--glass-heavy);">
+                            <h4 style="font-size: 0.8rem; text-transform: uppercase; color: var(--text-dim); margin-bottom: 0.5rem;">Avg. Marks</h4>
+                            <div id="marksPercentage" style="font-size: 2.5rem; font-weight: 800; color: var(--primary);">0%</div>
+                            <p style="font-size: 0.8rem; margin-top: 0.5rem;" id="marksCount">0 exams</p>
+                        </div>
+                    </div>
+
+                    <!-- ID Card -->
+                    <div class="id-card" style="margin-bottom: 3rem;">
+                        <div class="id-header">
+                            <h4>Muhyissunnah Dars Ukkuda</h4>
+                            <span style="font-size: 0.7rem; color: var(--text-dim); text-transform: uppercase;">Official Student ID</span>
+                        </div>
+                        <img id="idPhotoDisplay" src="" alt="Student Photo" class="id-photo">
+                        <div class="id-details">
+                            <p><strong>Name</strong> <span id="idNameDisplay"></span></p>
+                            <p><strong>Father</strong> <span id="idFatherDisplay"></span></p>
+                            <p><strong>DOB</strong> <span id="idDobDisplay"></span></p>
+                            <p><strong>Phone</strong> <span id="idPhoneDisplay"></span></p>
+                            <p><strong>Campus</strong> <span id="idCampusDisplay"></span></p>
+                        </div>
+                        <div class="id-number" id="idNumberDisplay">MSA UKKUDA-XXXX-XX</div>
+                    </div>
+
+                    <div style="text-align: center; margin-bottom: 3rem;">
+                        <button class="btn btn-ghost" id="downloadIdBtn" style="gap: 0.75rem;">
+                            <span>📥</span> Download ID Card
+                        </button>
+                        <p style="font-size: 0.75rem; color: var(--text-dim); margin-top: 0.5rem;">Tip: You can also take a screenshot of your ID card.</p>
+                    </div>
+
+                    <!-- Marks Section -->
+                    <div class="form-section">
+                        <h3>Academic Marks</h3>
+                        <table class="data-table">
+                            <thead><tr><th>Subject/Exam</th><th>Marks Obtained</th><th>Percentage</th><th>Date</th></tr></thead>
+                            <tbody id="marksTableBody"></tbody>
+                        </table>
+                    </div>
+
+                    <!-- Attendance Section -->
+                    <div class="form-section">
+                        <h3>Attendance Record</h3>
+                        <table class="data-table">
+                            <thead><tr><th>Session/Subject</th><th>Date</th><th>Status</th></tr></thead>
+                            <tbody id="attendanceTableBody"></tbody>
+                        </table>
+                    </div>
+
+                    <!-- Remarks Section -->
+                    <div class="form-section">
+                        <h3>Teacher Remarks</h3>
+                        <div id="remarksContainer" style="display: flex; flex-direction: column; gap: 1rem;"></div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- PWA Installation Instructions Modal -->
+    <div id="pwaModal" class="auth-overlay" aria-hidden="true">
+        <div class="auth-modal" role="dialog" aria-modal="true" aria-labelledby="pwaTitle">
+            <div class="auth-modal-header">
+                <div>
+                    <h2 id="pwaTitle">Download Portal App</h2>
+                    <p>Access the MSA UKKUDA portal directly from your home screen.</p>
+                </div>
+                <button id="closePwaBtn" class="close-modal" type="button">X</button>
+            </div>
+            
+            <div id="pwaAndroidInst" class="hidden">
+                <p style="margin-bottom:1.5rem;">Tap the button below to install the app on your Android device.</p>
+                <button id="pwaInstallActionBtn" class="btn btn-main btn-block">Install App Now</button>
+            </div>
+
+            <div id="pwaIosInst" class="hidden">
+                <p>To install on your iPhone/iPad:</p>
+                <ol style="margin: 1.5rem 0; padding-left: 1.5rem; display: grid; gap: 0.75rem;">
+                    <li>Tap the <strong>Share</strong> button ( <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:inline; vertical-align:middle;"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8M16 6l-4-4-4 4M12 2v13"/></svg> ) in Safari.</li>
+                    <li>Scroll down and tap <strong>'Add to Home Screen'</strong>.</li>
+                    <li>Tap <strong>'Add'</strong> in the top right corner.</li>
+                </ol>
+            </div>
+
+            <div id="pwaGenericInst">
+                <p>Your browser doesn't support automatic installation. You can usually find an "Install" or "Add to Home Screen" option in your browser's menu (⋮ or ≡).</p>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="student.js?v=2"></script>
+
+    <!-- PWA Registration -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js').catch(err => console.log('SW Registration failed:', err));
+            });
+        }
+    </script>
+
+    <!-- Mobile Toggle Script -->
+    <script>
+        const menuBtn = document.getElementById('mobileMenuBtn');
+        const sidebar = document.querySelector('.sidebar');
+        const overlay = document.getElementById('sidebarOverlay');
+
+        function toggleMenu(forceOpen) {
+            const shouldOpen = typeof forceOpen === 'boolean' ? forceOpen : !sidebar.classList.contains('active');
+            sidebar.classList.toggle('active', shouldOpen);
+            overlay.classList.toggle('active', shouldOpen);
+            document.body.classList.toggle('drawer-open', shouldOpen);
+            menuBtn?.setAttribute('aria-expanded', String(shouldOpen));
+        }
+
+        menuBtn?.addEventListener('click', () => toggleMenu());
+        overlay?.addEventListener('click', () => toggleMenu(false));
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape') toggleMenu(false);
+        });
+        window.addEventListener('resize', () => {
+            if (window.innerWidth > 900) toggleMenu(false);
+        });
+        
+        // Auto-close on nav click
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', () => {
+                if(window.innerWidth <= 900) toggleMenu(false);
+            });
+        });
+    </script>
+</body>
+</html>

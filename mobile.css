@@ -1,0 +1,510 @@
+/* ==========================================
+   MOBILE RESPONSIVE OVERRIDES
+   Supplements style.css for small screens
+   ========================================== */
+
+/* ---- Medium Screens (Tablets / Small Laptops) ---- */
+@media (max-width: 900px) {
+    .admin-layout,
+    .portal-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .admin-sidebar,
+    .portal-sidebar {
+        display: none !important;
+    }
+
+    .admin-main {
+        padding: 1.5rem 1.25rem 6rem;
+    }
+
+    .portal-main {
+        padding: 1.5rem 1.25rem 6rem;
+    }
+
+    .mobile-bottom-nav {
+        display: flex !important;
+    }
+
+    .grid-3 {
+        grid-template-columns: 1fr 1fr !important;
+    }
+
+    .grid-2 {
+        grid-template-columns: 1fr !important;
+    }
+
+    .stat-card-premium {
+        padding: 1.25rem;
+    }
+
+    .view-title {
+        font-size: 1.6rem !important;
+    }
+
+    /* Fix admin/teacher login absolute centering on tablets */
+    #adminAuthWrapper,
+    #teacherAuthWrapper {
+        position: relative !important;
+        top: auto !important;
+        left: auto !important;
+        transform: none !important;
+        margin: 2rem auto !important;
+        padding: 2.5rem !important;
+        max-width: 95% !important;
+        width: 95% !important;
+    }
+
+    /* Overview stat grids */
+    #view-overview > div:first-of-type,
+    #view-global-analytics > div:first-of-type {
+        grid-template-columns: 1fr 1fr !important;
+    }
+}
+
+/* ---- Mobile Phones ---- */
+@media (max-width: 768px) {
+
+    /* Fix absolute-positioned login boxes */
+    #adminAuthWrapper,
+    #teacherAuthWrapper {
+        position: relative !important;
+        top: auto !important;
+        left: auto !important;
+        transform: none !important;
+        margin: 1.5rem auto !important;
+        padding: 2rem 1.5rem !important;
+        max-width: 95% !important;
+        width: 95% !important;
+        border-radius: 2rem !important;
+    }
+
+    /* Registration app container */
+    .app-container {
+        flex-direction: column;
+        border-radius: 0;
+        margin: 0;
+        min-height: 100vh;
+    }
+
+    .app-sidebar {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+        padding: 1.5rem;
+    }
+
+    .app-content {
+        padding: 2rem 1.25rem 4rem;
+        max-height: none;
+    }
+
+    /* Stat cards full width on mobile */
+    #view-overview > div:first-of-type,
+    #view-global-analytics > div:first-of-type {
+        grid-template-columns: 1fr !important;
+    }
+
+    /* All grids collapse to 1 column */
+    .grid-3 {
+        grid-template-columns: 1fr !important;
+    }
+
+    /* Tables scroll horizontally */
+    section table,
+    .admin-view table {
+        min-width: 520px;
+    }
+
+    section > div > table,
+    .admin-view > div > table {
+        min-width: 520px;
+    }
+
+    /* Wrap all table containers */
+    .admin-view > div[style*="background: var(--glass)"],
+    .admin-view > div[style*="border-radius: 2rem"] {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    /* Modal fix */
+    #modalBody > div {
+        grid-template-columns: 1fr !important;
+        text-align: center;
+    }
+
+    #modalBody img {
+        margin: 0 auto 1.5rem;
+    }
+
+    .modal .glass-card {
+        padding: 2rem !important;
+        width: 95% !important;
+        margin: 1rem !important;
+        max-height: 95vh;
+    }
+
+    /* ID Card mobile fix */
+    .id-card-wrap {
+        width: 100% !important;
+        height: auto !important;
+        min-height: 240px;
+        transform: none !important;
+        padding: 1.25rem;
+    }
+
+    .id-card-body {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .id-photo {
+        margin-bottom: 1rem;
+    }
+
+    .id-details-grid {
+        grid-template-columns: 1fr 1fr !important;
+        width: 100%;
+    }
+
+    .id-footer {
+        position: relative;
+        margin-top: 1.5rem;
+        bottom: 0;
+        left: 0;
+        right: 0;
+    }
+
+    .id-card {
+        width: min(100%, 360px) !important;
+        padding: 1.15rem !important;
+        margin-inline: auto;
+    }
+
+    .id-details p {
+        align-items: flex-start;
+        overflow-wrap: anywhere;
+    }
+
+    .id-number {
+        font-size: clamp(1rem, 6vw, 1.35rem) !important;
+        letter-spacing: 0.06em !important;
+        overflow-wrap: anywhere;
+    }
+
+    /* Portal header stacks vertically */
+    .portal-header {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: flex-start;
+    }
+
+    /* Welcome banner */
+    .welcome-banner {
+        flex-direction: column;
+        text-align: center;
+        gap: 1.5rem;
+        padding: 2rem;
+    }
+
+    .banner-text h1 {
+        font-size: 1.75rem;
+    }
+
+    /* Dashboard grid single column */
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+
+    /* Profile page */
+    .profile-header {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .profile-details-grid {
+        grid-template-columns: 1fr !important;
+    }
+
+    /* Teacher student details modal */
+    #studentDetailsModal .app-container {
+        border-radius: 1.5rem !important;
+        height: 95vh;
+        max-width: 95%;
+        flex-direction: column;
+    }
+
+    .modal-content {
+        width: min(95vw, 560px) !important;
+        max-height: 90dvh !important;
+    }
+
+    #modalBody,
+    #adminModalBody {
+        grid-template-columns: 1fr !important;
+    }
+
+    #adminModalBody > * {
+        grid-column: auto !important;
+    }
+
+    /* Analytics charts side by side -> stacked */
+    #view-global-analytics > div:last-of-type {
+        grid-template-columns: 1fr !important;
+    }
+
+    /* View header actions stack */
+    #view-students .view-header {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 1rem;
+    }
+
+    #view-students .view-header > div {
+        flex-direction: column !important;
+        width: 100%;
+    }
+
+    #view-students .view-header input,
+    #view-students .view-header button {
+        max-width: 100% !important;
+        width: 100% !important;
+    }
+
+    .main-content,
+    .admin-main,
+    .portal-main,
+    .dashboard-section,
+    .admin-section,
+    .form-section {
+        min-width: 0;
+    }
+
+    .dashboard-section,
+    .admin-section,
+    .form-section,
+    #admittedDetailSection {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .data-table,
+    table {
+        min-width: 560px;
+    }
+}
+
+/* ---- Small Phones ---- */
+@media (max-width: 480px) {
+    .view-title {
+        font-size: 1.25rem !important;
+    }
+
+    .btn {
+        padding: 0.9rem 1.25rem;
+        font-size: 0.9rem;
+    }
+
+    .m-nav-item span {
+        font-size: 0.55rem;
+    }
+
+    #adminAuthWrapper,
+    #teacherAuthWrapper {
+        padding: 1.5rem !important;
+    }
+
+    .stat-info .val {
+        font-size: 1.75rem !important;
+    }
+
+    .admin-main,
+    .portal-main {
+        padding: 1rem 1rem 6rem !important;
+    }
+}
+
+/* ---- index.html Registration Page Mobile ---- */
+@media (max-width: 900px) {
+    /* Hide sidebar on registration page on mobile */
+    .app-container .app-sidebar {
+        display: none !important;
+    }
+
+    .app-container .app-content {
+        padding: 2rem 1.5rem 3rem;
+        max-height: none;
+        overflow-y: visible;
+    }
+
+    .auth-card-mode {
+        max-width: 100%;
+    }
+
+    .app-container {
+        border-radius: 1.5rem;
+        margin: 1rem;
+        width: calc(100% - 2rem);
+        min-height: auto;
+    }
+
+    /* Show mobile portal links bar */
+    .mobile-portal-links {
+        display: flex !important;
+    }
+}
+
+@media (max-width: 600px) {
+    .app-container {
+        border-radius: 0;
+        margin: 0;
+        width: 100%;
+        min-height: 100vh;
+    }
+
+    .app-container .app-content {
+        padding: 2rem 1.25rem 4rem;
+    }
+}
+
+/* Mobile Bottom Navigation (Native App Feel) */
+.mobile-nav {
+    display: none;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 70px;
+    background: var(--surface);
+    backdrop-filter: blur(20px);
+    border-top: 1px solid var(--border);
+    z-index: 1000;
+    justify-content: space-around;
+    align-items: center;
+    padding: 0 1rem;
+}
+
+@media (max-width: 900px) {
+    .portal-layout, .admin-layout {
+        grid-template-columns: 1fr !important;
+    }
+    
+    .sidebar, .admin-sidebar {
+        position: fixed !important;
+        top: 0 !important;
+        left: -280px !important; /* Off-screen */
+        width: 280px !important;
+        height: 100dvh !important;
+        z-index: 2000 !important;
+        display: flex !important;
+        flex-direction: column !important;
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        background: var(--surface-solid) !important;
+        box-shadow: var(--shadow-lg) !important;
+        overflow-y: auto !important;
+        padding-bottom: calc(2rem + env(safe-area-inset-bottom)) !important;
+    }
+
+    .sidebar.active, .admin-sidebar.active {
+        transform: translateX(280px) !important;
+    }
+
+    /* Mobile Header with Menu Button */
+    .mobile-top-bar {
+        display: flex !important;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1rem 1.5rem;
+        background: var(--glass-heavy);
+        backdrop-filter: blur(20px);
+        border-bottom: 1px solid var(--border);
+        position: sticky;
+        top: 0;
+        z-index: 1500;
+        gap: 0.75rem;
+        min-width: 0;
+    }
+
+    .mobile-top-bar .app-logo {
+        min-width: 0;
+        flex: 1;
+    }
+
+    .mobile-top-bar .app-logo span {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .menu-toggle {
+        display: flex !important;
+        flex-direction: column;
+        gap: 5px;
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 0.5rem;
+        min-width: 44px;
+        min-height: 44px;
+        justify-content: center;
+    }
+
+    .menu-toggle span {
+        width: 25px;
+        height: 2px;
+        background: var(--primary);
+        transition: 0.3s;
+    }
+
+    .sidebar-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0,0,0,0.4);
+        z-index: 1900;
+        display: none;
+        backdrop-filter: blur(4px);
+    }
+
+    .sidebar-overlay.active {
+        display: block;
+    }
+
+    .main-content, .admin-main {
+        padding: 1rem 1rem 2rem !important;
+    }
+
+    body.drawer-open {
+        overflow: hidden;
+    }
+    
+    /* Remove the old bottom nav as we are using the side drawer for ALL options */
+    .mobile-nav {
+        display: none !important;
+    }
+}
+
+.m-nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: var(--text-dim);
+    text-decoration: none;
+    font-size: 0.7rem;
+    font-weight: 700;
+    gap: 0.25rem;
+}
+
+.m-nav-item.active {
+    color: var(--primary);
+}
+
+.m-nav-icon {
+    font-size: 1.4rem;
+}
+

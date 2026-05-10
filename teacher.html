@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Faculty Portal | Muhyissunnah Dars Ukkuda</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="mobile.css">
+    <!-- PWA Support -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0a0a0f">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/3665/3665930.png">
+    <script>
+        (function() {
+            const theme = localStorage.getItem("msaukkuda:theme") || "dark";
+            document.documentElement.dataset.theme = theme;
+            if (theme === "light") {
+                const metaTheme = document.querySelector('meta[name="theme-color"]');
+                if (metaTheme) metaTheme.setAttribute("content", "#f8f3e8");
+            }
+        })();
+    </script>
+</head>
+<body>
+    <div class="portal-layout">
+        <!-- Mobile Top Bar -->
+        <div class="mobile-top-bar" style="display:none;">
+            <button class="menu-toggle" id="mobileMenuBtn" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="sidebarMenu">
+                <span></span><span></span><span></span>
+            </button>
+            <div class="app-logo" style="margin:0;">
+                <div class="dot"></div>
+                <span style="font-family: 'Cinzel', serif; font-size: 1.2rem;">MSA UKKUDA Faculty</span>
+            </div>
+            <div style="width:40px;"></div>
+        </div>
+
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+        <aside class="sidebar" id="sidebarMenu">
+            <div style="font-family: 'Amiri', serif; font-size: 2rem; color: var(--gold-base); text-align: center; margin-bottom: 1rem;">﷽</div>
+            <div class="app-logo" style="justify-content: center; margin-bottom: 3rem;">
+                <div class="dot"></div>
+                <span style="font-family: 'Cinzel', serif;">MSA UKKUDA Faculty</span>
+            </div>
+            
+            <nav id="facultyNav" class="hidden" style="flex: 1; display: flex; flex-direction: column;">
+                <div class="nav-item active" data-target="viewQueue">Student Queue</div>
+                <div class="nav-item" data-target="viewMyStudents">My Students</div>
+                <div class="nav-item" data-target="viewSubjects">Manage Subjects</div>
+                <div class="nav-item" data-target="viewMarks">Manage Marks</div>
+                <div class="nav-item" data-target="viewAttendance">Attendance</div>
+                <div class="nav-item" data-target="viewRemarks">Remarks</div>
+            </nav>
+
+            <button id="installAppBtn" class="btn btn-ghost" style="margin-top: auto;">Download App</button>
+            <button id="logoutBtn" class="btn btn-ghost" style="margin-top: 1rem;">Log Out</button>
+            <button class="btn btn-ghost" style="margin-top: 1rem;" onclick="window.location.href='index.html'">Public Page</button>
+        </aside>
+
+        <main class="main-content">
+            <!-- 1. FACULTY REGISTRATION -->
+            <div id="viewRegistration">
+                <div class="view-header">
+                    <h2 class="view-title">Faculty Registration</h2>
+                    <p class="view-desc">Provide your academic background to gain administrative access.</p>
+                </div>
+                <form id="regForm">
+                    <div class="form-section">
+                        <h3>Personal Info</h3>
+                        <div class="grid-2">
+                            <div class="input-field"><label class="label">Full Name</label><input type="text" id="facName" class="input" required></div>
+                            <div class="input-field"><label class="label">Phone Number</label><input type="tel" id="facPhone" class="input" required></div>
+                            <div class="input-field"><label class="label">Aadhar Number</label><input type="text" id="facAadhar" class="input" required></div>
+                            <div class="input-field"><label class="label">Date of Birth</label><input type="date" id="facDob" class="input" required></div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-section">
+                        <h3>Higher Education</h3>
+                        <div class="input-field"><label class="label">Where did you complete your Bachelor's Degree?</label><input type="text" id="facBachelors" class="input" required></div>
+                        <div class="input-field"><label class="label">Where did you complete your Master's Degree? (If applicable)</label><input type="text" id="facMasters" class="input"></div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3>Mudarris Experience</h3>
+                        <div class="input-field"><label class="label">Where are you currently serving as Mudarris?</label><input type="text" id="facMudarrisWhere" class="input" required></div>
+                    </div>
+
+                    <button type="submit" id="submitRegBtn" class="btn btn-main" style="width: 100%;">Submit for Admin Approval</button>
+                </form>
+            </div>
+
+            <!-- 2. PENDING APPROVAL -->
+            <div id="viewPending" class="hidden">
+                <div class="status-banner">
+                    <h2 class="view-title">Pending Verification</h2>
+                    <p class="view-desc">Your profile is submitted. The Admin will assign you to an off-campus shortly.</p>
+                </div>
+            </div>
+
+            <!-- 3. DASHBOARD (Admitted) -->
+            <div id="viewDashboard" class="hidden">
+                <div class="view-header">
+                    <h2 class="view-title" id="facWelcomeTitle">Welcome, Usthad</h2>
+                    <p class="view-desc">Campus Assigned: <strong id="facAssignedCampus" style="color:var(--primary);">Loading...</strong></p>
+                </div>
+
+                <!-- A. Student Queue -->
+                <div id="viewQueue" class="dashboard-section">
+                    <h3>Pending Applications</h3>
+                    <p id="queueStatus" style="margin:0.5rem 0 1rem; color:var(--text-dim); font-size:0.9rem;">Loading student applications...</p>
+                    <table class="data-table">
+                        <thead><tr><th>Name</th><th>Phone</th><th>Batch</th><th>Actions</th></tr></thead>
+                        <tbody id="queueTableBody"></tbody>
+                    </table>
+                </div>
+
+                <div id="viewMyStudents" class="dashboard-section hidden">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+                        <h3>My Enrolled Students</h3>
+                        <button id="downloadStudentListBtn" class="btn btn-ghost btn-sm">📥 Download List (CSV)</button>
+                    </div>
+                    <table class="data-table">
+                        <thead><tr><th>ID Number</th><th>Name</th><th>Batch</th><th>Actions</th></tr></thead>
+                        <tbody id="studentsTableBody"></tbody>
+                    </table>
+                </div>
+
+                <!-- NEW: Manage Subjects -->
+                <div id="viewSubjects" class="dashboard-section hidden">
+                    <h3>Course & Subject Management</h3>
+                    <div class="form-section">
+                        <div class="input-field" style="margin-bottom:1.5rem;">
+                            <label class="label">New Subject Name</label>
+                            <div style="display:grid; grid-template-columns: 1fr 150px auto; gap:1rem;">
+                                <input type="text" id="newSubName" class="input" placeholder="e.g. Arabic Grammar, Fiqh...">
+                                <select id="newSubBatch" class="input">
+                                    <option value="All">All Batches</option>
+                                </select>
+                                <button class="btn btn-main" id="addSubjectBtn">Add Subject</button>
+                            </div>
+                        </div>
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:2rem;">
+                            <h3>Available Subjects</h3>
+                            <button class="btn btn-ghost" style="color:var(--error); font-size:0.8rem;" onclick="clearAllSubjects()">Clear All</button>
+                        </div>
+                        <div id="subjectsList" style="display:flex; flex-wrap:wrap; gap:0.75rem; margin-top:1rem;">
+                            <!-- Injected via JS -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- C. Manage Marks -->
+                <div id="viewMarks" class="dashboard-section hidden">
+                    <h3>Add Exam Marks</h3>
+                    <div class="form-section grid-2">
+                        <div class="input-field"><label class="label">Select Student</label><select id="markStudent" class="input"></select></div>
+                        <div class="input-field"><label class="label">Subject</label><select id="markSubject" class="input"></select></div>
+                        <div class="input-field"><label class="label">Marks Obtained</label><input type="number" id="markObtained" class="input"></div>
+                        <div class="input-field"><label class="label">Total Marks</label><input type="number" id="markTotal" class="input"></div>
+                    </div>
+                    <button class="btn btn-main" id="saveMarkBtn">Save Marks</button>
+                    <p id="markStatus" style="margin-top:1rem; color:var(--success);"></p>
+                </div>
+
+                <!-- D. Attendance -->
+                <div id="viewAttendance" class="dashboard-section hidden">
+                    <h3>Mark Attendance</h3>
+                    <div class="form-section grid-3">
+                        <div class="input-field"><label class="label">Date</label><input type="date" id="attDate" class="input"></div>
+                        <div class="input-field"><label class="label">Subject / Session</label>
+                            <select id="attSession" class="input">
+                                <option value="" disabled selected>Select Subject...</option>
+                            </select>
+                        </div>
+                        <div class="input-field"><label class="label">Batch</label>
+                            <select id="attBatch" class="input"><option value="all">All Batches</option></select>
+                        </div>
+                    </div>
+                    
+                    <button class="btn btn-ghost" id="loadAttendanceGridBtn" style="margin-bottom:2rem;">Load Students</button>
+
+                    <table class="data-table hidden" id="attendanceGridTable">
+                        <thead><tr><th>Name</th><th>Batch</th><th>Status</th></tr></thead>
+                        <tbody id="attendanceGridBody"></tbody>
+                    </table>
+                    <button class="btn btn-main hidden" id="saveAttendanceBtn" style="margin-top:1rem;">Submit Attendance</button>
+                </div>
+
+                <!-- E. Remarks -->
+                <div id="viewRemarks" class="dashboard-section hidden">
+                    <h3>Add Remark</h3>
+                    <div class="form-section">
+                        <div class="input-field"><label class="label">Select Student</label><select id="remStudent" class="input"></select></div>
+                        <div class="input-field"><label class="label">Remark / Note</label><textarea id="remText" class="input" rows="4"></textarea></div>
+                        <button class="btn btn-main" id="saveRemarkBtn">Add Remark</button>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- Student Details Modal -->
+    <div id="studentModal" class="modal-overlay">
+        <div class="modal-content">
+            <h2 class="view-title" style="font-size:1.5rem; margin-bottom:1rem;">Student Details</h2>
+            <div id="modalBody" style="line-height:1.6;"></div>
+            <button class="btn btn-ghost" onclick="document.getElementById('studentModal').classList.remove('active')" style="margin-top:2rem; width:100%;">Close</button>
+        </div>
+    </div>
+
+    <!-- PWA Installation Instructions Modal -->
+    <div id="pwaModal" class="auth-overlay" aria-hidden="true">
+        <div class="auth-modal" role="dialog" aria-modal="true" aria-labelledby="pwaTitle">
+            <div class="auth-modal-header">
+                <div>
+                    <h2 id="pwaTitle">Download Portal App</h2>
+                    <p>Access the MSA UKKUDA portal directly from your home screen.</p>
+                </div>
+                <button id="closePwaBtn" class="close-modal" type="button">X</button>
+            </div>
+            
+            <div id="pwaAndroidInst" class="hidden">
+                <p style="margin-bottom:1.5rem;">Tap the button below to install the app on your Android device.</p>
+                <button id="pwaInstallActionBtn" class="btn btn-main btn-block">Install App Now</button>
+            </div>
+
+            <div id="pwaIosInst" class="hidden">
+                <p>To install on your iPhone/iPad:</p>
+                <ol style="margin: 1.5rem 0; padding-left: 1.5rem; display: grid; gap: 0.75rem;">
+                    <li>Tap the <strong>Share</strong> button ( <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:inline; vertical-align:middle;"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8M16 6l-4-4-4 4M12 2v13"/></svg> ) in Safari.</li>
+                    <li>Scroll down and tap <strong>'Add to Home Screen'</strong>.</li>
+                    <li>Tap <strong>'Add'</strong> in the top right corner.</li>
+                </ol>
+            </div>
+
+            <div id="pwaGenericInst">
+                <p>Your browser doesn't support automatic installation. You can usually find an "Install" or "Add to Home Screen" option in your browser's menu (⋮ or ≡).</p>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="teacher.js?v=2"></script>
+    <!-- PWA Registration -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js').catch(err => console.log('SW Registration failed:', err));
+            });
+        }
+    </script>
+
+    <!-- Mobile Toggle Script -->
+    <script>
+        const menuBtn = document.getElementById('mobileMenuBtn');
+        const sidebar = document.querySelector('.sidebar');
+        const overlay = document.getElementById('sidebarOverlay');
+
+        function toggleMenu(forceOpen) {
+            const shouldOpen = typeof forceOpen === 'boolean' ? forceOpen : !sidebar.classList.contains('active');
+            sidebar.classList.toggle('active', shouldOpen);
+            overlay.classList.toggle('active', shouldOpen);
+            document.body.classList.toggle('drawer-open', shouldOpen);
+            menuBtn?.setAttribute('aria-expanded', String(shouldOpen));
+        }
+
+        menuBtn?.addEventListener('click', () => toggleMenu());
+        overlay?.addEventListener('click', () => toggleMenu(false));
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape') toggleMenu(false);
+        });
+        window.addEventListener('resize', () => {
+            if (window.innerWidth > 900) toggleMenu(false);
+        });
+        
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', () => {
+                if(window.innerWidth <= 900) toggleMenu(false);
+            });
+        });
+    </script>
+</body>
+</html>

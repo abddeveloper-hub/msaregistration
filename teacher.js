@@ -937,6 +937,7 @@ function updateBatchDropdown() {
     
     const bSel = document.getElementById('attBatch');
     const subBatchSel = document.getElementById('newSubBatch');
+    const viewMarksBatchSel = document.getElementById('viewMarksBatch');
 
     if(bSel) {
         const current = bSel.value;
@@ -948,6 +949,13 @@ function updateBatchDropdown() {
     if(subBatchSel) {
         subBatchSel.innerHTML = '<option value="All">All Batches</option>';
         batches.forEach(b => subBatchSel.innerHTML += `<option value="${escapeHtml(b)}">${escapeHtml(b)}</option>`);
+    }
+
+    if (viewMarksBatchSel) {
+        const current = viewMarksBatchSel.value;
+        viewMarksBatchSel.innerHTML = '<option value="all">All Batches</option>';
+        batches.forEach(b => viewMarksBatchSel.innerHTML += `<option value="${escapeHtml(b)}">${escapeHtml(b)}</option>`);
+        if (current) viewMarksBatchSel.value = current;
     }
 }
 
@@ -989,6 +997,77 @@ document.getElementById('saveMarkBtn')?.addEventListener('click', async () => {
     } catch (err) { alert(err.message); }
 });
 
+const loadMarksBtn = document.getElementById('loadPastMarksBtn');
+if (loadMarksBtn) {
+    loadMarksBtn.addEventListener('click', async () => {
+        const batch = document.getElementById('viewMarksBatch').value;
+        const sub = document.getElementById('markSubject').value;
+        
+        if (!batch || !sub) return alert("Select a batch and subject first.");
+        
+        loadMarksBtn.disabled = true;
+        loadMarksBtn.innerText = "Loading...";
+
+        try {
+            const admitted = campusStudents.filter(s => isStatus(s, 'admitted'));
+            const students = batch === 'all' ? admitted : admitted.filter(s => s.batch === batch);
+            const tbody = document.getElementById('pastMarksBody');
+            tbody.innerHTML = '';
+            
+            let marksFound = 0;
+
+            for (const s of students) {
+                const q = query(
+                    collection(db, `users/${s.id}/marks`),
+                    where("subject", "==", sub)
+                );
+                const snaps = await getDocs(q);
+                
+                snaps.forEach(docSnap => {
+                    const data = docSnap.data();
+                    marksFound++;
+                    tbody.innerHTML += `
+                        <tr id="mark-row-${docSnap.id}">
+                            <td style="color:var(--text-dim); font-weight:bold;">${escapeHtml(s.rollNumber || '-')}</td>
+                            <td>${escapeHtml(s.fullName || 'Unnamed')}</td>
+                            <td>${escapeHtml(data.subject)}</td>
+                            <td>
+                                <strong>${data.marksObtained}</strong> / ${data.totalMarks} <span style="font-size:0.8rem; color:var(--text-dim);">(${data.percentage}%)</span>
+                            </td>
+                            <td>
+                                <button class="btn btn-ghost" style="color:var(--error); padding: 0.25rem 0.5rem; border: 1px solid var(--error);" onclick="deleteMark('${s.id}', '${docSnap.id}')">Delete</button>
+                            </td>
+                        </tr>
+                    `;
+                });
+            }
+
+            if (marksFound === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; color:var(--text-dim);">No marks found for this batch & subject.</td></tr>';
+            }
+
+            document.getElementById('pastMarksTable').classList.remove('hidden');
+        } catch (err) {
+            alert(err.message);
+        }
+        
+        loadMarksBtn.disabled = false;
+        loadMarksBtn.innerText = "Load Marks";
+    });
+}
+
+window.deleteMark = async (stuId, docId) => {
+    if(!confirm("Are you sure you want to delete this mark?")) return;
+    try {
+        await deleteDoc(doc(db, `users/${stuId}/marks`, docId));
+        const row = document.getElementById(`mark-row-${docId}`);
+        if(row) row.remove();
+        alert("Mark deleted successfully.");
+    } catch(err) {
+        alert(err.message);
+    }
+};
+
 // Remarks
 document.getElementById('saveRemarkBtn')?.addEventListener('click', async () => {
     const stuId = document.getElementById('remStudent').value;
@@ -1008,44 +1087,114 @@ document.getElementById('saveRemarkBtn')?.addEventListener('click', async () => 
 
 // Attendance Grid
 const loadAttBtn = document.getElementById('loadAttendanceGridBtn');
+const editAttBtn = document.getElementById('editPastAttendanceBtn');
 const saveAttBtn = document.getElementById('saveAttendanceBtn');
+const delAttBtn = document.getElementById('deleteAttendanceBtn');
 let currentAttStudents = [];
+let editingAttendanceMode = false;
+
+function buildAttGrid(students, existingData = {}) {
+    if(students.length === 0) {
+        alert("No students found.");
+        return;
+    }
+    
+    students.sort((a, b) => {
+        const rA = parseInt(a.rollNumber) || 99999;
+        const rB = parseInt(b.rollNumber) || 99999;
+        return rA - rB;
+    });
+    
+    const tbody = document.getElementById('attendanceGridBody');
+    tbody.innerHTML = '';
+    students.forEach(s => {
+        const existing = existingData[s.id] || { status: 'present', docId: null };
+        const isP = existing.status === 'present' ? 'active' : '';
+        const isA = existing.status === 'absent' ? 'active' : '';
+        const isL = existing.status === 'absent_reason' || existing.status === 'leave' ? 'active' : '';
+        const defaultStatus = existing.status || 'present';
+
+        tbody.innerHTML += `
+            <tr data-sid="${s.id}">
+                <td style="color:var(--text-dim); font-weight:bold;">${escapeHtml(s.rollNumber || '-')}</td>
+                <td>${escapeHtml(s.fullName || 'Unnamed')}</td>
+                <td>${escapeHtml(s.batch || 'N/A')}</td>
+                <td class="att-actions">
+                    <div style="display:flex; gap:0.5rem;">
+                        <button class="btn-att btn-p ${isP}" onclick="setAttRow(this, 'present')">P</button>
+                        <button class="btn-att btn-a ${isA}" onclick="setAttRow(this, 'absent')">A</button>
+                        <button class="btn-att btn-l ${isL}" onclick="setAttRow(this, 'absent_reason')">L</button>
+                    </div>
+                    <input type="hidden" class="att-status-val" value="${escapeHtml(defaultStatus)}">
+                    <input type="hidden" class="att-doc-id" value="${escapeHtml(existing.docId || '')}">
+                </td>
+            </tr>
+        `;
+    });
+    
+    document.getElementById('attendanceGridTable').classList.remove('hidden');
+    saveAttBtn.classList.remove('hidden');
+    if (editingAttendanceMode && delAttBtn) {
+        delAttBtn.classList.remove('hidden');
+    } else if (delAttBtn) {
+        delAttBtn.classList.add('hidden');
+    }
+}
 
 if (loadAttBtn) {
     loadAttBtn.addEventListener('click', () => {
+        editingAttendanceMode = false;
         const batch = document.getElementById('attBatch').value;
         const admitted = campusStudents.filter(s => isStatus(s, 'admitted'));
         currentAttStudents = batch === 'all' ? admitted : admitted.filter(s => s.batch === batch);
-        
-        if(currentAttStudents.length === 0) return alert("No students found for this batch.");
-        
-        currentAttStudents.sort((a, b) => {
-            const rA = parseInt(a.rollNumber) || 99999;
-            const rB = parseInt(b.rollNumber) || 99999;
-            return rA - rB;
-        });
-        
-        const tbody = document.getElementById('attendanceGridBody');
-        tbody.innerHTML = '';
-        currentAttStudents.forEach(s => {
-            tbody.innerHTML += `
-                <tr data-sid="${s.id}">
-                    <td style="color:var(--text-dim); font-weight:bold;">${escapeHtml(s.rollNumber || '-')}</td>
-                    <td>${escapeHtml(s.fullName || 'Unnamed')}</td>
-                    <td>${escapeHtml(s.batch || 'N/A')}</td>
-                    <td class="att-actions">
-                        <div style="display:flex; gap:0.5rem;">
-                            <button class="btn-att btn-p" onclick="setAttRow(this, 'present')">P</button>
-                            <button class="btn-att btn-a" onclick="setAttRow(this, 'absent')">A</button>
-                            <button class="btn-att btn-l" onclick="setAttRow(this, 'absent_reason')">L</button>
-                        </div>
-                        <input type="hidden" class="att-status-val" value="present">
-                    </td>
-                </tr>
-            `;
-        });
-        document.getElementById('attendanceGridTable').classList.remove('hidden');
-        saveAttBtn.classList.remove('hidden');
+        buildAttGrid(currentAttStudents);
+    });
+}
+
+if (editAttBtn) {
+    editAttBtn.addEventListener('click', async () => {
+        const date = document.getElementById('attDate').value;
+        const session = document.getElementById('attSession').value;
+        const batch = document.getElementById('attBatch').value;
+
+        if(!date || !session || session === '__ADD_NEW__') return alert("Select a Date and Subject/Session to edit.");
+
+        editAttBtn.disabled = true;
+        editAttBtn.innerText = "Loading...";
+
+        try {
+            const admitted = campusStudents.filter(s => isStatus(s, 'admitted'));
+            currentAttStudents = batch === 'all' ? admitted : admitted.filter(s => s.batch === batch);
+            
+            const existingData = {};
+            // Fetch attendance for all students in this batch for the selected date and session
+            for (const s of currentAttStudents) {
+                const q = query(
+                    collection(db, `users/${s.id}/attendance`),
+                    where("date", "==", date),
+                    where("sessionName", "==", session)
+                );
+                const snaps = await getDocs(q);
+                if (!snaps.empty) {
+                    const d = snaps.docs[0]; // Take first match
+                    existingData[s.id] = { status: d.data().status, docId: d.id };
+                }
+            }
+
+            if (Object.keys(existingData).length === 0) {
+                alert("No attendance records found for this Date and Subject to edit.");
+                editAttBtn.disabled = false;
+                editAttBtn.innerText = "Edit Past Attendance";
+                return;
+            }
+
+            editingAttendanceMode = true;
+            buildAttGrid(currentAttStudents, existingData);
+        } catch(err) {
+            alert("Error loading past attendance: " + err.message);
+        }
+        editAttBtn.disabled = false;
+        editAttBtn.innerText = "Edit Past Attendance";
     });
 }
 
@@ -1071,24 +1220,67 @@ if(saveAttBtn) {
             for(let row of rows) {
                 const sid = row.getAttribute('data-sid');
                 const status = row.querySelector('.att-status-val').value;
-                await addDoc(collection(db, `users/${sid}/attendance`), {
+                const docId = row.querySelector('.att-doc-id').value;
+                
+                const attData = {
                     date,
                     sessionName: session,
                     status,
                     markedBy: auth.currentUser.uid,
                     timestamp: new Date().toISOString()
-                });
+                };
+
+                if (docId) {
+                    await updateDoc(doc(db, `users/${sid}/attendance`, docId), attData);
+                } else {
+                    await addDoc(collection(db, `users/${sid}/attendance`), attData);
+                }
             }
             alert("Attendance Saved!");
             document.getElementById('attendanceGridTable').classList.add('hidden');
             saveAttBtn.classList.add('hidden');
+            if(delAttBtn) delAttBtn.classList.add('hidden');
             saveAttBtn.disabled = false;
             saveAttBtn.innerText = "Submit Attendance";
+            
+            // Refresh marked dates cache
+            if(typeof fetchMarkedDates === 'function') fetchMarkedDates();
         } catch (err) { 
             alert(err.message); 
             saveAttBtn.disabled = false;
             saveAttBtn.innerText = "Submit Attendance";
         }
+    });
+}
+
+if(delAttBtn) {
+    delAttBtn.addEventListener('click', async () => {
+        if(!confirm("Are you sure you want to completely DELETE this attendance record for all shown students? This cannot be undone.")) return;
+        
+        delAttBtn.disabled = true;
+        delAttBtn.innerText = "Deleting...";
+
+        try {
+            const rows = document.getElementById('attendanceGridBody').querySelectorAll('tr');
+            for(let row of rows) {
+                const sid = row.getAttribute('data-sid');
+                const docId = row.querySelector('.att-doc-id').value;
+                if (docId) {
+                    await deleteDoc(doc(db, `users/${sid}/attendance`, docId));
+                }
+            }
+            alert("Attendance Record Deleted!");
+            document.getElementById('attendanceGridTable').classList.add('hidden');
+            saveAttBtn.classList.add('hidden');
+            delAttBtn.classList.add('hidden');
+            
+            // Refresh marked dates cache
+            if(typeof fetchMarkedDates === 'function') fetchMarkedDates();
+        } catch(err) {
+            alert(err.message);
+        }
+        delAttBtn.disabled = false;
+        delAttBtn.innerText = "Delete This Record";
     });
 }
 

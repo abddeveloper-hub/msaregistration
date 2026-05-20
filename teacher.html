@@ -164,6 +164,22 @@
                     </div>
                     <button class="btn btn-main" id="saveMarkBtn">Save Marks</button>
                     <p id="markStatus" style="margin-top:1rem; color:var(--success);"></p>
+
+                    <hr style="border-color:var(--border); margin:2rem 0;">
+                    
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+                        <h3>View / Edit Past Marks</h3>
+                        <div style="display:flex; gap:0.5rem; align-items:center;">
+                            <label class="label" style="margin:0;">Batch</label>
+                            <select id="viewMarksBatch" class="input" style="width:120px;"></select>
+                            <button class="btn btn-ghost" id="loadPastMarksBtn">Load Marks</button>
+                        </div>
+                    </div>
+                    
+                    <table class="data-table hidden" id="pastMarksTable">
+                        <thead><tr><th>Roll No</th><th>Name</th><th>Subject</th><th>Marks</th><th>Actions</th></tr></thead>
+                        <tbody id="pastMarksBody"></tbody>
+                    </table>
                 </div>
 
                 <!-- D. Attendance -->
@@ -188,13 +204,20 @@
                         <div id="markedDatesList" style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.5rem;"></div>
                     </div>
                     
-                    <button class="btn btn-ghost" id="loadAttendanceGridBtn" style="margin-bottom:2rem;">Load Students</button>
+                    <div style="display:flex; gap:1rem; margin-bottom:2rem; align-items:center;">
+                        <button class="btn btn-ghost" id="loadAttendanceGridBtn">Load Students (New)</button>
+                        <button class="btn btn-ghost" id="editPastAttendanceBtn" style="border: 1px solid var(--primary); color:var(--primary);">Edit Past Attendance</button>
+                    </div>
 
                     <table class="data-table hidden" id="attendanceGridTable">
                         <thead><tr><th>Roll No</th><th>Name</th><th>Batch</th><th>Status</th></tr></thead>
                         <tbody id="attendanceGridBody"></tbody>
                     </table>
-                    <button class="btn btn-main hidden" id="saveAttendanceBtn" style="margin-top:1rem;">Submit Attendance</button>
+                    
+                    <div style="display:flex; gap:1rem; margin-top:1rem;">
+                        <button class="btn btn-main hidden" id="saveAttendanceBtn" style="flex:1;">Submit Attendance</button>
+                        <button class="btn btn-ghost hidden" id="deleteAttendanceBtn" style="color:var(--error); border: 1px solid var(--error); flex:1;">Delete This Record</button>
+                    </div>
                 </div>
 
                 <!-- E. Remarks -->

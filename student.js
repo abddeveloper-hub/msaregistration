@@ -504,13 +504,13 @@ function renderAdmittedDashboard(data, studentId) {
 
     // Fetch Attendance
     onSnapshot(collection(db, `users/${studentId}/attendance`), (snap) => {
-        const tbody = document.getElementById('attendanceTableBody');
+        const container = document.getElementById('attendanceContainer');
         const percentageDisplay = document.getElementById('attPercentage');
         const countDisplay = document.getElementById('attCount');
 
-        tbody.innerHTML = '';
+        container.innerHTML = '';
         if(snap.empty) {
-            tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;color:#666;">No attendance records.</td></tr>';
+            container.innerHTML = '<p style="text-align:center;color:#666;">No attendance records.</p>';
             if(percentageDisplay) percentageDisplay.innerText = '0%';
             if(countDisplay) countDisplay.innerText = '0/0 sessions';
             return;
@@ -518,18 +518,60 @@ function renderAdmittedDashboard(data, studentId) {
 
         let presentCount = 0;
         let totalCount = 0;
+        
+        // Group by month-year
+        const monthlyData = {};
 
         snap.forEach(doc => {
             const a = doc.data();
             totalCount++;
             if (a.status === 'present') presentCount++;
 
-            let statusColor = a.status === 'present' ? 'var(--success)' : (a.status === 'absent_reason' ? 'var(--accent)' : 'var(--error)');
-            tbody.innerHTML += `<tr>
-                <td>${a.sessionName}</td>
-                <td>${a.date}</td>
-                <td><span style="color:${statusColor}; text-transform:uppercase; font-size:0.8rem; font-weight:bold;">${a.status.replace('_', ' ')}</span></td>
-            </tr>`;
+            // Parse date "YYYY-MM-DD" or standard string to get Month Year
+            let monthYearKey = 'Unknown Date';
+            if (a.date) {
+                try {
+                    const dateObj = new Date(a.date);
+                    if (!isNaN(dateObj)) {
+                        monthYearKey = dateObj.toLocaleString('default', { month: 'long', year: 'numeric' });
+                    }
+                } catch(e) {}
+            }
+
+            if (!monthlyData[monthYearKey]) {
+                monthlyData[monthYearKey] = [];
+            }
+            monthlyData[monthYearKey].push(a);
+        });
+
+        // Sort keys (newest first, rough approximation by sorting Date parsing)
+        const sortedMonths = Object.keys(monthlyData).sort((a, b) => new Date(b) - new Date(a));
+
+        sortedMonths.forEach(month => {
+            // Sort records within month by date descending
+            monthlyData[month].sort((a, b) => new Date(b.date) - new Date(a.date));
+
+            let rowsHtml = '';
+            monthlyData[month].forEach(a => {
+                let statusColor = a.status === 'present' ? 'var(--success)' : (a.status === 'absent_reason' || a.status === 'leave' ? 'var(--accent)' : 'var(--error)');
+                rowsHtml += `<tr>
+                    <td>${escapeHtml(a.sessionName || 'N/A')}</td>
+                    <td>${escapeHtml(a.date || 'N/A')}</td>
+                    <td><span style="color:${statusColor}; text-transform:uppercase; font-size:0.8rem; font-weight:bold;">${escapeHtml((a.status || '').replace('_', ' '))}</span></td>
+                </tr>`;
+            });
+
+            container.innerHTML += `
+                <div style="background:var(--glass); border:1px solid var(--border); border-radius:0.5rem; overflow:hidden;">
+                    <div style="background:rgba(255,255,255,0.05); padding:0.75rem 1rem; border-bottom:1px solid var(--border); font-weight:bold; color:var(--primary);">
+                        ${escapeHtml(month)}
+                    </div>
+                    <table class="data-table" style="margin:0;">
+                        <thead><tr><th>Session/Subject</th><th>Date</th><th>Status</th></tr></thead>
+                        <tbody>${rowsHtml}</tbody>
+                    </table>
+                </div>
+            `;
         });
 
         const percent = totalCount > 0 ? Math.round((presentCount / totalCount) * 100) : 0;

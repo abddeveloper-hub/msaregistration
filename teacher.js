@@ -707,6 +707,7 @@ function updateSelects() {
     // 2. Subjects dropdown (Dynamic Filtering)
     const renderSubjectOpts = (targetEl, filterBatch = 'All') => {
         if (!targetEl) return;
+        const prevVal = targetEl.value;
         let subOpts = '<option value="" disabled selected>Select Subject...</option>';
         subOpts += '<option value="1st Dars">1st Dars</option>';
         subOpts += '<option value="2nd Dars">2nd Dars</option>';
@@ -724,6 +725,10 @@ function updateSelects() {
         });
         subOpts += '<option value="__ADD_NEW__">+ Add New Subject...</option>';
         targetEl.innerHTML = subOpts;
+
+        if (prevVal && [...targetEl.options].some(opt => opt.value === prevVal)) {
+            targetEl.value = prevVal;
+        }
     };
 
     const marksSub = document.getElementById('markSubject');

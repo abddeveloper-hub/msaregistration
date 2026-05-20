@@ -2,7 +2,7 @@
   "name": "MSA UKKUDA Islamic Portal",
   "short_name": "MSA UKKUDA Portal",
   "description": "Official Student and Faculty Portal for Muhyissunnah Dars Ukkuda",
-  "start_url": "/index.html",
+  "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#0a0a0f",
   "theme_color": "#0a0a0f",

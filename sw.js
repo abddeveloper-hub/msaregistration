@@ -1,21 +1,21 @@
-const CACHE_NAME = 'msaukkuda-portal-v4';
+const CACHE_NAME = 'msaukkuda-portal-v5';
 const ASSETS = [
-  '/',
-  '/index.html',
-  '/student.html',
-  '/teacher.html',
-  '/admin.html',
-  '/portal.html',
-  '/style.css',
-  '/mobile.css',
-  '/app.js',
-  '/student.js',
-  '/teacher.js',
-  '/admin.js',
-  '/portal.js',
-  '/firebase-config.js',
-  '/manifest.json',
-  '/assets/mdu-hero.png'
+  './',
+  './index.html',
+  './student.html',
+  './teacher.html',
+  './admin.html',
+  './portal.html',
+  './style.css',
+  './mobile.css',
+  './app.js',
+  './student.js',
+  './teacher.js',
+  './admin.js',
+  './portal.js',
+  './firebase-config.js',
+  './manifest.json',
+  './assets/mdu-hero.png'
 ];
 
 self.addEventListener('install', (event) => {
@@ -56,7 +56,8 @@ self.addEventListener('fetch', (event) => {
           }
           return response;
         })
-        .catch(() => caches.match(request).then((cached) => cached || caches.match('/index.html')))
+        .catch(() => caches.match(request).then((cached) => cached || caches.match('./index.html')))
+
     );
     return;
   }

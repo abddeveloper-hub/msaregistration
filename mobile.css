@@ -310,6 +310,23 @@ html, body {
         width: 100%;
         -webkit-overflow-scrolling: touch;
     }
+
+    /* Make Attendance Table Fit on Mobile Screen without scroll */
+    #attendanceGridTable {
+        white-space: normal;
+        overflow-x: visible;
+    }
+    #attendanceGridTable th, #attendanceGridTable td {
+        padding: 0.5rem 0.2rem;
+        font-size: 0.85rem;
+    }
+    #attendanceGridTable th:nth-child(3), #attendanceGridTable td:nth-child(3) {
+        display: none; /* Hide Batch column on mobile */
+    }
+    .btn-att {
+        padding: 0.4rem 0.6rem !important;
+        font-size: 0.85rem !important;
+    }
 }
 
 /* ---- Small Phones ---- */

@@ -180,6 +180,13 @@
                             <select id="attBatch" class="input"><option value="all">All Batches</option></select>
                         </div>
                     </div>
+
+                    <!-- Already Marked Dates & Status -->
+                    <div id="attStatusMessage" style="margin: 1rem 0; padding: 0.75rem; border-radius: 0.375rem; font-size: 0.9rem; display: none;"></div>
+                    <div id="markedDatesContainer" style="margin-bottom: 1.5rem; font-size: 0.85rem; padding: 0.75rem; background: var(--glass); border-radius: 0.375rem; border: 1px solid var(--border); display: none;">
+                        <span style="color: var(--text-dim); font-weight: 600;">Dates Already Marked:</span>
+                        <div id="markedDatesList" style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.5rem;"></div>
+                    </div>
                     
                     <button class="btn btn-ghost" id="loadAttendanceGridBtn" style="margin-bottom:2rem;">Load Students</button>
 

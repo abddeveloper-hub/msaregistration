@@ -481,17 +481,61 @@ window.viewStudentDetails = async (uid) => {
     // Fetch Stats for Modal
     let attPct = 0;
     let marksAvg = 0;
+    let totalP = 0, totalA = 0, totalL = 0;
+    const sessionStats = {}; // key: sessionName, value: { total: 0, present: 0, absent: 0, leave: 0 }
+
     try {
         const attSnap = await getDocs(collection(db, `users/${uid}/attendance`));
         const total = attSnap.size;
-        const present = attSnap.docs.filter(d => d.data().status === 'present').length;
-        attPct = total > 0 ? Math.round((present/total)*100) : 0;
+
+        attSnap.forEach(docSnap => {
+            const data = docSnap.data();
+            const sName = data.sessionName || 'Default Session';
+            if (!sessionStats[sName]) {
+                sessionStats[sName] = { total: 0, present: 0, absent: 0, leave: 0 };
+            }
+            sessionStats[sName].total++;
+            if (data.status === 'present') {
+                sessionStats[sName].present++;
+                totalP++;
+            } else if (data.status === 'absent') {
+                sessionStats[sName].absent++;
+                totalA++;
+            } else if (data.status === 'absent_reason' || data.status === 'leave') {
+                sessionStats[sName].leave++;
+                totalL++;
+            }
+        });
+
+        attPct = total > 0 ? Math.round((totalP/total)*100) : 0;
 
         const marksSnap = await getDocs(collection(db, `users/${uid}/marks`));
         const mCount = marksSnap.size;
         const totalM = marksSnap.docs.reduce((acc, d) => acc + parseFloat(d.data().percentage || 0), 0);
         marksAvg = mCount > 0 ? Math.round(totalM / mCount) : 0;
     } catch(e) { console.error("Stats fetch error:", e); }
+
+    let breakdownHtml = '';
+    if (Object.keys(sessionStats).length === 0) {
+        breakdownHtml = '<p style="color:var(--text-dim); font-size:0.85rem; margin:0; text-align:center;">No attendance records found.</p>';
+    } else {
+        Object.entries(sessionStats).forEach(([sName, stat]) => {
+            const sPct = stat.total > 0 ? Math.round((stat.present / stat.total) * 100) : 0;
+            breakdownHtml += `
+                <div style="display:flex; flex-direction:column; gap:0.25rem; font-size:0.8rem; margin-bottom:0.5rem;">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <span style="font-weight:600; color:var(--text);">${escapeHtml(sName)}</span>
+                        <span style="font-weight:700; color:${sPct >= 75 ? 'var(--success)' : 'var(--error)'};">
+                            ${sPct}% <span style="font-weight:normal; color:var(--text-dim); font-size:0.7rem;">(P:${stat.present} A:${stat.absent} L:${stat.leave})</span>
+                        </span>
+                    </div>
+                    <div style="width:100%; height:6px; background:rgba(255,255,255,0.05); border-radius:3px; overflow:hidden; border:1px solid rgba(255,255,255,0.05);">
+                        <div style="width:${sPct}%; height:100%; background: ${sPct >= 75 ? 'var(--success)' : 'var(--error)'}; border-radius:3px;"></div>
+                    </div>
+                </div>
+            `;
+        });
+    }
 
     body.innerHTML = `
         <div style="display:flex; gap:1rem; margin-bottom:1.5rem; align-items:center;">
@@ -502,14 +546,26 @@ window.viewStudentDetails = async (uid) => {
             </div>
         </div>
 
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:1.5rem;">
-            <div style="text-align:center; padding:1rem; background:var(--glass); border-radius:0.5rem; border:1px solid var(--border);">
-                <div style="font-size:0.7rem; color:var(--text-dim); text-transform:uppercase;">Attendance</div>
-                <div style="font-size:1.5rem; font-weight:800; color:var(--success);">${attPct}%</div>
+        <div style="display:grid; grid-template-columns:1.2fr 1fr; gap:1rem; margin-bottom:1.5rem;">
+            <div style="padding:1rem; background:var(--glass); border-radius:0.5rem; border:1px solid var(--border); display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center;">
+                <div style="font-size:0.7rem; color:var(--text-dim); text-transform:uppercase; margin-bottom:0.25rem;">Overall Attendance</div>
+                <div style="font-size:1.6rem; font-weight:800; color:var(--success);">${attPct}%</div>
+                <div style="font-size:0.75rem; color:var(--text-dim); margin-top:0.25rem; display:flex; gap:0.5rem;">
+                    <span style="color:var(--success);">P: ${totalP}</span>
+                    <span style="color:var(--error);">A: ${totalA}</span>
+                    <span style="color:var(--warning);">L: ${totalL}</span>
+                </div>
             </div>
-            <div style="text-align:center; padding:1rem; background:var(--glass); border-radius:0.5rem; border:1px solid var(--border);">
-                <div style="font-size:0.7rem; color:var(--text-dim); text-transform:uppercase;">Avg. Marks</div>
-                <div style="font-size:1.5rem; font-weight:800; color:var(--primary);">${marksAvg}%</div>
+            <div style="text-align:center; padding:1rem; background:var(--glass); border-radius:0.5rem; border:1px solid var(--border); display:flex; flex-direction:column; justify-content:center; align-items:center;">
+                <div style="font-size:0.7rem; color:var(--text-dim); text-transform:uppercase; margin-bottom:0.25rem;">Avg. Marks</div>
+                <div style="font-size:1.6rem; font-weight:800; color:var(--primary);">${marksAvg}%</div>
+            </div>
+        </div>
+
+        <div style="margin-bottom:1.5rem; background:var(--glass); border-radius:0.5rem; padding:1rem; border:1px solid var(--border);">
+            <div style="font-size:0.8rem; font-weight:700; color:var(--primary); text-transform:uppercase; margin-bottom:0.75rem; border-bottom:1px solid var(--border); padding-bottom:0.5rem;">Attendance Breakdown</div>
+            <div style="max-height:180px; overflow-y:auto; padding-right:0.25rem;">
+                ${breakdownHtml}
             </div>
         </div>
 
@@ -737,6 +793,107 @@ function updateSelects() {
     
     renderSubjectOpts(marksSub, 'All'); // Marks shows all by default
     renderSubjectOpts(attSub, attBatch); // Attendance filters by selected batch
+
+    // Fetch and display marked dates for this batch & session
+    fetchMarkedDates();
+}
+
+// Fetch and display already marked dates for selected Batch and Subject
+async function fetchMarkedDates() {
+    const batch = document.getElementById('attBatch')?.value;
+    const session = document.getElementById('attSession')?.value;
+    const container = document.getElementById('markedDatesContainer');
+    const listEl = document.getElementById('markedDatesList');
+    const statusMsg = document.getElementById('attStatusMessage');
+
+    if (!container || !listEl) return;
+
+    // Reset status message and list
+    statusMsg.style.display = 'none';
+    statusMsg.innerHTML = '';
+
+    if (!batch || !session || session === '__ADD_NEW__') {
+        container.style.display = 'none';
+        return;
+    }
+
+    const admitted = campusStudents.filter(s => isStatus(s, 'admitted'));
+    const batchStudents = batch === 'all' ? admitted : admitted.filter(s => s.batch === batch);
+
+    if (batchStudents.length === 0) {
+        container.style.display = 'none';
+        return;
+    }
+
+    // Take the first student in the batch to check marked dates
+    const student = batchStudents[0];
+    
+    try {
+        const attSnap = await getDocs(collection(db, `users/${student.id}/attendance`));
+        const dates = [];
+        attSnap.forEach(docSnap => {
+            const data = docSnap.data();
+            // Match the selected session
+            if (data.sessionName === session && data.date) {
+                dates.push(data.date);
+            }
+        });
+
+        // Deduplicate and sort dates descending (latest first)
+        const uniqueDates = [...new Set(dates)].sort((a, b) => new Date(b) - new Date(a));
+
+        if (uniqueDates.length > 0) {
+            container.style.display = 'block';
+            listEl.innerHTML = uniqueDates.map(d => `
+                <span class="badge" style="background:var(--glass-heavy); border:1px solid var(--primary); padding:0.25rem 0.5rem; font-size:0.75rem; border-radius:0.25rem;">
+                    ${escapeHtml(d)}
+                </span>
+            `).join('');
+        } else {
+            container.style.display = 'block';
+            listEl.innerHTML = '<span style="color:var(--text-dim);">No attendance records found.</span>';
+        }
+
+        // Save list of marked dates globally to check in date input change listener
+        window.currentMarkedDates = uniqueDates;
+
+        // Check if currently selected date is already marked
+        checkSelectedDateMarkedStatus();
+
+    } catch (err) {
+        console.error("Error fetching marked dates:", err);
+    }
+}
+
+// Check if currently selected date is in the list of marked dates
+function checkSelectedDateMarkedStatus() {
+    const dateInput = document.getElementById('attDate');
+    const statusMsg = document.getElementById('attStatusMessage');
+    if (!dateInput || !statusMsg) return;
+
+    const selectedDate = dateInput.value;
+    if (!selectedDate || !window.currentMarkedDates) {
+        statusMsg.style.display = 'none';
+        return;
+    }
+
+    if (window.currentMarkedDates.includes(selectedDate)) {
+        statusMsg.style.background = 'rgba(231, 76, 60, 0.15)';
+        statusMsg.style.border = '1px solid var(--error)';
+        statusMsg.style.color = 'var(--error)';
+        statusMsg.style.padding = '0.75rem';
+        statusMsg.style.borderRadius = '0.375rem';
+        statusMsg.style.display = 'block';
+        statusMsg.innerHTML = `⚠️ <strong>Warning:</strong> Attendance has already been submitted for this Date, Batch, and Subject!`;
+    } else {
+        statusMsg.style.background = 'rgba(46, 204, 113, 0.1)';
+        statusMsg.style.border = '1px solid var(--success)';
+        statusMsg.style.color = 'var(--success)';
+        statusMsg.style.padding = '0.75rem';
+        statusMsg.style.borderRadius = '0.375rem';
+        statusMsg.style.display = 'block';
+        statusMsg.innerHTML = `✅ <strong>Ready:</strong> No attendance recorded for this date.`;
+    }
 }
 
 // Auto-sync Batch when Subject is selected in Attendance
@@ -796,6 +953,13 @@ function updateBatchDropdown() {
 
 // Refresh subjects when attendance batch changes
 document.getElementById('attBatch')?.addEventListener('change', updateSelects);
+
+// Check marked status when date changes
+document.getElementById('attDate')?.addEventListener('change', () => {
+    if (typeof checkSelectedDateMarkedStatus === 'function') {
+        checkSelectedDateMarkedStatus();
+    }
+});
 
 // Marks
 document.getElementById('saveMarkBtn')?.addEventListener('click', async () => {

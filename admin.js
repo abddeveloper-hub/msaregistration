@@ -441,8 +441,82 @@ window.adminViewStudent = async (uid) => {
             </div>
         </div>
     `;
+
+    const actions = document.getElementById('adminModalActions');
+    if (actions) {
+        let admitBtnHtml = s.status === 'pending' ? `<button class="btn btn-main" onclick="adminQuickAdmit('${s.id}')">Approve / Admit Student</button>` : '';
+        actions.innerHTML = `
+            <button class="btn btn-ghost" style="border:1px solid var(--primary); color:var(--primary);" onclick="openAdminEditStudent('${s.id}')">Edit Profile</button>
+            ${admitBtnHtml}
+        `;
+    }
+
     modal.classList.add('active');
 };
+
+window.adminQuickAdmit = async (uid) => {
+    if(!confirm("Are you sure you want to admit this student?")) return;
+    try {
+        await updateDoc(doc(db, "users", uid), { status: 'admitted' });
+        alert("Student admitted successfully!");
+        document.getElementById('adminStudentModal').classList.remove('active');
+    } catch(e) {
+        alert("Error: " + e.message);
+    }
+};
+
+window.openAdminEditStudent = (uid) => {
+    const s = allUsers.find(x => x.id === uid);
+    if(!s) return;
+    
+    // Populate campus options
+    const campusSelect = document.getElementById('editStuCampus');
+    campusSelect.innerHTML = '<option value="" disabled selected>Select Campus</option>';
+    allInstitutions.forEach(i => {
+        campusSelect.innerHTML += `<option value="${i.id}">${i.name}</option>`;
+    });
+
+    // Pre-fill form
+    document.getElementById('editStuId').value = s.id;
+    document.getElementById('editStuName').value = s.fullName || '';
+    document.getElementById('editStuPhone').value = s.phone || '';
+    document.getElementById('editStuDob').value = s.dob || '';
+    document.getElementById('editStuStatus').value = s.status || 'pending';
+    document.getElementById('editStuBatch').value = s.batch || '';
+    
+    // Select campus properly (handling legacy name or ID)
+    const matchedInst = allInstitutions.find(inst => recordMatchesInstitution(s, inst));
+    if (matchedInst) {
+        campusSelect.value = matchedInst.id;
+    }
+
+    document.getElementById('adminStudentModal').classList.remove('active');
+    document.getElementById('adminEditStudentModal').classList.add('active');
+};
+
+document.getElementById('adminEditStudentForm')?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const uid = document.getElementById('editStuId').value;
+    const campusSelect = document.getElementById('editStuCampus');
+    const selectedCampusId = campusSelect.value;
+    const selectedCampusName = campusSelect.options[campusSelect.selectedIndex]?.text || '';
+
+    try {
+        await updateDoc(doc(db, "users", uid), {
+            fullName: document.getElementById('editStuName').value,
+            phone: document.getElementById('editStuPhone').value,
+            dob: document.getElementById('editStuDob').value,
+            status: document.getElementById('editStuStatus').value,
+            batch: document.getElementById('editStuBatch').value,
+            campus: selectedCampusName,
+            campusId: selectedCampusId
+        });
+        alert("Student profile updated successfully!");
+        document.getElementById('adminEditStudentModal').classList.remove('active');
+    } catch(err) {
+        alert("Error updating profile: " + err.message);
+    }
+});
 
 // 5. MANAGE ADMINS
 document.getElementById('addAdminBtn')?.addEventListener('click', async () => {

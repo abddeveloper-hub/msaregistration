@@ -464,6 +464,9 @@ function renderAdmittedDashboard(data, studentId) {
     document.getElementById('idPhoneDisplay').innerText = data.phone;
     document.getElementById('idCampusDisplay').innerText = data.campus;
     document.getElementById('idNumberDisplay').innerText = data.idNumber || "MSA UKKUDA-PENDING";
+    
+    const rollDisplay = document.getElementById('idRollNumberDisplay');
+    if (rollDisplay) rollDisplay.innerText = data.rollNumber || "Not Assigned";
 
     // Fetch Marks
     onSnapshot(collection(db, `users/${studentId}/marks`), (snap) => {

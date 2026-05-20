@@ -470,6 +470,14 @@ window.viewStudentDetails = async (uid) => {
     body.innerHTML = '<p>Loading statistics...</p>';
     document.getElementById('studentModal').classList.add('active');
 
+    const editBtn = document.getElementById('editStudentModalBtn');
+    if (editBtn) {
+        editBtn.onclick = () => {
+            document.getElementById('studentModal').classList.remove('active');
+            window.openEditStudent(uid);
+        };
+    }
+
     // Fetch Stats for Modal
     let attPct = 0;
     let marksAvg = 0;
@@ -583,6 +591,82 @@ window.rejectStudent = async (uid) => {
         updatedAt: new Date().toISOString()
     });
 };
+
+// Edit Student Logic
+let editingStudentId = null;
+
+window.openEditStudent = (uid) => {
+    const s = campusStudents.find(x => x.id === uid);
+    if(!s) return;
+    editingStudentId = uid;
+    
+    document.getElementById('viewEditStudent').classList.remove('hidden');
+    
+    document.getElementById('editStuIdNumber').value = s.idNumber || '';
+    document.getElementById('editStuRollNumber').value = s.rollNumber || '';
+    
+    document.getElementById('editStuName').value = s.fullName || '';
+    document.getElementById('editStuDob').value = s.dob || '';
+    document.getElementById('editStuBlood').value = s.bloodGroup || '';
+    document.getElementById('editStuPhone').value = s.phone || '';
+    document.getElementById('editStuAadhar').value = s.aadhar || '';
+    
+    document.getElementById('editStuFatherName').value = s.fatherName || '';
+    document.getElementById('editStuFatherPhone').value = s.fatherPhone || '';
+    document.getElementById('editStuAddress').value = s.address || '';
+    
+    document.getElementById('editStuSayyid').value = s.isSayyid || 'no';
+    document.getElementById('editStuHafiz').value = s.isHafiz || 'no';
+    document.getElementById('editStuOrphan').value = s.isOrphan || 'no';
+    
+    document.getElementById('editStuCampus').value = s.campus || '';
+    document.getElementById('editStuBatch').value = s.batch || '';
+};
+
+window.closeEditStudent = () => {
+    document.getElementById('viewEditStudent').classList.add('hidden');
+    editingStudentId = null;
+};
+
+const editStudentForm = document.getElementById('editStudentForm');
+if (editStudentForm) {
+    editStudentForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        if (!editingStudentId) return;
+        
+        const btn = document.getElementById('saveEditBtn');
+        btn.disabled = true;
+        btn.innerText = "Saving...";
+        
+        try {
+            await updateDoc(doc(db, "users", editingStudentId), {
+                idNumber: document.getElementById('editStuIdNumber').value,
+                rollNumber: document.getElementById('editStuRollNumber').value,
+                fullName: document.getElementById('editStuName').value,
+                dob: document.getElementById('editStuDob').value,
+                bloodGroup: document.getElementById('editStuBlood').value,
+                phone: document.getElementById('editStuPhone').value,
+                aadhar: document.getElementById('editStuAadhar').value,
+                fatherName: document.getElementById('editStuFatherName').value,
+                fatherPhone: document.getElementById('editStuFatherPhone').value,
+                address: document.getElementById('editStuAddress').value,
+                isSayyid: document.getElementById('editStuSayyid').value,
+                isHafiz: document.getElementById('editStuHafiz').value,
+                isOrphan: document.getElementById('editStuOrphan').value,
+                batch: document.getElementById('editStuBatch').value,
+                updatedAt: new Date().toISOString()
+            });
+            alert("Student profile updated successfully!");
+            window.closeEditStudent();
+        } catch (error) {
+            console.error("Edit Error:", error);
+            alert("Failed to update student: " + error.message);
+        } finally {
+            btn.disabled = false;
+            btn.innerText = "Save Changes";
+        }
+    });
+}
 
 
 // My Students
@@ -766,11 +850,18 @@ if (loadAttBtn) {
         
         if(currentAttStudents.length === 0) return alert("No students found for this batch.");
         
+        currentAttStudents.sort((a, b) => {
+            const rA = parseInt(a.rollNumber) || 99999;
+            const rB = parseInt(b.rollNumber) || 99999;
+            return rA - rB;
+        });
+        
         const tbody = document.getElementById('attendanceGridBody');
         tbody.innerHTML = '';
         currentAttStudents.forEach(s => {
             tbody.innerHTML += `
                 <tr data-sid="${s.id}">
+                    <td style="color:var(--text-dim); font-weight:bold;">${escapeHtml(s.rollNumber || '-')}</td>
                     <td>${escapeHtml(s.fullName || 'Unnamed')}</td>
                     <td>${escapeHtml(s.batch || 'N/A')}</td>
                     <td class="att-actions">

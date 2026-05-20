@@ -184,7 +184,7 @@
                     <button class="btn btn-ghost" id="loadAttendanceGridBtn" style="margin-bottom:2rem;">Load Students</button>
 
                     <table class="data-table hidden" id="attendanceGridTable">
-                        <thead><tr><th>Name</th><th>Batch</th><th>Status</th></tr></thead>
+                        <thead><tr><th>Roll No</th><th>Name</th><th>Batch</th><th>Status</th></tr></thead>
                         <tbody id="attendanceGridBody"></tbody>
                     </table>
                     <button class="btn btn-main hidden" id="saveAttendanceBtn" style="margin-top:1rem;">Submit Attendance</button>
@@ -204,12 +204,94 @@
         </main>
     </div>
 
+    <!-- Edit Student View -->
+    <div id="viewEditStudent" class="hidden" style="position: absolute; top:0; left:0; width:100%; min-height:100dvh; background:var(--bg); z-index:2000; overflow-y:auto; padding:2rem;">
+        <div class="view-header" style="display:flex; justify-content:space-between; align-items:center;">
+            <div>
+                <h2 class="view-title">Edit Student Profile</h2>
+                <p class="view-desc">Update student information, Roll Number, and ID Number.</p>
+            </div>
+            <button class="btn btn-ghost" onclick="closeEditStudent()">← Back</button>
+        </div>
+        <form id="editStudentForm" style="max-width:800px; margin:0 auto; padding-bottom:4rem;">
+            <div class="form-section">
+                <h3>Official IDs</h3>
+                <div class="grid-2">
+                    <div class="input-field"><label class="label">ID Number</label><input type="text" id="editStuIdNumber" class="input" required></div>
+                    <div class="input-field"><label class="label">Roll Number</label><input type="text" id="editStuRollNumber" class="input" placeholder="e.g. 101"></div>
+                </div>
+            </div>
+            <div class="form-section">
+                <h3>Personal Information</h3>
+                <div class="grid-2">
+                    <div class="input-field"><label class="label">Full Name</label><input type="text" id="editStuName" class="input" required></div>
+                    <div class="input-field"><label class="label">Date of Birth</label><input type="date" id="editStuDob" class="input" required></div>
+                    <div class="input-field"><label class="label">Blood Group</label><input type="text" id="editStuBlood" class="input" required></div>
+                    <div class="input-field"><label class="label">Phone Number</label><input type="tel" id="editStuPhone" class="input" required></div>
+                    <div class="input-field"><label class="label">Aadhar Number</label><input type="text" id="editStuAadhar" class="input" required></div>
+                </div>
+            </div>
+            <div class="form-section">
+                <h3>Family & Residence</h3>
+                <div class="grid-2">
+                    <div class="input-field"><label class="label">Father's Name</label><input type="text" id="editStuFatherName" class="input" required></div>
+                    <div class="input-field"><label class="label">Father's Phone Number</label><input type="tel" id="editStuFatherPhone" class="input" required></div>
+                </div>
+                <div class="input-field"><label class="label">Full Address</label><textarea id="editStuAddress" class="input" rows="3" required></textarea></div>
+                
+                <div class="grid-3" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.5rem;">
+                    <div class="input-field">
+                        <label class="label">Are you a Sayyid?</label>
+                        <select id="editStuSayyid" class="input"><option value="no">No</option><option value="yes">Yes</option></select>
+                    </div>
+                    <div class="input-field">
+                        <label class="label">Are you a Hafiz?</label>
+                        <select id="editStuHafiz" class="input"><option value="no">No</option><option value="yes">Yes</option></select>
+                    </div>
+                    <div class="input-field">
+                        <label class="label">Are you an Orphan?</label>
+                        <select id="editStuOrphan" class="input"><option value="no">No</option><option value="yes">Yes</option></select>
+                    </div>
+                </div>
+            </div>
+            <div class="form-section">
+                <h3>Institutional Details</h3>
+                <div class="grid-2">
+                    <div class="input-field">
+                        <label class="label">Campus</label>
+                        <input type="text" id="editStuCampus" class="input" readonly style="background:var(--glass); cursor:not-allowed;">
+                    </div>
+                    <div class="input-field">
+                        <label class="label">Target Batch</label>
+                        <select id="editStuBatch" class="input" required>
+                            <!-- Options injected dynamically or via JS, for now just a generic list -->
+                            <option value="Batch 1">Batch 1</option>
+                            <option value="Batch 2">Batch 2</option>
+                            <option value="Batch 3">Batch 3</option>
+                            <option value="Batch 4">Batch 4</option>
+                            <option value="Batch 5">Batch 5</option>
+                            <option value="Batch 6">Batch 6</option>
+                            <option value="Batch 7">Batch 7</option>
+                            <option value="Batch 8">Batch 8</option>
+                            <option value="Batch 9">Batch 9</option>
+                            <option value="Batch 10">Batch 10</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <button type="submit" id="saveEditBtn" class="btn btn-main" style="width: 100%;">Save Changes</button>
+        </form>
+    </div>
+
     <!-- Student Details Modal -->
     <div id="studentModal" class="modal-overlay">
         <div class="modal-content">
             <h2 class="view-title" style="font-size:1.5rem; margin-bottom:1rem;">Student Details</h2>
             <div id="modalBody" style="line-height:1.6;"></div>
-            <button class="btn btn-ghost" onclick="document.getElementById('studentModal').classList.remove('active')" style="margin-top:2rem; width:100%;">Close</button>
+            <div style="display:flex; gap:1rem; margin-top:2rem;">
+                <button class="btn btn-main" id="editStudentModalBtn" style="flex:1;">Edit Profile</button>
+                <button class="btn btn-ghost" onclick="document.getElementById('studentModal').classList.remove('active')" style="flex:1;">Close</button>
+            </div>
         </div>
     </div>
 

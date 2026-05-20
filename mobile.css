@@ -3,6 +3,17 @@
    Supplements style.css for small screens
    ========================================== */
 
+html, body {
+    overflow-x: hidden;
+    width: 100vw;
+    max-width: 100%;
+}
+
+.portal-layout, .admin-layout, .app-container {
+    max-width: 100vw;
+    overflow-x: hidden;
+}
+
 /* ---- Medium Screens (Tablets / Small Laptops) ---- */
 @media (max-width: 900px) {
     .admin-layout,

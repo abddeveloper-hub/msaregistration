@@ -313,19 +313,29 @@ html, body {
 
     /* Make Attendance Table Fit on Mobile Screen without scroll */
     #attendanceGridTable {
+        display: table;
+        width: 100%;
         white-space: normal;
         overflow-x: visible;
     }
     #attendanceGridTable th, #attendanceGridTable td {
-        padding: 0.5rem 0.2rem;
+        padding: 0.75rem 0.25rem;
         font-size: 0.85rem;
+        word-break: break-word;
     }
     #attendanceGridTable th:nth-child(3), #attendanceGridTable td:nth-child(3) {
         display: none; /* Hide Batch column on mobile */
     }
+    #attendanceGridTable .att-actions > div {
+        display: flex;
+        gap: 0.25rem !important;
+        width: 100%;
+    }
     .btn-att {
-        padding: 0.4rem 0.6rem !important;
-        font-size: 0.85rem !important;
+        flex: 1;
+        padding: 0.6rem 0 !important;
+        font-size: 0.9rem !important;
+        text-align: center;
     }
 }
 

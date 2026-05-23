@@ -210,6 +210,21 @@ function setRole(role) {
 
 function openAuthModal(role = selectedRole, isFixed = false) {
     if (!authModal) return;
+
+    if (auth.currentUser) {
+        // If already logged in, fetch role and redirect immediately
+        const uid = auth.currentUser.uid;
+        getDoc(doc(db, "users", uid)).then(snap => {
+            const role = snap.exists() ? snap.data().role : selectedRole;
+            if (role === "admin") window.location.href = "admin.html";
+            else if (role === "faculty") window.location.href = "teacher.html";
+            else window.location.href = "student.html";
+        }).catch(() => {
+            window.location.href = "student.html";
+        });
+        return;
+    }
+
     setRole(role);
     authModal.dataset.fixedRole = String(Boolean(isFixed));
     authModal.classList.add("active");
@@ -405,12 +420,11 @@ if (authForm) {
 
             authSubmitBtn.textContent = "Opening Portal...";
             
-            if (userData) {
-                const role = userData.role;
-                if (role === "admin") window.location.href = "admin.html";
-                else if (role === "faculty") window.location.href = "teacher.html";
-                else window.location.href = "student.html";
-            }
+            const targetRole = userData ? userData.role : selectedRole;
+            
+            if (targetRole === "admin") window.location.href = "admin.html";
+            else if (targetRole === "faculty") window.location.href = "teacher.html";
+            else window.location.href = "student.html";
 
             window.setTimeout(() => {
                 if (authSubmitBtn) {

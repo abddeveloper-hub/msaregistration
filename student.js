@@ -25,6 +25,16 @@ function normalizeText(value) {
     return String(value || '').trim().toLowerCase();
 }
 
+function escapeHtml(value) {
+    return String(value ?? '').replace(/[&<>"']/g, (char) => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;'
+    }[char]));
+}
+
 function selectCampusFromData(data) {
     const select = document.getElementById('stuCampus');
     if (!select || !data) return;
@@ -344,8 +354,6 @@ if (regForm) {
             }
 
             const payload = {
-                parentUid: auth.currentUser.uid,
-                role: 'student',
                 fullName: document.getElementById('stuName').value,
                 username: document.getElementById('stuUsername').value,
                 dob: document.getElementById('stuDob').value,
@@ -364,8 +372,6 @@ if (regForm) {
                 campus: selectedCampus.name,
                 campusId: selectedCampus.id,
                 batch: document.getElementById('stuBatch').value,
-                status: 'pending',
-                createdAt: new Date().toISOString(),
                 updatedAt: new Date().toISOString()
             };
 
@@ -375,6 +381,10 @@ if (regForm) {
                 await updateDoc(doc(db, "users", activeStudentId), payload);
                 alert("Application updated!");
             } else {
+                payload.parentUid = auth.currentUser.uid;
+                payload.role = 'student';
+                payload.status = 'pending';
+                payload.createdAt = new Date().toISOString();
                 await addDoc(collection(db, "users"), payload);
                 alert("Registration submitted successfully!");
             }
@@ -406,6 +416,16 @@ function showStudentDetail(studentId) {
         document.getElementById('detailStudentName').innerText = data.fullName;
         document.getElementById('detailStudentStatus').innerText = "Status: " + (data.status || 'Pending');
 
+        const editBtn = document.getElementById('editProfileBtn');
+        if (editBtn) {
+            editBtn.onclick = () => {
+                showNewStudentForm();
+                prefillForm(data);
+                activeStudentId = studentId; // Re-set because showNewStudentForm resets it
+                document.getElementById('submitRegBtn').innerText = "Update Application";
+            };
+        }
+
         if(data.status === 'admitted') {
             document.getElementById('pendingStatusSection').classList.add('hidden');
             document.getElementById('admittedDetailSection').classList.remove('hidden');
@@ -413,13 +433,6 @@ function showStudentDetail(studentId) {
         } else {
             document.getElementById('admittedDetailSection').classList.add('hidden');
             document.getElementById('pendingStatusSection').classList.remove('hidden');
-            
-            document.getElementById('editProfileBtn').onclick = () => {
-                showNewStudentForm();
-                prefillForm(data);
-                activeStudentId = studentId; // Re-set because showNewStudentForm resets it
-                document.getElementById('submitRegBtn').innerText = "Update Application";
-            };
         }
     });
 }

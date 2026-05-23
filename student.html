@@ -198,19 +198,21 @@
 
             <!-- VIEW: Student Detail (Admitted or Pending) -->
             <div id="viewStudentDetail" class="hidden">
-                <div class="view-header" style="display:flex; justify-content:space-between; align-items:center;">
+                <div class="view-header" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem;">
                     <div>
                         <h2 class="view-title" id="detailStudentName">Student Details</h2>
                         <p class="view-desc" id="detailStudentStatus">Status: Pending Approval</p>
                     </div>
-                    <button class="btn btn-ghost" onclick="showAccountDashboard()">← Back to List</button>
+                    <div style="display:flex; gap:0.5rem; align-items:center;">
+                        <button id="editProfileBtn" class="btn btn-primary" style="padding: 0.5rem 1rem;">Edit Application</button>
+                        <button class="btn btn-ghost" onclick="showAccountDashboard()">← Back to List</button>
+                    </div>
                 </div>
 
                 <div id="pendingStatusSection" class="status-banner hidden">
                     <svg width="64" height="64" fill="none" stroke="var(--accent)" viewBox="0 0 24 24" style="margin-bottom: 1rem;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                     <h3>Application Under Review</h3>
                     <p>This student application is currently being reviewed by the administration.</p>
-                    <button id="editProfileBtn" class="btn btn-ghost" style="margin: 2rem auto 0; width: auto; padding: 0.75rem 2rem;">Edit Application</button>
                 </div>
 
                 <div id="admittedDetailSection" class="hidden">

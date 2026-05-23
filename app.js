@@ -1,6 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-import { getFirestore, doc, setDoc, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+import { getFirestore, doc, setDoc, getDoc, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 import { firebaseConfig } from "./firebase-config.js";
 
 const app = initializeApp(firebaseConfig);
@@ -381,23 +381,37 @@ if (authForm) {
         authSubmitBtn.textContent = "Processing...";
 
         try {
+            let userData = null;
             if (isSignUpMode) {
                 const userCred = await createUserWithEmailAndPassword(auth, email, password);
                 const finalRole = email.toLowerCase() === "admin@msaukkuda.com" ? "admin" : selectedRole;
 
-                await setDoc(doc(db, "users", userCred.user.uid), {
+                userData = {
                     uid: userCred.user.uid,
                     email,
                     fullName,
                     role: finalRole,
                     status: finalRole === "admin" ? "admitted" : "unsubmitted",
                     createdAt: new Date().toISOString()
-                });
+                };
+                await setDoc(doc(db, "users", userCred.user.uid), userData);
             } else {
-                await signInWithEmailAndPassword(auth, email, password);
+                const userCred = await signInWithEmailAndPassword(auth, email, password);
+                const userSnap = await getDoc(doc(db, "users", userCred.user.uid));
+                if (userSnap.exists()) {
+                    userData = userSnap.data();
+                }
             }
 
             authSubmitBtn.textContent = "Opening Portal...";
+            
+            if (userData) {
+                const role = userData.role;
+                if (role === "admin") window.location.href = "admin.html";
+                else if (role === "faculty") window.location.href = "teacher.html";
+                else window.location.href = "student.html";
+            }
+
             window.setTimeout(() => {
                 if (authSubmitBtn) {
                     authSubmitBtn.disabled = false;
@@ -451,10 +465,9 @@ onAuthStateChanged(auth, async (user) => {
             heroLoginBtn.onclick = redirectToPortal;
             heroLoginBtn.textContent = "Enter Portal";
         }
-
-        if (authModal?.classList.contains("active")) {
-            redirectToPortal();
-        }
+        
+        // We removed the automatic redirection from here because it caused delays and overlaps 
+        // with the much faster direct redirect in the auth form submission handler.
     }, (error) => {
         console.warn("Unable to load signed-in user profile:", error);
     });

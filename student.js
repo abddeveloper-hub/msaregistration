@@ -230,13 +230,24 @@ if (downloadIdBtn) {
             </html>
         `;
         
-        const printWindow = window.open('', '_blank');
-        printWindow.document.write(printContent);
-        printWindow.document.close();
-        printWindow.focus();
+        const printIframe = document.createElement('iframe');
+        printIframe.style.position = 'absolute';
+        printIframe.style.width = '0';
+        printIframe.style.height = '0';
+        printIframe.style.border = 'none';
+        document.body.appendChild(printIframe);
+        
+        printIframe.contentDocument.write(printContent);
+        printIframe.contentDocument.close();
+        
         setTimeout(() => {
-            printWindow.print();
-            printWindow.close();
+            printIframe.contentWindow.focus();
+            printIframe.contentWindow.print();
+            setTimeout(() => {
+                if (document.body.contains(printIframe)) {
+                    document.body.removeChild(printIframe);
+                }
+            }, 2000);
         }, 500);
     });
 }

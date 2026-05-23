@@ -233,6 +233,12 @@ function renderCampusStudentsFrom(users) {
         .filter(isStudentApplication)
         .filter(user => recordMatchesCampusScope(user, activeCampusScope));
 
+    campusStudents.sort((a, b) => {
+        const rollA = String(a.rollNumber || '').toLowerCase();
+        const rollB = String(b.rollNumber || '').toLowerCase();
+        return rollA.localeCompare(rollB, undefined, { numeric: true, sensitivity: 'base' });
+    });
+
     renderQueue();
     renderMyStudents();
     updateSelects();

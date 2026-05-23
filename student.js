@@ -383,6 +383,7 @@ if (regForm) {
                 campus: selectedCampus.name,
                 campusId: selectedCampus.id,
                 batch: document.getElementById('stuBatch').value,
+                rollNumber: document.getElementById('stuRollNumber')?.value || '',
                 updatedAt: new Date().toISOString()
             };
 
@@ -473,6 +474,7 @@ function prefillForm(data) {
     setInputValue('schoolPucWhere', data.schoolInfo?.pucWhere);
     setInputValue('schoolDegreeWhich', data.schoolInfo?.degreeWhich);
     setInputValue('schoolDegreeWhere', data.schoolInfo?.degreeWhere);
+    setInputValue('stuRollNumber', data.rollNumber);
     pendingCampusSelection = data;
     selectCampusFromData(data);
     document.getElementById('stuBatch').value = data.batch || '';
@@ -487,10 +489,9 @@ function renderAdmittedDashboard(data, studentId) {
     document.getElementById('idDobDisplay').innerText = data.dob;
     document.getElementById('idPhoneDisplay').innerText = data.phone;
     document.getElementById('idCampusDisplay').innerText = data.campus;
-    document.getElementById('idNumberDisplay').innerText = data.idNumber || "MSA UKKUDA-PENDING";
     
     const rollDisplay = document.getElementById('idRollNumberDisplay');
-    if (rollDisplay) rollDisplay.innerText = data.rollNumber || "Not Assigned";
+    if (rollDisplay) rollDisplay.innerText = data.rollNumber || "PENDING";
 
     // Fetch Marks
     onSnapshot(collection(db, `users/${studentId}/marks`), (snap) => {

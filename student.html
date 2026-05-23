@@ -97,6 +97,7 @@
                         <div class="grid-2">
                             <div class="input-field"><label class="label">Full Name of Student</label><input type="text" id="stuName" class="input" required></div>
                             <div class="input-field"><label class="label">Student Identifier (e.g. Nickname)</label><input type="text" id="stuUsername" class="input" required placeholder="To help you identify this student"></div>
+                            <div class="input-field"><label class="label">Roll Number</label><input type="text" id="stuRollNumber" class="input" placeholder="Enter roll number"></div>
                             <div class="input-field"><label class="label">Date of Birth</label><input type="date" id="stuDob" class="input" required></div>
                             <div class="input-field"><label class="label">Blood Group</label><input type="text" id="stuBlood" class="input" required placeholder="e.g. O+"></div>
                             <div class="input-field"><label class="label">Phone Number</label><input type="tel" id="stuPhone" class="input" required></div>
@@ -239,13 +240,15 @@
                         <img id="idPhotoDisplay" src="" alt="Student Photo" class="id-photo">
                         <div class="id-details">
                             <p><strong>Name</strong> <span id="idNameDisplay"></span></p>
-                            <p><strong>Father</strong> <span id="idFatherDisplay"></span></p>
-                            <p><strong>DOB</strong> <span id="idDobDisplay"></span></p>
-                            <p><strong>Phone</strong> <span id="idPhoneDisplay"></span></p>
-                            <p><strong>Campus</strong> <span id="idCampusDisplay"></span></p>
-                            <p><strong>Roll No</strong> <span id="idRollNumberDisplay" style="color:var(--primary); font-weight:bold;"></span></p>
+                            <p><strong>Father:</strong> <span id="idFatherDisplay"></span></p>
+                            <p><strong>D.O.B:</strong> <span id="idDobDisplay"></span></p>
+                            <p><strong>Phone:</strong> <span id="idPhoneDisplay"></span></p>
+                            <p><strong>Campus:</strong> <span id="idCampusDisplay"></span></p>
                         </div>
-                        <div class="id-number" id="idNumberDisplay">MSA UKKUDA-XXXX-XX</div>
+                        <div style="background:var(--glass-heavy); padding:0.5rem; border-radius:0.5rem; text-align:center; margin-bottom:1rem;">
+                            <span style="font-size:0.75rem; color:var(--text-dim); text-transform:uppercase; font-weight:bold;">Roll No</span>
+                            <div class="id-number" id="idRollNumberDisplay" style="margin-top:0.25rem;">PENDING</div>
+                        </div>
                     </div>
 
                     <div style="text-align: center; margin-bottom: 3rem;">

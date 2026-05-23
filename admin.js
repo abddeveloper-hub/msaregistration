@@ -115,9 +115,9 @@ if(document.getElementById('downloadGlobalStudentListBtn')) {
         const students = allUsers.filter(isStudentApplication);
         if (students.length === 0) return alert("No students to download.");
 
-        let csv = "ID Number,Full Name,Phone,Campus,Batch,Status\n";
+        let csv = "Roll Number,Full Name,Phone,Campus,Batch,Status\n";
         students.forEach(s => {
-            csv += `"${s.idNumber || 'N/A'}","${s.fullName || 'Unnamed'}","${s.phone || 'N/A'}","${getRecordCampusName(s)}","${s.batch || 'N/A'}","${s.status || 'pending'}"\n`;
+            csv += `"${s.rollNumber || 'N/A'}","${s.fullName || 'Unnamed'}","${s.phone || 'N/A'}","${getRecordCampusName(s)}","${s.batch || 'N/A'}","${s.status || 'pending'}"\n`;
         });
 
         const blob = new Blob([csv], { type: 'text/csv' });
@@ -346,7 +346,7 @@ function renderGlobalStudents() {
         data.forEach(s => {
             const statColor = s.status === 'admitted' ? 'color:var(--success)' : 'color:var(--accent)';
             tbody.innerHTML += `<tr>
-                <td>${s.idNumber || 'N/A'}</td>
+                <td>${s.rollNumber || 'N/A'}</td>
                 <td><strong>${s.fullName}</strong><br><span style="font-size:0.7rem;">${s.phone || ''}</span></td>
                 <td>${getRecordCampusName(s)}</td>
                 <td style="${statColor}; text-transform:uppercase; font-size:0.8rem; font-weight:bold;">${s.status || 'unsubmitted'}</td>
@@ -365,7 +365,7 @@ function renderGlobalStudents() {
         const val = e.target.value.toLowerCase();
         const filtered = students.filter(s => 
             (s.fullName && s.fullName.toLowerCase().includes(val)) || 
-            (s.idNumber && s.idNumber.toLowerCase().includes(val)) ||
+            (s.rollNumber && s.rollNumber.toLowerCase().includes(val)) ||
             (s.phone && s.phone.includes(val)) ||
             normalizeText(getRecordCampusName(s)).includes(val)
         );
@@ -430,7 +430,7 @@ window.adminViewStudent = async (uid) => {
         </div>
         <div>
             <h3 style="color:var(--primary); margin-bottom:1rem;">Academic Info</h3>
-            <p><strong>ID Number:</strong> <span style="color:var(--accent); font-weight:bold;">${s.idNumber || 'Pending'}</span></p>
+            <p><strong>Roll Number:</strong> <span style="color:var(--accent); font-weight:bold;">${s.rollNumber || 'Pending'}</span></p>
             <p><strong>Campus:</strong> ${getRecordCampusName(s)}</p>
             <p><strong>Batch:</strong> ${s.batch || 'None'}</p>
             <p><strong>Schooling:</strong> ${s.schoolInfo?.level || 'N/A'}</p>

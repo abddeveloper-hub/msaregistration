@@ -155,7 +155,7 @@ document.getElementById('downloadStudentListBtn')?.addEventListener('click', () 
 
     let csv = "ID Number,Full Name,Phone,Batch,Campus\n";
     admitted.forEach(s => {
-        csv += `"${s.idNumber || 'N/A'}","${s.fullName || 'Unnamed'}","${s.phone || 'N/A'}","${s.batch || 'N/A'}","${s.campus || 'N/A'}"\n`;
+        csv += `"${s.rollNumber || 'N/A'}","${s.fullName || 'Unnamed'}","${s.phone || 'N/A'}","${s.batch || 'N/A'}","${s.campus || 'N/A'}"\n`;
     });
 
     const blob = new Blob([csv], { type: 'text/csv' });
@@ -542,7 +542,7 @@ window.viewStudentDetails = async (uid) => {
             <img src="${escapeHtml(s.photoUrl || '')}" style="width:80px; height:80px; object-fit:cover; border-radius:0.5rem; background:#333;">
             <div>
                 <h3 style="margin:0; color:var(--primary);">${escapeHtml(s.fullName || 'N/A')}</h3>
-                <p style="margin:0; font-size:0.9rem; color:var(--text-dim);">${escapeHtml(s.idNumber || 'Pending ID')}</p>
+                <p style="margin:0; font-size:0.9rem; color:var(--text-dim);">${escapeHtml(s.rollNumber || 'Pending Roll No')}</p>
             </div>
         </div>
 
@@ -610,7 +610,7 @@ window.approveStudent = async (uid) => {
                 
                 transaction.update(doc(db, "users", uid), {
                     status: 'admitted',
-                    idNumber: `MSA UKKUDA-${shortCampus}-${seq}`,
+                    rollNumber: s.rollNumber || `${seq}`,
                     campus: campusLabel,
                     campusId: campusId,
                     admittedBy: auth.currentUser?.uid || 'system',
@@ -625,7 +625,7 @@ window.approveStudent = async (uid) => {
             // FALLBACK: Simple approval without ID generation if counter doc is locked
             await updateDoc(doc(db, "users", uid), {
                 status: 'admitted',
-                idNumber: `MSA UKKUDA-${shortCampus}-PENDING`,
+                rollNumber: s.rollNumber || `PENDING`,
                 campus: campusLabel,
                 campusId: campusId,
                 admittedBy: auth.currentUser?.uid || 'system',
@@ -658,7 +658,6 @@ window.openEditStudent = (uid) => {
     
     document.getElementById('viewEditStudent').classList.remove('hidden');
     
-    document.getElementById('editStuIdNumber').value = s.idNumber || '';
     document.getElementById('editStuRollNumber').value = s.rollNumber || '';
     
     document.getElementById('editStuName').value = s.fullName || '';
@@ -696,7 +695,6 @@ if (editStudentForm) {
         
         try {
             await updateDoc(doc(db, "users", editingStudentId), {
-                idNumber: document.getElementById('editStuIdNumber').value,
                 rollNumber: document.getElementById('editStuRollNumber').value,
                 fullName: document.getElementById('editStuName').value,
                 dob: document.getElementById('editStuDob').value,
@@ -739,7 +737,7 @@ function renderMyStudents() {
     admitted.forEach(s => {
         const tr = document.createElement('tr');
         tr.innerHTML = `
-            <td style="color:var(--primary); font-weight:bold;">${escapeHtml(s.idNumber || 'N/A')}</td>
+            <td style="color:var(--primary); font-weight:bold;">${escapeHtml(s.rollNumber || 'N/A')}</td>
             <td>${escapeHtml(s.fullName || 'Unnamed')}</td>
             <td>${escapeHtml(s.batch || 'N/A')}</td>
             <td><button class="action-btn btn-action" onclick="viewStudentDetails('${s.id}')">View</button></td>
@@ -753,7 +751,7 @@ function updateSelects() {
     
     // 1. Students dropdown
     let stuOpts = '<option value="" disabled selected>Select Student...</option>';
-    admitted.forEach(s => stuOpts += `<option value="${s.id}">${escapeHtml(s.fullName || 'Unnamed')} (${escapeHtml(s.idNumber || 'No ID')})</option>`);
+    admitted.forEach(s => stuOpts += `<option value="${s.id}">${escapeHtml(s.fullName || 'Unnamed')} (${escapeHtml(s.rollNumber || 'No Roll No')})</option>`);
     
     const sm = document.getElementById('markStudent');
     const rm = document.getElementById('remStudent');

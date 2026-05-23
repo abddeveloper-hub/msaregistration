@@ -123,16 +123,16 @@ function updatePortalUI() {
     const user = currentUserData;
     const name = studentName(user);
     const firstName = name.split(" ")[0] || "Student";
-    const idNumber = user.idNumber || "PENDING";
+    const rollNumber = user.rollNumber || "PENDING";
 
     setText("userName", name);
     setText("welcomeName", firstName);
-    setText("displayIdNumber", idNumber);
+    setText("displayIdNumber", rollNumber);
     setText("userAvatar", name[0]?.toUpperCase() || "S");
 
     setText("profileFullName", name);
     setText("profileEmail", user.email || "N/A");
-    setText("profileIdNum", idNumber);
+    setText("profileIdNum", rollNumber);
     setSrc("profilePhoto", avatarUrl(user));
 
     const details = document.getElementById("profileDetails");
@@ -334,7 +334,7 @@ function renderIdCard(user) {
                         <div class="id-detail-item"><label>Guardian</label><p>${escapeHtml(user.fatherName || "N/A")}</p></div>
                         <div class="id-detail-item"><label>District</label><p>${escapeHtml(user.district || user.campus || "N/A")}</p></div>
                     </div>
-                    <div class="id-number-box">${escapeHtml(user.idNumber || "PENDING")}</div>
+                    <div class="id-number-box">${escapeHtml(user.rollNumber || "PENDING")}</div>
                 </div>
             </div>
             <div class="id-footer">

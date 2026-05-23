@@ -610,7 +610,7 @@ window.approveStudent = async (uid) => {
                 
                 transaction.update(doc(db, "users", uid), {
                     status: 'admitted',
-                    rollNumber: s.rollNumber || `${seq}`,
+                    rollNumber: student.rollNumber || `${seq}`,
                     campus: campusLabel,
                     campusId: campusId,
                     admittedBy: auth.currentUser?.uid || 'system',
@@ -625,7 +625,7 @@ window.approveStudent = async (uid) => {
             // FALLBACK: Simple approval without ID generation if counter doc is locked
             await updateDoc(doc(db, "users", uid), {
                 status: 'admitted',
-                rollNumber: s.rollNumber || `PENDING`,
+                rollNumber: student.rollNumber || `PENDING`,
                 campus: campusLabel,
                 campusId: campusId,
                 admittedBy: auth.currentUser?.uid || 'system',

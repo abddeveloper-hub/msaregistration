@@ -1331,13 +1331,17 @@ if (downloadAttPdfBtn) {
             cell.style.color = '#000';
         });
         
-        wrapper.appendChild(clone);
+        wrapper.style.position = 'absolute';
+        wrapper.style.left = '-9999px';
+        wrapper.style.width = 'max-content';
+        wrapper.style.background = '#fff';
+        document.body.appendChild(wrapper);
         
         const opt = {
             margin:       10,
             filename:     `Attendance_${batch.replace(/\\s+/g, '_')}_${date}.pdf`,
             image:        { type: 'jpeg', quality: 0.98 },
-            html2canvas:  { scale: 2, windowWidth: 800 },
+            html2canvas:  { scale: 2 },
             jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
         };
         
@@ -1345,6 +1349,7 @@ if (downloadAttPdfBtn) {
         downloadAttPdfBtn.innerText = "Generating PDF...";
         
         html2pdf().set(opt).from(wrapper).save().then(() => {
+            document.body.removeChild(wrapper);
             downloadAttPdfBtn.disabled = false;
             downloadAttPdfBtn.innerText = "📥 Download PDF";
         });
@@ -1474,18 +1479,24 @@ if (downloadMonthlyAttPdfBtn) {
                     ${tableHtml}
                 </div>
             `;
+            wrapper.style.position = 'absolute';
+            wrapper.style.left = '-9999px';
+            wrapper.style.width = 'max-content';
+            wrapper.style.background = '#fff';
+            document.body.appendChild(wrapper);
             
             const opt = {
                 margin:       10,
                 filename:     `Monthly_Attendance_${batch.replace(/\s+/g, '_')}_${month}.pdf`,
                 image:        { type: 'jpeg', quality: 0.98 },
-                html2canvas:  { scale: 2, windowWidth: 1800 },
+                html2canvas:  { scale: 2 },
                 jsPDF:        { unit: 'mm', format: sortedDates.length > 15 ? 'a3' : 'a4', orientation: 'landscape' }
             };
             
             downloadMonthlyAttPdfBtn.innerText = "Generating PDF...";
             
             await html2pdf().set(opt).from(wrapper).save();
+            document.body.removeChild(wrapper);
             
         } catch (err) {
             alert(err.message);

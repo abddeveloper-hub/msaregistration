@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Import Attendance</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; max-width: 800px; margin: auto; }
+        textarea { width: 100%; height: 300px; font-family: monospace; }
+        button { padding: 10px 20px; font-size: 16px; background: #007bff; color: white; border: none; cursor: pointer; margin-top: 10px; }
+        button:disabled { background: #ccc; }
+        #log { margin-top: 20px; padding: 10px; background: #f4f4f4; border: 1px solid #ccc; height: 200px; overflow-y: auto; font-family: monospace; }
+    </style>
+</head>
+<body>
+    <h2>Import May 2026 Attendance</h2>
+    <p>This script will read the transcription below and insert attendance records for <b>1st Dars</b> and <b>2nd Dars</b> into Firestore.</p>
+    <p>Format: <code>RollNo: mark,mark,mark...</code> (19 marks for days: 4,5,6,7, 9,10,11,12,13, 15,16,17,18,19, 21,22,23,24,25)</p>
+    <p>Marks: <b>x</b> = present, <b>A</b> = absent, <b>-</b> = skip, anything else = leave.</p>
+
+    <textarea id="dataInput">
+1: x, x, x, A, x, x, x, x, x, x, x, x, x, A, x, A, A, A, x
+2: x, A, A, A, x, A, A, A, A, A, A, A, A, A, x, A, A, A, P
+3: x, A, x, x, x, A, A, A, A, x, A, A, x, A, A, A, A, A, P
+4: x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x
+5: x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x
+6: x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x
+7: x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, A
+8: x, x, x, x, x, x, x, x, x, P, x, x, x, x, x, x, A, A, A
+9: x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, A, A, A, x
+10: x, x, x, x, x, x, x, x, P, x, x, x, x, x, x, x, x, x, x
+11: x, P, x, x, x, x, x, x, x, x, A, A, P, A, x, x, x, x, x
+12: x, x, x, x, P, x, x, x, A, A, A, x, A, x, x, x, x, x, x
+13: x, x, x, x, x, x, x, x, P, x, x, x, x, x, x, x, A, x, P
+14: x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x
+15: x, x, x, x, x, x, x, x, x, x, A, x, A, x, x, A, x, P, A
+16: x, A, x, A, A, x, x, x, x, x, x, x, x, x, x, x, P, A, A
+17: A, A, x, x, x, x, x, x, P, x, x, x, x, x, x, P, A, x, A
+18: A, A, x, x, x, x, x, x, A, x, x, x, x, x, x, x, A, x, P
+19: x, x, x, x, x, x, x, x, P, x, x, x, A, x, x, x, x, x, x
+20: x, x, x, x, x, x, x, x, A, x, x, x, A, x, x, x, x, x, x
+21: A, x, A, x, x, x, x, x, A, P, A, x, P, A, x, x, x, x, x
+22: x, x, x, x, P, x, A, A, P, x, x, x, x, x, x, x, x, A, A
+23: -, -, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x
+24: -, -, x, x, x, x, x, x, x, x, x, x, x, x, P, A, A, A, A
+25: x, x, x, A, x, x, x, x, A, x, x, x, x, x, A, A, x, x, x
+26: x, A, x, A, x, A, A, A, x, x, x, x, x, x, x, x, P, A, A
+27: x, A, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x
+28: x, x, x, x, P, x, x, x, x, A, x, x, x, x, x, x, x, x, x
+29: x, x, x, x, P, x, x, x, x, A, x, x, x, x, x, x, x, x, x
+30: A, P, x, x, x, x, x, x, x, x, x, A, x, x, x, x, x, A, x
+31: A, P, x, x, x, x, x, x, x, x, x, P, x, x, x, A, A, x, x
+32: x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, P, x
+33: x, x, x, x, A, C, x, x, x, P, A, P, x, x, A, x, x, x, x
+34: x, x, x, x, x, E, P, x, P, P, A, A, x, x, x, A, x, x, x
+35: x, x, x, x, x, P, P, x, A, A, x, A, x, x, x, x, x, x, x
+36: x, x, x, x, A, x, x, x, A, x, x, x, x, x, x, x, x, x, x
+37: A, A, x, x, A, A, x, x, A, A, A, x, x, x, A, x, x, A, x
+38: x, P, P, x, x, x, A, x, x, x, x, A, x, x, x, x, x, x, x
+39: x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, A, x
+40: x, x, x, x, A, A, A, x, x, x, x, x, x, x, A, x, x, A, x
+41: A, A, x, x, A, A, A, x, A, A, A, A, A, x, A, A, A, A, A
+42: A, A, x, x, A, A, A, x, A, A, A, A, A, x, A, A, A, A, A
+43: x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x
+44: x, x, x, x, x, x, x, x, x, x, x, A, x, x, x, x, x, x, x
+45: A, x, x, x, x, x, x, x, A, A, A, A, x, x, P, P, A, A, x
+46: A, x, x, A, x, x, x, x, A, x, A, A, A, x, A, A, A, A, x
+47: x, A, x, x, x, x, x, x, P, x, x, x, x, x, x, A, A, A, A
+48: x, x, x, x, x, x, x, x, x, P, x, x, x, x, x, x, x, x, x
+49: x, P, x, x, A, A, x, x, x, x, x, x, x, x, x, x, P, A, A
+50: A, A, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x
+51: x, x, x, x, A, x, x, x, x, x, x, x, x, x, A, x, x, x, x
+52: x, A, x, x, A, x, x, x, A, A, x, x, x, x, x, x, x, x, x
+53: x, P, x, x, x, x, x, x, A, x, x, x, x, x, x, x, x, A, x
+54: x, x, x, P, x, x, x, x, P, x, x, x, x, x, x, x, x, A, A
+55: -, x, B, A, x, x, x, x, x, x, x, x, x, x, x, x, x, P, A
+56: x, x, P, P, x, x, x, x, x, x, x, x, x, x, x, x, x, P, A
+57: x, x, P, P, x, x, x, x, x, x, x, x, x, x, x, x, x, P, A
+    </textarea>
+    
+    <button id="importBtn">Import Attendance to DB</button>
+    <div id="log"></div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, getDocs, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { firebaseConfig } from "./firebase-config.js";
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        const logEl = document.getElementById('log');
+        const log = (msg) => {
+            console.log(msg);
+            logEl.innerHTML += msg + "<br>";
+            logEl.scrollTop = logEl.scrollHeight;
+        };
+
+        document.getElementById('importBtn').addEventListener('click', async () => {
+            const btn = document.getElementById('importBtn');
+            btn.disabled = true;
+            log("Starting import...");
+
+            const text = document.getElementById('dataInput').value;
+            const lines = text.split('\n').map(l => l.trim()).filter(l => l);
+            
+            // The days marked in the image
+            const days = [4, 5, 6, 7, 9, 10, 11, 12, 13, 15, 16, 17, 18, 19, 21, 22, 23, 24, 25];
+            const yearMonth = "2026-05";
+
+            // Map roll number to array of marks
+            const attendanceMap = {};
+            for (const line of lines) {
+                const parts = line.split(':');
+                if (parts.length === 2) {
+                    const roll = parts[0].trim();
+                    const marks = parts[1].split(',').map(m => m.trim());
+                    attendanceMap[roll] = marks;
+                }
+            }
+
+            log(`Parsed data for ${Object.keys(attendanceMap).length} students.`);
+            log("Fetching students from database...");
+
+            try {
+                const usersSnap = await getDocs(collection(db, "users"));
+                const students = [];
+                usersSnap.forEach(d => {
+                    const data = d.data();
+                    if ((data.role === 'student' || !data.role) && data.status === 'admitted') {
+                        students.push({ id: d.id, ...data });
+                    }
+                });
+
+                log(`Found ${students.length} admitted students in DB.`);
+
+                let recordsAdded = 0;
+
+                for (const student of students) {
+                    const rollNo = parseInt(student.rollNumber);
+                    if (!rollNo || !attendanceMap[rollNo]) continue;
+
+                    const marks = attendanceMap[rollNo];
+                    
+                    for (let i = 0; i < marks.length; i++) {
+                        if (i >= days.length) break;
+                        
+                        const mark = marks[i].toLowerCase();
+                        if (mark === '-') continue; // Skip blank/unmarked
+                        
+                        let status = 'present';
+                        if (mark === 'a') status = 'absent';
+                        else if (mark !== 'x') status = 'leave';
+
+                        const dayStr = days[i].toString().padStart(2, '0');
+                        const dateStr = `${yearMonth}-${dayStr}`;
+
+                        const sessions = ["1st Dars", "2nd Dars"];
+                        for (const session of sessions) {
+                            const attData = {
+                                date: dateStr,
+                                sessionName: session,
+                                status: status,
+                                markedBy: "import_script",
+                                timestamp: new Date().toISOString()
+                            };
+
+                            // Use predictable doc ID to prevent duplicates if run twice
+                            const docId = `${dateStr}_${session.replace(/\s+/g, '')}`;
+                            await setDoc(doc(db, `users/${student.id}/attendance`, docId), attData);
+                            recordsAdded++;
+                        }
+                    }
+                }
+
+                log(`Successfully added ${recordsAdded} attendance records!`);
+                log("Import complete. You can now view the Monthly Report in the portal.");
+
+            } catch (err) {
+                log(`<span style="color:red">Error: ${err.message}</span>`);
+            }
+            btn.disabled = false;
+        });
+    </script>
+</body>
+</html>

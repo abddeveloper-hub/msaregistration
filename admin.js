@@ -333,7 +333,9 @@ document.getElementById('directAddFacBtn')?.addEventListener('click', async () =
 
 // 4. GLOBAL STUDENTS
 function renderGlobalStudents() {
-    const students = allUsers.filter(isStudentApplication);
+    const students = allUsers.filter(isStudentApplication).sort((a, b) => {
+        return (a.rollNumber || '').toString().localeCompare((b.rollNumber || '').toString(), undefined, { numeric: true });
+    });
     const tbody = document.getElementById('globalStuTableBody');
     if(!tbody) return;
     

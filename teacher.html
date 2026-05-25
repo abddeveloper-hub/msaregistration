@@ -22,6 +22,7 @@
             }
         })();
     </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head>
 <body>
     <div class="portal-layout">
@@ -136,7 +137,7 @@
                         <div class="input-field" style="margin-bottom:1.5rem;">
                             <label class="label">New Subject Name</label>
                             <div style="display:grid; grid-template-columns: 1fr 150px auto; gap:1rem;">
-                                <input type="text" id="newSubName" class="input" placeholder="e.g. Arabic Grammar, Fiqh...">
+                                <input type="text" id="newSubName" class="input" dir="auto" placeholder="e.g. Arabic Grammar, Fiqh...">
                                 <select id="newSubBatch" class="input">
                                     <option value="All">All Batches</option>
                                 </select>
@@ -204,9 +205,10 @@
                         <div id="markedDatesList" style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.5rem;"></div>
                     </div>
                     
-                    <div style="display:flex; gap:1rem; margin-bottom:2rem; align-items:center;">
+                    <div style="display:flex; flex-wrap:wrap; gap:1rem; margin-bottom:2rem; align-items:center;">
                         <button class="btn btn-ghost" id="loadAttendanceGridBtn">Load Students (New)</button>
                         <button class="btn btn-ghost" id="editPastAttendanceBtn" style="border: 1px solid var(--primary); color:var(--primary);">Edit Past Attendance</button>
+                        <button class="btn btn-ghost hidden" id="downloadAttPdfBtn" style="border: 1px solid var(--success); color:var(--success);">📥 Download PDF</button>
                     </div>
 
                     <table class="data-table hidden" id="attendanceGridTable">
@@ -217,6 +219,20 @@
                     <div style="display:flex; gap:1rem; margin-top:1rem;">
                         <button class="btn btn-main hidden" id="saveAttendanceBtn" style="flex:1;">Submit Attendance</button>
                         <button class="btn btn-ghost hidden" id="deleteAttendanceBtn" style="color:var(--error); border: 1px solid var(--error); flex:1;">Delete This Record</button>
+                    </div>
+
+                    <hr style="border-color:var(--border); margin:2rem 0;">
+                    
+                    <div style="margin-bottom:1rem;">
+                        <h3>Monthly Attendance Report</h3>
+                        <p style="font-size:0.85rem; color:var(--text-dim); margin-bottom:1rem;">Select a Subject and Batch above, choose a month below, and download the report.</p>
+                        <div class="form-section grid-2" style="align-items:end;">
+                            <div class="input-field">
+                                <label class="label">Select Month</label>
+                                <input type="month" id="attMonth" class="input">
+                            </div>
+                            <button class="btn btn-ghost" id="downloadMonthlyAttPdfBtn" style="border: 1px solid var(--primary); color:var(--primary); width:100%;">📥 Download Monthly PDF</button>
+                        </div>
                     </div>
                 </div>
 

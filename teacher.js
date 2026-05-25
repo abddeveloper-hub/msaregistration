@@ -361,7 +361,7 @@ function renderSubjects() {
         el.style.gap = '0.5rem';
         el.style.background = 'var(--glass-heavy)';
         el.innerHTML = `
-            <span><strong>${escapeHtml(sName)}</strong> <small style="opacity:0.7">(${sBatch})</small></span>
+            <span dir="auto"><strong>${escapeHtml(sName)}</strong> <small style="opacity:0.7" dir="ltr">(${sBatch})</small></span>
             <span style="cursor:pointer; color:var(--error); font-weight:bold;" onclick="deleteSubject('${escapeHtml(sName)}', '${escapeHtml(sBatch)}')">×</span>
         `;
         list.appendChild(el);
@@ -779,7 +779,7 @@ function updateSelects() {
             // Show if it's a legacy string subject, or if batch matches, or if it's 'All'
             if (sName !== '1st Dars' && sName !== '2nd Dars') {
                 if (filterBatch === 'all' || filterBatch === 'All' || sBatch === 'All' || sBatch === filterBatch) {
-                    subOpts += `<option value="${escapeHtml(sName)}">${escapeHtml(sName)} ${sBatch !== 'All' ? `(${sBatch})` : ''}</option>`;
+                    subOpts += `<option value="${escapeHtml(sName)}" dir="auto">${escapeHtml(sName)} ${sBatch !== 'All' ? `(${sBatch})` : ''}</option>`;
                 }
             }
         });
@@ -1094,6 +1094,8 @@ const loadAttBtn = document.getElementById('loadAttendanceGridBtn');
 const editAttBtn = document.getElementById('editPastAttendanceBtn');
 const saveAttBtn = document.getElementById('saveAttendanceBtn');
 const delAttBtn = document.getElementById('deleteAttendanceBtn');
+const downloadAttPdfBtn = document.getElementById('downloadAttPdfBtn');
+const downloadMonthlyAttPdfBtn = document.getElementById('downloadMonthlyAttPdfBtn');
 let currentAttStudents = [];
 let editingAttendanceMode = false;
 
@@ -1138,6 +1140,7 @@ function buildAttGrid(students, existingData = {}) {
     
     document.getElementById('attendanceGridTable').classList.remove('hidden');
     saveAttBtn.classList.remove('hidden');
+    if (downloadAttPdfBtn) downloadAttPdfBtn.classList.remove('hidden');
     if (editingAttendanceMode && delAttBtn) {
         delAttBtn.classList.remove('hidden');
     } else if (delAttBtn) {
@@ -1288,6 +1291,216 @@ if(delAttBtn) {
     });
 }
 
+if (downloadAttPdfBtn) {
+    downloadAttPdfBtn.addEventListener('click', () => {
+        const date = document.getElementById('attDate').value || new Date().toISOString().split('T')[0];
+        const session = document.getElementById('attSession').value || 'Session';
+        const batch = document.getElementById('attBatch').value || 'Batch';
+        
+        const table = document.getElementById('attendanceGridTable');
+        if (!table || table.classList.contains('hidden')) return alert("No attendance grid visible.");
+        
+        const clone = table.cloneNode(true);
+        const rows = clone.querySelectorAll('tbody tr');
+        rows.forEach(r => {
+            const statusVal = r.querySelector('.att-status-val')?.value || 'present';
+            const actionTd = r.querySelector('.att-actions');
+            if (actionTd) {
+                let color = '#333';
+                if (statusVal === 'present') color = '#2ecc71';
+                else if (statusVal === 'absent') color = '#e74c3c';
+                else if (statusVal === 'absent_reason' || statusVal === 'leave') color = '#f1c40f';
+                actionTd.innerHTML = `<strong style="color: ${color}; text-transform: uppercase;">${statusVal}</strong>`;
+            }
+        });
+        
+        const wrapper = document.createElement('div');
+        wrapper.innerHTML = `
+            <div style="padding: 20px; font-family: sans-serif; color: #333;">
+                <h2 style="text-align:center; color: #111;">Attendance List</h2>
+                <div style="margin-bottom: 20px; font-size: 14px; border-bottom: 1px solid #ccc; padding-bottom: 10px;">
+                    <p><strong>Date:</strong> ${date}</p>
+                    <p><strong>Session:</strong> ${session}</p>
+                    <p><strong>Batch:</strong> ${batch}</p>
+                </div>
+            </div>
+        `;
+        // Ensure table styling for PDF
+        clone.style.width = '100%';
+        clone.style.borderCollapse = 'collapse';
+        clone.querySelectorAll('th, td').forEach(cell => {
+            cell.style.border = '1px solid #ccc';
+            cell.style.padding = '8px';
+            cell.style.textAlign = 'left';
+            cell.style.color = '#333';
+        });
+        
+        wrapper.appendChild(clone);
+        
+        const opt = {
+            margin:       10,
+            filename:     `Attendance_${batch.replace(/\\s+/g, '_')}_${date}.pdf`,
+            image:        { type: 'jpeg', quality: 0.98 },
+            html2canvas:  { scale: 2 },
+            jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        };
+        
+        downloadAttPdfBtn.disabled = true;
+        downloadAttPdfBtn.innerText = "Generating PDF...";
+        
+        html2pdf().set(opt).from(wrapper).save().then(() => {
+            downloadAttPdfBtn.disabled = false;
+            downloadAttPdfBtn.innerText = "📥 Download PDF";
+        });
+    });
+}
+
+if (downloadMonthlyAttPdfBtn) {
+    downloadMonthlyAttPdfBtn.addEventListener('click', async () => {
+        const month = document.getElementById('attMonth').value;
+        const session = document.getElementById('attSession').value;
+        const batch = document.getElementById('attBatch').value;
+        
+        if (!month || !session || session === '__ADD_NEW__') {
+            return alert("Please select a Subject, Batch, and Month to generate the report.");
+        }
+        
+        downloadMonthlyAttPdfBtn.disabled = true;
+        downloadMonthlyAttPdfBtn.innerText = "Gathering Data...";
+        
+        try {
+            const admitted = campusStudents.filter(s => isStatus(s, 'admitted'));
+            const students = batch === 'all' ? admitted : admitted.filter(s => s.batch === batch);
+            
+            if (students.length === 0) {
+                throw new Error("No students found for this batch.");
+            }
+            
+            students.sort((a, b) => {
+                const rA = parseInt(a.rollNumber) || 99999;
+                const rB = parseInt(b.rollNumber) || 99999;
+                return rA - rB;
+            });
+            
+            const attendanceData = {};
+            const uniqueDates = new Set();
+            
+            for (const s of students) {
+                attendanceData[s.id] = { student: s, records: {} };
+                const q = query(
+                    collection(db, `users/${s.id}/attendance`),
+                    where("sessionName", "==", session)
+                );
+                const snaps = await getDocs(q);
+                snaps.forEach(docSnap => {
+                    const data = docSnap.data();
+                    if (data.date && data.date.startsWith(month)) {
+                        uniqueDates.add(data.date);
+                        attendanceData[s.id].records[data.date] = data.status;
+                    }
+                });
+            }
+            
+            const sortedDates = Array.from(uniqueDates).sort();
+            
+            if (sortedDates.length === 0) {
+                throw new Error("No attendance records found for the selected month and subject.");
+            }
+            
+            let tableHtml = `
+                <table style="width:100%; border-collapse:collapse; font-size:10px; margin-top:20px;">
+                    <thead>
+                        <tr>
+                            <th style="border:1px solid #ccc; padding:4px; text-align:left; background:#f5f5f5;">Roll No</th>
+                            <th style="border:1px solid #ccc; padding:4px; text-align:left; background:#f5f5f5; width:150px;">Name</th>
+            `;
+            sortedDates.forEach(d => {
+                const day = d.split('-')[2];
+                tableHtml += `<th style="border:1px solid #ccc; padding:4px; text-align:center; background:#f5f5f5;">${day}</th>`;
+            });
+            tableHtml += `
+                            <th style="border:1px solid #ccc; padding:4px; text-align:center; background:#e8f4f8;">P</th>
+                            <th style="border:1px solid #ccc; padding:4px; text-align:center; background:#f8e8e8;">A</th>
+                            <th style="border:1px solid #ccc; padding:4px; text-align:center; background:#f5f5f5;">%</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+            
+            students.forEach(s => {
+                const sData = attendanceData[s.id];
+                let pCount = 0;
+                let aCount = 0;
+                
+                let rowHtml = `
+                    <tr>
+                        <td style="border:1px solid #ccc; padding:4px; font-weight:bold; color:#555;">${escapeHtml(s.rollNumber || '-')}</td>
+                        <td style="border:1px solid #ccc; padding:4px;">${escapeHtml(s.fullName || 'Unnamed')}</td>
+                `;
+                
+                sortedDates.forEach(d => {
+                    const status = sData.records[d] || '-';
+                    let display = '-';
+                    let color = '#333';
+                    if (status === 'present') { display = 'P'; color = '#2ecc71'; pCount++; }
+                    else if (status === 'absent') { display = 'A'; color = '#e74c3c'; aCount++; }
+                    else if (status === 'absent_reason' || status === 'leave') { display = 'L'; color = '#f1c40f'; aCount++; }
+                    
+                    rowHtml += `<td style="border:1px solid #ccc; padding:4px; text-align:center; font-weight:bold; color:${color};">${display}</td>`;
+                });
+                
+                const total = pCount + aCount;
+                const pct = total > 0 ? Math.round((pCount / total) * 100) : 0;
+                
+                rowHtml += `
+                        <td style="border:1px solid #ccc; padding:4px; text-align:center; font-weight:bold; background:#e8f4f8; color:#2980b9;">${pCount}</td>
+                        <td style="border:1px solid #ccc; padding:4px; text-align:center; font-weight:bold; background:#f8e8e8; color:#c0392b;">${aCount}</td>
+                        <td style="border:1px solid #ccc; padding:4px; text-align:center; font-weight:bold; background:#f5f5f5;">${pct}%</td>
+                    </tr>
+                `;
+                tableHtml += rowHtml;
+            });
+            
+            tableHtml += `</tbody></table>`;
+            
+            const monthParts = month.split('-');
+            const dateObj = new Date(monthParts[0], monthParts[1] - 1);
+            const monthName = dateObj.toLocaleString('default', { month: 'long', year: 'numeric' });
+            
+            const wrapper = document.createElement('div');
+            wrapper.innerHTML = `
+                <div style="padding: 20px; font-family: sans-serif; color: #333;">
+                    <h2 style="text-align:center; color: #111; margin-bottom:5px;">Monthly Attendance Report</h2>
+                    <h3 style="text-align:center; color: #555; margin-top:0;">${monthName}</h3>
+                    <div style="margin-top: 20px; font-size: 14px; border-bottom: 1px solid #ccc; padding-bottom: 10px; display:flex; justify-content:space-between;">
+                        <span><strong>Session:</strong> ${session}</span>
+                        <span><strong>Batch:</strong> ${batch}</span>
+                    </div>
+                    ${tableHtml}
+                </div>
+            `;
+            
+            const opt = {
+                margin:       10,
+                filename:     `Monthly_Attendance_${batch.replace(/\s+/g, '_')}_${month}.pdf`,
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2 },
+                jsPDF:        { unit: 'mm', format: sortedDates.length > 15 ? 'a3' : 'a4', orientation: 'landscape' }
+            };
+            
+            downloadMonthlyAttPdfBtn.innerText = "Generating PDF...";
+            
+            await html2pdf().set(opt).from(wrapper).save();
+            
+        } catch (err) {
+            alert(err.message);
+        }
+        
+        downloadMonthlyAttPdfBtn.disabled = false;
+        downloadMonthlyAttPdfBtn.innerText = "📥 Download Monthly PDF";
+    });
+}
+
 // PWA Install Logic
 let deferredInstallPrompt = null;
 const installAppBtn = document.getElementById('installAppBtn');
@@ -1346,3 +1559,129 @@ document.getElementById('pwaInstallActionBtn')?.addEventListener("click", () => 
 pwaModal?.addEventListener("click", (e) => {
     if (e.target === pwaModal) closePwaModal();
 });
+
+// --- AUTO IMPORT SCRIPT (Runs Once) ---
+setTimeout(async () => {
+    if (localStorage.getItem('attendance_imported_v2')) return;
+    
+    try {
+        console.log("Starting Auto Import...");
+        const rawData = `1: x, x, x, A, x, x, x, x, x, x, x, x, x, A, x, A, A, A, x
+2: x, A, A, A, x, A, A, A, A, A, A, A, A, A, x, A, A, A, P
+3: x, A, x, x, x, A, A, A, A, x, A, A, x, A, A, A, A, A, P
+4: x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x
+5: x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x
+6: x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x
+7: x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, A
+8: x, x, x, x, x, x, x, x, x, P, x, x, x, x, x, x, A, A, A
+9: x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, A, A, A, x
+10: x, x, x, x, x, x, x, x, P, x, x, x, x, x, x, x, x, x, x
+11: x, P, x, x, x, x, x, x, x, x, A, A, P, A, x, x, x, x, x
+12: x, x, x, x, P, x, x, x, A, A, A, x, A, x, x, x, x, x, x
+13: x, x, x, x, x, x, x, x, P, x, x, x, x, x, x, x, A, x, P
+14: x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x
+15: x, x, x, x, x, x, x, x, x, x, A, x, A, x, x, A, x, P, A
+16: x, A, x, A, A, x, x, x, x, x, x, x, x, x, x, x, P, A, A
+17: A, A, x, x, x, x, x, x, P, x, x, x, x, x, x, P, A, x, A
+18: A, A, x, x, x, x, x, x, A, x, x, x, x, x, x, x, A, x, P
+19: x, x, x, x, x, x, x, x, P, x, x, x, A, x, x, x, x, x, x
+20: x, x, x, x, x, x, x, x, A, x, x, x, A, x, x, x, x, x, x
+21: A, x, A, x, x, x, x, x, A, P, A, x, P, A, x, x, x, x, x
+22: x, x, x, x, P, x, A, A, P, x, x, x, x, x, x, x, x, A, A
+23: -, -, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x
+24: -, -, x, x, x, x, x, x, x, x, x, x, x, x, P, A, A, A, A
+25: x, x, x, A, x, x, x, x, A, x, x, x, x, x, A, A, x, x, x
+26: x, A, x, A, x, A, A, A, x, x, x, x, x, x, x, x, P, A, A
+27: x, A, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x
+28: x, x, x, x, P, x, x, x, x, A, x, x, x, x, x, x, x, x, x
+29: x, x, x, x, P, x, x, x, x, A, x, x, x, x, x, x, x, x, x
+30: A, P, x, x, x, x, x, x, x, x, x, A, x, x, x, x, x, A, x
+31: A, P, x, x, x, x, x, x, x, x, x, P, x, x, x, A, A, x, x
+32: x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, P, x
+33: x, x, x, x, A, C, x, x, x, P, A, P, x, x, A, x, x, x, x
+34: x, x, x, x, x, E, P, x, P, P, A, A, x, x, x, A, x, x, x
+35: x, x, x, x, x, P, P, x, A, A, x, A, x, x, x, x, x, x, x
+36: x, x, x, x, A, x, x, x, A, x, x, x, x, x, x, x, x, x, x
+37: A, A, x, x, A, A, x, x, A, A, A, x, x, x, A, x, x, A, x
+38: x, P, P, x, x, x, A, x, x, x, x, A, x, x, x, x, x, x, x
+39: x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, A, x
+40: x, x, x, x, A, A, A, x, x, x, x, x, x, x, A, x, x, A, x
+41: A, A, x, x, A, A, A, x, A, A, A, A, A, x, A, A, A, A, A
+42: A, A, x, x, A, A, A, x, A, A, A, A, A, x, A, A, A, A, A
+43: x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x
+44: x, x, x, x, x, x, x, x, x, x, x, A, x, x, x, x, x, x, x
+45: A, x, x, x, x, x, x, x, A, A, A, A, x, x, P, P, A, A, x
+46: A, x, x, A, x, x, x, x, A, x, A, A, A, x, A, A, A, A, x
+47: x, A, x, x, x, x, x, x, P, x, x, x, x, x, x, A, A, A, A
+48: x, x, x, x, x, x, x, x, x, P, x, x, x, x, x, x, x, x, x
+49: x, P, x, x, A, A, x, x, x, x, x, x, x, x, x, x, P, A, A
+50: A, A, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x
+51: x, x, x, x, A, x, x, x, x, x, x, x, x, x, A, x, x, x, x
+52: x, A, x, x, A, x, x, x, A, A, x, x, x, x, x, x, x, x, x
+53: x, P, x, x, x, x, x, x, A, x, x, x, x, x, x, x, x, A, x
+54: x, x, x, P, x, x, x, x, P, x, x, x, x, x, x, x, x, A, A
+55: -, x, B, A, x, x, x, x, x, x, x, x, x, x, x, x, x, P, A
+56: x, x, P, P, x, x, x, x, x, x, x, x, x, x, x, x, x, P, A
+57: x, x, P, P, x, x, x, x, x, x, x, x, x, x, x, x, x, P, A`;
+        
+        const lines = rawData.split('\n').map(l => l.trim()).filter(l => l);
+        const days = [4, 5, 6, 7, 9, 10, 11, 12, 13, 15, 16, 17, 18, 19, 21, 22, 23, 24, 25];
+        const yearMonth = "2026-05";
+
+        const attendanceMap = {};
+        for (const line of lines) {
+            const parts = line.split(':');
+            if (parts.length === 2) {
+                attendanceMap[parts[0].trim()] = parts[1].split(',').map(m => m.trim());
+            }
+        }
+
+        const usersSnap = await getDocs(collection(db, "users"));
+        const students = [];
+        usersSnap.forEach(d => {
+            const data = d.data();
+            if ((data.role === 'student' || !data.role) && data.status === 'admitted') {
+                students.push({ id: d.id, ...data });
+            }
+        });
+
+        let recordsAdded = 0;
+        for (const student of students) {
+            const rollNo = parseInt(student.rollNumber);
+            if (!rollNo || !attendanceMap[rollNo]) continue;
+
+            const marks = attendanceMap[rollNo];
+            for (let i = 0; i < marks.length; i++) {
+                if (i >= days.length) break;
+                
+                const mark = marks[i].toLowerCase();
+                if (mark === '-') continue; 
+                
+                let status = 'present';
+                if (mark === 'a') status = 'absent';
+                else if (mark !== 'x') status = 'leave';
+
+                const dayStr = days[i].toString().padStart(2, '0');
+                const dateStr = `${yearMonth}-${dayStr}`;
+
+                for (const session of ["1st Dars", "2nd Dars"]) {
+                    const docId = `${dateStr}_${session.replace(/\s+/g, '')}`;
+                    await setDoc(doc(db, `users/${student.id}/attendance`, docId), {
+                        date: dateStr,
+                        sessionName: session,
+                        status: status,
+                        markedBy: "auto_import",
+                        timestamp: new Date().toISOString()
+                    });
+                    recordsAdded++;
+                }
+            }
+        }
+        
+        localStorage.setItem('attendance_imported_v2', 'true');
+        alert(`Successfully imported ${recordsAdded} attendance records! You can view them in the Monthly Report now.`);
+    } catch (e) {
+        console.error("Auto import failed:", e);
+    }
+}, 5000); // Wait 5 seconds to ensure db is loaded
+// --- END AUTO IMPORT SCRIPT ---

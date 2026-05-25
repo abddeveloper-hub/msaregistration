@@ -1407,8 +1407,8 @@ if (downloadMonthlyAttPdfBtn) {
                 <table style="width:100%; border-collapse:collapse; font-size:10px; margin-top:20px; color:#000;">
                     <thead>
                         <tr>
-                            <th style="border:1px solid #000; padding:4px; text-align:left; background:#f5f5f5; color:#000;">Roll No</th>
-                            <th style="border:1px solid #000; padding:4px; text-align:left; background:#f5f5f5; width:150px; color:#000;">Name</th>
+                            <th style="border:1px solid #000; padding:4px; text-align:left; background:#f5f5f5; color:#000; white-space:nowrap;">Roll No</th>
+                            <th style="border:1px solid #000; padding:4px; text-align:left; background:#f5f5f5; min-width:150px; color:#000; white-space:nowrap;">Name</th>
             `;
             sortedDates.forEach(d => {
                 const day = d.split('-')[2];
@@ -1430,8 +1430,8 @@ if (downloadMonthlyAttPdfBtn) {
                 
                 let rowHtml = `
                     <tr>
-                        <td style="border:1px solid #000; padding:4px; font-weight:bold; color:#000;">${escapeHtml(s.rollNumber || '-')}</td>
-                        <td style="border:1px solid #000; padding:4px; color:#000;">${escapeHtml(s.fullName || 'Unnamed')}</td>
+                        <td style="border:1px solid #000; padding:4px; font-weight:bold; color:#000; white-space:nowrap;">${escapeHtml(s.rollNumber || '-')}</td>
+                        <td style="border:1px solid #000; padding:4px; color:#000; white-space:nowrap;">${escapeHtml(s.fullName || 'Unnamed')}</td>
                 `;
                 
                 sortedDates.forEach(d => {
@@ -1479,7 +1479,7 @@ if (downloadMonthlyAttPdfBtn) {
                 margin:       10,
                 filename:     `Monthly_Attendance_${batch.replace(/\s+/g, '_')}_${month}.pdf`,
                 image:        { type: 'jpeg', quality: 0.98 },
-                html2canvas:  { scale: 2, windowWidth: 1200 },
+                html2canvas:  { scale: 2, windowWidth: 1800 },
                 jsPDF:        { unit: 'mm', format: sortedDates.length > 15 ? 'a3' : 'a4', orientation: 'landscape' }
             };
             

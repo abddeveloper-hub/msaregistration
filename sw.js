@@ -1,4 +1,4 @@
-const CACHE_NAME = 'msaukkuda-portal-v7';
+const CACHE_NAME = 'msaukkuda-portal-v8';
 const ASSETS = [
   './',
   './index.html',

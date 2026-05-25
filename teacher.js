@@ -1306,19 +1306,15 @@ if (downloadAttPdfBtn) {
             const statusVal = r.querySelector('.att-status-val')?.value || 'present';
             const actionTd = r.querySelector('.att-actions');
             if (actionTd) {
-                let color = '#333';
-                if (statusVal === 'present') color = '#2ecc71';
-                else if (statusVal === 'absent') color = '#e74c3c';
-                else if (statusVal === 'absent_reason' || statusVal === 'leave') color = '#f1c40f';
-                actionTd.innerHTML = `<strong style="color: ${color}; text-transform: uppercase;">${statusVal}</strong>`;
+                actionTd.innerHTML = `<strong style="color: #000; text-transform: uppercase;">${statusVal}</strong>`;
             }
         });
         
         const wrapper = document.createElement('div');
         wrapper.innerHTML = `
-            <div style="padding: 20px; font-family: sans-serif; color: #333;">
-                <h2 style="text-align:center; color: #111;">Attendance List</h2>
-                <div style="margin-bottom: 20px; font-size: 14px; border-bottom: 1px solid #ccc; padding-bottom: 10px;">
+            <div style="padding: 20px; font-family: sans-serif; color: #000;">
+                <h2 style="text-align:center; color: #000;">Attendance List</h2>
+                <div style="margin-bottom: 20px; font-size: 14px; border-bottom: 1px solid #000; padding-bottom: 10px; color: #000;">
                     <p><strong>Date:</strong> ${date}</p>
                     <p><strong>Session:</strong> ${session}</p>
                     <p><strong>Batch:</strong> ${batch}</p>
@@ -1329,10 +1325,10 @@ if (downloadAttPdfBtn) {
         clone.style.width = '100%';
         clone.style.borderCollapse = 'collapse';
         clone.querySelectorAll('th, td').forEach(cell => {
-            cell.style.border = '1px solid #ccc';
+            cell.style.border = '1px solid #000';
             cell.style.padding = '8px';
             cell.style.textAlign = 'left';
-            cell.style.color = '#333';
+            cell.style.color = '#000';
         });
         
         wrapper.appendChild(clone);
@@ -1341,7 +1337,7 @@ if (downloadAttPdfBtn) {
             margin:       10,
             filename:     `Attendance_${batch.replace(/\\s+/g, '_')}_${date}.pdf`,
             image:        { type: 'jpeg', quality: 0.98 },
-            html2canvas:  { scale: 2 },
+            html2canvas:  { scale: 2, windowWidth: 800 },
             jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
         };
         
@@ -1408,20 +1404,20 @@ if (downloadMonthlyAttPdfBtn) {
             }
             
             let tableHtml = `
-                <table style="width:100%; border-collapse:collapse; font-size:10px; margin-top:20px;">
+                <table style="width:100%; border-collapse:collapse; font-size:10px; margin-top:20px; color:#000;">
                     <thead>
                         <tr>
-                            <th style="border:1px solid #ccc; padding:4px; text-align:left; background:#f5f5f5;">Roll No</th>
-                            <th style="border:1px solid #ccc; padding:4px; text-align:left; background:#f5f5f5; width:150px;">Name</th>
+                            <th style="border:1px solid #000; padding:4px; text-align:left; background:#f5f5f5; color:#000;">Roll No</th>
+                            <th style="border:1px solid #000; padding:4px; text-align:left; background:#f5f5f5; width:150px; color:#000;">Name</th>
             `;
             sortedDates.forEach(d => {
                 const day = d.split('-')[2];
-                tableHtml += `<th style="border:1px solid #ccc; padding:4px; text-align:center; background:#f5f5f5;">${day}</th>`;
+                tableHtml += `<th style="border:1px solid #000; padding:4px; text-align:center; background:#f5f5f5; color:#000;">${day}</th>`;
             });
             tableHtml += `
-                            <th style="border:1px solid #ccc; padding:4px; text-align:center; background:#e8f4f8;">P</th>
-                            <th style="border:1px solid #ccc; padding:4px; text-align:center; background:#f8e8e8;">A</th>
-                            <th style="border:1px solid #ccc; padding:4px; text-align:center; background:#f5f5f5;">%</th>
+                            <th style="border:1px solid #000; padding:4px; text-align:center; background:#f5f5f5; color:#000;">P</th>
+                            <th style="border:1px solid #000; padding:4px; text-align:center; background:#f5f5f5; color:#000;">A</th>
+                            <th style="border:1px solid #000; padding:4px; text-align:center; background:#f5f5f5; color:#000;">%</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -1434,28 +1430,27 @@ if (downloadMonthlyAttPdfBtn) {
                 
                 let rowHtml = `
                     <tr>
-                        <td style="border:1px solid #ccc; padding:4px; font-weight:bold; color:#555;">${escapeHtml(s.rollNumber || '-')}</td>
-                        <td style="border:1px solid #ccc; padding:4px;">${escapeHtml(s.fullName || 'Unnamed')}</td>
+                        <td style="border:1px solid #000; padding:4px; font-weight:bold; color:#000;">${escapeHtml(s.rollNumber || '-')}</td>
+                        <td style="border:1px solid #000; padding:4px; color:#000;">${escapeHtml(s.fullName || 'Unnamed')}</td>
                 `;
                 
                 sortedDates.forEach(d => {
                     const status = sData.records[d] || '-';
                     let display = '-';
-                    let color = '#333';
-                    if (status === 'present') { display = 'P'; color = '#2ecc71'; pCount++; }
-                    else if (status === 'absent') { display = 'A'; color = '#e74c3c'; aCount++; }
-                    else if (status === 'absent_reason' || status === 'leave') { display = 'L'; color = '#f1c40f'; aCount++; }
+                    if (status === 'present') { display = 'P'; pCount++; }
+                    else if (status === 'absent') { display = 'A'; aCount++; }
+                    else if (status === 'absent_reason' || status === 'leave') { display = 'L'; aCount++; }
                     
-                    rowHtml += `<td style="border:1px solid #ccc; padding:4px; text-align:center; font-weight:bold; color:${color};">${display}</td>`;
+                    rowHtml += `<td style="border:1px solid #000; padding:4px; text-align:center; font-weight:bold; color:#000;">${display}</td>`;
                 });
                 
                 const total = pCount + aCount;
                 const pct = total > 0 ? Math.round((pCount / total) * 100) : 0;
                 
                 rowHtml += `
-                        <td style="border:1px solid #ccc; padding:4px; text-align:center; font-weight:bold; background:#e8f4f8; color:#2980b9;">${pCount}</td>
-                        <td style="border:1px solid #ccc; padding:4px; text-align:center; font-weight:bold; background:#f8e8e8; color:#c0392b;">${aCount}</td>
-                        <td style="border:1px solid #ccc; padding:4px; text-align:center; font-weight:bold; background:#f5f5f5;">${pct}%</td>
+                        <td style="border:1px solid #000; padding:4px; text-align:center; font-weight:bold; color:#000; background:#f5f5f5;">${pCount}</td>
+                        <td style="border:1px solid #000; padding:4px; text-align:center; font-weight:bold; color:#000; background:#f5f5f5;">${aCount}</td>
+                        <td style="border:1px solid #000; padding:4px; text-align:center; font-weight:bold; color:#000; background:#f5f5f5;">${pct}%</td>
                     </tr>
                 `;
                 tableHtml += rowHtml;
@@ -1469,10 +1464,10 @@ if (downloadMonthlyAttPdfBtn) {
             
             const wrapper = document.createElement('div');
             wrapper.innerHTML = `
-                <div style="padding: 20px; font-family: sans-serif; color: #333;">
-                    <h2 style="text-align:center; color: #111; margin-bottom:5px;">Monthly Attendance Report</h2>
-                    <h3 style="text-align:center; color: #555; margin-top:0;">${monthName}</h3>
-                    <div style="margin-top: 20px; font-size: 14px; border-bottom: 1px solid #ccc; padding-bottom: 10px; display:flex; justify-content:space-between;">
+                <div style="padding: 20px; font-family: sans-serif; color: #000;">
+                    <h2 style="text-align:center; color: #000; margin-bottom:5px;">Monthly Attendance Report</h2>
+                    <h3 style="text-align:center; color: #000; margin-top:0;">${monthName}</h3>
+                    <div style="margin-top: 20px; font-size: 14px; border-bottom: 1px solid #000; padding-bottom: 10px; display:flex; justify-content:space-between; color: #000;">
                         <span><strong>Session:</strong> ${session}</span>
                         <span><strong>Batch:</strong> ${batch}</span>
                     </div>
@@ -1484,7 +1479,7 @@ if (downloadMonthlyAttPdfBtn) {
                 margin:       10,
                 filename:     `Monthly_Attendance_${batch.replace(/\s+/g, '_')}_${month}.pdf`,
                 image:        { type: 'jpeg', quality: 0.98 },
-                html2canvas:  { scale: 2 },
+                html2canvas:  { scale: 2, windowWidth: 1200 },
                 jsPDF:        { unit: 'mm', format: sortedDates.length > 15 ? 'a3' : 'a4', orientation: 'landscape' }
             };
             

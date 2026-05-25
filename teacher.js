@@ -1337,22 +1337,27 @@ if (downloadAttPdfBtn) {
         wrapper.style.background = '#fff';
         document.body.appendChild(wrapper);
         
-        const opt = {
-            margin:       10,
-            filename:     `Attendance_${batch.replace(/\\s+/g, '_')}_${date}.pdf`,
-            image:        { type: 'jpeg', quality: 0.98 },
-            html2canvas:  { scale: 2 },
-            jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
-        };
-        
-        downloadAttPdfBtn.disabled = true;
-        downloadAttPdfBtn.innerText = "Generating PDF...";
-        
-        html2pdf().set(opt).from(wrapper).save().then(() => {
-            document.body.removeChild(wrapper);
-            downloadAttPdfBtn.disabled = false;
-            downloadAttPdfBtn.innerText = "📥 Download PDF";
-        });
+        // Wait a tiny bit for browser layout
+        setTimeout(() => {
+            const wWidth = wrapper.scrollWidth + 40;
+
+            const opt = {
+                margin:       10,
+                filename:     `Attendance_${batch.replace(/\\s+/g, '_')}_${date}.pdf`,
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2, windowWidth: wWidth },
+                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+            
+            downloadAttPdfBtn.disabled = true;
+            downloadAttPdfBtn.innerText = "Generating PDF...";
+            
+            html2pdf().set(opt).from(wrapper).save().then(() => {
+                document.body.removeChild(wrapper);
+                downloadAttPdfBtn.disabled = false;
+                downloadAttPdfBtn.innerText = "📥 Download PDF";
+            });
+        }, 50);
     });
 }
 
@@ -1485,11 +1490,15 @@ if (downloadMonthlyAttPdfBtn) {
             wrapper.style.background = '#fff';
             document.body.appendChild(wrapper);
             
+            // Allow layout calculation
+            await new Promise(r => setTimeout(r, 50));
+            const wWidth = wrapper.scrollWidth + 40;
+
             const opt = {
                 margin:       10,
                 filename:     `Monthly_Attendance_${batch.replace(/\s+/g, '_')}_${month}.pdf`,
                 image:        { type: 'jpeg', quality: 0.98 },
-                html2canvas:  { scale: 2 },
+                html2canvas:  { scale: 2, windowWidth: wWidth },
                 jsPDF:        { unit: 'mm', format: sortedDates.length > 15 ? 'a3' : 'a4', orientation: 'landscape' }
             };
             

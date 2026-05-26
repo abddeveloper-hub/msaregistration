@@ -1300,64 +1300,48 @@ if (downloadAttPdfBtn) {
         const table = document.getElementById('attendanceGridTable');
         if (!table || table.classList.contains('hidden')) return alert("No attendance grid visible.");
         
-        const clone = table.cloneNode(true);
-        const rows = clone.querySelectorAll('tbody tr');
+        const rows = table.querySelectorAll('tbody tr');
+        const head = [];
+        table.querySelectorAll('thead th').forEach(th => head.push(th.innerText.trim()));
+        
+        const body = [];
         rows.forEach(r => {
-            const statusVal = r.querySelector('.att-status-val')?.value || 'present';
-            const actionTd = r.querySelector('.att-actions');
-            if (actionTd) {
-                actionTd.innerHTML = `<strong style="color: #000; text-transform: uppercase;">${statusVal}</strong>`;
-            }
-        });
-        
-        const wrapper = document.createElement('div');
-        wrapper.innerHTML = `
-            <div style="padding: 20px; font-family: sans-serif; color: #000;">
-                <h2 style="text-align:center; color: #000;">Attendance List</h2>
-                <div style="margin-bottom: 20px; font-size: 14px; border-bottom: 1px solid #000; padding-bottom: 10px; color: #000;">
-                    <p><strong>Date:</strong> ${date}</p>
-                    <p><strong>Session:</strong> ${session}</p>
-                    <p><strong>Batch:</strong> ${batch}</p>
-                </div>
-            </div>
-        `;
-        // Ensure table styling for PDF
-        clone.style.width = '100%';
-        clone.style.borderCollapse = 'collapse';
-        clone.querySelectorAll('th, td').forEach(cell => {
-            cell.style.border = '1px solid #000';
-            cell.style.padding = '8px';
-            cell.style.textAlign = 'left';
-            cell.style.color = '#000';
-        });
-        
-        wrapper.style.position = 'absolute';
-        wrapper.style.left = '-9999px';
-        wrapper.style.width = 'max-content';
-        wrapper.style.background = '#fff';
-        document.body.appendChild(wrapper);
-        
-        // Wait a tiny bit for browser layout
-        setTimeout(() => {
-            const wWidth = wrapper.scrollWidth + 40;
-
-            const opt = {
-                margin:       10,
-                filename:     `Attendance_${batch.replace(/\\s+/g, '_')}_${date}.pdf`,
-                image:        { type: 'jpeg', quality: 0.98 },
-                html2canvas:  { scale: 2, windowWidth: wWidth },
-                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
-            };
-            
-            downloadAttPdfBtn.disabled = true;
-            downloadAttPdfBtn.innerText = "Generating PDF...";
-            
-            html2pdf().set(opt).from(wrapper).save().then(() => {
-                document.body.removeChild(wrapper);
-                downloadAttPdfBtn.disabled = false;
-                downloadAttPdfBtn.innerText = "📥 Download PDF";
+            const cells = r.querySelectorAll('td');
+            const rowData = [];
+            cells.forEach((td, i) => {
+                if (td.classList.contains('att-actions')) {
+                    const statusVal = r.querySelector('.att-status-val')?.value || 'present';
+                    rowData.push(statusVal.toUpperCase());
+                } else {
+                    rowData.push(td.innerText.trim());
+                }
             });
-        }, 50);
+            body.push(rowData);
+        });
+        
+        downloadAttPdfBtn.disabled = true;
+        downloadAttPdfBtn.innerText = "Generating PDF...";
+
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+        
+        doc.setFontSize(16);
+        doc.text('Attendance List', 105, 15, { align: 'center' });
+        doc.setFontSize(10);
+        doc.text(`Date: ${date}   Session: ${session}   Batch: ${batch}`, 14, 25);
+        
+        doc.autoTable({
+            head: [head],
+            body: body,
+            startY: 30,
+            styles: { fontSize: 9, cellPadding: 3, textColor: [0,0,0], lineColor: [0,0,0], lineWidth: 0.1 },
+            headStyles: { fillColor: [240,240,240], textColor: [0,0,0], fontStyle: 'bold' },
+            alternateRowStyles: { fillColor: [250,250,250] },
+        });
+        
+        doc.save(`Attendance_${batch.replace(/\s+/g,'_')}_${date}.pdf`);
+        downloadAttPdfBtn.disabled = false;
+        downloadAttPdfBtn.innerText = "📥 Download PDF";
     });
 }
 
@@ -1379,7 +1363,7 @@ if (downloadMonthlyAttPdfBtn) {
             const students = batch === 'all' ? admitted : admitted.filter(s => s.batch === batch);
             
             if (students.length === 0) {
-                throw new Error("No students found for this batch.");
+                throw new Error("No admitted students found for this selection.");
             }
             
             students.sort((a, b) => {
@@ -1413,100 +1397,58 @@ if (downloadMonthlyAttPdfBtn) {
                 throw new Error("No attendance records found for the selected month and subject.");
             }
             
-            let tableHtml = `
-                <table style="width:100%; border-collapse:collapse; font-size:10px; margin-top:20px; color:#000;">
-                    <thead>
-                        <tr>
-                            <th style="border:1px solid #000; padding:4px; text-align:left; background:#f5f5f5; color:#000; white-space:nowrap;">Roll No</th>
-                            <th style="border:1px solid #000; padding:4px; text-align:left; background:#f5f5f5; min-width:150px; color:#000; white-space:nowrap;">Name</th>
-            `;
-            sortedDates.forEach(d => {
-                const day = d.split('-')[2];
-                tableHtml += `<th style="border:1px solid #000; padding:4px; text-align:center; background:#f5f5f5; color:#000;">${day}</th>`;
-            });
-            tableHtml += `
-                            <th style="border:1px solid #000; padding:4px; text-align:center; background:#f5f5f5; color:#000;">P</th>
-                            <th style="border:1px solid #000; padding:4px; text-align:center; background:#f5f5f5; color:#000;">A</th>
-                            <th style="border:1px solid #000; padding:4px; text-align:center; background:#f5f5f5; color:#000;">%</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-            `;
-            
-            students.forEach(s => {
-                const sData = attendanceData[s.id];
-                let pCount = 0;
-                let aCount = 0;
-                
-                let rowHtml = `
-                    <tr>
-                        <td style="border:1px solid #000; padding:4px; font-weight:bold; color:#000; white-space:nowrap;">${escapeHtml(s.rollNumber || '-')}</td>
-                        <td style="border:1px solid #000; padding:4px; color:#000; white-space:nowrap;">${escapeHtml(s.fullName || 'Unnamed')}</td>
-                `;
-                
-                sortedDates.forEach(d => {
-                    const status = sData.records[d] || '-';
-                    let display = '-';
-                    if (status === 'present') { display = 'P'; pCount++; }
-                    else if (status === 'absent') { display = 'A'; aCount++; }
-                    else if (status === 'absent_reason' || status === 'leave') { display = 'L'; aCount++; }
-                    
-                    rowHtml += `<td style="border:1px solid #000; padding:4px; text-align:center; font-weight:bold; color:#000;">${display}</td>`;
-                });
-                
-                const total = pCount + aCount;
-                const pct = total > 0 ? Math.round((pCount / total) * 100) : 0;
-                
-                rowHtml += `
-                        <td style="border:1px solid #000; padding:4px; text-align:center; font-weight:bold; color:#000; background:#f5f5f5;">${pCount}</td>
-                        <td style="border:1px solid #000; padding:4px; text-align:center; font-weight:bold; color:#000; background:#f5f5f5;">${aCount}</td>
-                        <td style="border:1px solid #000; padding:4px; text-align:center; font-weight:bold; color:#000; background:#f5f5f5;">${pct}%</td>
-                    </tr>
-                `;
-                tableHtml += rowHtml;
-            });
-            
-            tableHtml += `</tbody></table>`;
-            
             const monthParts = month.split('-');
             const dateObj = new Date(monthParts[0], monthParts[1] - 1);
             const monthName = dateObj.toLocaleString('default', { month: 'long', year: 'numeric' });
-            
-            const wrapper = document.createElement('div');
-            wrapper.innerHTML = `
-                <div style="padding: 20px; font-family: sans-serif; color: #000;">
-                    <h2 style="text-align:center; color: #000; margin-bottom:5px;">Monthly Attendance Report</h2>
-                    <h3 style="text-align:center; color: #000; margin-top:0;">${monthName}</h3>
-                    <div style="margin-top: 20px; font-size: 14px; border-bottom: 1px solid #000; padding-bottom: 10px; display:flex; justify-content:space-between; color: #000;">
-                        <span><strong>Session:</strong> ${session}</span>
-                        <span><strong>Batch:</strong> ${batch}</span>
-                    </div>
-                    ${tableHtml}
-                </div>
-            `;
-            wrapper.style.position = 'absolute';
-            wrapper.style.left = '-9999px';
-            wrapper.style.width = 'max-content';
-            wrapper.style.background = '#fff';
-            document.body.appendChild(wrapper);
-            
-            // Allow layout calculation
-            await new Promise(r => setTimeout(r, 50));
-            const wWidth = wrapper.scrollWidth + 40;
 
-            const opt = {
-                margin:       10,
-                filename:     `Monthly_Attendance_${batch.replace(/\s+/g, '_')}_${month}.pdf`,
-                image:        { type: 'jpeg', quality: 0.98 },
-                html2canvas:  { scale: 2, windowWidth: wWidth },
-                jsPDF:        { unit: 'mm', format: sortedDates.length > 15 ? 'a3' : 'a4', orientation: 'landscape' }
-            };
+            // Build table data for jsPDF autoTable
+            const dayLabels = sortedDates.map(d => d.split('-')[2]);
+            const head = ['#', 'Name', ...dayLabels, 'P', 'A', '%'];
             
+            const body = students.map(s => {
+                const sData = attendanceData[s.id];
+                let pCount = 0, aCount = 0;
+                const dayCells = sortedDates.map(d => {
+                    const status = sData.records[d] || '';
+                    if (status === 'present') { pCount++; return 'P'; }
+                    else if (status === 'absent') { aCount++; return 'A'; }
+                    else if (status === 'absent_reason' || status === 'leave') { aCount++; return 'L'; }
+                    return '-';
+                });
+                const total = pCount + aCount;
+                const pct = total > 0 ? Math.round((pCount / total) * 100) + '%' : '-';
+                return [s.rollNumber || '-', s.fullName || 'Unnamed', ...dayCells, pCount, aCount, pct];
+            });
+
             downloadMonthlyAttPdfBtn.innerText = "Generating PDF...";
-            
-            await html2pdf().set(opt).from(wrapper).save();
-            document.body.removeChild(wrapper);
-            
+
+            const { jsPDF } = window.jspdf;
+            const isLandscape = sortedDates.length > 10;
+            const format = sortedDates.length > 20 ? 'a3' : 'a4';
+            const doc = new jsPDF({ orientation: isLandscape ? 'landscape' : 'portrait', unit: 'mm', format });
+
+            doc.setFontSize(14);
+            doc.text('Monthly Attendance Report', doc.internal.pageSize.getWidth() / 2, 12, { align: 'center' });
+            doc.setFontSize(11);
+            doc.text(monthName, doc.internal.pageSize.getWidth() / 2, 19, { align: 'center' });
+            doc.setFontSize(9);
+            doc.text(`Session: ${session}   Batch: ${batch === 'all' ? 'All Batches' : batch}`, 14, 26);
+
+            doc.autoTable({
+                head: [head],
+                body: body,
+                startY: 30,
+                styles: { fontSize: 8, cellPadding: 2, textColor: [0,0,0], lineColor: [0,0,0], lineWidth: 0.1, overflow: 'linebreak' },
+                headStyles: { fillColor: [230,230,230], textColor: [0,0,0], fontStyle: 'bold', halign: 'center' },
+                columnStyles: {
+                    0: { cellWidth: 10, halign: 'center' },
+                    1: { cellWidth: 40 },
+                },
+                alternateRowStyles: { fillColor: [248,248,248] },
+            });
+
+            doc.save(`Monthly_Attendance_${batch.replace(/\s+/g,'_')}_${month}.pdf`);
+
         } catch (err) {
             alert(err.message);
         }
@@ -1515,6 +1457,8 @@ if (downloadMonthlyAttPdfBtn) {
         downloadMonthlyAttPdfBtn.innerText = "📥 Download Monthly PDF";
     });
 }
+
+
 
 // PWA Install Logic
 let deferredInstallPrompt = null;

@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cinzel:wght@500;700;800&family=Noto+Kufi+Arabic:wght@400;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap');
+/* Google Fonts are now loaded via <link> preconnect in HTML for better mobile performance */
 
 :root {
     color-scheme: dark;
@@ -115,12 +115,11 @@ body::before {
     inset: 0;
     pointer-events: none;
     z-index: -2;
+    /* Simplified from 4 layered gradients to 1 for mobile GPU performance */
     background-image:
-        linear-gradient(30deg, rgba(216, 173, 74, 0.055) 12%, transparent 12.5%, transparent 87%, rgba(216, 173, 74, 0.055) 87.5%),
-        linear-gradient(150deg, rgba(216, 173, 74, 0.055) 12%, transparent 12.5%, transparent 87%, rgba(216, 173, 74, 0.055) 87.5%),
-        linear-gradient(30deg, rgba(216, 173, 74, 0.035) 12%, transparent 12.5%, transparent 87%, rgba(216, 173, 74, 0.035) 87.5%),
-        linear-gradient(150deg, rgba(216, 173, 74, 0.035) 12%, transparent 12.5%, transparent 87%, rgba(216, 173, 74, 0.035) 87.5%);
-    background-position: 0 0, 0 0, 28px 28px, 28px 28px;
+        linear-gradient(30deg, rgba(216, 173, 74, 0.05) 12%, transparent 12.5%, transparent 87%, rgba(216, 173, 74, 0.05) 87.5%),
+        linear-gradient(150deg, rgba(216, 173, 74, 0.05) 12%, transparent 12.5%, transparent 87%, rgba(216, 173, 74, 0.05) 87.5%);
+    background-position: 0 0, 0 0;
     background-size: 56px 98px;
     opacity: 0.45;
 }
@@ -305,9 +304,11 @@ img {
     inset-inline: 0;
     inset-block-start: 0;
     z-index: 1000;
-    background: color-mix(in srgb, var(--bg) 84%, transparent);
+    /* Reduced blur from 18px to 8px — heavy on mobile GPUs */
+    background: color-mix(in srgb, var(--bg) 92%, transparent);
     border-bottom: 1px solid var(--border);
-    backdrop-filter: blur(18px);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
 }
 
 .navbar {
@@ -495,9 +496,9 @@ img {
     padding: 1rem;
     border: 1px solid var(--border);
     border-radius: var(--radius);
-    background: color-mix(in srgb, var(--surface) 88%, transparent);
+    background: var(--surface-solid);
     box-shadow: var(--shadow-sm);
-    backdrop-filter: blur(18px);
+    /* Removed backdrop-filter — not needed, solid bg used instead */
 }
 
 .stat-num {
@@ -721,8 +722,10 @@ img {
     align-items: center;
     justify-content: center;
     padding: 1rem;
-    background: rgba(3, 7, 6, 0.78);
-    backdrop-filter: blur(16px);
+    background: rgba(3, 7, 6, 0.85);
+    /* Reduced blur from 16px to 6px for mobile performance */
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
     opacity: 0;
     pointer-events: none;
     transition: opacity 180ms ease;

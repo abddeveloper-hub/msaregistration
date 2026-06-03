@@ -1493,6 +1493,45 @@ if (downloadMonthlyAttPdfBtn) {
             
             const attendanceData = {};
             const uniqueDates = new Set();
+
+            // Parse the selected month (format: "YYYY-MM") into year & month numbers
+            const [selYear, selMonth] = month.split('-').map(Number);
+
+            // Helper: parse a stored date string (could be "YYYY-MM-DD" or locale like "6/3/2026" or "03/06/2026")
+            // Returns a Date object or null
+            function parseStoredDate(dateStr) {
+                if (!dateStr) return null;
+                // Try ISO format first (YYYY-MM-DD)
+                if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
+                    return new Date(dateStr + 'T00:00:00');
+                }
+                // Try locale formats: M/D/YYYY or D/M/YYYY or MM/DD/YYYY etc.
+                const parts = dateStr.split('/');
+                if (parts.length === 3) {
+                    // Determine which part is year
+                    const yearIdx = parts.findIndex(p => p.length === 4);
+                    if (yearIdx === 2) {
+                        // M/D/YYYY (US locale) or D/M/YYYY
+                        return new Date(parseInt(parts[2]), parseInt(parts[0]) - 1, parseInt(parts[1]));
+                    } else if (yearIdx === 0) {
+                        // YYYY/M/D
+                        return new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
+                    }
+                }
+                // Fallback: let JS try to parse it
+                const d = new Date(dateStr);
+                return isNaN(d) ? null : d;
+            }
+
+            // Convert a stored date string to a sortable key "YYYY-MM-DD"
+            function toSortableKey(dateStr) {
+                const d = parseStoredDate(dateStr);
+                if (!d) return dateStr;
+                const y = d.getFullYear();
+                const m = String(d.getMonth() + 1).padStart(2, '0');
+                const day = String(d.getDate()).padStart(2, '0');
+                return `${y}-${m}-${day}`;
+            }
             
             for (const s of students) {
                 attendanceData[s.id] = { student: s, records: {} };
@@ -1503,9 +1542,17 @@ if (downloadMonthlyAttPdfBtn) {
                 const snaps = await getDocs(q);
                 snaps.forEach(docSnap => {
                     const data = docSnap.data();
-                    if (data.date && data.date.startsWith(month)) {
-                        uniqueDates.add(data.date);
-                        attendanceData[s.id].records[data.date] = data.status;
+                    if (!data.date) return;
+
+                    const parsed = parseStoredDate(data.date);
+                    if (!parsed) return;
+
+                    // Check if this record belongs to the selected month & year
+                    if (parsed.getFullYear() === selYear && (parsed.getMonth() + 1) === selMonth) {
+                        // Use a normalized sortable key so PDF columns sort correctly
+                        const key = toSortableKey(data.date);
+                        uniqueDates.add(key);
+                        attendanceData[s.id].records[key] = data.status;
                     }
                 });
             }

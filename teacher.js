@@ -1450,7 +1450,42 @@ if(delAttBtn) {
     });
 }
 
+/**
+ * Renders any text (including Arabic, Malayalam, etc.) onto a canvas and returns
+ * a PNG data URL + dimensions in mm, ready to be embedded in jsPDF via addImage().
+ * This bypasses jsPDF's font limitation for non-Latin scripts.
+ */
+function renderTextAsImage(text, fontSizePx = 22) {
+    try {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        // Use the page's loaded Arabic-capable font
+        const fontStr = `${fontSizePx}px Amiri, "Noto Kufi Arabic", "Outfit", sans-serif`;
+        ctx.font = fontStr;
+        const measured = ctx.measureText(text);
+        const w = Math.ceil(measured.width) + 20;
+        const h = Math.ceil(fontSizePx * 1.6);
+        canvas.width = w;
+        canvas.height = h;
+        // Transparent background
+        ctx.clearRect(0, 0, w, h);
+        ctx.font = fontStr;
+        ctx.fillStyle = '#000000';
+        ctx.textBaseline = 'middle';
+        ctx.textAlign = 'left';
+        ctx.fillText(text, 8, h / 2);
+        const data = canvas.toDataURL('image/png');
+        // Convert px → mm (1mm ≈ 3.7795px at 96dpi)
+        const PX_PER_MM = 3.7795;
+        return { data, widthMm: w / PX_PER_MM, heightMm: h / PX_PER_MM };
+    } catch (e) {
+        console.warn('renderTextAsImage failed:', e);
+        return null;
+    }
+}
+
 if (downloadAttPdfBtn) {
+
     downloadAttPdfBtn.addEventListener('click', () => {
         const date = document.getElementById('attDate').value || new Date().toISOString().split('T')[0];
         const session = document.getElementById('attSession').value || 'Session';
@@ -1487,12 +1522,17 @@ if (downloadAttPdfBtn) {
         doc.setFontSize(16);
         doc.text('Attendance List', 105, 15, { align: 'center' });
         doc.setFontSize(10);
-        doc.text(`Date: ${date}   Session: ${session}   Batch: ${batch}`, 14, 25);
+        // Render date/batch in normal font, session name via canvas (supports Arabic/Malayalam)
+        doc.text(`Date: ${date}    Batch: ${batch}`, 14, 25);
+        const sessionImg1 = renderTextAsImage(`Session: ${session}`, 22);
+        if (sessionImg1) {
+            doc.addImage(sessionImg1.data, 'PNG', 14, 28, sessionImg1.widthMm, sessionImg1.heightMm);
+        }
         
         doc.autoTable({
             head: [head],
             body: body,
-            startY: 30,
+            startY: 36,
             styles: { fontSize: 9, cellPadding: 3, textColor: [0,0,0], lineColor: [0,0,0], lineWidth: 0.1 },
             headStyles: { fillColor: [240,240,240], textColor: [0,0,0], fontStyle: 'bold' },
             alternateRowStyles: { fillColor: [250,250,250] },
@@ -1632,18 +1672,26 @@ if (downloadMonthlyAttPdfBtn) {
             const isLandscape = sortedDates.length > 10;
             const format = sortedDates.length > 20 ? 'a3' : 'a4';
             const doc = new jsPDF({ orientation: isLandscape ? 'landscape' : 'portrait', unit: 'mm', format });
+            const pageWidth = doc.internal.pageSize.getWidth();
 
             doc.setFontSize(14);
-            doc.text('Monthly Attendance Report', doc.internal.pageSize.getWidth() / 2, 12, { align: 'center' });
+            doc.text('Monthly Attendance Report', pageWidth / 2, 12, { align: 'center' });
             doc.setFontSize(11);
-            doc.text(monthName, doc.internal.pageSize.getWidth() / 2, 19, { align: 'center' });
-            doc.setFontSize(9);
-            doc.text(`Session: ${session}   Batch: ${batch === 'all' ? 'All Batches' : batch}`, 14, 26);
+            doc.text(monthName, pageWidth / 2, 19, { align: 'center' });
+
+            // Render session name via canvas so Arabic/Malayalam text appears correctly
+            const batchLabel = batch === 'all' ? 'All Batches' : batch;
+            const sessionImg = renderTextAsImage(`Session: ${session}   |   Batch: ${batchLabel}`, 22);
+            let tableStartY = 30;
+            if (sessionImg) {
+                doc.addImage(sessionImg.data, 'PNG', 14, 24, sessionImg.widthMm, sessionImg.heightMm);
+                tableStartY = 24 + sessionImg.heightMm + 2;
+            }
 
             doc.autoTable({
                 head: [head],
                 body: body,
-                startY: 30,
+                startY: tableStartY,
                 styles: { fontSize: 8, cellPadding: 2, textColor: [0,0,0], lineColor: [0,0,0], lineWidth: 0.1, overflow: 'linebreak' },
                 headStyles: { fillColor: [230,230,230], textColor: [0,0,0], fontStyle: 'bold', halign: 'center' },
                 columnStyles: {

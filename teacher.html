@@ -140,23 +140,42 @@
 
                 <!-- NEW: Manage Subjects -->
                 <div id="viewSubjects" class="dashboard-section hidden">
-                    <h3>Course & Subject Management</h3>
-                    <div class="form-section">
-                        <div class="input-field" style="margin-bottom:1.5rem;">
-                            <label class="label">New Subject Name</label>
-                            <div style="display:grid; grid-template-columns: 1fr 150px auto; gap:1rem;">
-                                <input type="text" id="newSubName" class="input" dir="auto" placeholder="e.g. Arabic Grammar, Fiqh...">
-                                <select id="newSubBatch" class="input">
+                    <div class="view-header" style="margin-bottom:1.5rem;">
+                        <h2 class="view-title">Course & Subject Management</h2>
+                        <p class="view-desc">Add subjects or sessions for your campus batches.</p>
+                    </div>
+
+                    <div class="form-section" style="padding: 1.5rem;">
+                        <!-- Subject Name - full width -->
+                        <div class="input-field" style="margin-bottom:1rem;">
+                            <label class="label" style="font-size:0.8rem; text-transform:uppercase; letter-spacing:0.08em; color:var(--text-dim); margin-bottom:0.5rem; display:block;">New Subject Name</label>
+                            <input type="text" id="newSubName" class="input" dir="auto" placeholder="e.g. Arabic Grammar, Fiqh, Malayalam..." style="width:100%; font-size:1rem; padding: 0.85rem 1rem;">
+                        </div>
+
+                        <!-- Batch + Add button in a row -->
+                        <div style="display:grid; grid-template-columns: 1fr auto; gap:0.75rem; align-items:end;">
+                            <div class="input-field" style="margin:0;">
+                                <label class="label" style="font-size:0.8rem; text-transform:uppercase; letter-spacing:0.08em; color:var(--text-dim); margin-bottom:0.5rem; display:block;">Assign to Batch</label>
+                                <select id="newSubBatch" class="input" style="width:100%;">
                                     <option value="All">All Batches</option>
                                 </select>
-                                <button class="btn btn-main" id="addSubjectBtn">Add Subject</button>
                             </div>
+                            <button class="btn btn-main" id="addSubjectBtn" style="height:48px; padding: 0 1.5rem; white-space:nowrap;">
+                                + Add Subject
+                            </button>
                         </div>
-                        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:2rem;">
-                            <h3>Available Subjects</h3>
-                            <button class="btn btn-ghost" style="color:var(--error); font-size:0.8rem;" onclick="clearAllSubjects()">Clear All</button>
+                    </div>
+
+                    <!-- Available Subjects -->
+                    <div class="form-section" style="margin-top:1.25rem; padding:1.5rem;">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.25rem;">
+                            <div>
+                                <h3 style="margin:0; font-size:1rem; color:var(--text-main);">Available Subjects</h3>
+                                <p style="margin:0.25rem 0 0; font-size:0.78rem; color:var(--text-dim);">Tap × to remove a subject</p>
+                            </div>
+                            <button class="btn btn-ghost btn-sm" style="color:var(--error); border:1px solid rgba(255,107,107,0.3); font-size:0.8rem;" onclick="clearAllSubjects()">Clear All</button>
                         </div>
-                        <div id="subjectsList" style="display:flex; flex-wrap:wrap; gap:0.75rem; margin-top:1rem;">
+                        <div id="subjectsList" style="display:flex; flex-wrap:wrap; gap:0.6rem;">
                             <!-- Injected via JS -->
                         </div>
                     </div>

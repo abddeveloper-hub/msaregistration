@@ -346,27 +346,67 @@ function renderSubjects() {
     if (!list) return;
     list.innerHTML = '';
     if (campusSubjects.length === 0) {
-        list.innerHTML = '<p style="color:var(--text-dim);">No subjects configured yet. Add the first subject above.</p>';
+        list.innerHTML = `
+            <div style="width:100%; text-align:center; padding:2rem 1rem; color:var(--text-dim);">
+                <div style="font-size:2rem; margin-bottom:0.5rem;">📚</div>
+                <p style="margin:0; font-size:0.9rem;">No subjects yet. Add your first subject above.</p>
+            </div>`;
         return;
     }
     campusSubjects.forEach(sub => {
         const sName = typeof sub === 'string' ? sub : sub.name;
         const sBatch = typeof sub === 'string' ? 'All' : (sub.batch || 'All');
-        
+        const batchLabel = sBatch === 'All' ? 'ALL' : sBatch.toUpperCase();
+
         const el = document.createElement('div');
-        el.className = 'badge';
-        el.style.padding = '0.5rem 1rem';
-        el.style.display = 'flex';
-        el.style.alignItems = 'center';
-        el.style.gap = '0.5rem';
-        el.style.background = 'var(--glass-heavy)';
+        el.style.cssText = `
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            background: var(--glass-heavy);
+            border: 1px solid var(--border);
+            border-radius: 999px;
+            padding: 0.5rem 0.75rem 0.5rem 1rem;
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--text-main);
+            transition: border-color 0.2s;
+        `;
         el.innerHTML = `
-            <span dir="auto"><strong>${escapeHtml(sName)}</strong> <small style="opacity:0.7" dir="ltr">(${sBatch})</small></span>
-            <span style="cursor:pointer; color:var(--error); font-weight:bold;" onclick="deleteSubject('${escapeHtml(sName)}', '${escapeHtml(sBatch)}')">×</span>
+            <span dir="auto" style="line-height:1.3;">${escapeHtml(sName)}</span>
+            <span style="
+                font-size: 0.65rem;
+                font-weight: 800;
+                letter-spacing: 0.08em;
+                color: var(--primary);
+                background: var(--primary-glow);
+                border-radius: 999px;
+                padding: 0.1rem 0.45rem;
+                white-space: nowrap;
+            " dir="ltr">${escapeHtml(batchLabel)}</span>
+            <button onclick="deleteSubject('${escapeHtml(sName)}', '${escapeHtml(sBatch)}')" style="
+                background: none;
+                border: none;
+                color: var(--error);
+                font-size: 1.1rem;
+                font-weight: bold;
+                cursor: pointer;
+                padding: 0 0.1rem;
+                line-height: 1;
+                opacity: 0.7;
+                transition: opacity 0.15s;
+                min-width: 22px;
+                min-height: 22px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border-radius: 50%;
+            " onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.7'" title="Remove subject">×</button>
         `;
         list.appendChild(el);
     });
 }
+
 
 document.getElementById('addSubjectBtn')?.addEventListener('click', async () => {
     const nameInput = document.getElementById('newSubName');

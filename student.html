@@ -258,19 +258,38 @@
                         <p style="font-size: 0.75rem; color: var(--text-dim); margin-top: 0.5rem;">Tip: You can also take a screenshot of your ID card.</p>
                     </div>
 
-                    <!-- Marks Section -->
-                    <div class="form-section">
-                        <h3>Academic Marks</h3>
+                    <!-- 1st Dars Section -->
+                    <div id="firstDarsSection" class="form-section hidden">
+                        <h3>1st Dars - Academic Performance</h3>
                         <table class="data-table">
                             <thead><tr><th>Subject/Exam</th><th>Marks Obtained</th><th>Percentage</th><th>Date</th></tr></thead>
-                            <tbody id="marksTableBody"></tbody>
+                            <tbody id="marksTableBody1stDars"></tbody>
                         </table>
+                        <div id="attendanceContainer1stDars" style="display: flex; flex-direction: column; gap: 1.5rem; margin-top: 2rem;">
+                            <!-- Injected dynamically by JS -->
+                        </div>
                     </div>
 
-                    <!-- Attendance Section -->
-                    <div class="form-section">
-                        <h3>Attendance Record</h3>
-                        <div id="attendanceContainer" style="display: flex; flex-direction: column; gap: 1.5rem;">
+                    <!-- 2nd Dars Section -->
+                    <div id="secondDarsSection" class="form-section hidden">
+                        <h3>2nd Dars - Academic Performance</h3>
+                        <table class="data-table">
+                            <thead><tr><th>Subject/Exam</th><th>Marks Obtained</th><th>Percentage</th><th>Date</th></tr></thead>
+                            <tbody id="marksTableBody2ndDars"></tbody>
+                        </table>
+                        <div id="attendanceContainer2ndDars" style="display: flex; flex-direction: column; gap: 1.5rem; margin-top: 2rem;">
+                            <!-- Injected dynamically by JS -->
+                        </div>
+                    </div>
+
+                    <!-- Other Subjects Section -->
+                    <div id="otherSubjectsSection" class="form-section hidden">
+                        <h3>Other Subjects - Academic Performance</h3>
+                        <table class="data-table">
+                            <thead><tr><th>Subject/Exam</th><th>Marks Obtained</th><th>Percentage</th><th>Date</th></tr></thead>
+                            <tbody id="marksTableBodyOther"></tbody>
+                        </table>
+                        <div id="attendanceContainerOther" style="display: flex; flex-direction: column; gap: 1.5rem; margin-top: 2rem;">
                             <!-- Injected dynamically by JS -->
                         </div>
                     </div>
@@ -317,7 +336,7 @@
         </div>
     </div>
 
-    <script type="module" src="student.js?v=2"></script>
+    <script type="module" src="student.js?v=3"></script>
 
     <!-- PWA Registration -->
     <script>

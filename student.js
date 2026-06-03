@@ -493,110 +493,203 @@ function renderAdmittedDashboard(data, studentId) {
     const rollDisplay = document.getElementById('idRollNumberDisplay');
     if (rollDisplay) rollDisplay.innerText = data.rollNumber || "PENDING";
 
-    // Fetch Marks
+    // Fetch Marks - Grouped by Dars Type
     onSnapshot(collection(db, `users/${studentId}/marks`), (snap) => {
-        const tbody = document.getElementById('marksTableBody');
         const percentageDisplay = document.getElementById('marksPercentage');
         const countDisplay = document.getElementById('marksCount');
         
-        tbody.innerHTML = '';
-        if(snap.empty) {
-            tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:#666;">No marks recorded yet.</td></tr>';
-            if(percentageDisplay) percentageDisplay.innerText = '0%';
-            if(countDisplay) countDisplay.innerText = '0 exams';
-            return;
+        // Separate marks by type
+        const marks1stDars = [];
+        const marks2ndDars = [];
+        const marksOther = [];
+
+        if(!snap.empty) {
+            snap.forEach(doc => {
+                const m = doc.data();
+                if(m.subject === '1st Dars') {
+                    marks1stDars.push(m);
+                } else if(m.subject === '2nd Dars') {
+                    marks2ndDars.push(m);
+                } else {
+                    marksOther.push(m);
+                }
+            });
         }
 
+        // Render 1st Dars Marks
+        const tbody1st = document.getElementById('marksTableBody1stDars');
+        const section1st = document.getElementById('firstDarsSection');
+        if(tbody1st) {
+            tbody1st.innerHTML = '';
+            if(marks1stDars.length === 0) {
+                tbody1st.innerHTML = '<tr><td colspan="4" style="text-align:center;color:#666;">No marks recorded yet.</td></tr>';
+                section1st?.classList.add('hidden');
+            } else {
+                marks1stDars.forEach(m => {
+                    tbody1st.innerHTML += `<tr>
+                        <td><strong>${m.subject}</strong></td>
+                        <td>${m.marksObtained} / ${m.totalMarks}</td>
+                        <td><span style="color:var(--primary); font-weight:bold;">${m.percentage}%</span></td>
+                        <td>${m.date}</td>
+                    </tr>`;
+                });
+                section1st?.classList.remove('hidden');
+            }
+        }
+
+        // Render 2nd Dars Marks
+        const tbody2nd = document.getElementById('marksTableBody2ndDars');
+        const section2nd = document.getElementById('secondDarsSection');
+        if(tbody2nd) {
+            tbody2nd.innerHTML = '';
+            if(marks2ndDars.length === 0) {
+                tbody2nd.innerHTML = '<tr><td colspan="4" style="text-align:center;color:#666;">No marks recorded yet.</td></tr>';
+                section2nd?.classList.add('hidden');
+            } else {
+                marks2ndDars.forEach(m => {
+                    tbody2nd.innerHTML += `<tr>
+                        <td><strong>${m.subject}</strong></td>
+                        <td>${m.marksObtained} / ${m.totalMarks}</td>
+                        <td><span style="color:var(--primary); font-weight:bold;">${m.percentage}%</span></td>
+                        <td>${m.date}</td>
+                    </tr>`;
+                });
+                section2nd?.classList.remove('hidden');
+            }
+        }
+
+        // Render Other Subjects Marks
+        const tbodyOther = document.getElementById('marksTableBodyOther');
+        const sectionOther = document.getElementById('otherSubjectsSection');
+        if(tbodyOther) {
+            tbodyOther.innerHTML = '';
+            if(marksOther.length === 0) {
+                tbodyOther.innerHTML = '<tr><td colspan="4" style="text-align:center;color:#666;">No marks recorded yet.</td></tr>';
+                sectionOther?.classList.add('hidden');
+            } else {
+                marksOther.forEach(m => {
+                    tbodyOther.innerHTML += `<tr>
+                        <td><strong>${m.subject}</strong></td>
+                        <td>${m.marksObtained} / ${m.totalMarks}</td>
+                        <td><span style="color:var(--primary); font-weight:bold;">${m.percentage}%</span></td>
+                        <td>${m.date}</td>
+                    </tr>`;
+                });
+                sectionOther?.classList.remove('hidden');
+            }
+        }
+
+        // Update overall percentage (all subjects combined)
+        const allMarks = [...marks1stDars, ...marks2ndDars, ...marksOther];
         let totalPercent = 0;
         let examCount = 0;
-
-        snap.forEach(doc => {
-            const m = doc.data();
+        allMarks.forEach(m => {
             examCount++;
             totalPercent += parseFloat(m.percentage || 0);
-
-            tbody.innerHTML += `<tr>
-                <td><strong>${m.subject}</strong></td>
-                <td>${m.marksObtained} / ${m.totalMarks}</td>
-                <td><span style="color:var(--primary); font-weight:bold;">${m.percentage}%</span></td>
-                <td>${m.date}</td>
-            </tr>`;
         });
 
-        if(percentageDisplay) percentageDisplay.innerText = `${Math.round(totalPercent / examCount)}%`;
+        if(percentageDisplay) percentageDisplay.innerText = examCount > 0 ? `${Math.round(totalPercent / examCount)}%` : '0%';
         if(countDisplay) countDisplay.innerText = `${examCount} exam${examCount > 1 ? 's' : ''}`;
     });
 
-    // Fetch Attendance
+    // Fetch Attendance - Grouped by Dars Type
     onSnapshot(collection(db, `users/${studentId}/attendance`), (snap) => {
-        const container = document.getElementById('attendanceContainer');
         const percentageDisplay = document.getElementById('attPercentage');
         const countDisplay = document.getElementById('attCount');
 
-        container.innerHTML = '';
-        if(snap.empty) {
-            container.innerHTML = '<p style="text-align:center;color:#666;">No attendance records.</p>';
-            if(percentageDisplay) percentageDisplay.innerText = '0%';
-            if(countDisplay) countDisplay.innerText = '0/0 sessions';
-            return;
+        // Separate attendance by type
+        const att1stDars = [];
+        const att2ndDars = [];
+        const attOther = [];
+
+        if(!snap.empty) {
+            snap.forEach(doc => {
+                const a = doc.data();
+                if(a.sessionName === '1st Dars') {
+                    att1stDars.push(a);
+                } else if(a.sessionName === '2nd Dars') {
+                    att2ndDars.push(a);
+                } else {
+                    attOther.push(a);
+                }
+            });
         }
 
-        let presentCount = 0;
-        let totalCount = 0;
-        
-        // Group by month-year
-        const monthlyData = {};
+        // Helper function to render attendance by type
+        const renderAttendanceByType = (records, containerId, sectionId) => {
+            const container = document.getElementById(containerId);
+            const section = document.getElementById(sectionId);
+            
+            if (!container) return;
+            container.innerHTML = '';
 
-        snap.forEach(doc => {
-            const a = doc.data();
-            totalCount++;
-            if (a.status === 'present') presentCount++;
-
-            // Parse date "YYYY-MM-DD" or standard string to get Month Year
-            let monthYearKey = 'Unknown Date';
-            if (a.date) {
-                try {
-                    const dateObj = new Date(a.date);
-                    if (!isNaN(dateObj)) {
-                        monthYearKey = dateObj.toLocaleString('default', { month: 'long', year: 'numeric' });
-                    }
-                } catch(e) {}
+            if (records.length === 0) {
+                container.innerHTML = '<p style="text-align:center;color:#666;">No attendance records.</p>';
+                section?.classList.add('hidden');
+                return;
             }
 
-            if (!monthlyData[monthYearKey]) {
-                monthlyData[monthYearKey] = [];
-            }
-            monthlyData[monthYearKey].push(a);
-        });
+            section?.classList.remove('hidden');
 
-        // Sort keys (newest first, rough approximation by sorting Date parsing)
-        const sortedMonths = Object.keys(monthlyData).sort((a, b) => new Date(b) - new Date(a));
-
-        sortedMonths.forEach(month => {
-            // Sort records within month by date descending
-            monthlyData[month].sort((a, b) => new Date(b.date) - new Date(a.date));
-
-            let rowsHtml = '';
-            monthlyData[month].forEach(a => {
-                let statusColor = a.status === 'present' ? 'var(--success)' : (a.status === 'absent_reason' || a.status === 'leave' ? 'var(--accent)' : 'var(--error)');
-                rowsHtml += `<tr>
-                    <td>${escapeHtml(a.sessionName || 'N/A')}</td>
-                    <td>${escapeHtml(a.date || 'N/A')}</td>
-                    <td><span style="color:${statusColor}; text-transform:uppercase; font-size:0.8rem; font-weight:bold;">${escapeHtml((a.status || '').replace('_', ' '))}</span></td>
-                </tr>`;
+            // Group by month-year
+            const monthlyData = {};
+            records.forEach(a => {
+                let monthYearKey = 'Unknown Date';
+                if (a.date) {
+                    try {
+                        const dateObj = new Date(a.date);
+                        if (!isNaN(dateObj)) {
+                            monthYearKey = dateObj.toLocaleString('default', { month: 'long', year: 'numeric' });
+                        }
+                    } catch(e) {}
+                }
+                if (!monthlyData[monthYearKey]) {
+                    monthlyData[monthYearKey] = [];
+                }
+                monthlyData[monthYearKey].push(a);
             });
 
-            container.innerHTML += `
-                <div style="background:var(--glass); border:1px solid var(--border); border-radius:0.5rem; overflow:hidden;">
-                    <div style="background:rgba(255,255,255,0.05); padding:0.75rem 1rem; border-bottom:1px solid var(--border); font-weight:bold; color:var(--primary);">
-                        ${escapeHtml(month)}
+            // Sort keys (newest first)
+            const sortedMonths = Object.keys(monthlyData).sort((a, b) => new Date(b) - new Date(a));
+
+            sortedMonths.forEach(month => {
+                monthlyData[month].sort((a, b) => new Date(b.date) - new Date(a.date));
+
+                let rowsHtml = '';
+                monthlyData[month].forEach(a => {
+                    let statusColor = a.status === 'present' ? 'var(--success)' : (a.status === 'absent_reason' || a.status === 'leave' ? 'var(--accent)' : 'var(--error)');
+                    rowsHtml += `<tr>
+                        <td>${escapeHtml(a.sessionName || 'N/A')}</td>
+                        <td>${escapeHtml(a.date || 'N/A')}</td>
+                        <td><span style="color:${statusColor}; text-transform:uppercase; font-size:0.8rem; font-weight:bold;">${escapeHtml((a.status || '').replace('_', ' '))}</span></td>
+                    </tr>`;
+                });
+
+                container.innerHTML += `
+                    <div style="background:var(--glass); border:1px solid var(--border); border-radius:0.5rem; overflow:hidden;">
+                        <div style="background:rgba(255,255,255,0.05); padding:0.75rem 1rem; border-bottom:1px solid var(--border); font-weight:bold; color:var(--primary);">
+                            ${escapeHtml(month)}
+                        </div>
+                        <table class="data-table" style="margin:0;">
+                            <thead><tr><th>Session/Subject</th><th>Date</th><th>Status</th></tr></thead>
+                            <tbody>${rowsHtml}</tbody>
+                        </table>
                     </div>
-                    <table class="data-table" style="margin:0;">
-                        <thead><tr><th>Session/Subject</th><th>Date</th><th>Status</th></tr></thead>
-                        <tbody>${rowsHtml}</tbody>
-                    </table>
-                </div>
-            `;
+                `;
+            });
+        };
+
+        // Render each type
+        renderAttendanceByType(att1stDars, 'attendanceContainer1stDars', 'firstDarsSection');
+        renderAttendanceByType(att2ndDars, 'attendanceContainer2ndDars', 'secondDarsSection');
+        renderAttendanceByType(attOther, 'attendanceContainerOther', 'otherSubjectsSection');
+
+        // Update overall statistics
+        const allAttendance = [...att1stDars, ...att2ndDars, ...attOther];
+        let presentCount = 0;
+        let totalCount = allAttendance.length;
+        allAttendance.forEach(a => {
+            if (a.status === 'present') presentCount++;
         });
 
         const percent = totalCount > 0 ? Math.round((presentCount / totalCount) * 100) : 0;

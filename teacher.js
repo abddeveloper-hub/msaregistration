@@ -521,13 +521,48 @@ window.viewStudentDetails = async (uid) => {
         marksAvg = mCount > 0 ? Math.round(totalM / mCount) : 0;
     } catch(e) { console.error("Stats fetch error:", e); }
 
-    let breakdownHtml = '';
-    if (Object.keys(sessionStats).length === 0) {
-        breakdownHtml = '<p style="color:var(--text-dim); font-size:0.85rem; margin:0; text-align:center;">No attendance records found.</p>';
-    } else {
-        Object.entries(sessionStats).forEach(([sName, stat]) => {
+    // Separate sessions by type
+    const dars1st = {};
+    const dars2nd = {};
+    const otherSessions = {};
+
+    Object.entries(sessionStats).forEach(([sName, stat]) => {
+        if (sName === '1st Dars') {
+            dars1st[sName] = stat;
+        } else if (sName === '2nd Dars') {
+            dars2nd[sName] = stat;
+        } else {
+            otherSessions[sName] = stat;
+        }
+    });
+
+    // Calculate attendance % for each type
+    const calcAttendancePct = (sessionObj) => {
+        let totalRecords = 0;
+        let presentRecords = 0;
+        Object.values(sessionObj).forEach(stat => {
+            totalRecords += stat.total;
+            presentRecords += stat.present;
+        });
+        return totalRecords > 0 ? Math.round((presentRecords / totalRecords) * 100) : 0;
+    };
+
+    const att1stPct = calcAttendancePct(dars1st);
+    const att2ndPct = calcAttendancePct(dars2nd);
+    const attOtherPct = calcAttendancePct(otherSessions);
+
+    const renderBreakdownSection = (sessionObj, title) => {
+        if (Object.keys(sessionObj).length === 0) return '';
+        
+        let html = '';
+        if (title) {
+            html = `<div style="margin-bottom:1rem;">
+                <div style="font-size:0.75rem; font-weight:700; color:var(--primary); text-transform:uppercase; margin-bottom:0.5rem; padding-bottom:0.25rem; border-bottom:1px solid var(--border);">${title}</div>`;
+        }
+        
+        Object.entries(sessionObj).forEach(([sName, stat]) => {
             const sPct = stat.total > 0 ? Math.round((stat.present / stat.total) * 100) : 0;
-            breakdownHtml += `
+            html += `
                 <div style="display:flex; flex-direction:column; gap:0.25rem; font-size:0.8rem; margin-bottom:0.5rem;">
                     <div style="display:flex; justify-content:space-between; align-items:center;">
                         <span style="font-weight:600; color:var(--text);">${escapeHtml(sName)}</span>
@@ -541,49 +576,133 @@ window.viewStudentDetails = async (uid) => {
                 </div>
             `;
         });
+        
+        if (title) {
+            html += '</div>';
+        }
+        return html;
+    };
+
+    let breakdownHtml = '';
+    if (Object.keys(sessionStats).length === 0) {
+        breakdownHtml = '<p style="color:var(--text-dim); font-size:0.85rem; margin:0; text-align:center;">No attendance records found.</p>';
+    } else {
+        breakdownHtml += renderBreakdownSection(dars1st, '1st Dars');
+        breakdownHtml += renderBreakdownSection(dars2nd, '2nd Dars');
+        breakdownHtml += renderBreakdownSection(otherSessions, 'Other Subjects');
     }
 
     body.innerHTML = `
-        <div style="display:flex; gap:1rem; margin-bottom:1.5rem; align-items:center;">
-            <img src="${escapeHtml(s.photoUrl || '')}" style="width:80px; height:80px; object-fit:cover; border-radius:0.5rem; background:#333;">
-            <div>
-                <h3 style="margin:0; color:var(--primary);">${escapeHtml(s.fullName || 'N/A')}</h3>
-                <p style="margin:0; font-size:0.9rem; color:var(--text-dim);">${escapeHtml(s.rollNumber || 'Pending Roll No')}</p>
-            </div>
-        </div>
-
-        <div style="display:grid; grid-template-columns:1.2fr 1fr; gap:1rem; margin-bottom:1.5rem;">
-            <div style="padding:1rem; background:var(--glass); border-radius:0.5rem; border:1px solid var(--border); display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center;">
-                <div style="font-size:0.7rem; color:var(--text-dim); text-transform:uppercase; margin-bottom:0.25rem;">Overall Attendance</div>
-                <div style="font-size:1.6rem; font-weight:800; color:var(--success);">${attPct}%</div>
-                <div style="font-size:0.75rem; color:var(--text-dim); margin-top:0.25rem; display:flex; gap:0.5rem;">
-                    <span style="color:var(--success);">P: ${totalP}</span>
-                    <span style="color:var(--error);">A: ${totalA}</span>
-                    <span style="color:var(--warning);">L: ${totalL}</span>
+        <!-- Student Header -->
+        <div style="display:flex; gap:1.5rem; margin-bottom:2rem; align-items:center; padding:1.5rem; background:linear-gradient(135deg, rgba(251,191,36,0.1), rgba(100,200,255,0.1)); border-radius:0.75rem; border:1px solid var(--border);">
+            <img src="${escapeHtml(s.photoUrl || '')}" style="width:100px; height:100px; object-fit:cover; border-radius:0.75rem; background:#333; border:2px solid var(--primary); flex-shrink:0;">
+            <div style="flex:1;">
+                <h2 style="margin:0 0 0.5rem; font-size:1.5rem; color:var(--primary);">${escapeHtml(s.fullName || 'N/A')}</h2>
+                <p style="margin:0 0 0.75rem; font-size:1rem; color:var(--text-dim); font-weight:500;">ID: ${escapeHtml(s.rollNumber || 'Pending')}</p>
+                <div style="display:flex; gap:2rem; font-size:0.9rem;">
+                    <span style="color:var(--text);"><strong>Batch:</strong> ${escapeHtml(s.batch || 'N/A')}</span>
+                    <span style="color:var(--text);"><strong>Dars:</strong> ${escapeHtml(s.darsType || 'N/A')}</span>
                 </div>
             </div>
-            <div style="text-align:center; padding:1rem; background:var(--glass); border-radius:0.5rem; border:1px solid var(--border); display:flex; flex-direction:column; justify-content:center; align-items:center;">
-                <div style="font-size:0.7rem; color:var(--text-dim); text-transform:uppercase; margin-bottom:0.25rem;">Avg. Marks</div>
-                <div style="font-size:1.6rem; font-weight:800; color:var(--primary);">${marksAvg}%</div>
+        </div>
+
+        <!-- Attendance Performance Cards -->
+        <div style="margin-bottom:2rem;">
+            <h3 style="margin:0 0 1rem; color:var(--text); font-size:1.1rem; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; color:var(--text-dim);">📊 Attendance Performance</h3>
+            <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(160px, 1fr)); gap:1rem;">
+                ${Object.keys(dars1st).length > 0 ? `
+                    <div style="padding:1.25rem; background:linear-gradient(135deg, #fbbf2460, #fbbf2420); border-radius:0.75rem; border:1px solid #fbbf24; display:flex; flex-direction:column; align-items:center; text-align:center; transition:all 0.3s ease; cursor:pointer;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 16px rgba(251,191,36,0.2)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+                        <div style="font-size:0.8rem; color:#fbbf24; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:0.5rem;">📚 1st Dars</div>
+                        <div style="font-size:2.2rem; font-weight:900; color:${att1stPct >= 75 ? 'var(--success)' : '#ef4444'}; margin-bottom:0.25rem;">${att1stPct}%</div>
+                        <div style="font-size:0.75rem; color:var(--text-dim);">Attendance Rate</div>
+                    </div>
+                ` : ''}
+                ${Object.keys(dars2nd).length > 0 ? `
+                    <div style="padding:1.25rem; background:linear-gradient(135deg, #34d39960, #34d39920); border-radius:0.75rem; border:1px solid #34d399; display:flex; flex-direction:column; align-items:center; text-align:center; transition:all 0.3s ease; cursor:pointer;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 16px rgba(52,211,153,0.2)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+                        <div style="font-size:0.8rem; color:#34d399; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:0.5rem;">📚 2nd Dars</div>
+                        <div style="font-size:2.2rem; font-weight:900; color:${att2ndPct >= 75 ? 'var(--success)' : '#ef4444'}; margin-bottom:0.25rem;">${att2ndPct}%</div>
+                        <div style="font-size:0.75rem; color:var(--text-dim);">Attendance Rate</div>
+                    </div>
+                ` : ''}
+                ${Object.keys(otherSessions).length > 0 ? `
+                    <div style="padding:1.25rem; background:linear-gradient(135deg, #60a5fa60, #60a5fa20); border-radius:0.75rem; border:1px solid #60a5fa; display:flex; flex-direction:column; align-items:center; text-align:center; transition:all 0.3s ease; cursor:pointer;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 16px rgba(96,165,250,0.2)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+                        <div style="font-size:0.8rem; color:#60a5fa; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:0.5rem;">📖 Other Subjects</div>
+                        <div style="font-size:2.2rem; font-weight:900; color:${attOtherPct >= 75 ? 'var(--success)' : '#ef4444'}; margin-bottom:0.25rem;">${attOtherPct}%</div>
+                        <div style="font-size:0.75rem; color:var(--text-dim);">Attendance Rate</div>
+                    </div>
+                ` : ''}
+                <div style="padding:1.25rem; background:linear-gradient(135deg, rgba(0,0,0,0.2), rgba(0,0,0,0.1)); border-radius:0.75rem; border:1px solid var(--border); display:flex; flex-direction:column; align-items:center; text-align:center;">
+                    <div style="font-size:0.8rem; color:var(--text-dim); font-weight:700; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:0.5rem;">📊 Average Marks</div>
+                    <div style="font-size:2.2rem; font-weight:900; color:var(--primary); margin-bottom:0.25rem;">${marksAvg}%</div>
+                    <div style="font-size:0.75rem; color:var(--text-dim);">Overall Performance</div>
+                </div>
             </div>
         </div>
 
-        <div style="margin-bottom:1.5rem; background:var(--glass); border-radius:0.5rem; padding:1rem; border:1px solid var(--border);">
-            <div style="font-size:0.8rem; font-weight:700; color:var(--primary); text-transform:uppercase; margin-bottom:0.75rem; border-bottom:1px solid var(--border); padding-bottom:0.5rem;">Attendance Breakdown</div>
-            <div style="max-height:180px; overflow-y:auto; padding-right:0.25rem;">
-                ${breakdownHtml}
+        <!-- Detailed Attendance Breakdown by Session -->
+        <div style="margin-bottom:2rem;">
+            <h3 style="margin:0 0 1rem; color:var(--text); font-size:1.1rem; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; color:var(--text-dim);">📋 Attendance Breakdown by Session</h3>
+            <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:1.5rem;">
+                ${Object.keys(dars1st).length > 0 ? `
+                    <div style="background:linear-gradient(135deg, #fbbf2410, #fbbf2405); border-radius:0.75rem; padding:1.25rem; border:1px solid #fbbf24; border-left:4px solid #fbbf24;">
+                        <div style="font-size:0.85rem; font-weight:700; color:#fbbf24; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:1rem; padding-bottom:0.75rem; border-bottom:1px solid #fbbf2430;">📚 1st Dars Sessions</div>
+                        <div style="max-height:160px; overflow-y:auto; padding-right:0.5rem;">
+                            ${renderBreakdownSection(dars1st, '')}
+                        </div>
+                    </div>
+                ` : ''}
+                ${Object.keys(dars2nd).length > 0 ? `
+                    <div style="background:linear-gradient(135deg, #34d39910, #34d39905); border-radius:0.75rem; padding:1.25rem; border:1px solid #34d399; border-left:4px solid #34d399;">
+                        <div style="font-size:0.85rem; font-weight:700; color:#34d399; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:1rem; padding-bottom:0.75rem; border-bottom:1px solid #34d39930;">📚 2nd Dars Sessions</div>
+                        <div style="max-height:160px; overflow-y:auto; padding-right:0.5rem;">
+                            ${renderBreakdownSection(dars2nd, '')}
+                        </div>
+                    </div>
+                ` : ''}
+                ${Object.keys(otherSessions).length > 0 ? `
+                    <div style="background:linear-gradient(135deg, #60a5fa10, #60a5fa05); border-radius:0.75rem; padding:1.25rem; border:1px solid #60a5fa; border-left:4px solid #60a5fa;">
+                        <div style="font-size:0.85rem; font-weight:700; color:#60a5fa; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:1rem; padding-bottom:0.75rem; border-bottom:1px solid #60a5fa30;">📖 Other Subject Sessions</div>
+                        <div style="max-height:160px; overflow-y:auto; padding-right:0.5rem;">
+                            ${renderBreakdownSection(otherSessions, '')}
+                        </div>
+                    </div>
+                ` : ''}
+                ${Object.keys(sessionStats).length === 0 ? `
+                    <div style="background:var(--glass); border-radius:0.75rem; padding:2rem; border:1px solid var(--border); grid-column: 1/-1; text-align:center;">
+                        <p style="color:var(--text-dim); font-size:0.9rem; margin:0;">📭 No attendance records found for this student.</p>
+                    </div>
+                ` : ''}
             </div>
         </div>
 
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.5rem; font-size:0.9rem;">
-            <p><strong>Father:</strong> ${escapeHtml(s.fatherName || 'N/A')}</p>
-            <p><strong>Batch:</strong> ${escapeHtml(s.batch || 'N/A')}</p>
-            <p><strong>Phone:</strong> ${escapeHtml(s.phone || 'N/A')}</p>
-            <p><strong>DOB:</strong> ${escapeHtml(s.dob || 'N/A')}</p>
+        <!-- Student Information -->
+        <div style="margin-bottom:2rem;">
+            <h3 style="margin:0 0 1rem; color:var(--text); font-size:1.1rem; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; color:var(--text-dim);">👤 Personal Information</h3>
+            <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(250px, 1fr)); gap:1rem;">
+                <div style="padding:1rem; background:var(--glass); border-radius:0.75rem; border:1px solid var(--border);">
+                    <div style="font-size:0.75rem; color:var(--text-dim); text-transform:uppercase; letter-spacing:0.05em; margin-bottom:0.5rem; font-weight:600;">Father's Name</div>
+                    <div style="font-size:0.95rem; color:var(--text);">${escapeHtml(s.fatherName || 'Not provided')}</div>
+                </div>
+                <div style="padding:1rem; background:var(--glass); border-radius:0.75rem; border:1px solid var(--border);">
+                    <div style="font-size:0.75rem; color:var(--text-dim); text-transform:uppercase; letter-spacing:0.05em; margin-bottom:0.5rem; font-weight:600;">📱 Phone Number</div>
+                    <div style="font-size:0.95rem; color:var(--text);">${escapeHtml(s.phone || 'Not provided')}</div>
+                </div>
+                <div style="padding:1rem; background:var(--glass); border-radius:0.75rem; border:1px solid var(--border);">
+                    <div style="font-size:0.75rem; color:var(--text-dim); text-transform:uppercase; letter-spacing:0.05em; margin-bottom:0.5rem; font-weight:600;">🎂 Date of Birth</div>
+                    <div style="font-size:0.95rem; color:var(--text);">${escapeHtml(s.dob || 'Not provided')}</div>
+                </div>
+            </div>
         </div>
-        <hr style="border-color:var(--border); margin:1rem 0;">
-        <p style="font-size:0.9rem;"><strong>Education:</strong> ${escapeHtml(s.schoolInfo?.level || 'N/A')} (Dars: ${escapeHtml(s.darsType || 'N/A')})</p>
-        <p style="font-size:0.9rem;"><strong>Address:</strong> ${escapeHtml(s.address || 'N/A')}</p>
+
+        <!-- Education Details -->
+        <div style="padding:1.25rem; background:linear-gradient(135deg, rgba(100,200,255,0.1), rgba(100,200,255,0.05)); border-radius:0.75rem; border:1px solid var(--border); border-left:4px solid var(--primary);">
+            <h3 style="margin:0 0 1rem; color:var(--text); font-size:1rem; font-weight:600;">📖 Educational Background</h3>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem; font-size:0.9rem;">
+                <p style="margin:0.5rem 0;"><strong style="color:var(--primary);">School Level:</strong> <span style="color:var(--text);">${escapeHtml(s.schoolInfo?.level || 'Not specified')}</span></p>
+                <p style="margin:0.5rem 0;"><strong style="color:var(--primary);">Dars Type:</strong> <span style="color:var(--text);">${escapeHtml(s.darsType || 'Not specified')}</span></p>
+            </div>
+            <p style="margin:0.75rem 0 0; color:var(--text-dim); font-size:0.85rem;"><strong>📍 Address:</strong> ${escapeHtml(s.address || 'Not provided')}</p>
+        </div>
     `;
 };
 

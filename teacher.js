@@ -1484,6 +1484,98 @@ function renderTextAsImage(text, fontSizePx = 22) {
     }
 }
 
+function needsPdfWindowFallback() {
+    const ua = navigator.userAgent || '';
+    const platform = navigator.platform || '';
+    const isIOS = /iPad|iPhone|iPod/.test(ua) || (platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    const isStandalone = window.matchMedia?.('(display-mode: standalone)').matches || window.navigator.standalone === true;
+    const isAndroidWebView = /; wv\)/i.test(ua) || (/Android/i.test(ua) && /Version\/[\d.]+.*Mobile Safari/i.test(ua));
+    const isInAppBrowser = /FBAN|FBAV|Instagram|Line|WhatsApp/i.test(ua);
+    return isIOS || isStandalone || isAndroidWebView || isInAppBrowser;
+}
+
+function writePdfWindowMessage(pdfWindow, message) {
+    if (!pdfWindow || pdfWindow.closed) return;
+    try {
+        pdfWindow.document.open();
+        pdfWindow.document.write(`<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>PDF Download</title>
+    <style>
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: grid;
+            place-items: center;
+            background: #ffffff;
+            color: #111827;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 24px;
+        }
+        p {
+            max-width: 320px;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+<body>
+    <p>${escapeHtml(message)}</p>
+</body>
+</html>`);
+        pdfWindow.document.close();
+    } catch (err) {
+        console.warn('Unable to update PDF helper window:', err);
+    }
+}
+
+function openPdfWindow(message) {
+    if (!needsPdfWindowFallback()) return null;
+    const pdfWindow = window.open('', '_blank');
+    writePdfWindowMessage(pdfWindow, message);
+    return pdfWindow;
+}
+
+function savePdfDocument(doc, filename, pdfWindow = null) {
+    const blob = doc.output('blob');
+    const blobUrl = URL.createObjectURL(blob);
+    let delivered = false;
+
+    if (pdfWindow && !pdfWindow.closed) {
+        try {
+            pdfWindow.location.href = blobUrl;
+            delivered = true;
+        } catch (err) {
+            console.warn('PDF helper window failed:', err);
+        }
+    }
+
+    if (!delivered) {
+        const link = document.createElement('a');
+        link.href = blobUrl;
+        link.download = filename;
+        link.target = '_blank';
+        link.rel = 'noopener';
+        link.style.display = 'none';
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+
+        if (needsPdfWindowFallback() && !('download' in HTMLAnchorElement.prototype)) {
+            const opened = window.open(blobUrl, '_blank');
+            if (!opened) {
+                URL.revokeObjectURL(blobUrl);
+                throw new Error("PDF was created, but this browser blocked the download. Please allow pop-ups for this site and try again.");
+            }
+        }
+    }
+
+    setTimeout(() => URL.revokeObjectURL(blobUrl), 120000);
+}
+
 if (downloadAttPdfBtn) {
 
     downloadAttPdfBtn.addEventListener('click', () => {
@@ -1497,6 +1589,7 @@ if (downloadAttPdfBtn) {
         const rows = table.querySelectorAll('tbody tr');
         const head = [];
         table.querySelectorAll('thead th').forEach(th => head.push(th.innerText.trim()));
+        const pdfWindow = openPdfWindow("Preparing attendance PDF...");
         
         const body = [];
         rows.forEach(r => {
@@ -1516,8 +1609,11 @@ if (downloadAttPdfBtn) {
         downloadAttPdfBtn.disabled = true;
         downloadAttPdfBtn.innerText = "Generating PDF...";
 
-        const { jsPDF } = window.jspdf;
+        try {
+        const { jsPDF } = window.jspdf || {};
+        if (!jsPDF) throw new Error("PDF tools are still loading. Please refresh the page and try again.");
         const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+        if (typeof doc.autoTable !== 'function') throw new Error("PDF table tools are still loading. Please refresh the page and try again.");
         
         doc.setFontSize(16);
         doc.text('Attendance List', 105, 15, { align: 'center' });
@@ -1538,9 +1634,14 @@ if (downloadAttPdfBtn) {
             alternateRowStyles: { fillColor: [250,250,250] },
         });
         
-        doc.save(`Attendance_${batch.replace(/\s+/g,'_')}_${date}.pdf`);
+        savePdfDocument(doc, `Attendance_${batch.replace(/\s+/g,'_')}_${date}.pdf`, pdfWindow);
+        } catch (err) {
+            writePdfWindowMessage(pdfWindow, err.message || "PDF generation failed.");
+            alert(err.message || "PDF generation failed.");
+        } finally {
         downloadAttPdfBtn.disabled = false;
-        downloadAttPdfBtn.innerText = "📥 Download PDF";
+        downloadAttPdfBtn.innerText = "\uD83D\uDCE5 Download PDF";
+        }
     });
 }
 
@@ -1554,6 +1655,7 @@ if (downloadMonthlyAttPdfBtn) {
             return alert("Please select a Subject, Batch, and Month to generate the report.");
         }
         
+        const pdfWindow = openPdfWindow("Preparing monthly attendance PDF...");
         downloadMonthlyAttPdfBtn.disabled = true;
         downloadMonthlyAttPdfBtn.innerText = "Gathering Data...";
         
@@ -1668,10 +1770,12 @@ if (downloadMonthlyAttPdfBtn) {
 
             downloadMonthlyAttPdfBtn.innerText = "Generating PDF...";
 
-            const { jsPDF } = window.jspdf;
+            const { jsPDF } = window.jspdf || {};
+            if (!jsPDF) throw new Error("PDF tools are still loading. Please refresh the page and try again.");
             const isLandscape = sortedDates.length > 10;
             const format = sortedDates.length > 20 ? 'a3' : 'a4';
             const doc = new jsPDF({ orientation: isLandscape ? 'landscape' : 'portrait', unit: 'mm', format });
+            if (typeof doc.autoTable !== 'function') throw new Error("PDF table tools are still loading. Please refresh the page and try again.");
             const pageWidth = doc.internal.pageSize.getWidth();
 
             doc.setFontSize(14);
@@ -1701,14 +1805,15 @@ if (downloadMonthlyAttPdfBtn) {
                 alternateRowStyles: { fillColor: [248,248,248] },
             });
 
-            doc.save(`Monthly_Attendance_${batch.replace(/\s+/g,'_')}_${month}.pdf`);
+            savePdfDocument(doc, `Monthly_Attendance_${batch.replace(/\s+/g,'_')}_${month}.pdf`, pdfWindow);
 
         } catch (err) {
-            alert(err.message);
+            writePdfWindowMessage(pdfWindow, err.message || "PDF generation failed.");
+            alert(err.message || "PDF generation failed.");
         }
         
         downloadMonthlyAttPdfBtn.disabled = false;
-        downloadMonthlyAttPdfBtn.innerText = "📥 Download Monthly PDF";
+        downloadMonthlyAttPdfBtn.innerText = "\uD83D\uDCE5 Download Monthly PDF";
     });
 }
 

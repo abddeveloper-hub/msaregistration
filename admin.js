@@ -384,26 +384,26 @@ window.viewInstitutionDetails = async (instId) => {
     const inst = allInstitutions.find(i => i.id === instId);
     if(!inst) return;
 
-    document.getElementById('modalInstName').innerText = inst.name;
-    document.getElementById('modalInstReg').innerText = inst.regNumber || 'N/A';
+    document.getElementById('detailInstName').innerText = inst.name;
+    document.getElementById('detailInstReg').innerText = inst.regNumber || 'N/A';
 
     const instStudents = allUsers.filter(u => isStudentApplication(u) && recordMatchesInstitution(u, inst));
     const instFaculty = allUsers.filter(u => u.role === 'faculty' && recordMatchesInstitution(u, inst));
 
-    document.getElementById('modalInstTotalStudents').innerText = instStudents.length;
-    document.getElementById('modalInstTotalFaculty').innerText = instFaculty.length;
+    document.getElementById('detailInstTotalStudents').innerText = instStudents.length;
+    document.getElementById('detailInstTotalFaculty').innerText = instFaculty.length;
 
     const pendingCount = instStudents.filter(s => s.status === 'pending').length;
-    document.getElementById('modalInstPending').innerText = pendingCount;
+    document.getElementById('detailInstPending').innerText = pendingCount;
 
     const sayyids = instStudents.filter(s => s.isSayyid === 'yes').length;
     const hafizs = instStudents.filter(s => s.isHafiz === 'yes').length;
     const orphans = instStudents.filter(s => s.isOrphan === 'yes').length;
     const specialCount = sayyids + hafizs + orphans;
-    document.getElementById('modalInstSpecial').innerText = specialCount;
+    document.getElementById('detailInstSpecial').innerText = specialCount;
 
     // Populate Students
-    const studentTbody = document.getElementById('modalInstStudentTableBody');
+    const studentTbody = document.getElementById('detailInstStudentTableBody');
     studentTbody.innerHTML = '';
     
     if(instStudents.length === 0) {
@@ -427,12 +427,15 @@ window.viewInstitutionDetails = async (instId) => {
                     <div style="margin-top:4px;">${badges}</div>
                 </td>
                 <td style="vertical-align:top;">${statusLabel}</td>
+                <td style="vertical-align:top;">
+                    <button class="action-btn btn-action" onclick="adminViewStudent('${s.id}')">View</button>
+                </td>
             </tr>`;
         });
     }
 
     // Populate Faculty
-    const facultyTbody = document.getElementById('modalInstFacultyTableBody');
+    const facultyTbody = document.getElementById('detailInstFacultyTableBody');
     facultyTbody.innerHTML = '';
 
     if(instFaculty.length === 0) {
@@ -448,11 +451,18 @@ window.viewInstitutionDetails = async (instId) => {
                     <span style="font-size:0.8rem; color:var(--text-dim);">${contact}</span>
                 </td>
                 <td style="vertical-align:top;">${statusLabel}</td>
+                <td style="vertical-align:top;">
+                    <button class="action-btn btn-action" onclick="adminViewFaculty('${f.id}')">View</button>
+                </td>
             </tr>`;
         });
     }
 
-    document.getElementById('adminInstitutionModal').classList.add('active');
+    document.querySelectorAll('.admin-section').forEach(sec => sec.classList.add('hidden'));
+    document.getElementById('viewInstitutionDetail').classList.remove('hidden');
+    document.querySelectorAll('#adminNav .nav-item').forEach(n => n.classList.remove('active'));
+    const instNavItem = document.querySelector('#adminNav .nav-item[data-target="viewInstitutions"]');
+    if (instNavItem) instNavItem.classList.add('active');
 };
 
 
@@ -642,6 +652,53 @@ window.adminViewStudent = async (uid) => {
     }
 
     modal.classList.add('active');
+};
+
+window.adminViewFaculty = async (uid) => {
+    const f = allUsers.find(x => x.id === uid);
+    if(!f) return;
+    
+    const modal = document.getElementById('adminStudentModal');
+    const body = document.getElementById('adminModalBody');
+    
+    // Change modal title temporarily
+    const titleEl = modal.querySelector('.view-title');
+    if(titleEl) titleEl.innerText = "Faculty Full Report";
+
+    body.innerHTML = `
+        <div style="grid-column: span 2;">
+            <h3 style="color:var(--primary); margin-bottom:1rem;">Faculty Profile</h3>
+            <div style="display: flex; gap: 2rem; align-items: flex-start;">
+                <img src="${f.photoUrl || ''}" style="width:120px; height:120px; object-fit:cover; border-radius:1rem; background:#333;" alt="No Photo">
+                <div>
+                    <p><strong>Name:</strong> ${f.fullName || 'N/A'}</p>
+                    <p><strong>Email:</strong> ${f.email || 'N/A'}</p>
+                    <p><strong>Phone:</strong> ${f.phone || 'N/A'}</p>
+                    <p><strong>Status:</strong> <span style="text-transform:uppercase; font-weight:bold; color:var(--success);">${f.status || 'N/A'}</span></p>
+                    <p><strong>Assigned Campus:</strong> ${getRecordCampusName(f)}</p>
+                </div>
+            </div>
+        </div>
+    `;
+
+    const actions = document.getElementById('adminModalActions');
+    if (actions) {
+        actions.innerHTML = `
+            <button class="action-btn btn-reject" onclick="deleteRecord('users', '${f.id}')" style="padding: 0.5rem 1rem;">Delete Faculty</button>
+        `;
+    }
+
+    modal.classList.add('active');
+    
+    // Reset title when closed
+    const closeBtn = modal.querySelector('.btn-ghost');
+    if (closeBtn) {
+        const oldOnClick = closeBtn.onclick;
+        closeBtn.onclick = function(e) {
+            if(titleEl) titleEl.innerText = "Student Full Report";
+            if(oldOnClick) oldOnClick(e);
+        };
+    }
 };
 
 window.deleteEvent = async (id, title) => {

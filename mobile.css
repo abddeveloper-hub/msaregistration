@@ -269,7 +269,7 @@ html, body {
 
     /* Force grids in profiles to 1 column on mobile */
     #studentDetailBody > div > div[style*="display:grid"],
-    #viewInstitutionDetail div[style*="display: grid"],
+    #viewInstitutionDetail div[style*="1fr 1fr"],
     #adminModalBody div[style*="display: grid"] {
         grid-template-columns: 1fr !important;
     }
@@ -277,6 +277,16 @@ html, body {
     #studentDetailBody div[style*="grid-column: span 2"],
     #adminModalBody div[style*="grid-column: span 2"] {
         grid-column: auto !important;
+    }
+
+    /* Move floating buttons up to not overlap bottom nav */
+    #aiToggleBtn {
+        bottom: calc(5.5rem + 20px) !important;
+    }
+
+    .fab-container {
+        bottom: calc(5.5rem + 1rem) !important;
+        right: 1.5rem !important;
     }
 
     .modal-content {

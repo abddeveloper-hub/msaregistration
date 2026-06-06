@@ -566,14 +566,14 @@ function renderQueue() {
 window.viewStudentDetails = async (uid) => {
     const s = campusStudents.find(x => x.id === uid);
     if(!s) return;
-    const body = document.getElementById('modalBody');
+    const body = document.getElementById('studentDetailBody');
     body.innerHTML = '<p>Loading statistics...</p>';
-    document.getElementById('studentModal').classList.add('active');
+    document.getElementById('viewStudentDetail').classList.remove('hidden');
 
-    const editBtn = document.getElementById('editStudentModalBtn');
+    const editBtn = document.getElementById('editStudentFullBtn');
     if (editBtn) {
         editBtn.onclick = () => {
-            document.getElementById('studentModal').classList.remove('active');
+            document.getElementById('viewStudentDetail').classList.add('hidden');
             window.openEditStudent(uid);
         };
     }

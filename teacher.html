@@ -422,16 +422,19 @@
         </div>
     </div>
 
-    <!-- Student Details Modal -->
-    <div id="studentModal" class="modal-overlay">
-        <div class="modal-content">
-            <h2 class="view-title" style="font-size:1.5rem; margin-bottom:1rem;">Student Details</h2>
-            <div id="modalBody" style="line-height:1.6;"></div>
-            <div style="display:flex; gap:1rem; margin-top:2rem;">
-                <button class="btn btn-main" id="editStudentModalBtn" style="flex:1;">Edit Profile</button>
-                <button class="btn btn-ghost" onclick="document.getElementById('studentModal').classList.remove('active')" style="flex:1;">Close</button>
+    <!-- Student Details Full View -->
+    <div id="viewStudentDetail" class="hidden" style="position: absolute; top:0; left:0; width:100%; min-height:100dvh; background:var(--bg); z-index:1500; overflow-y:auto; padding:2rem;">
+        <div class="view-header" style="display:flex; justify-content:space-between; align-items:center;">
+            <div>
+                <h2 class="view-title">Student Details</h2>
+                <p class="view-desc">Complete overview of the student's profile and performance.</p>
+            </div>
+            <div style="display:flex; gap:1rem;">
+                <button class="btn btn-main" id="editStudentFullBtn">Edit Profile</button>
+                <button class="btn btn-ghost" onclick="document.getElementById('viewStudentDetail').classList.add('hidden')">← Back</button>
             </div>
         </div>
+        <div id="studentDetailBody" style="max-width:900px; margin:0 auto; padding-bottom:4rem; line-height:1.6;"></div>
     </div>
 
     <!-- PWA Installation Instructions Modal -->

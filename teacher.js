@@ -1,6 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, onSnapshot, query, where, addDoc, runTransaction, getDocs, deleteDoc, arrayUnion, arrayRemove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, onSnapshot, query, where, addDoc, runTransaction, getDocs, deleteDoc, arrayUnion, arrayRemove, enableMultiTabIndexedDbPersistence } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 import { firebaseConfig } from "./firebase-config.js";
 
 
@@ -8,6 +8,7 @@ import { firebaseConfig } from "./firebase-config.js";
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
+enableMultiTabIndexedDbPersistence(db).catch((err) => console.warn("Offline persistence error:", err.code));
 
 // DOM
 const viewRegistration = document.getElementById('viewRegistration');
@@ -353,12 +354,14 @@ function renderSubjects() {
             </div>`;
         return;
     }
-    campusSubjects.forEach(sub => {
+    campusSubjects.forEach((sub, index) => {
         const sName = typeof sub === 'string' ? sub : sub.name;
         const sBatch = typeof sub === 'string' ? 'All' : (sub.batch || 'All');
         const batchLabel = sBatch === 'All' ? 'ALL' : sBatch.toUpperCase();
 
         const el = document.createElement('div');
+        el.className = 'subject-card';
+        el.setAttribute('draggable', 'true');
         el.style.cssText = `
             display: inline-flex;
             align-items: center;
@@ -370,10 +373,11 @@ function renderSubjects() {
             font-size: 0.95rem;
             font-weight: 600;
             color: var(--text-main);
-            transition: border-color 0.2s;
+            transition: border-color 0.2s, transform 0.2s, opacity 0.2s;
+            cursor: grab;
         `;
         el.innerHTML = `
-            <span dir="auto" style="line-height:1.3;">${escapeHtml(sName)}</span>
+            <span dir="auto" style="line-height:1.3; pointer-events:none;">${escapeHtml(sName)}</span>
             <span style="
                 font-size: 0.65rem;
                 font-weight: 800;
@@ -383,6 +387,7 @@ function renderSubjects() {
                 border-radius: 999px;
                 padding: 0.1rem 0.45rem;
                 white-space: nowrap;
+                pointer-events:none;
             " dir="ltr">${escapeHtml(batchLabel)}</span>
             <button onclick="deleteSubject('${escapeHtml(sName)}', '${escapeHtml(sBatch)}')" style="
                 background: none;
@@ -403,6 +408,55 @@ function renderSubjects() {
                 border-radius: 50%;
             " onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.7'" title="Remove subject">×</button>
         `;
+
+        // Drag and Drop Logic
+        el.addEventListener('dragstart', (e) => {
+            e.dataTransfer.effectAllowed = 'move';
+            e.dataTransfer.setData('text/plain', index);
+            setTimeout(() => el.classList.add('dragging'), 0);
+        });
+        
+        el.addEventListener('dragend', () => {
+            el.classList.remove('dragging');
+            document.querySelectorAll('.subject-card').forEach(c => c.classList.remove('drag-over'));
+        });
+        
+        el.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+            el.classList.add('drag-over');
+        });
+        
+        el.addEventListener('dragleave', () => {
+            el.classList.remove('drag-over');
+        });
+        
+        el.addEventListener('drop', async (e) => {
+            e.preventDefault();
+            el.classList.remove('drag-over');
+            const draggedIdx = parseInt(e.dataTransfer.getData('text/plain'));
+            const targetIdx = index;
+            if (draggedIdx === targetIdx) return;
+            
+            // Reorder array
+            const draggedItem = campusSubjects[draggedIdx];
+            campusSubjects.splice(draggedIdx, 1);
+            campusSubjects.splice(targetIdx, 0, draggedItem);
+            
+            renderSubjects(); // optimistic update
+            
+            // Save to Firestore
+            const cid = activeCampusScope?.campusId || (currentFacData?.role === 'admin' ? 'global_config' : null);
+            if (cid) {
+                try {
+                    await setDoc(doc(db, "institutions", cid), { subjectsList: campusSubjects }, { merge: true });
+                } catch(err) {
+                    console.error("Save order error:", err);
+                    if(window.showToast) window.showToast("Failed to save new order", "error");
+                }
+            }
+        });
+
         list.appendChild(el);
     });
 }
@@ -489,7 +543,7 @@ function renderQueue() {
     if(!tbody) return;
     tbody.innerHTML = '';
     if(pendingStudents.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; color:var(--text-dim);">No pending students.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="4" style="border:none;"><div class="empty-state-card"><div class="icon">📭</div><h3>Queue is Empty</h3><p>No pending student applications to review.</p></div></td></tr>';
         return;
     }
     
@@ -909,6 +963,10 @@ function renderMyStudents() {
         `;
         tbody.appendChild(tr);
     });
+    
+    if(typeof renderChatRoster === 'function') {
+        renderChatRoster(admitted);
+    }
 }
 
 function updateSelects() {

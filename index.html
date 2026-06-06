@@ -4,12 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Muhyissunnah Dars Ukkuda | Official Portal</title>
+    <!-- Open Graph / SEO Meta Tags -->
+    <meta property="og:title" content="Muhyissunnah Dars Ukkuda | Official Portal">
+    <meta property="og:description" content="A polished digital campus for registration, admissions, attendance, marks, and administrative oversight.">
+    <meta property="og:description" content="Official platform for admissions, attendance, and academics.">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="https://cdn-icons-png.flaticon.com/512/3665/3665930.png">
+    
+
     <!-- Preconnect to critical origins for faster mobile loading -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://www.gstatic.com" crossorigin>
     <!-- Google Fonts: loaded as <link> (non-blocking) instead of CSS @import -->
-    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cinzel:wght@500;700;800&family=Noto+Kufi+Arabic:wght@400;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Inter:wght@400;500;600&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="mobile.css">
     
@@ -17,7 +25,9 @@
     <meta name="theme-color" content="#0a0a0f">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/3665/3665930.png">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js" defer></script>
+    <link rel="icon" type="image/jpeg" href="logo.jpg">
+    <link rel="apple-touch-icon" href="logo.jpg">
     <link rel="manifest" href="manifest.json">
     <script>
         (function() {
@@ -31,10 +41,11 @@
     </script>
 </head>
 <body class="landing-page">
+
     <header class="nav-wrapper">
         <nav class="navbar" aria-label="Primary navigation">
             <a class="brand-lockup" href="index.html" aria-label="Muhyissunnah Dars Ukkuda home">
-                <span class="brand-mark">MSA UKKUDA</span>
+                <img src="logo.jpg" alt="MSA Ukkuda Logo" class="brand-logo-img">
                 <span class="brand-text">
                     <strong>Muhyissunnah Dars</strong>
                     <span>Ukkuda Official Portal</span>
@@ -42,9 +53,8 @@
             </a>
 
             <div class="nav-actions">
-                <button id="themeToggleBtn" class="btn btn-ghost icon-btn" type="button" aria-label="Toggle color theme" title="Toggle color theme">
-                    <span id="themeToggleLabel">Dark</span>
-                </button>
+                <button class="btn btn-ghost icon-btn" onclick="toggleTheme()" title="Toggle Dark/Light Mode">🌓</button>
+                <button class="btn btn-ghost icon-btn" type="button" aria-label="Search" onclick="document.getElementById('aiToggleBtn')?.click()"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg></button>
                 <button id="installAppBtn" class="btn btn-ghost install-app-btn hidden" type="button">Download App</button>
                 <button id="navAdminBtn" class="btn btn-ghost" type="button">Admin</button>
                 <button id="navLoginBtn" class="btn btn-main" type="button">Sign In</button>
@@ -78,21 +88,21 @@
         <section class="stats-strip" aria-label="Live portal statistics">
             <div class="floating-stats-bar">
                 <div class="stat-item">
-                    <span class="stat-num" id="statEnrollment">0</span>
+                    <span class="stat-num skeleton" id="statEnrollment">0000</span>
                     <span class="stat-text">Enrollments</span>
                 </div>
                 <div class="stat-item">
-                    <span class="stat-num" id="statInstitutions">0</span>
+                    <span class="stat-num skeleton" id="statInstitutions">0000</span>
                     <span class="stat-text">Institutions</span>
                 </div>
                 <div class="stat-item">
-                    <span class="stat-num" id="statFaculty">0</span>
+                    <span class="stat-num skeleton" id="statFaculty">0000</span>
                     <span class="stat-text">Faculty</span>
                 </div>
             </div>
         </section>
 
-        <section id="portalAccess" class="page-section" aria-labelledby="portalTitle">
+        <section id="portalAccess" class="page-section fade-in-up" aria-labelledby="portalTitle">
             <div class="section-heading-row">
                 <div>
                     <p class="section-kicker">Role-based access</p>
@@ -102,7 +112,7 @@
             </div>
 
             <div class="cards-grid">
-                <a id="studentCard" class="portal-card student" href="student.html">
+                <a id="studentCard" href="student.html" class="portal-card student">
                     <span class="portal-card-top">
                         <span class="portal-initial">ST</span>
                         <span class="portal-status">Admissions</span>
@@ -117,7 +127,7 @@
                     </span>
                 </a>
 
-                <a id="facultyCard" class="portal-card faculty" href="teacher.html">
+                <a id="facultyCard" href="teacher.html" class="portal-card faculty">
                     <span class="portal-card-top">
                         <span class="portal-initial">FC</span>
                         <span class="portal-status">Academic</span>
@@ -132,7 +142,7 @@
                     </span>
                 </a>
 
-                <a id="adminCard" class="portal-card admin" href="admin.html">
+                <a id="adminCard" href="admin.html" class="portal-card admin">
                     <span class="portal-card-top">
                         <span class="portal-initial">AD</span>
                         <span class="portal-status">Secure</span>
@@ -149,7 +159,7 @@
             </div>
         </section>
 
-        <section class="page-section" aria-labelledby="featuresTitle">
+        <section class="page-section fade-in-up" aria-labelledby="featuresTitle" style="animation-delay: 0.2s;">
             <p class="section-kicker">New portal features</p>
             <h2 id="featuresTitle" class="section-title">Built for daily institutional work.</h2>
             <div class="feature-grid">
@@ -295,7 +305,8 @@
         </div>
     </div>
 
-    <script type="module" src="app.js?v=3"></script>
+    <script type="module" src="app.js?v=2"></script>
+    <script type="module" src="ai.js"></script>
 
     <!-- PWA Registration -->
     <script>

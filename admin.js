@@ -1,11 +1,12 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 import { getAuth, onAuthStateChanged, signOut, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-import { getFirestore, doc, getDoc, updateDoc, collection, onSnapshot, addDoc, setDoc, getDocs, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+import { getFirestore, doc, getDoc, updateDoc, collection, onSnapshot, addDoc, setDoc, getDocs, deleteDoc, enableMultiTabIndexedDbPersistence, query as fsQuery, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 import { firebaseConfig } from "./firebase-config.js";
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
+enableMultiTabIndexedDbPersistence(db).catch((err) => console.warn("Offline persistence error:", err.code));
 
 // Secondary Auth App for creating users without logging out
 const secondaryApp = initializeApp(firebaseConfig, "Secondary");
@@ -215,6 +216,118 @@ function updateStats() {
     if(document.getElementById('statSayyids')) document.getElementById('statSayyids').innerText = sayyids;
     if(document.getElementById('statHafizs')) document.getElementById('statHafizs').innerText = hafizs;
     if(document.getElementById('statOrphans')) document.getElementById('statOrphans').innerText = orphans;
+
+    if (!window.chartInstances) window.chartInstances = {};
+
+    Chart.defaults.color = '#a0a0b0';
+    Chart.defaults.font.family = 'Inter, sans-serif';
+
+    // 1. Demographics Breakdown (Pie Chart)
+    const ctxDemographics = document.getElementById('chartDemographics');
+    if (ctxDemographics) {
+        if (window.chartInstances.demo) window.chartInstances.demo.destroy();
+        const general = students.length - sayyids - hafizs - orphans;
+        window.chartInstances.demo = new Chart(ctxDemographics, {
+            type: 'pie',
+            data: {
+                labels: ['General', 'Sayyids', 'Hafizs', 'Orphans'],
+                datasets: [{
+                    data: [Math.max(0, general), sayyids, hafizs, orphans],
+                    backgroundColor: ['rgba(255, 255, 255, 0.1)', 'rgba(216, 173, 74, 0.8)', 'rgba(54, 193, 144, 0.8)', 'rgba(235, 87, 87, 0.8)'],
+                    borderWidth: 0
+                }]
+            },
+            options: { responsive: true, maintainAspectRatio: false }
+        });
+    }
+
+    // 2. Institution Distribution (Doughnut Chart)
+    const ctxInst = document.getElementById('chartInstitutions');
+    if (ctxInst) {
+        if (window.chartInstances.inst) window.chartInstances.inst.destroy();
+        
+        const instCounts = {};
+        students.forEach(s => {
+            const campus = getRecordCampusName(s);
+            instCounts[campus] = (instCounts[campus] || 0) + 1;
+        });
+
+        window.chartInstances.inst = new Chart(ctxInst, {
+            type: 'doughnut',
+            data: {
+                labels: Object.keys(instCounts),
+                datasets: [{
+                    data: Object.values(instCounts),
+                    backgroundColor: ['#d8ad4a', '#36c190', '#eb5757', '#2f80ed', '#9b51e0', '#f2c94c'],
+                    borderWidth: 0
+                }]
+            },
+            options: { responsive: true, maintainAspectRatio: false }
+        });
+    }
+
+    // 3. Registration Trends (Line Chart)
+    const ctxTrends = document.getElementById('chartTrends');
+    if (ctxTrends) {
+        if (window.chartInstances.trends) window.chartInstances.trends.destroy();
+        
+        const trendData = {};
+        students.forEach(s => {
+            let dateStr = "Unknown";
+            if (s.createdAt) {
+                const date = s.createdAt.toDate ? s.createdAt.toDate() : new Date(s.createdAt);
+                if (!isNaN(date)) dateStr = date.toLocaleDateString();
+            }
+            trendData[dateStr] = (trendData[dateStr] || 0) + 1;
+        });
+        
+        const sortedDates = Object.keys(trendData).sort((a,b) => new Date(a) - new Date(b));
+        const sortedCounts = sortedDates.map(d => trendData[d]);
+
+        window.chartInstances.trends = new Chart(ctxTrends, {
+            type: 'line',
+            data: {
+                labels: sortedDates,
+                datasets: [{
+                    label: 'Registrations',
+                    data: sortedCounts,
+                    borderColor: '#36c190',
+                    backgroundColor: 'rgba(54, 193, 144, 0.2)',
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: { 
+                responsive: true, maintainAspectRatio: false,
+                scales: { y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.05)' } }, x: { grid: { display: false } } }
+            }
+        });
+    }
+
+    // 4. Faculty vs Students (Bar Chart)
+    const ctxFS = document.getElementById('chartFacultyStudent');
+    if (ctxFS) {
+        if (window.chartInstances.fs) window.chartInstances.fs.destroy();
+        
+        const campuses = [...new Set(allInstitutions.map(i => i.name))];
+        const studentData = campuses.map(c => students.filter(s => getRecordCampusName(s) === c).length);
+        const facultyData = campuses.map(c => faculty.filter(f => getRecordCampusName(f) === c).length);
+
+        window.chartInstances.fs = new Chart(ctxFS, {
+            type: 'bar',
+            data: {
+                labels: campuses,
+                datasets: [
+                    { label: 'Students', data: studentData, backgroundColor: '#d8ad4a' },
+                    { label: 'Faculty', data: facultyData, backgroundColor: '#36c190' }
+                ]
+            },
+            options: { 
+                responsive: true, maintainAspectRatio: false,
+                scales: { y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.05)' } }, x: { grid: { display: false } } }
+            }
+        });
+    }
 }
 
 function renderProgressOverview() {
@@ -229,7 +342,7 @@ function renderProgressOverview() {
         const enrolled = allUsers.filter(u => isStudentApplication(u) && recordMatchesInstitution(u, inst)).length;
         const assignedFacs = allUsers.filter(u => u.role === 'faculty' && recordMatchesInstitution(u, inst)).map(f => f.fullName || 'Unknown').join(', ');
         tbody.innerHTML += `<tr>
-            <td><strong>${inst.name}</strong></td>
+            <td><strong style="cursor:pointer; color:var(--primary); transition:opacity 0.2s;" onmouseover="this.style.opacity=0.8" onmouseout="this.style.opacity=1" onclick="window.viewInstitutionDetails('${inst.id}')">${inst.name}</strong></td>
             <td>${enrolled}</td>
             <td style="font-size:0.8rem; color:var(--text-dim);">${assignedFacs || 'None'}</td>
         </tr>`;
@@ -249,7 +362,7 @@ function renderInstitutions() {
         const assignedFacs = allUsers.filter(u => u.role === 'faculty' && recordMatchesInstitution(u, inst)).length;
         tbody.innerHTML += `<tr>
             <td>${inst.regNumber || 'N/A'}</td>
-            <td><strong>${inst.name}</strong></td>
+            <td><strong style="cursor:pointer; color:var(--primary); transition:opacity 0.2s;" onmouseover="this.style.opacity=0.8" onmouseout="this.style.opacity=1" onclick="window.viewInstitutionDetails('${inst.id}')">${inst.name}</strong></td>
             <td>${assignedFacs} Faculty</td>
             <td><button class="action-btn btn-reject" onclick="deleteRecord('institutions', '${inst.id}')">Delete</button></td>
         </tr>`;
@@ -266,6 +379,41 @@ document.getElementById('addInstBtn')?.addEventListener('click', async () => {
         document.getElementById('instRegNum').value = '';
     } catch (e) { alert(e.message); }
 });
+
+window.viewInstitutionDetails = async (instId) => {
+    const inst = allInstitutions.find(i => i.id === instId);
+    if(!inst) return;
+
+    document.getElementById('modalInstName').innerText = inst.name;
+    document.getElementById('modalInstReg').innerText = inst.regNumber || 'N/A';
+
+    const instStudents = allUsers.filter(u => isStudentApplication(u) && recordMatchesInstitution(u, inst));
+    const instFaculty = allUsers.filter(u => u.role === 'faculty' && recordMatchesInstitution(u, inst));
+
+    document.getElementById('modalInstTotalStudents').innerText = instStudents.length;
+    document.getElementById('modalInstTotalFaculty').innerText = instFaculty.length;
+
+    const tbody = document.getElementById('modalInstStudentTableBody');
+    tbody.innerHTML = '';
+    
+    if(instStudents.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="3" style="text-align:center; color:var(--text-dim);">No students enrolled here yet.</td></tr>';
+    } else {
+        instStudents.forEach(s => {
+            const contact = s.email || s.parentPhone || 'N/A';
+            const statusLabel = s.status === 'admitted' ? '<span class="status-badge" style="background:var(--success-dim); color:var(--success);">Admitted</span>' :
+                              s.status === 'rejected' ? '<span class="status-badge" style="background:var(--danger-dim); color:var(--danger);">Rejected</span>' :
+                              '<span class="status-badge" style="background:var(--warning-dim); color:var(--warning);">Pending</span>';
+            tbody.innerHTML += `<tr>
+                <td><strong>${s.fullName || 'Unknown'}</strong></td>
+                <td>${contact}</td>
+                <td>${statusLabel}</td>
+            </tr>`;
+        });
+    }
+
+    document.getElementById('adminInstitutionModal').classList.add('active');
+};
 
 
 
@@ -455,6 +603,54 @@ window.adminViewStudent = async (uid) => {
 
     modal.classList.add('active');
 };
+
+window.deleteEvent = async (id, title) => {
+    if(confirm(`Are you sure you want to delete the event: ${title}?`)) {
+        try {
+            await deleteDoc(doc(db, 'calendarEvents', id));
+            if(window.showToast) window.showToast("Event deleted");
+        } catch(e) {
+            console.error(e);
+        }
+    }
+};
+
+// ==========================================
+// SECURITY LOGS LOGIC
+// ==========================================
+const securityLogsQuery = fsQuery(collection(db, 'securityLogs'), orderBy('timestamp', 'desc'), limit(50));
+onSnapshot(securityLogsQuery, (snapshot) => {
+    const tbody = document.getElementById('securityLogsBody');
+    if(!tbody) return;
+    tbody.innerHTML = '';
+    
+    if(snapshot.empty) {
+        tbody.innerHTML = '<tr><td colspan="5"><div class="empty-state-card"><div class="icon">🛡️</div><h3>No Logs Found</h3><p>Security audit logs will appear here when users log in.</p></div></td></tr>';
+        return;
+    }
+    
+    snapshot.forEach(docSnap => {
+        const d = docSnap.data();
+        const dateStr = new Date(d.timestamp).toLocaleString();
+        
+        let deviceStr = d.userAgent || '';
+        if(deviceStr.includes('iPhone')) deviceStr = '📱 iPhone';
+        else if(deviceStr.includes('Android')) deviceStr = '📱 Android';
+        else if(deviceStr.includes('Mac OS')) deviceStr = '💻 Mac';
+        else if(deviceStr.includes('Windows')) deviceStr = '💻 Windows PC';
+        else deviceStr = 'Unknown Device';
+        
+        tbody.innerHTML += `
+            <tr>
+                <td style="font-size:0.85rem; color:var(--text-dim);">${dateStr}</td>
+                <td><strong>${escapeHtml(d.email || '')}</strong></td>
+                <td><span style="text-transform:capitalize; color:var(--primary); font-weight:600;">${escapeHtml(d.role || '')}</span></td>
+                <td><span style="font-family:monospace; background:var(--glass-heavy); padding:0.2rem 0.5rem; border-radius:4px; font-size:0.8rem;">${escapeHtml(d.ip || 'N/A')}</span></td>
+                <td style="color:var(--text-dim); font-size:0.9rem;">${deviceStr}</td>
+            </tr>
+        `;
+    });
+});
 
 window.adminQuickAdmit = async (uid) => {
     if(!confirm("Are you sure you want to admit this student?")) return;

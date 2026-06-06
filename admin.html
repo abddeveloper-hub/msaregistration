@@ -9,15 +9,19 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://www.gstatic.com" crossorigin>
     <!-- Google Fonts: loaded as <link> (non-blocking) instead of CSS @import -->
-    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cinzel:wght@500;700;800&family=Noto+Kufi+Arabic:wght@400;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Inter:wght@400;500;600&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="mobile.css">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- PWA Support -->
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#0a0a0f">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/3665/3665930.png">
+    <link rel="icon" type="image/jpeg" href="logo.jpg">
+    <link rel="apple-touch-icon" href="logo.jpg">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js" defer></script>
     <script>
         (function() {
             const theme = localStorage.getItem("msaukkuda:theme") || "dark";
@@ -33,7 +37,7 @@
     <div id="adminLoginView" class="auth-view-container" style="display: flex; justify-content: center; align-items: center; min-height: 100vh; background: var(--bg);">
         <div class="form-section" style="width:100%; max-width:400px;">
             <div class="app-logo" style="margin-bottom: 2rem; color:var(--primary); justify-content:center;">
-                <div class="dot"></div>
+                <img src="logo.jpg" alt="Logo" class="app-logo-img">
                 Admin Root Access
             </div>
             <p style="text-align:center; color:var(--text-dim); margin-bottom:2rem;">Enter authorized credentials to continue.</p>
@@ -61,7 +65,7 @@
                 <span></span><span></span><span></span>
             </button>
             <div class="app-logo" style="margin:0;">
-                <div class="dot"></div>
+                <img src="logo.jpg" alt="Logo" class="app-logo-img">
                 <span style="font-family: 'Cinzel', serif; font-size: 1.2rem;">MSA UKKUDA Admin</span>
             </div>
             <div style="width:40px;"></div>
@@ -72,7 +76,7 @@
         <aside class="sidebar" id="sidebarMenu">
             <div style="font-family: 'Amiri', serif; font-size: 2rem; color: var(--gold-base); text-align: center; margin-bottom: 1rem;">﷽</div>
             <div class="app-logo" style="justify-content: center; margin-bottom: 3rem;">
-                <div class="dot"></div>
+                <img src="logo.jpg" alt="Logo" class="app-logo-img">
                 <span style="font-family: 'Cinzel', serif;">MSA UKKUDA Admin</span>
             </div>
             
@@ -83,11 +87,14 @@
                 <div class="nav-item" data-target="viewFacultyApps">Faculty Applications</div>
                 <div class="nav-item" data-target="viewStudents">Global Student Directory</div>
                 <div class="nav-item" data-target="viewAdmins">Manage Admins</div>
+                <div class="nav-item" data-target="viewCalendar">Academic Calendar</div>
+                <div class="nav-item" data-target="viewSecurityLogs">Security Logs</div>
                 <div class="nav-item" onclick="window.location.href='teacher.html'">Teacher Portal</div>
             </nav>
 
             <button id="logoutBtn" class="btn btn-ghost" style="margin-top: auto;">Log Out</button>
             <button class="btn btn-ghost" style="margin-top: 1rem;" onclick="window.location.href='index.html'">Public Page</button>
+            <button class="btn btn-ghost" style="margin-top: 1rem;" onclick="toggleTheme()">🌓 Toggle Theme</button>
         </aside>
 
         <main class="main-content">
@@ -102,6 +109,33 @@
                     <div class="stat-card"><div class="stat-val" id="statSayyids" style="color:var(--secondary);">0</div><div class="stat-lbl">Sayyids</div></div>
                     <div class="stat-card"><div class="stat-val" id="statHafizs" style="color:var(--success);">0</div><div class="stat-lbl">Hafizs</div></div>
                     <div class="stat-card"><div class="stat-val" id="statOrphans" style="color:var(--accent);">0</div><div class="stat-lbl">Orphans</div></div>
+                </div>
+
+                <div class="analytics-dashboard">
+                    <div class="chart-container form-section">
+                        <h3>Demographics Breakdown</h3>
+                        <div style="position: relative; height: 300px; width: 100%;">
+                            <canvas id="chartDemographics"></canvas>
+                        </div>
+                    </div>
+                    <div class="chart-container form-section">
+                        <h3>Institution Distribution</h3>
+                        <div style="position: relative; height: 300px; width: 100%;">
+                            <canvas id="chartInstitutions"></canvas>
+                        </div>
+                    </div>
+                    <div class="chart-container form-section">
+                        <h3>Registration Trends</h3>
+                        <div style="position: relative; height: 300px; width: 100%;">
+                            <canvas id="chartTrends"></canvas>
+                        </div>
+                    </div>
+                    <div class="chart-container form-section">
+                        <h3>Faculty vs Students</h3>
+                        <div style="position: relative; height: 300px; width: 100%;">
+                            <canvas id="chartFacultyStudent"></canvas>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="form-section">
@@ -196,7 +230,100 @@
                 </div>
             </div>
 
+            <!-- 6. ACADEMIC CALENDAR -->
+            <div id="viewCalendar" class="admin-section hidden">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 2rem;">
+                    <h2 class="view-title" style="margin:0;">Academic Calendar</h2>
+                    <button class="btn btn-main" onclick="document.getElementById('adminCalendarEventModal').classList.add('active')">Add Event</button>
+                </div>
+                
+                <div class="calendar-controls">
+                    <button class="btn btn-ghost" id="calPrevMonth">&laquo; Prev Month</button>
+                    <h3 id="calCurrentMonthYear" style="color:var(--text-main); font-family:'Cinzel',serif;">Month Year</h3>
+                    <button class="btn btn-ghost" id="calNextMonth">Next Month &raquo;</button>
+                </div>
+
+                <div class="calendar-grid-wrapper">
+                    <div class="calendar-grid-header">
+                        <div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
+                    </div>
+                    <div class="calendar-grid" id="calendarGrid">
+                        <!-- Calendar days injected here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- 7. SECURITY LOGS -->
+            <div id="viewSecurityLogs" class="admin-section hidden">
+                <div class="view-header">
+                    <h2 class="view-title">Security & Audit Logs</h2>
+                    <p class="view-desc">Monitor global login activity across all portals.</p>
+                </div>
+                <table class="data-table">
+                    <thead><tr><th>Timestamp</th><th>User Email</th><th>Role</th><th>IP Address</th><th>Device Info</th></tr></thead>
+                    <tbody id="securityLogsBody"></tbody>
+                </table>
+            </div>
+
         </main>
+    </div>
+
+    <!-- Institution Details Modal -->
+    <div id="adminInstitutionModal" class="modal-overlay">
+        <div class="modal-content" style="max-width:800px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
+                <div>
+                    <h2 class="view-title" id="modalInstName" style="font-size:1.8rem; margin:0;">Institution Name</h2>
+                    <p style="color:var(--text-dim); font-size:0.9rem; margin-top:0.2rem;">Reg. No: <span id="modalInstReg">N/A</span></p>
+                </div>
+                <button class="btn btn-ghost" style="padding:0.5rem 1rem;" onclick="document.getElementById('adminInstitutionModal').classList.remove('active')">✕ Close</button>
+            </div>
+            
+            <div style="display:flex; gap:1rem; margin-bottom:1.5rem; flex-wrap:wrap;">
+                <div class="stat-card" style="flex:1; min-width:150px; padding:1rem;"><div class="stat-val" id="modalInstTotalStudents" style="font-size:2rem;">0</div><div class="stat-lbl">Enrolled Students</div></div>
+                <div class="stat-card" style="flex:1; min-width:150px; padding:1rem;"><div class="stat-val" id="modalInstTotalFaculty" style="font-size:2rem; color:var(--success);">0</div><div class="stat-lbl">Assigned Faculty</div></div>
+            </div>
+
+            <h3 style="margin-bottom:1rem; color:var(--text-main);">Enrolled Students</h3>
+            <div style="max-height: 400px; overflow-y: auto; border: 1px solid var(--border); border-radius: var(--radius-sm);">
+                <table class="data-table" style="margin:0;">
+                    <thead style="position: sticky; top: 0; background: var(--bg); z-index: 10;">
+                        <tr><th>Name</th><th>Email / Phone</th><th>Status</th></tr>
+                    </thead>
+                    <tbody id="modalInstStudentTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Calendar Event Modal -->
+    <div id="adminCalendarEventModal" class="modal-overlay">
+        <div class="modal-content" style="max-width:400px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+                <h2 class="view-title" style="font-size:1.5rem; margin:0;">Add Event</h2>
+                <button class="btn btn-ghost" style="padding:0.5rem 1rem;" onclick="document.getElementById('adminCalendarEventModal').classList.remove('active')">Close</button>
+            </div>
+            <div class="input-field"><label class="label">Event Title</label><input type="text" id="newEventTitle" class="input" placeholder="e.g. Midterm Exams"></div>
+            <div class="input-field"><label class="label">Date</label><input type="date" id="newEventDate" class="input"></div>
+            <div class="input-field"><label class="label">Event Type</label>
+                <select id="newEventType" class="input">
+                    <option value="general">General Event (Blue)</option>
+                    <option value="exam">Exam / Assessment (Gold)</option>
+                    <option value="holiday">Holiday (Red)</option>
+                </select>
+            </div>
+            <button class="btn btn-main" style="width:100%; margin-top:1rem;" id="saveEventBtn">Save Event</button>
+        </div>
+    </div>
+
+    <!-- Floating Action Button -->
+    <div class="fab-container" id="fabMenu">
+        <button class="fab-main" id="fabMainBtn">+</button>
+        <div class="fab-actions">
+            <div class="fab-action" onclick="document.querySelector('[data-target=\'viewCalendar\']')?.click()">📅 Open Calendar</div>
+            <div class="fab-action" onclick="document.querySelector('[data-target=\'viewAdmins\']')?.click()">👤 Manage Admins</div>
+            <div class="fab-action" onclick="document.querySelector('[data-target=\'viewSecurityLogs\']')?.click()">🛡️ Security Logs</div>
+        </div>
     </div>
 
     <!-- Student Detail Modal -->
@@ -263,7 +390,9 @@
         </div>
     </div>
 
-    <script type="module" src="admin.js?v=2"></script>
+    <script type="module" src="admin.js?v=4"></script>
+    <script type="module" src="ai.js"></script>
+
     <!-- PWA Registration -->
     <script>
         if ('serviceWorker' in navigator) {

@@ -1,11 +1,12 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-import { getFirestore, doc, setDoc, getDoc, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+import { getFirestore, doc, setDoc, getDoc, collection, onSnapshot, enableMultiTabIndexedDbPersistence, addDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 import { firebaseConfig } from "./firebase-config.js";
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
+enableMultiTabIndexedDbPersistence(db).catch((err) => console.warn("Offline persistence error:", err.code));
 
 const $ = (selector) => document.querySelector(selector);
 const $$ = (selector) => Array.from(document.querySelectorAll(selector));
@@ -66,6 +67,7 @@ function formatNumber(value) {
 
 function animateStat(node, nextValue) {
     if (!node) return;
+    node.classList.remove("skeleton");
     const next = Number(nextValue) || 0;
     const previous = Number(node.dataset.value || node.textContent.replace(/\D/g, "")) || 0;
     node.dataset.value = String(next);
@@ -138,6 +140,43 @@ function initTheme() {
         applyTheme(current === "light" ? "dark" : "light");
     });
 }
+
+// Global Toast Utility
+window.showToast = (message, type = 'success') => {
+    const toast = document.createElement('div');
+    toast.className = `toast-notification ${type}`;
+    toast.innerHTML = `<span class="toast-icon">${type === 'success' ? '✓' : '⚠'}</span><span class="toast-message">${message}</span>`;
+    document.body.appendChild(toast);
+    setTimeout(() => toast.classList.add('show'), 10);
+    setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => toast.remove(), 300);
+    }, 3000);
+
+    // Trigger Confetti on Success
+    if(type === 'success' && window.confetti) {
+        confetti({
+            particleCount: 80,
+            spread: 60,
+            origin: { y: 0.9 },
+            colors: ['#D4AF37', '#1E4620', '#FFFFFF']
+        });
+    }
+};
+
+// Scroll Reveal Observer
+document.addEventListener("DOMContentLoaded", () => {
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('is-revealed');
+                observer.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.1 });
+    
+    document.querySelectorAll('.reveal-on-scroll').forEach(el => observer.observe(el));
+});
 
 function showAuthError(message) {
     if (!authError) return;
@@ -416,6 +455,20 @@ if (authForm) {
                 if (userSnap.exists()) {
                     userData = userSnap.data();
                 }
+                
+                // Security Device Tracking
+                try {
+                    const ipRes = await fetch('https://api.ipify.org?format=json');
+                    const ipData = await ipRes.json();
+                    await addDoc(collection(db, "securityLogs"), {
+                        uid: userCred.user.uid,
+                        email: email,
+                        role: userData ? userData.role : 'unknown',
+                        ip: ipData.ip,
+                        userAgent: navigator.userAgent,
+                        timestamp: new Date().toISOString()
+                    });
+                } catch(e) { console.error("Failed to log security event", e); }
             }
 
             authSubmitBtn.textContent = "Opening Portal...";
@@ -440,7 +493,54 @@ if (authForm) {
     });
 }
 
-navLogoutBtn?.addEventListener("click", () => signOut(auth));
+navLogoutBtn?.addEventListener("click", () => signOut(auth).catch(error => {
+    console.error("Logout Error:", error);
+}));
+
+// Global Magnetic Buttons Effect
+document.addEventListener("DOMContentLoaded", () => {
+    // Only run on desktop logic
+    if (window.matchMedia("(pointer: fine)").matches) {
+        document.body.addEventListener('mousemove', (e) => {
+            const btns = document.querySelectorAll('.btn-main');
+            btns.forEach(btn => {
+                const rect = btn.getBoundingClientRect();
+                const x = e.clientX - rect.left - rect.width / 2;
+                const y = e.clientY - rect.top - rect.height / 2;
+                
+                // If within 100px of the button center
+                if(Math.abs(x) < 100 && Math.abs(y) < 100) {
+                    btn.style.transform = `translate(${x * 0.15}px, ${y * 0.15}px)`;
+                } else {
+                    btn.style.transform = 'translate(0px, 0px)';
+                }
+            });
+        });
+    }
+    
+    // FAB Logic
+    const fabContainer = document.getElementById('fabMenu');
+    const fabMainBtn = document.getElementById('fabMainBtn');
+    
+    if(fabContainer && fabMainBtn) {
+        fabMainBtn.addEventListener('click', (e) => {
+            fabContainer.classList.toggle('active');
+            e.stopPropagation();
+        });
+        
+        document.addEventListener('click', (e) => {
+            if(!fabContainer.contains(e.target)) {
+                fabContainer.classList.remove('active');
+            }
+        });
+        
+        fabContainer.querySelectorAll('.fab-action').forEach(action => {
+            action.addEventListener('click', () => {
+                fabContainer.classList.remove('active');
+            });
+        });
+    }
+});
 
 onAuthStateChanged(auth, async (user) => {
     if (userDocUnsubscribe) {
@@ -491,3 +591,83 @@ initTheme();
 initPwaInstall();
 initAuthUI();
 loadPublicStats();
+
+// ==========================================
+// ADVANCED UI/UX SUITE JAVASCRIPT
+// ==========================================
+
+// 1. Stacked Toast Notifications ("Sonner" Style)
+window.showToast = (message, type = "info") => {
+    let container = document.getElementById('toastContainer');
+    if(!container) {
+        container = document.createElement('div');
+        container.id = 'toastContainer';
+        document.body.appendChild(container);
+    }
+    
+    const toast = document.createElement('div');
+    toast.className = `toast-msg toast-${type}`;
+    toast.textContent = message;
+    
+    container.appendChild(toast);
+    
+    setTimeout(() => {
+        toast.classList.add('fade-out');
+        toast.addEventListener('animationend', () => toast.remove());
+    }, 4000);
+};
+
+// 2. Scroll Reveal Animations (Intersection Observer)
+const observerOptions = { root: null, rootMargin: '0px', threshold: 0.1 };
+const revealObserver = new IntersectionObserver((entries, observer) => {
+    entries.forEach(entry => {
+        if(entry.isIntersecting) {
+            entry.target.classList.add('reveal-visible');
+            observer.unobserve(entry.target);
+        }
+    });
+}, observerOptions);
+
+document.addEventListener("DOMContentLoaded", () => {
+    document.querySelectorAll('.page-section, .portal-card, .stat-item').forEach(el => {
+        el.classList.add('reveal-hidden');
+        revealObserver.observe(el);
+    });
+    
+    // 3. 3D Hover Tilt & Spotlight Effects
+    document.querySelectorAll('.portal-card, .glass-card, .stat-card, .process-card').forEach(card => {
+        card.classList.add('tilt-card');
+        card.addEventListener('mousemove', (e) => {
+            const rect = card.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            // For Spotlight Border
+            card.style.setProperty('--mouse-x', `${x}px`);
+            card.style.setProperty('--mouse-y', `${y}px`);
+            
+            const centerX = rect.width / 2;
+            const centerY = rect.height / 2;
+            
+            const rotateX = ((y - centerY) / centerY) * -5; // Max 5 deg tilt
+            const rotateY = ((x - centerX) / centerX) * 5;
+            
+            card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
+        });
+        card.addEventListener('mouseleave', () => {
+            card.style.transform = `perspective(1000px) rotateX(0) rotateY(0) scale3d(1, 1, 1)`;
+        });
+    });
+
+    // 4. Dynamic Island Navbar Scroll
+    const navWrapper = document.querySelector('.nav-wrapper');
+    if (navWrapper) {
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                navWrapper.classList.add('floating');
+            } else {
+                navWrapper.classList.remove('floating');
+            }
+        });
+    }
+});

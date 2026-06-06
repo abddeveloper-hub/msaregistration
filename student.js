@@ -1,6 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-import { getFirestore, doc, setDoc, getDoc, getDocs, updateDoc, collection, onSnapshot, query, where, addDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+import { getFirestore, doc, setDoc, getDoc, getDocs, updateDoc, collection, onSnapshot, query, where, addDoc, enableMultiTabIndexedDbPersistence, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 import { firebaseConfig } from "./firebase-config.js";
 
 
@@ -8,6 +8,7 @@ import { firebaseConfig } from "./firebase-config.js";
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
+enableMultiTabIndexedDbPersistence(db).catch((err) => console.warn("Offline persistence error:", err.code));
 
 // DOM Elements
 const logoutBtn = document.getElementById('logoutBtn');
@@ -113,6 +114,7 @@ function renderAccountDashboard() {
     loading?.classList.add('hidden');
     if(myStudents.length === 0) {
         noStudents?.classList.remove('hidden');
+        if(noStudents) noStudents.innerHTML = '<div class="empty-state-card"><div class="icon">🎓</div><h3>No Students Registered</h3><p>You haven\'t registered any students yet. Start a new application!</p></div>';
     } else {
         noStudents?.classList.add('hidden');
         myStudents.forEach(s => {
@@ -470,10 +472,10 @@ function prefillForm(data) {
     setInputValue('schoolClass', data.schoolInfo?.class);
     setInputValue('schoolSslcPercent', data.schoolInfo?.sslcPercent);
     setInputValue('schoolSslcWhere', data.schoolInfo?.sslcWhere);
-    setInputValue('schoolPucPercent', data.schoolInfo?.pucPercent);
-    setInputValue('schoolPucWhere', data.schoolInfo?.pucWhere);
-    setInputValue('schoolDegreeWhich', data.schoolInfo?.degreeWhich);
-    setInputValue('schoolDegreeWhere', data.schoolInfo?.degreeWhere);
+    setInputValue('schoolPucPercent', data.schoolInfo?.schoolPucPercent);
+    setInputValue('schoolPucWhere', data.schoolInfo?.schoolPucWhere);
+    setInputValue('schoolDegreeWhich', data.schoolInfo?.schoolDegreeWhich);
+    setInputValue('schoolDegreeWhere', data.schoolInfo?.schoolDegreeWhere);
     setInputValue('stuRollNumber', data.rollNumber);
     pendingCampusSelection = data;
     selectCampusFromData(data);
@@ -716,6 +718,114 @@ function renderAdmittedDashboard(data, studentId) {
         });
     });
 }
+
+// ==========================================
+// REAL-TIME MESSAGING LOGIC (STUDENT)
+// ==========================================
+let currentChatTeacher = null;
+let chatUnsub = null;
+
+async function loadTeacherRoster() {
+    const roster = document.getElementById('chatRoster');
+    if(!roster) return;
+    roster.innerHTML = 'Loading teachers...';
+    
+    try {
+        const q = query(collection(db, "users"), where("role", "==", "faculty"));
+        const snap = await getDocs(q);
+        
+        roster.innerHTML = '';
+        if(snap.empty) {
+            roster.innerHTML = '<div style="padding:1rem; color:var(--text-dim); font-size:0.9rem;">No teachers available.</div>';
+            return;
+        }
+        
+        snap.forEach(docSnap => {
+            const t = docSnap.data();
+            const div = document.createElement('div');
+            div.style.cssText = `padding:1rem; border-bottom:1px solid var(--border); cursor:pointer; transition:background 0.2s;`;
+            div.innerHTML = `<strong>${escapeHtml(t.fullName || 'Teacher')}</strong>`;
+            div.onmouseover = () => div.style.background = 'var(--surface-hover)';
+            div.onmouseout = () => div.style.background = '';
+            div.onclick = () => loadChat(t);
+            roster.appendChild(div);
+        });
+    } catch(e) {
+        console.error("Failed to load teachers", e);
+    }
+}
+
+function loadChat(teacher) {
+    currentChatTeacher = teacher;
+    document.getElementById('chatHeader').innerHTML = `Chat with <strong>${escapeHtml(teacher.fullName || 'Teacher')}</strong>`;
+    document.getElementById('chatInput').disabled = false;
+    document.getElementById('chatSendBtn').disabled = false;
+    document.getElementById('chatInput').focus();
+    
+    if(chatUnsub) chatUnsub();
+    
+    const myUid = auth.currentUser ? auth.currentUser.uid : (activeStudentId ? activeStudentId : null);
+    if(!myUid) return;
+    
+    const q = query(collection(db, "messages"), orderBy("timestamp", "asc"));
+    chatUnsub = onSnapshot(q, (snapshot) => {
+        const history = document.getElementById('chatHistory');
+        if(!history) return;
+        history.innerHTML = '';
+        snapshot.forEach(docSnap => {
+            const m = docSnap.data();
+            if((m.senderUid === myUid && m.receiverUid === teacher.uid) ||
+               (m.senderUid === teacher.uid && m.receiverUid === myUid)) {
+                
+                const isMe = m.senderUid === myUid;
+                const align = isMe ? 'flex-end' : 'flex-start';
+                const bg = isMe ? 'var(--primary)' : 'var(--glass-heavy)';
+                const color = isMe ? 'white' : 'var(--text-main)';
+                const dateStr = new Date(m.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                
+                history.innerHTML += `
+                    <div style="align-self:${align}; background:${bg}; color:${color}; padding:0.5rem 1rem; border-radius:1rem; max-width:75%; font-size:0.95rem;">
+                        <div style="margin-bottom:0.2rem;">${escapeHtml(m.text)}</div>
+                        <div style="font-size:0.65rem; opacity:0.7; text-align:right;">${dateStr}</div>
+                    </div>
+                `;
+            }
+        });
+        history.scrollTop = history.scrollHeight;
+    });
+}
+
+document.getElementById('chatSendBtn')?.addEventListener('click', async () => {
+    if(!currentChatTeacher) return;
+    const input = document.getElementById('chatInput');
+    const text = input.value.trim();
+    if(!text) return;
+    
+    const myUid = auth.currentUser ? auth.currentUser.uid : (activeStudentId ? activeStudentId : null);
+    if(!myUid) return;
+    
+    input.value = '';
+    try {
+        await addDoc(collection(db, "messages"), {
+            senderUid: myUid,
+            receiverUid: currentChatTeacher.uid,
+            text: text,
+            timestamp: Date.now()
+        });
+    } catch(e) {
+        console.error(e);
+        if(window.showToast) window.showToast("Failed to send message", "error");
+    }
+});
+
+document.getElementById('chatInput')?.addEventListener('keypress', (e) => {
+    if(e.key === 'Enter') document.getElementById('chatSendBtn').click();
+});
+
+// Load roster when navigating to messages
+document.querySelector('[data-target="viewMessages"]')?.addEventListener('click', () => {
+    loadTeacherRoster();
+});
 
 // PWA Install Logic
 let deferredInstallPrompt = null;

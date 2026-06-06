@@ -279,19 +279,36 @@
                 <button class="btn btn-ghost" style="padding:0.5rem 1rem;" onclick="document.getElementById('adminInstitutionModal').classList.remove('active')">✕ Close</button>
             </div>
             
-            <div style="display:flex; gap:1rem; margin-bottom:1.5rem; flex-wrap:wrap;">
-                <div class="stat-card" style="flex:1; min-width:150px; padding:1rem;"><div class="stat-val" id="modalInstTotalStudents" style="font-size:2rem;">0</div><div class="stat-lbl">Enrolled Students</div></div>
-                <div class="stat-card" style="flex:1; min-width:150px; padding:1rem;"><div class="stat-val" id="modalInstTotalFaculty" style="font-size:2rem; color:var(--success);">0</div><div class="stat-lbl">Assigned Faculty</div></div>
+            <div style="display:flex; gap:1rem; margin-bottom:1rem; flex-wrap:wrap;">
+                <div class="stat-card" style="flex:1; min-width:120px; padding:1rem;"><div class="stat-val" id="modalInstTotalStudents" style="font-size:1.8rem;">0</div><div class="stat-lbl">Enrolled Students</div></div>
+                <div class="stat-card" style="flex:1; min-width:120px; padding:1rem;"><div class="stat-val" id="modalInstTotalFaculty" style="font-size:1.8rem; color:var(--success);">0</div><div class="stat-lbl">Assigned Faculty</div></div>
+                <div class="stat-card" style="flex:1; min-width:120px; padding:1rem;"><div class="stat-val" id="modalInstPending" style="font-size:1.8rem; color:var(--warning);">0</div><div class="stat-lbl">Pending Apps</div></div>
+                <div class="stat-card" style="flex:1; min-width:120px; padding:1rem;"><div class="stat-val" id="modalInstSpecial" style="font-size:1.8rem; color:var(--accent);">0</div><div class="stat-lbl">Special Categories</div></div>
             </div>
 
-            <h3 style="margin-bottom:1rem; color:var(--text-main);">Enrolled Students</h3>
-            <div style="max-height: 400px; overflow-y: auto; border: 1px solid var(--border); border-radius: var(--radius-sm);">
-                <table class="data-table" style="margin:0;">
-                    <thead style="position: sticky; top: 0; background: var(--bg); z-index: 10;">
-                        <tr><th>Name</th><th>Email / Phone</th><th>Status</th></tr>
-                    </thead>
-                    <tbody id="modalInstStudentTableBody"></tbody>
-                </table>
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:1.5rem;">
+                <div>
+                    <h3 style="margin-bottom:0.5rem; color:var(--text-main);">Enrolled Students</h3>
+                    <div style="max-height: 350px; overflow-y: auto; border: 1px solid var(--border); border-radius: var(--radius-sm);">
+                        <table class="data-table" style="margin:0;">
+                            <thead style="position: sticky; top: 0; background: var(--bg); z-index: 10;">
+                                <tr><th>Name / Details</th><th>Status</th></tr>
+                            </thead>
+                            <tbody id="modalInstStudentTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+                <div>
+                    <h3 style="margin-bottom:0.5rem; color:var(--text-main);">Assigned Faculty</h3>
+                    <div style="max-height: 350px; overflow-y: auto; border: 1px solid var(--border); border-radius: var(--radius-sm);">
+                        <table class="data-table" style="margin:0;">
+                            <thead style="position: sticky; top: 0; background: var(--bg); z-index: 10;">
+                                <tr><th>Name / Contact</th><th>Status</th></tr>
+                            </thead>
+                            <tbody id="modalInstFacultyTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

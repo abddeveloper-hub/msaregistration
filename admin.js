@@ -393,21 +393,61 @@ window.viewInstitutionDetails = async (instId) => {
     document.getElementById('modalInstTotalStudents').innerText = instStudents.length;
     document.getElementById('modalInstTotalFaculty').innerText = instFaculty.length;
 
-    const tbody = document.getElementById('modalInstStudentTableBody');
-    tbody.innerHTML = '';
+    const pendingCount = instStudents.filter(s => s.status === 'pending').length;
+    document.getElementById('modalInstPending').innerText = pendingCount;
+
+    const sayyids = instStudents.filter(s => s.isSayyid === 'yes').length;
+    const hafizs = instStudents.filter(s => s.isHafiz === 'yes').length;
+    const orphans = instStudents.filter(s => s.isOrphan === 'yes').length;
+    const specialCount = sayyids + hafizs + orphans;
+    document.getElementById('modalInstSpecial').innerText = specialCount;
+
+    // Populate Students
+    const studentTbody = document.getElementById('modalInstStudentTableBody');
+    studentTbody.innerHTML = '';
     
     if(instStudents.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="3" style="text-align:center; color:var(--text-dim);">No students enrolled here yet.</td></tr>';
+        studentTbody.innerHTML = '<tr><td colspan="2" style="text-align:center; color:var(--text-dim);">No students enrolled here yet.</td></tr>';
     } else {
         instStudents.forEach(s => {
             const contact = s.email || s.parentPhone || 'N/A';
             const statusLabel = s.status === 'admitted' ? '<span class="status-badge" style="background:var(--success-dim); color:var(--success);">Admitted</span>' :
                               s.status === 'rejected' ? '<span class="status-badge" style="background:var(--danger-dim); color:var(--danger);">Rejected</span>' :
                               '<span class="status-badge" style="background:var(--warning-dim); color:var(--warning);">Pending</span>';
-            tbody.innerHTML += `<tr>
-                <td><strong>${s.fullName || 'Unknown'}</strong></td>
-                <td>${contact}</td>
-                <td>${statusLabel}</td>
+            
+            let badges = '';
+            if (s.isSayyid === 'yes') badges += '<span style="font-size:0.7rem; background:#d8ad4a; color:#121212; padding:2px 6px; border-radius:4px; margin-right:4px;">Sayyid</span>';
+            if (s.isHafiz === 'yes') badges += '<span style="font-size:0.7rem; background:#36c190; color:#121212; padding:2px 6px; border-radius:4px; margin-right:4px;">Hafiz</span>';
+            if (s.isOrphan === 'yes') badges += '<span style="font-size:0.7rem; background:#eb5757; color:#fff; padding:2px 6px; border-radius:4px; margin-right:4px;">Orphan</span>';
+
+            studentTbody.innerHTML += `<tr>
+                <td>
+                    <strong>${s.fullName || 'Unknown'}</strong><br>
+                    <span style="font-size:0.8rem; color:var(--text-dim);">${contact}</span><br>
+                    <div style="margin-top:4px;">${badges}</div>
+                </td>
+                <td style="vertical-align:top;">${statusLabel}</td>
+            </tr>`;
+        });
+    }
+
+    // Populate Faculty
+    const facultyTbody = document.getElementById('modalInstFacultyTableBody');
+    facultyTbody.innerHTML = '';
+
+    if(instFaculty.length === 0) {
+        facultyTbody.innerHTML = '<tr><td colspan="2" style="text-align:center; color:var(--text-dim);">No faculty assigned yet.</td></tr>';
+    } else {
+        instFaculty.forEach(f => {
+            const contact = f.email || f.phone || 'N/A';
+            const statusLabel = f.status === 'admitted' || f.status === 'active' ? '<span class="status-badge" style="background:var(--success-dim); color:var(--success);">Active</span>' :
+                              '<span class="status-badge" style="background:var(--warning-dim); color:var(--warning);">Pending</span>';
+            facultyTbody.innerHTML += `<tr>
+                <td>
+                    <strong>${f.fullName || 'Unknown'}</strong><br>
+                    <span style="font-size:0.8rem; color:var(--text-dim);">${contact}</span>
+                </td>
+                <td style="vertical-align:top;">${statusLabel}</td>
             </tr>`;
         });
     }

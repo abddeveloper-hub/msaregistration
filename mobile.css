@@ -249,6 +249,36 @@ html, body {
         flex-direction: column;
     }
 
+    /* Full screen details views */
+    #viewInstitutionDetail,
+    #viewStudentDetail,
+    #viewEditStudent {
+        padding: 1.5rem 1rem 5rem 1rem !important;
+        width: 100vw !important;
+        max-width: 100vw !important;
+        overflow-x: hidden !important;
+        box-sizing: border-box !important;
+    }
+
+    #studentDetailBody .view-header,
+    #viewInstitutionDetail .view-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+
+    /* Force grids in profiles to 1 column on mobile */
+    #studentDetailBody > div > div[style*="display:grid"],
+    #viewInstitutionDetail div[style*="display: grid"],
+    #adminModalBody div[style*="display: grid"] {
+        grid-template-columns: 1fr !important;
+    }
+    
+    #studentDetailBody div[style*="grid-column: span 2"],
+    #adminModalBody div[style*="grid-column: span 2"] {
+        grid-column: auto !important;
+    }
+
     .modal-content {
         width: min(95vw, 560px) !important;
         max-height: 90dvh !important;

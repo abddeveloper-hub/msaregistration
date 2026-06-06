@@ -769,33 +769,81 @@ window.viewStudentDetails = async (uid) => {
             </div>
         </div>
 
-        <!-- Student Information -->
+        <!-- Student Information Grid -->
         <div style="margin-bottom:2rem;">
-            <h3 style="margin:0 0 1rem; color:var(--text); font-size:1.1rem; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; color:var(--text-dim);">👤 Personal Information</h3>
-            <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(250px, 1fr)); gap:1rem;">
+            <h3 style="margin:0 0 1rem; color:var(--text); font-size:1.1rem; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; color:var(--text-dim);">👤 Personal & Family Details</h3>
+            <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:1rem;">
                 <div style="padding:1rem; background:var(--glass); border-radius:0.75rem; border:1px solid var(--border);">
-                    <div style="font-size:0.75rem; color:var(--text-dim); text-transform:uppercase; letter-spacing:0.05em; margin-bottom:0.5rem; font-weight:600;">Father's Name</div>
+                    <div style="font-size:0.75rem; color:var(--text-dim); text-transform:uppercase; letter-spacing:0.05em; margin-bottom:0.5rem; font-weight:600;">👨‍👦 Father's Name</div>
                     <div style="font-size:0.95rem; color:var(--text);">${escapeHtml(s.fatherName || 'Not provided')}</div>
                 </div>
                 <div style="padding:1rem; background:var(--glass); border-radius:0.75rem; border:1px solid var(--border);">
-                    <div style="font-size:0.75rem; color:var(--text-dim); text-transform:uppercase; letter-spacing:0.05em; margin-bottom:0.5rem; font-weight:600;">📱 Phone Number</div>
+                    <div style="font-size:0.75rem; color:var(--text-dim); text-transform:uppercase; letter-spacing:0.05em; margin-bottom:0.5rem; font-weight:600;">📞 Father's Phone</div>
+                    <div style="font-size:0.95rem; color:var(--text);">${escapeHtml(s.fatherPhone || 'Not provided')}</div>
+                </div>
+                <div style="padding:1rem; background:var(--glass); border-radius:0.75rem; border:1px solid var(--border);">
+                    <div style="font-size:0.75rem; color:var(--text-dim); text-transform:uppercase; letter-spacing:0.05em; margin-bottom:0.5rem; font-weight:600;">📱 Student Phone</div>
                     <div style="font-size:0.95rem; color:var(--text);">${escapeHtml(s.phone || 'Not provided')}</div>
                 </div>
                 <div style="padding:1rem; background:var(--glass); border-radius:0.75rem; border:1px solid var(--border);">
                     <div style="font-size:0.75rem; color:var(--text-dim); text-transform:uppercase; letter-spacing:0.05em; margin-bottom:0.5rem; font-weight:600;">🎂 Date of Birth</div>
                     <div style="font-size:0.95rem; color:var(--text);">${escapeHtml(s.dob || 'Not provided')}</div>
                 </div>
+                <div style="padding:1rem; background:var(--glass); border-radius:0.75rem; border:1px solid var(--border);">
+                    <div style="font-size:0.75rem; color:var(--text-dim); text-transform:uppercase; letter-spacing:0.05em; margin-bottom:0.5rem; font-weight:600;">🩸 Blood Group</div>
+                    <div style="font-size:0.95rem; color:var(--text);">${escapeHtml(s.bloodGroup || 'Not provided')}</div>
+                </div>
+                <div style="padding:1rem; background:var(--glass); border-radius:0.75rem; border:1px solid var(--border);">
+                    <div style="font-size:0.75rem; color:var(--text-dim); text-transform:uppercase; letter-spacing:0.05em; margin-bottom:0.5rem; font-weight:600;">🆔 Aadhar Number</div>
+                    <div style="font-size:0.95rem; color:var(--text);">${escapeHtml(s.aadhar || 'Not provided')}</div>
+                </div>
+            </div>
+            
+            <div style="margin-top:1rem; padding:1.25rem; background:var(--glass); border-radius:0.75rem; border:1px solid var(--border);">
+                <div style="font-size:0.75rem; color:var(--text-dim); text-transform:uppercase; letter-spacing:0.05em; margin-bottom:0.5rem; font-weight:600;">📍 Address</div>
+                <div style="font-size:0.95rem; color:var(--text); line-height:1.5;">${escapeHtml(s.address || 'Not provided')}</div>
             </div>
         </div>
 
-        <!-- Education Details -->
-        <div style="padding:1.25rem; background:linear-gradient(135deg, rgba(100,200,255,0.1), rgba(100,200,255,0.05)); border-radius:0.75rem; border:1px solid var(--border); border-left:4px solid var(--primary);">
-            <h3 style="margin:0 0 1rem; color:var(--text); font-size:1rem; font-weight:600;">📖 Educational Background</h3>
-            <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem; font-size:0.9rem;">
-                <p style="margin:0.5rem 0;"><strong style="color:var(--primary);">School Level:</strong> <span style="color:var(--text);">${escapeHtml(s.schoolInfo?.level || 'Not specified')}</span></p>
-                <p style="margin:0.5rem 0;"><strong style="color:var(--primary);">Dars Type:</strong> <span style="color:var(--text);">${escapeHtml(s.darsType || 'Not specified')}</span></p>
+        <!-- Special Categories & Academic -->
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(300px, 1fr)); gap:1.5rem; margin-bottom:2rem;">
+            <!-- Special Categories -->
+            <div style="padding:1.25rem; background:linear-gradient(135deg, rgba(251,191,36,0.05), rgba(251,191,36,0.1)); border-radius:0.75rem; border:1px solid var(--border); border-left:4px solid #fbbf24;">
+                <h3 style="margin:0 0 1rem; color:var(--text); font-size:1rem; font-weight:600;">⭐ Special Categories</h3>
+                <div style="display:flex; flex-direction:column; gap:0.75rem; font-size:0.95rem;">
+                    <div style="display:flex; justify-content:space-between; border-bottom:1px solid rgba(255,255,255,0.05); padding-bottom:0.5rem;">
+                        <span style="color:var(--text-dim);">Sayyid:</span> 
+                        <span style="font-weight:600; color:${s.isSayyid === 'yes' ? 'var(--success)' : 'var(--text)'};">${s.isSayyid === 'yes' ? 'Yes' : 'No'}</span>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; border-bottom:1px solid rgba(255,255,255,0.05); padding-bottom:0.5rem;">
+                        <span style="color:var(--text-dim);">Hafiz:</span> 
+                        <span style="font-weight:600; color:${s.isHafiz === 'yes' ? 'var(--success)' : 'var(--text)'};">${s.isHafiz === 'yes' ? 'Yes' : 'No'}</span>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; padding-bottom:0.5rem;">
+                        <span style="color:var(--text-dim);">Orphan:</span> 
+                        <span style="font-weight:600; color:${s.isOrphan === 'yes' ? 'var(--success)' : 'var(--text)'};">${s.isOrphan === 'yes' ? 'Yes' : 'No'}</span>
+                    </div>
+                </div>
             </div>
-            <p style="margin:0.75rem 0 0; color:var(--text-dim); font-size:0.85rem;"><strong>📍 Address:</strong> ${escapeHtml(s.address || 'Not provided')}</p>
+
+            <!-- Educational Background -->
+            <div style="padding:1.25rem; background:linear-gradient(135deg, rgba(100,200,255,0.1), rgba(100,200,255,0.05)); border-radius:0.75rem; border:1px solid var(--border); border-left:4px solid var(--primary);">
+                <h3 style="margin:0 0 1rem; color:var(--text); font-size:1rem; font-weight:600;">📖 Educational Background</h3>
+                <div style="display:flex; flex-direction:column; gap:0.75rem; font-size:0.95rem;">
+                    <div style="display:flex; justify-content:space-between; border-bottom:1px solid rgba(255,255,255,0.05); padding-bottom:0.5rem;">
+                        <span style="color:var(--text-dim);">School Level:</span> 
+                        <span style="font-weight:600; color:var(--text);">${escapeHtml(s.schoolInfo?.level || 'Not specified')}</span>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; border-bottom:1px solid rgba(255,255,255,0.05); padding-bottom:0.5rem;">
+                        <span style="color:var(--text-dim);">Dars Type:</span> 
+                        <span style="font-weight:600; color:var(--text);">${escapeHtml(s.darsType || 'Not specified')}</span>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; padding-bottom:0.5rem;">
+                        <span style="color:var(--text-dim);">Campus:</span> 
+                        <span style="font-weight:600; color:var(--text);">${escapeHtml(s.campus || 'Not specified')}</span>
+                    </div>
+                </div>
+            </div>
         </div>
     `;
 };

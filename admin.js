@@ -406,8 +406,13 @@ window.viewInstitutionDetails = async (instId) => {
     const studentTbody = document.getElementById('detailInstStudentTableBody');
     studentTbody.innerHTML = '';
     
+    // Sort students by roll number
+    instStudents.sort((a, b) => {
+        return (a.rollNumber || '').toString().localeCompare((b.rollNumber || '').toString(), undefined, { numeric: true });
+    });
+
     if(instStudents.length === 0) {
-        studentTbody.innerHTML = '<tr><td colspan="2" style="text-align:center; color:var(--text-dim);">No students enrolled here yet.</td></tr>';
+        studentTbody.innerHTML = '<tr><td colspan="4" style="text-align:center; color:var(--text-dim);">No students enrolled here yet.</td></tr>';
     } else {
         instStudents.forEach(s => {
             const contact = s.email || s.parentPhone || 'N/A';
@@ -421,6 +426,7 @@ window.viewInstitutionDetails = async (instId) => {
             if (s.isOrphan === 'yes') badges += '<span style="font-size:0.7rem; background:#eb5757; color:#fff; padding:2px 6px; border-radius:4px; margin-right:4px;">Orphan</span>';
 
             studentTbody.innerHTML += `<tr>
+                <td>${s.rollNumber || 'N/A'}</td>
                 <td>
                     <strong>${s.fullName || 'Unknown'}</strong><br>
                     <span style="font-size:0.8rem; color:var(--text-dim);">${contact}</span><br>

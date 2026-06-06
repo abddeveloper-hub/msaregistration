@@ -94,9 +94,10 @@ html, body {
     /* Registration app container */
     .app-container {
         flex-direction: column;
-        border-radius: 0;
-        margin: 0;
-        min-height: 100vh;
+        border-radius: 1.5rem;
+        margin: 1rem;
+        width: calc(100% - 2rem);
+        min-height: auto;
     }
 
     .app-sidebar {
@@ -401,10 +402,10 @@ html, body {
 
 @media (max-width: 600px) {
     .app-container {
-        border-radius: 0;
-        margin: 0;
-        width: 100%;
-        min-height: 100vh;
+        border-radius: 1.25rem;
+        margin: 0.75rem;
+        width: calc(100% - 1.5rem);
+        min-height: auto;
     }
 
     .app-container .app-content {

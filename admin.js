@@ -624,49 +624,34 @@ window.adminViewStudent = async (uid) => {
             </div>
         </div>
 
-        <div style="grid-column: span 2;">
-            <div style="display: flex; gap: 2.5rem; align-items: flex-start; flex-wrap: wrap;">
-                
-                <!-- Profile Image -->
-                <div style="display:flex; flex-direction:column; align-items:center; gap:1rem;">
-                    <img src="${s.photoUrl || ''}" style="width:160px; height:160px; object-fit:cover; border-radius:1.5rem; background:var(--glass-heavy); border: 1px solid var(--border);" alt="Student Photo">
-                    <span class="status-badge" style="background: ${s.status === 'admitted' ? 'var(--success-dim)' : 'var(--warning-dim)'}; color: ${s.status === 'admitted' ? 'var(--success)' : 'var(--warning)'}; font-size: 0.85rem; padding: 0.3rem 1rem;">
-                        ${(s.status || 'pending').toUpperCase()}
-                    </span>
-                </div>
+        <div>
+            <h3 style="color:var(--primary); margin-bottom:1rem;">Personal Profile</h3>
+            <div style="display:flex; flex-direction:column; align-items:center; gap:1rem; margin-bottom:1.5rem;">
+                <img src="${s.photoUrl || ''}" style="width:120px; height:120px; object-fit:cover; border-radius:1rem; background:var(--glass-heavy); border: 1px solid var(--border);" alt="Student Photo">
+                <span class="status-badge" style="background: ${s.status === 'admitted' ? 'var(--success-dim)' : 'var(--warning-dim)'}; color: ${s.status === 'admitted' ? 'var(--success)' : 'var(--warning)'}; font-size: 0.85rem; padding: 0.3rem 1rem;">
+                    ${(s.status || 'pending').toUpperCase()}
+                </span>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; font-size: 0.95rem;">
+                <div style="grid-column: span 2;"><strong style="color:var(--text-dim); font-size:0.8rem; text-transform:uppercase; letter-spacing:0.5px;">Full Name</strong><br><span style="font-size:1.05rem; color:var(--text-main);">${s.fullName || 'N/A'}</span></div>
+                <div><strong style="color:var(--text-dim); font-size:0.8rem; text-transform:uppercase; letter-spacing:0.5px;">Phone</strong><br><span style="color:var(--text-main);">${s.phone || 'N/A'}</span></div>
+                <div><strong style="color:var(--text-dim); font-size:0.8rem; text-transform:uppercase; letter-spacing:0.5px;">Date of Birth</strong><br><span style="color:var(--text-main);">${s.dob || 'N/A'}</span></div>
+                <div><strong style="color:var(--text-dim); font-size:0.8rem; text-transform:uppercase; letter-spacing:0.5px;">Aadhar No.</strong><br><span style="color:var(--text-main);">${s.aadhar || 'N/A'}</span></div>
+                <div style="grid-column: span 2;"><strong style="color:var(--text-dim); font-size:0.8rem; text-transform:uppercase; letter-spacing:0.5px;">Father's Details</strong><br><span style="color:var(--text-main);">${s.fatherName || 'N/A'} <span style="color:var(--text-dim);">(${s.fatherPhone || 'N/A'})</span></span></div>
+                <div style="grid-column: span 2;"><strong style="color:var(--text-dim); font-size:0.8rem; text-transform:uppercase; letter-spacing:0.5px;">Address</strong><br><span style="color:var(--text-main);">${s.address || 'N/A'}</span></div>
+            </div>
+        </div>
 
-                <!-- Personal Information -->
-                <div style="flex: 1; min-width: 280px;">
-                    <h3 style="color:var(--primary); margin-bottom:1.5rem; border-bottom: 1px solid var(--border); padding-bottom: 0.5rem; display:flex; align-items:center; gap:0.5rem;">
-                        <span>👤 Personal Information</span>
-                    </h3>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; font-size: 0.95rem;">
-                        <div><strong style="color:var(--text-dim); font-size:0.8rem; text-transform:uppercase; letter-spacing:0.5px;">Full Name</strong><br><span style="font-size:1.05rem; color:var(--text-main);">${s.fullName || 'N/A'}</span></div>
-                        <div><strong style="color:var(--text-dim); font-size:0.8rem; text-transform:uppercase; letter-spacing:0.5px;">Phone</strong><br><span style="color:var(--text-main);">${s.phone || 'N/A'}</span></div>
-                        <div><strong style="color:var(--text-dim); font-size:0.8rem; text-transform:uppercase; letter-spacing:0.5px;">Date of Birth</strong><br><span style="color:var(--text-main);">${s.dob || 'N/A'}</span></div>
-                        <div><strong style="color:var(--text-dim); font-size:0.8rem; text-transform:uppercase; letter-spacing:0.5px;">Aadhar No.</strong><br><span style="color:var(--text-main);">${s.aadhar || 'N/A'}</span></div>
-                        <div style="grid-column: span 2;"><strong style="color:var(--text-dim); font-size:0.8rem; text-transform:uppercase; letter-spacing:0.5px;">Father's Details</strong><br><span style="color:var(--text-main);">${s.fatherName || 'N/A'} <span style="color:var(--text-dim);">(${s.fatherPhone || 'N/A'})</span></span></div>
-                        <div style="grid-column: span 2;"><strong style="color:var(--text-dim); font-size:0.8rem; text-transform:uppercase; letter-spacing:0.5px;">Address</strong><br><span style="color:var(--text-main);">${s.address || 'N/A'}</span></div>
-                    </div>
-                </div>
-
-                <!-- Academic Information -->
-                <div style="flex: 1; min-width: 280px;">
-                    <h3 style="color:var(--primary); margin-bottom:1.5rem; border-bottom: 1px solid var(--border); padding-bottom: 0.5rem; display:flex; align-items:center; gap:0.5rem;">
-                        <span>🎓 Academic Information</span>
-                    </h3>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; font-size: 0.95rem;">
-                        <div><strong style="color:var(--text-dim); font-size:0.8rem; text-transform:uppercase; letter-spacing:0.5px;">Roll Number</strong><br><span style="color:var(--accent); font-weight:bold; font-size: 1.1rem;">${s.rollNumber || 'Pending'}</span></div>
-                        <div><strong style="color:var(--text-dim); font-size:0.8rem; text-transform:uppercase; letter-spacing:0.5px;">Campus</strong><br><span style="color:var(--text-main);">${getRecordCampusName(s)}</span></div>
-                        <div><strong style="color:var(--text-dim); font-size:0.8rem; text-transform:uppercase; letter-spacing:0.5px;">Batch</strong><br><span style="color:var(--text-main);">${s.batch || 'None'}</span></div>
-                        <div><strong style="color:var(--text-dim); font-size:0.8rem; text-transform:uppercase; letter-spacing:0.5px;">Schooling</strong><br><span style="color:var(--text-main);">${s.schoolInfo?.level || 'N/A'}</span></div>
-                    </div>
-
-                    <div class="form-section" style="padding:1.25rem; margin-top:2rem; background: var(--glass-heavy); border: 1px solid var(--border); border-radius: var(--radius-sm);">
-                        <h4 style="margin-bottom:1rem; color:var(--text-main); font-size:0.9rem; text-transform:uppercase; letter-spacing:0.5px;">Exam Details</h4>
-                        <ul style="padding-left:1.5rem; font-size:0.95rem; max-height:150px; overflow-y:auto; margin:0; color:var(--text-dim);">${marksHtml}</ul>
-                    </div>
-                </div>
+        <div>
+            <h3 style="color:var(--primary); margin-bottom:1rem;">Academic Info</h3>
+            <p><strong>Roll Number:</strong> <span style="color:var(--accent); font-weight:bold;">${s.rollNumber || 'Pending'}</span></p>
+            <p><strong>Campus:</strong> ${getRecordCampusName(s)}</p>
+            <p><strong>Batch:</strong> ${s.batch || 'None'}</p>
+            <p><strong>Schooling:</strong> ${s.schoolInfo?.level || 'N/A'}</p>
+            
+            <div class="form-section" style="padding:1rem; margin-top:2rem;">
+                <h4 style="margin-bottom:0.5rem;">Exam Details</h4>
+                <ul style="padding-left:1.5rem; font-size:0.9rem; max-height:150px; overflow-y:auto;">${marksHtml}</ul>
             </div>
         </div>
     `;

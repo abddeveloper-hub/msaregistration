@@ -2024,8 +2024,17 @@ if (downloadAllSubjectsMonthlyAttPdfBtn) {
             const finalSubjects = Array.from(activeSubjects).sort((a, b) => {
                 const isDarsA = a.includes('Dars');
                 const isDarsB = b.includes('Dars');
+                const isHizbA = a.includes('حزب');
+                const isHizbB = b.includes('حزب');
+                
+                // Hizb always comes first
+                if (isHizbA && !isHizbB) return -1;
+                if (!isHizbA && isHizbB) return 1;
+                
+                // Dars always comes last
                 if (isDarsA && !isDarsB) return 1;
                 if (!isDarsA && isDarsB) return -1;
+                
                 return a.localeCompare(b);
             });
             

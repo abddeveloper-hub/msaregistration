@@ -2149,7 +2149,7 @@ if (downloadAllSubjectsMonthlyAttPdfBtn) {
 
             // Fixed sizing to ensure exactly 10 students per page with smaller headings
             let bodyFontSize = 10;
-            let headerFontSize = 11;
+            let headerFontSize = 13;
             let padding = 1;
             let rowHeight = 13; 
 

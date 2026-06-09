@@ -2027,6 +2027,8 @@ if (downloadAllSubjectsMonthlyAttPdfBtn) {
             const finalSubjects = Array.from(activeSubjects).sort((a, b) => {
                 const isDarsA = a.includes('Dars');
                 const isDarsB = b.includes('Dars');
+                const isMalayalamA = a.toUpperCase().includes('MALAYALAM') || a.includes('മലയാളം');
+                const isMalayalamB = b.toUpperCase().includes('MALAYALAM') || b.includes('മലയാളം');
                 const isHizbA = a.includes('حزب');
                 const isHizbB = b.includes('حزب');
                 const isTafseerA = a.includes('تفسير');
@@ -2043,6 +2045,10 @@ if (downloadAllSubjectsMonthlyAttPdfBtn) {
                 // Dars always comes last
                 if (isDarsA && !isDarsB) return 1;
                 if (!isDarsA && isDarsB) return -1;
+                
+                // Malayalam comes right before Dars
+                if (isMalayalamA && !isMalayalamB) return 1;
+                if (!isMalayalamA && isMalayalamB) return -1;
                 
                 return a.localeCompare(b);
             });

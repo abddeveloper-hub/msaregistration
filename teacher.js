@@ -2026,10 +2026,16 @@ if (downloadAllSubjectsMonthlyAttPdfBtn) {
                 const isDarsB = b.includes('Dars');
                 const isHizbA = a.includes('حزب');
                 const isHizbB = b.includes('حزب');
+                const isTafseerA = a.includes('تفسير');
+                const isTafseerB = b.includes('تفسير');
                 
                 // Hizb always comes first
                 if (isHizbA && !isHizbB) return -1;
                 if (!isHizbA && isHizbB) return 1;
+                
+                // Tafseer comes second
+                if (isTafseerA && !isTafseerB) return -1;
+                if (!isTafseerA && isTafseerB) return 1;
                 
                 // Dars always comes last
                 if (isDarsA && !isDarsB) return 1;

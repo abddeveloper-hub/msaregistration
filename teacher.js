@@ -1922,8 +1922,253 @@ if (downloadMonthlyAttPdfBtn) {
         downloadMonthlyAttPdfBtn.innerText = "\uD83D\uDCE5 Download Monthly PDF";
     });
 }
+const downloadAllSubjectsMonthlyAttPdfBtn = document.getElementById('downloadAllSubjectsMonthlyAttPdfBtn');
+if (downloadAllSubjectsMonthlyAttPdfBtn) {
+    downloadAllSubjectsMonthlyAttPdfBtn.addEventListener('click', async () => {
+        const month = document.getElementById('attMonth').value;
+        const batch = document.getElementById('attBatch').value;
+        
+        if (!month) {
+            return alert("Please select a Month and Batch to generate the report.");
+        }
+        
+        const pdfWindow = openPdfWindow("Preparing all-subjects monthly attendance PDF...");
+        downloadAllSubjectsMonthlyAttPdfBtn.disabled = true;
+        downloadAllSubjectsMonthlyAttPdfBtn.innerText = "Gathering Data...";
+        
+        try {
+            const admitted = campusStudents.filter(s => isStatus(s, 'admitted'));
+            const students = batch === 'all' ? admitted : admitted.filter(s => s.batch === batch);
+            
+            if (students.length === 0) {
+                throw new Error("No admitted students found for this selection.");
+            }
+            
+            students.sort((a, b) => {
+                const rA = parseInt(a.rollNumber) || 99999;
+                const rB = parseInt(b.rollNumber) || 99999;
+                return rA - rB;
+            });
 
+            // Get all subjects assigned to this batch or 'All'
+            const relevantSubjects = campusSubjects.filter(sub => {
+                if (batch === 'all') return true;
+                return !sub.batches || sub.batches.length === 0 || sub.batches.includes('All') || sub.batches.includes(batch);
+            }).map(s => s.name);
 
+            if (relevantSubjects.length === 0) {
+                throw new Error("No subjects found for this batch.");
+            }
+
+            const monthParts = month.split('-');
+            const selYear = parseInt(monthParts[0]);
+            const selMonth = parseInt(monthParts[1]);
+            const dateObj = new Date(selYear, selMonth - 1);
+            const monthName = dateObj.toLocaleString('default', { month: 'long', year: 'numeric' });
+
+            const { jsPDF } = window.jspdf || {};
+            if (!jsPDF) throw new Error("PDF tools are still loading. Please refresh the page and try again.");
+            
+            const orientation = relevantSubjects.length > 5 ? 'landscape' : 'portrait';
+            const doc = new jsPDF({ orientation: orientation, unit: 'mm', format: 'a4' });
+            if (typeof doc.autoTable !== 'function') throw new Error("PDF table tools are still loading. Please refresh the page and try again.");
+            const pageWidth = doc.internal.pageSize.getWidth();
+
+            // 1. Fetch ALL attendance for the selected students
+            const allStudentAttendance = {};
+            for (const s of students) {
+                allStudentAttendance[s.id] = [];
+                const q = collection(db, `users/${s.id}/attendance`);
+                const snaps = await getDocs(q);
+                snaps.forEach(docSnap => allStudentAttendance[s.id].push(docSnap.data()));
+            }
+
+            // Helper: parse a stored date string
+            function parseStoredDate(dateStr) {
+                if (!dateStr) return null;
+                if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) return new Date(dateStr + 'T00:00:00');
+                const parts = dateStr.split('/');
+                if (parts.length === 3) {
+                    const yearIdx = parts.findIndex(p => p.length === 4);
+                    if (yearIdx === 2) return new Date(parseInt(parts[2]), parseInt(parts[0]) - 1, parseInt(parts[1]));
+                    else if (yearIdx === 0) return new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
+                }
+                const d = new Date(dateStr);
+                return isNaN(d) ? null : d;
+            }
+
+            // 2. Discover ALL subjects that actually have attendance marked for these students in this month
+            // and compute total classes held per subject (max records per student)
+            const activeSubjects = new Set();
+            for (const s of students) {
+                const records = allStudentAttendance[s.id] || [];
+                for (const data of records) {
+                    if (!data.date || !data.sessionName) continue;
+                    
+                    const parsed = parseStoredDate(data.date);
+                    if (parsed && parsed.getFullYear() === selYear && (parsed.getMonth() + 1) === selMonth) {
+                        activeSubjects.add(data.sessionName);
+                    }
+                }
+            }
+            
+            const finalSubjects = Array.from(activeSubjects).sort();
+            
+            if (finalSubjects.length === 0) {
+                throw new Error("No attendance records found for any subject in the selected month.");
+            }
+            
+            const subjectWorkingDays = {}; // Maps subject name to max classes held
+            for (const session of finalSubjects) {
+                let maxClasses = 0;
+                for (const s of students) {
+                    const records = allStudentAttendance[s.id] || [];
+                    let count = 0;
+                    for (const data of records) {
+                        if (data.sessionName === session) {
+                            const parsed = parseStoredDate(data.date);
+                            if (parsed && parsed.getFullYear() === selYear && (parsed.getMonth() + 1) === selMonth) {
+                                count++;
+                            }
+                        }
+                    }
+                    if (count > maxClasses) maxClasses = count;
+                }
+                subjectWorkingDays[session] = maxClasses;
+            }
+            
+            if (finalSubjects.length === 0) {
+                throw new Error("No attendance records found for any subject in the selected month.");
+            }
+
+            // Use empty strings (with newlines for height) in the header to make room for images
+            const head = ['#', 'Name', ...finalSubjects.map(() => '      \n      '), '      \n      '];
+            const body = [];
+            
+            const totalAllDays = finalSubjects.reduce((sum, sub) => sum + (subjectWorkingDays[sub] || 0), 0);
+
+            for (const s of students) {
+                const row = [s.rollNumber || '-', s.fullName || 'Unnamed'];
+                const records = allStudentAttendance[s.id] || [];
+                
+                let studentTotalP = 0, studentTotalA = 0, studentTotalL = 0;
+                
+                for (const session of finalSubjects) {
+                    let pCount = 0, aCount = 0, lCount = 0;
+                    
+                    for (const data of records) {
+                        if (data.sessionName !== session) continue;
+                        if (!data.date) continue;
+                        const parsed = parseStoredDate(data.date);
+                        if (!parsed) continue;
+                        if (parsed.getFullYear() === selYear && (parsed.getMonth() + 1) === selMonth) {
+                            const status = data.status || '';
+                            if (status === 'present') { pCount++; }
+                            else if (status === 'absent') { aCount++; }
+                            else if (status === 'absent_reason' || status === 'leave') { lCount++; }
+                        }
+                    }
+                    
+                    studentTotalP += pCount;
+                    studentTotalA += aCount;
+                    studentTotalL += lCount;
+                    
+                    const total = pCount + aCount + lCount;
+                    if (total > 0) {
+                        row.push(`P:${pCount}\nA:${aCount}\nL:${lCount}`);
+                    } else {
+                        row.push('-');
+                    }
+                }
+                
+                const overallTotal = studentTotalP + studentTotalA + studentTotalL;
+                if (overallTotal > 0) {
+                    row.push(`P:${studentTotalP}\nA:${studentTotalA}\nL:${studentTotalL}`);
+                } else {
+                    row.push('-');
+                }
+                
+                body.push(row);
+            }
+
+            doc.setFontSize(14);
+            doc.text('Monthly Attendance Master Summary', pageWidth / 2, 12, { align: 'center' });
+            doc.setFontSize(11);
+            doc.text(monthName, pageWidth / 2, 19, { align: 'center' });
+
+            const batchLabel = batch === 'all' ? 'All Batches' : batch;
+            const sessionImg = renderTextAsImage(`Batch: ${batchLabel}`, 22);
+            let tableStartY = 30;
+            if (sessionImg) {
+                doc.addImage(sessionImg.data, 'PNG', 14, 24, sessionImg.widthMm, sessionImg.heightMm);
+                tableStartY = 24 + sessionImg.heightMm + 2;
+            }
+
+            const columnStyles = { 0: { cellWidth: 10, halign: 'center' }, 1: { cellWidth: 40 } };
+            for (let i = 0; i < finalSubjects.length; i++) {
+                columnStyles[i + 2] = { halign: 'center' };
+            }
+            columnStyles[finalSubjects.length + 2] = { halign: 'center', fontStyle: 'bold', fillColor: [240, 240, 240] };
+
+            doc.autoTable({
+                head: [head],
+                body: body,
+                startY: tableStartY,
+                styles: { fontSize: 8, cellPadding: 2, textColor: [0,0,0], lineColor: [0,0,0], lineWidth: 0.1, overflow: 'linebreak' },
+                headStyles: { fillColor: [230,230,230], textColor: [0,0,0], fontStyle: 'bold', halign: 'center', minCellHeight: 12 },
+                columnStyles: columnStyles,
+                alternateRowStyles: { fillColor: [248,248,248] },
+                didDrawCell: function(data) {
+                    if (data.section === 'head' && data.column.index >= 2) {
+                        let headerText = '';
+                        if (data.column.index < 2 + finalSubjects.length) {
+                            const subjectName = finalSubjects[data.column.index - 2];
+                            const workingDays = subjectWorkingDays[subjectName] || 0;
+                            headerText = `${subjectName} (${workingDays})`;
+                        } else {
+                            headerText = `Total (${totalAllDays})`;
+                        }
+                        
+                        // Render text as image to support Arabic/Malayalam correctly and match font sizes
+                        const img = renderTextAsImage(headerText, 12);
+                        if (img && img.data) {
+                            const padding = 2;
+                            let tw = img.widthMm;
+                            let th = img.heightMm;
+                            
+                            // Only scale down if it exceeds cell width
+                            if (tw > data.cell.width - (padding * 2)) {
+                                const ratio = (data.cell.width - (padding * 2)) / tw;
+                                tw *= ratio;
+                                th *= ratio;
+                            }
+                            
+                            // Only scale down if it exceeds cell height
+                            if (th > data.cell.height - (padding * 2)) {
+                                const ratio = (data.cell.height - (padding * 2)) / th;
+                                tw *= ratio;
+                                th *= ratio;
+                            }
+                            
+                            const x = data.cell.x + (data.cell.width - tw) / 2;
+                            const y = data.cell.y + (data.cell.height - th) / 2;
+                            doc.addImage(img.data, 'PNG', x, y, tw, th);
+                        }
+                    }
+                }
+            });
+
+            savePdfDocument(doc, `All_Subjects_Monthly_Attendance_${batch.replace(/\s+/g,'_')}_${month}.pdf`, pdfWindow);
+
+        } catch (err) {
+            writePdfWindowMessage(pdfWindow, err.message || "PDF generation failed.");
+            alert(err.message || "PDF generation failed.");
+        }
+        
+        downloadAllSubjectsMonthlyAttPdfBtn.disabled = false;
+        downloadAllSubjectsMonthlyAttPdfBtn.innerText = "\uD83D\uDCE5 Download All Subjects Monthly PDF";
+    });
+}
 
 // PWA Install Logic
 let deferredInstallPrompt = null;

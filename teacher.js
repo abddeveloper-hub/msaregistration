@@ -1172,20 +1172,30 @@ document.getElementById('attSession')?.addEventListener('change', (e) => {
 
     const batchDropdown = document.getElementById('attBatch');
     if (!batchDropdown) return;
+    
+    const currentBatch = batchDropdown.value;
 
     // Default Dars sessions match 'All Batches'
     if (selectedName === '1st Dars' || selectedName === '2nd Dars') {
-        batchDropdown.value = 'all';
-        updateSelects();
+        fetchMarkedDates();
         return;
     }
 
     // Find the subject in our list
     const sub = campusSubjects.find(s => s.name === selectedName);
     if (sub && sub.batch) {
-        const batchVal = sub.batch === 'All' ? 'all' : sub.batch;
-        batchDropdown.value = batchVal;
-        updateSelects(); 
+        const subBatch = sub.batch === 'All' ? 'all' : sub.batch;
+        
+        // If the subject is specific to a batch, and we aren't on that batch, switch to it.
+        if (subBatch !== 'all' && currentBatch !== subBatch) {
+            batchDropdown.value = subBatch;
+            updateSelects(); 
+        } else {
+            // Otherwise, keep the user's current batch selection and just fetch dates
+            fetchMarkedDates();
+        }
+    } else {
+        fetchMarkedDates();
     }
 });
 
@@ -2011,7 +2021,13 @@ if (downloadAllSubjectsMonthlyAttPdfBtn) {
                 }
             }
             
-            const finalSubjects = Array.from(activeSubjects).sort();
+            const finalSubjects = Array.from(activeSubjects).sort((a, b) => {
+                const isDarsA = a.includes('Dars');
+                const isDarsB = b.includes('Dars');
+                if (isDarsA && !isDarsB) return 1;
+                if (!isDarsA && isDarsB) return -1;
+                return a.localeCompare(b);
+            });
             
             if (finalSubjects.length === 0) {
                 throw new Error("No attendance records found for any subject in the selected month.");

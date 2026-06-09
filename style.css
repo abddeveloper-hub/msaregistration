@@ -2267,3 +2267,9 @@ body, .portal-card, .glass-card, .nav-wrapper, .modal-content, .input, .btn, .su
 .analytics-dashboard { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 2rem; }
 @media (max-width: 900px) { .analytics-dashboard { grid-template-columns: 1fr; } }
 
+/* Hide install button when already running as a PWA app */
+@media all and (display-mode: standalone) {
+    #installAppBtn, .pwa-install-btn, .install-app-btn {
+        display: none !important;
+    }
+}

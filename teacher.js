@@ -2155,7 +2155,7 @@ if (downloadAllSubjectsMonthlyAttPdfBtn) {
 
             // Fixed sizing to ensure exactly 10 students per page with smaller headings
             let bodyFontSize = 10;
-            let headerFontSize = 13;
+            let headerFontSize = 16;
             let padding = 1;
             let rowHeight = 13; 
 
@@ -2174,7 +2174,7 @@ if (downloadAllSubjectsMonthlyAttPdfBtn) {
                     startY: i === 0 ? tableStartY : 15, // Start higher on subsequent pages since there is no title
                     margin: { bottom: 5, top: 15 }, // Force minimal margins so 10 rows never auto-break
                     styles: { fontSize: bodyFontSize, cellPadding: padding, textColor: [0,0,0], lineColor: [0,0,0], lineWidth: 0.1, overflow: 'linebreak', minCellHeight: rowHeight },
-                headStyles: { fillColor: [230,230,230], textColor: [0,0,0], fontStyle: 'bold', halign: 'center', minCellHeight: 12 },
+                headStyles: { fillColor: [230,230,230], textColor: [0,0,0], fontStyle: 'bold', halign: 'center', minCellHeight: 16 },
                 columnStyles: columnStyles,
                 alternateRowStyles: { fillColor: [248,248,248] },
                 didDrawCell: function(data) {

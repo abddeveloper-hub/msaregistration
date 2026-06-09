@@ -1969,8 +1969,7 @@ if (downloadAllSubjectsMonthlyAttPdfBtn) {
             const { jsPDF } = window.jspdf || {};
             if (!jsPDF) throw new Error("PDF tools are still loading. Please refresh the page and try again.");
             
-            const orientation = relevantSubjects.length > 5 ? 'landscape' : 'portrait';
-            const doc = new jsPDF({ orientation: orientation, unit: 'mm', format: 'a4' });
+            const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
             if (typeof doc.autoTable !== 'function') throw new Error("PDF table tools are still loading. Please refresh the page and try again.");
             const pageWidth = doc.internal.pageSize.getWidth();
 
@@ -2042,7 +2041,7 @@ if (downloadAllSubjectsMonthlyAttPdfBtn) {
             }
 
             // Use empty strings (with newlines for height) in the header to make room for images
-            const head = ['#', 'Name', ...finalSubjects.map(() => '      \n      '), '      \n      '];
+            const head = ['#', 'Name', ...finalSubjects.map(() => '      \n      '), '      \n      ', '      \n      '];
             const body = [];
             
             const totalAllDays = finalSubjects.reduce((sum, sub) => sum + (subjectWorkingDays[sub] || 0), 0);
@@ -2083,8 +2082,11 @@ if (downloadAllSubjectsMonthlyAttPdfBtn) {
                 
                 const overallTotal = studentTotalP + studentTotalA + studentTotalL;
                 if (overallTotal > 0) {
+                    const pct = Math.round((studentTotalP / overallTotal) * 100);
                     row.push(`P:${studentTotalP}\nA:${studentTotalA}\nL:${studentTotalL}`);
+                    row.push(`${pct}%`);
                 } else {
+                    row.push('-');
                     row.push('-');
                 }
                 
@@ -2109,12 +2111,29 @@ if (downloadAllSubjectsMonthlyAttPdfBtn) {
                 columnStyles[i + 2] = { halign: 'center' };
             }
             columnStyles[finalSubjects.length + 2] = { halign: 'center', fontStyle: 'bold', fillColor: [240, 240, 240] };
+            columnStyles[finalSubjects.length + 3] = { halign: 'center', fontStyle: 'bold', fillColor: [240, 240, 240] };
 
-            doc.autoTable({
-                head: [head],
-                body: body,
-                startY: tableStartY,
-                styles: { fontSize: 8, cellPadding: 2, textColor: [0,0,0], lineColor: [0,0,0], lineWidth: 0.1, overflow: 'linebreak' },
+            // Fixed sizing to ensure exactly 10 students per page with smaller headings
+            let bodyFontSize = 10;
+            let headerFontSize = 11;
+            let padding = 1;
+            let rowHeight = 13; 
+
+            // We want EXACTLY 10 students per page. The safest way is to draw the table in chunks of 10.
+            const chunkSize = 10;
+            for (let i = 0; i < body.length; i += chunkSize) {
+                const chunk = body.slice(i, i + chunkSize);
+                
+                if (i > 0) {
+                    doc.addPage();
+                }
+
+                doc.autoTable({
+                    head: [head],
+                    body: chunk,
+                    startY: i === 0 ? tableStartY : 15, // Start higher on subsequent pages since there is no title
+                    margin: { bottom: 5, top: 15 }, // Force minimal margins so 10 rows never auto-break
+                    styles: { fontSize: bodyFontSize, cellPadding: padding, textColor: [0,0,0], lineColor: [0,0,0], lineWidth: 0.1, overflow: 'linebreak', minCellHeight: rowHeight },
                 headStyles: { fillColor: [230,230,230], textColor: [0,0,0], fontStyle: 'bold', halign: 'center', minCellHeight: 12 },
                 columnStyles: columnStyles,
                 alternateRowStyles: { fillColor: [248,248,248] },
@@ -2125,12 +2144,14 @@ if (downloadAllSubjectsMonthlyAttPdfBtn) {
                             const subjectName = finalSubjects[data.column.index - 2];
                             const workingDays = subjectWorkingDays[subjectName] || 0;
                             headerText = `${subjectName} (${workingDays})`;
-                        } else {
+                        } else if (data.column.index === 2 + finalSubjects.length) {
                             headerText = `Total (${totalAllDays})`;
+                        } else {
+                            headerText = `Percentage`;
                         }
                         
                         // Render text as image to support Arabic/Malayalam correctly and match font sizes
-                        const img = renderTextAsImage(headerText, 12);
+                        const img = renderTextAsImage(headerText, headerFontSize);
                         if (img && img.data) {
                             const padding = 2;
                             let tw = img.widthMm;
@@ -2157,6 +2178,7 @@ if (downloadAllSubjectsMonthlyAttPdfBtn) {
                     }
                 }
             });
+            }
 
             savePdfDocument(doc, `All_Subjects_Monthly_Attendance_${batch.replace(/\s+/g,'_')}_${month}.pdf`, pdfWindow);
 

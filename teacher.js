@@ -1181,8 +1181,11 @@ document.getElementById('attSession')?.addEventListener('change', (e) => {
         return;
     }
 
-    // Find the subject in our list
-    const sub = campusSubjects.find(s => s.name === selectedName);
+    // Find the subject in our list, prioritizing the current batch
+    let sub = campusSubjects.find(s => s.name === selectedName && s.batch === currentBatch);
+    if (!sub) sub = campusSubjects.find(s => s.name === selectedName && (s.batch === 'All' || !s.batch));
+    if (!sub) sub = campusSubjects.find(s => s.name === selectedName);
+
     if (sub && sub.batch) {
         const subBatch = sub.batch === 'All' ? 'all' : sub.batch;
         

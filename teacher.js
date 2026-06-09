@@ -2029,6 +2029,8 @@ if (downloadAllSubjectsMonthlyAttPdfBtn) {
                 const isDarsB = b.includes('Dars');
                 const isMalayalamA = a.toUpperCase().includes('MALAYALAM') || a.includes('മലയാളം');
                 const isMalayalamB = b.toUpperCase().includes('MALAYALAM') || b.includes('മലയാളം');
+                const isArabicA = a.toUpperCase().includes('ARABIC') || a.toUpperCase().includes('LUGAT') || a.toUpperCase().includes('LUGHAT') || a.includes('لغة') || a.includes('العربية');
+                const isArabicB = b.toUpperCase().includes('ARABIC') || b.toUpperCase().includes('LUGAT') || b.toUpperCase().includes('LUGHAT') || b.includes('لغة') || b.includes('العربية');
                 const isHizbA = a.includes('حزب');
                 const isHizbB = b.includes('حزب');
                 const isTafseerA = a.includes('تفسير');
@@ -2049,6 +2051,10 @@ if (downloadAllSubjectsMonthlyAttPdfBtn) {
                 // Malayalam comes right before Dars
                 if (isMalayalamA && !isMalayalamB) return 1;
                 if (!isMalayalamA && isMalayalamB) return -1;
+
+                // Arabic comes right before Malayalam
+                if (isArabicA && !isArabicB) return 1;
+                if (!isArabicA && isArabicB) return -1;
                 
                 return a.localeCompare(b);
             });

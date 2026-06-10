@@ -2185,6 +2185,7 @@ body, .portal-card, .glass-card, .nav-wrapper, .modal-content, .input, .btn, .su
     flex-direction: column-reverse;
     align-items: flex-end;
     gap: 1rem;
+    pointer-events: none;
 }
 
 .fab-actions {
@@ -2226,6 +2227,7 @@ body, .portal-card, .glass-card, .nav-wrapper, .modal-content, .input, .btn, .su
 }
 
 .fab-main {
+    pointer-events: auto;
     width: 60px;
     height: 60px;
     border-radius: 50%;

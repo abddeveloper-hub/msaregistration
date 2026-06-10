@@ -418,7 +418,7 @@
         </form>
     </div>
 
-    <!-- Floating Action Button -->
+    <!-- Floating Action Button (Mobile Only) -->
     <div class="fab-container" id="fabMenu">
         <button class="fab-main" id="fabMainBtn">+</button>
         <div class="fab-actions">
@@ -505,6 +505,28 @@
         window.addEventListener('resize', () => {
             if (window.innerWidth > 900) toggleMenu(false);
         });
+
+        const fabContainer = document.getElementById('fabMenu');
+        const fabMainBtn = document.getElementById('fabMainBtn');
+        
+        if(fabContainer && fabMainBtn) {
+            fabMainBtn.addEventListener('click', (e) => {
+                fabContainer.classList.toggle('active');
+                e.stopPropagation();
+            });
+            
+            document.addEventListener('click', (e) => {
+                if(!fabContainer.contains(e.target)) {
+                    fabContainer.classList.remove('active');
+                }
+            });
+            
+            fabContainer.querySelectorAll('.fab-action').forEach(action => {
+                action.addEventListener('click', () => {
+                    fabContainer.classList.remove('active');
+                });
+            });
+        }
         
         document.querySelectorAll('.nav-item').forEach(item => {
             item.addEventListener('click', () => {

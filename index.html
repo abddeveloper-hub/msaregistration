@@ -6,23 +6,21 @@
     <title>Muhyissunnah Dars Ukkuda | Official Portal</title>
     <!-- Open Graph / SEO Meta Tags -->
     <meta property="og:title" content="Muhyissunnah Dars Ukkuda | Official Portal">
-    <meta property="og:description" content="A polished digital campus for registration, admissions, attendance, marks, and administrative oversight.">
-    <meta property="og:description" content="Official platform for admissions, attendance, and academics.">
+    <meta property="og:description" content="A pristine digital campus for registration, admissions, attendance, marks, and administrative oversight.">
     <meta property="og:type" content="website">
-    <meta property="og:image" content="https://cdn-icons-png.flaticon.com/512/3665/3665930.png">
     
-
     <!-- Preconnect to critical origins for faster mobile loading -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preconnect" href="https://www.gstatic.com" crossorigin>
-    <!-- Google Fonts: loaded as <link> (non-blocking) instead of CSS @import -->
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Inter:wght@400;500;600&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+    <!-- Apple-esque Typography: Playfair for massive headers, Inter for crisp UI -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="landing.css">
     <link rel="stylesheet" href="mobile.css">
     
     <!-- PWA Support -->
-    <meta name="theme-color" content="#0a0a0f">
+    <meta name="theme-color" content="#FFFFFF">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js" defer></script>
@@ -31,16 +29,10 @@
     <link rel="manifest" href="manifest.json">
     <script>
         (function() {
-            const theme = localStorage.getItem("msaukkuda:theme") || "dark";
-            document.documentElement.dataset.theme = theme;
-            if (theme === "light") {
-                const metaTheme = document.querySelector('meta[name="theme-color"]');
-                if (metaTheme) metaTheme.setAttribute("content", "#f8f3e8");
-            }
+            // Force pristine light theme for ultra-premium aesthetic
+            document.documentElement.dataset.theme = "light";
         })();
     </script>
-    <link rel="manifest" href="./manifest.json">
-    <link rel="apple-touch-icon" href="./logo.jpg">
 </head>
 <body class="landing-page">
 
@@ -49,167 +41,314 @@
             <a class="brand-lockup" href="index.html" aria-label="Muhyissunnah Dars Ukkuda home">
                 <img src="logo.jpg" alt="MSA Ukkuda Logo" class="brand-logo-img">
                 <span class="brand-text">
-                    <strong>Muhyissunnah Dars</strong>
-                    <span>Ukkuda Official Portal</span>
+                    <strong style="font-family: var(--font-display); letter-spacing: 0;">Muhyissunnah Dars</strong>
+                    <span style="letter-spacing: 0.15em;">Ukkuda Official Portal</span>
                 </span>
             </a>
 
-            <div class="nav-actions">
-                <button class="btn btn-ghost icon-btn" onclick="toggleTheme()" title="Toggle Dark/Light Mode">🌓</button>
+            <div class="nav-actions" style="position: relative;">
+                <button class="btn btn-ghost icon-btn" onclick="toggleTheme()" title="Toggle Dark/Light Mode" style="display:none;">🌓</button>
                 <button id="installAppBtn" class="btn btn-ghost install-app-btn hidden" type="button">Download App</button>
-                <button id="navAdminBtn" class="btn btn-ghost" type="button">Admin</button>
-                <button id="navLoginBtn" class="btn btn-main" type="button">Sign In</button>
+                
+                <button class="btn btn-ghost icon-btn" id="loginMenuToggleBtn" type="button" style="font-size: 1.5rem; padding: 0.5rem; line-height: 1;">⋮</button>
+                
+                <div id="loginDropdownMenu" class="hidden" style="position: absolute; top: calc(100% + 0.5rem); right: 0; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); box-shadow: 0 10px 25px rgba(0,0,0,0.1); display: flex; flex-direction: column; min-width: 200px; z-index: 100; overflow: hidden;">
+                    <button id="dropStudentBtn" class="btn btn-ghost" style="border-radius: 0; border: none; border-bottom: 1px solid var(--border); justify-content: flex-start; padding: 1rem;">Student Login</button>
+                    <button id="dropFacultyBtn" class="btn btn-ghost" style="border-radius: 0; border: none; border-bottom: 1px solid var(--border); justify-content: flex-start; padding: 1rem;">Faculty Login</button>
+                    <button id="navAdminBtn" class="btn btn-ghost" style="border-radius: 0; border: none; justify-content: flex-start; padding: 1rem;">Admin Login</button>
+                </div>
+                
                 <button id="navLogoutBtn" class="btn btn-ghost btn-sm hidden" type="button">Log Out</button>
             </div>
         </nav>
     </header>
 
     <main id="mainContent">
+        <!-- Massive Clean Hero Section -->
         <section class="hero-section" aria-labelledby="heroTitle">
-            <div class="hero-bg" aria-hidden="true"></div>
             <div class="hero-inner">
-                <div class="hero-content">
-                    <div class="bismillah-mark" aria-hidden="true">&#65018;</div>
-                    <div class="pill-badge">Official Institutional Portal</div>
-                    <h1 id="heroTitle">Muhyissunnah Dars <span>Ukkuda</span></h1>
-                    <p class="hero-arabic" lang="ar" dir="rtl">&#1585;&#1614;&#1576;&#1616;&#1617; &#1586;&#1616;&#1583;&#1618;&#1606;&#1616;&#1610; &#1593;&#1616;&#1604;&#1618;&#1605;&#1611;&#1575;</p>
-                    <p class="hero-translation">"My Lord, increase me in knowledge" (20:114)</p>
-                    <p class="hero-lead">A polished digital campus for registration, admissions, attendance, marks, faculty workflow, and administrative oversight.</p>
-
-                    <div class="hero-actions">
-                        <button id="heroLoginBtn" class="btn btn-main" type="button">Enter Dashboard</button>
-                        <a class="btn btn-ghost" href="#portalAccess">Explore Portals</a>
+                <div class="pill-badge animate-on-scroll slide-up">Institutional Portal</div>
+                
+                <div class="hero-content" style="display: flex; flex-direction: column; align-items: center; width: 100%;">
+                    <!-- Left sliding title -->
+                    <h1 id="heroTitle" class="animate-on-scroll slide-from-left delay-100" style="margin-bottom: 0;">
+                        Precision in
+                    </h1>
+                    <!-- Right sliding title -->
+                    <h1 class="animate-on-scroll slide-from-right delay-200" style="margin-top: -10px;">
+                        <span>Academic Excellence.</span>
+                    </h1>
+                    
+                    <p class="hero-lead animate-on-scroll slide-up delay-300">
+                        Experience a flawless digital campus. From seamless student registration to authoritative faculty administration and comprehensive institutional oversight.
+                    </p>
+                    
+                    <div class="hero-actions animate-on-scroll slide-up delay-400">
+                        <button id="heroLoginBtn" class="btn btn-main" style="padding: 1.25rem 3rem; font-size: 1.1rem; border-radius: 50px;" type="button">Enter Dashboard</button>
                     </div>
-
                 </div>
-
             </div>
         </section>
 
-        <section class="stats-strip" aria-label="Live portal statistics">
-            <div class="floating-stats-bar">
-                <div class="stat-item">
+        <!-- Institutional Achievements Section -->
+        <section id="aboutInstitution" style="padding: 8rem 2rem; background: var(--surface); overflow: hidden;">
+            <div style="max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; gap: 4rem;">
+                <div class="animate-on-scroll slide-from-left" style="max-width: 700px;">
+                    <p style="color: var(--primary); font-weight: 700; text-transform: uppercase; letter-spacing: 0.15em; font-size: 0.85rem; margin-bottom: 1rem;">Legacy of Excellence</p>
+                    <h2 style="font-family: var(--font-display); font-size: clamp(2.5rem, 5vw, 4rem); font-weight: 700; color: var(--text-main); line-height: 1.1;">Forging the future of traditional scholarship.</h2>
+                </div>
+                
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 4rem;">
+                    <div class="animate-on-scroll slide-up delay-100">
+                        <p style="color: var(--text-dim); font-size: 1.15rem; line-height: 1.8; margin-bottom: 2rem;">
+                            For over a decade, Muhyissunnah Dars Ukkuda has stood at the intersection of rigorous Islamic scholarship and modern academic infrastructure. We have proudly graduated thousands of students who now serve as community leaders, esteemed educators, and global professionals.
+                        </p>
+                        <p style="color: var(--text-dim); font-size: 1.15rem; line-height: 1.8;">
+                            Our uncompromising commitment to holistic education has earned us recognition as a premier center of learning. By maintaining a highly selective faculty verification standard, we ensure that every student is guided by the most qualified scholars in their respective fields.
+                        </p>
+                    </div>
+                    
+                    <div class="animate-on-scroll slide-from-right delay-200" style="display: flex; flex-direction: column; gap: 2rem;">
+                        <div style="background: var(--bg-desert); padding: 2.5rem; border-radius: 24px; border: 1px solid var(--border);">
+                            <h3 style="font-size: 1.35rem; font-weight: 700; margin-bottom: 1.5rem; color: var(--text-main); font-family: var(--font-display);">Key Milestones</h3>
+                            <ul style="list-style: none; padding: 0; display: flex; flex-direction: column; gap: 1.25rem;">
+                                <li style="display: flex; gap: 1rem; align-items: flex-start;">
+                                    <span style="color: #34C759; font-size: 1.25rem; line-height: 1;">✓</span>
+                                    <span style="color: var(--text-dim); line-height: 1.5;">Our students have consistently secured top prizes at the prestigious <strong>SSF National Level</strong>.</span>
+                                </li>
+                                <li style="display: flex; gap: 1rem; align-items: flex-start;">
+                                    <span style="color: #34C759; font-size: 1.25rem; line-height: 1;">✓</span>
+                                    <span style="color: var(--text-dim); line-height: 1.5;">Achieved exceptional recognition and honors at the <strong>Thartheel National Level</strong>.</span>
+                                </li>
+                                <li style="display: flex; gap: 1rem; align-items: flex-start;">
+                                    <span style="color: #34C759; font-size: 1.25rem; line-height: 1;">✓</span>
+                                    <span style="color: var(--text-dim); line-height: 1.5;">Pioneered this state-of-the-art digital infrastructure for absolute academic transparency.</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Premium Portal Access Section removed -->
+
+        <!-- Stats Section -->
+        <section class="stats-section">
+            <div class="stats-grid">
+                <div class="stat-item animate-on-scroll slide-from-left delay-100">
                     <span class="stat-num skeleton" id="statEnrollment">0000</span>
-                    <span class="stat-text">Enrollments</span>
+                    <span class="stat-text">Active Enrollments</span>
                 </div>
-                <div class="stat-item">
+                <div class="stat-item animate-on-scroll slide-up delay-200" style="border-left: 1px solid var(--border); border-right: 1px solid var(--border);">
                     <span class="stat-num skeleton" id="statInstitutions">0000</span>
-                    <span class="stat-text">Institutions</span>
+                    <span class="stat-text">Partner Campuses</span>
                 </div>
-                <div class="stat-item">
+                <div class="stat-item animate-on-scroll slide-from-right delay-300">
                     <span class="stat-num skeleton" id="statFaculty">0000</span>
-                    <span class="stat-text">Faculty</span>
+                    <span class="stat-text">Verified Faculty</span>
                 </div>
             </div>
         </section>
 
-        <section id="portalAccess" class="page-section fade-in-up" aria-labelledby="portalTitle">
-            <div class="section-heading-row">
-                <div>
-                    <p class="section-kicker">Role-based access</p>
-                    <h2 id="portalTitle" class="section-title">Choose the workspace that matches your role.</h2>
-                    <p class="section-lead">Each portal is tuned for the job at hand: fast registration for families, clear operational control for faculty, and complete institutional visibility for administrators.</p>
+        <!-- Academic Programs Section -->
+        <section id="academicPrograms" style="padding: 8rem 2rem; background: var(--surface);">
+            <div style="max-width: 1200px; margin: 0 auto;">
+                <div class="section-header">
+                    <p style="color: var(--primary); font-weight: 700; text-transform: uppercase; letter-spacing: 0.15em; font-size: 0.85rem; margin-bottom: 0.75rem;" class="animate-on-scroll slide-from-left">Our Curriculum</p>
+                    <h2 class="animate-on-scroll slide-from-right" style="font-family: var(--font-display); font-size: clamp(2.5rem, 5vw, 4rem); font-weight: 700; color: var(--text-main); margin-bottom: 3rem;">Academic Programs</h2>
+                </div>
+                <div class="cards-grid">
+                    <div class="portal-card animate-on-scroll slide-up delay-100">
+                        <h3 style="font-size: 1.5rem; color: var(--text-main); margin-bottom: 1rem; font-family: var(--font-display);">Islamic Theology</h3>
+                        <p style="color: var(--text-dim); margin-bottom: 1.5rem;">Comprehensive study of Aqeedah, Fiqh, and Tafseer, preparing students for deep spiritual and community leadership.</p>
+                        <a href="#" style="color: var(--primary); font-weight: 600; text-decoration: none; margin-top: auto;">Explore Syllabus &rarr;</a>
+                    </div>
+                    <div class="portal-card animate-on-scroll slide-up delay-200">
+                        <h3 style="font-size: 1.5rem; color: var(--text-main); margin-bottom: 1rem; font-family: var(--font-display);">Arabic Linguistics</h3>
+                        <p style="color: var(--text-dim); margin-bottom: 1.5rem;">Mastery of classical Arabic grammar, literature, and rhetoric to access original scholarly texts.</p>
+                        <a href="#" style="color: var(--primary); font-weight: 600; text-decoration: none; margin-top: auto;">Explore Syllabus &rarr;</a>
+                    </div>
+                    <div class="portal-card animate-on-scroll slide-up delay-300">
+                        <h3 style="font-size: 1.5rem; color: var(--text-main); margin-bottom: 1rem; font-family: var(--font-display);">Modern Sciences integration</h3>
+                        <p style="color: var(--text-dim); margin-bottom: 1.5rem;">Bridging traditional scholarship with contemporary academic disciplines for well-rounded graduates.</p>
+                        <a href="#" style="color: var(--primary); font-weight: 600; text-decoration: none; margin-top: auto;">Explore Syllabus &rarr;</a>
+                    </div>
                 </div>
             </div>
+        </section>
 
-            <div class="cards-grid">
-                <a id="studentCard" href="student.html" class="portal-card student">
-                    <span class="portal-card-top">
-                        <span class="portal-initial">ST</span>
-                        <span class="portal-status">Admissions</span>
-                    </span>
-                    <span>
-                        <h3>Student Portal</h3>
-                        <p>Register students, track approval status, view official ID details, and review marks, attendance, and remarks in one secure account.</p>
-                    </span>
-                    <span class="portal-card-footer">
-                        <span>Open student access</span>
-                        <span aria-hidden="true">-&gt;</span>
-                    </span>
-                </a>
-
-                <a id="facultyCard" href="teacher.html" class="portal-card faculty">
-                    <span class="portal-card-top">
-                        <span class="portal-initial">FC</span>
-                        <span class="portal-status">Academic</span>
-                    </span>
-                    <span>
-                        <h3>Faculty Portal</h3>
-                        <p>Approve applications, manage your enrolled students, record attendance, enter marks, and add academic remarks from a focused workspace.</p>
-                    </span>
-                    <span class="portal-card-footer">
-                        <span>Open faculty access</span>
-                        <span aria-hidden="true">-&gt;</span>
-                    </span>
-                </a>
-
-                <a id="adminCard" href="admin.html" class="portal-card admin">
-                    <span class="portal-card-top">
-                        <span class="portal-initial">AD</span>
-                        <span class="portal-status">Secure</span>
-                    </span>
-                    <span>
-                        <h3>Admin Root</h3>
-                        <p>Monitor system totals, institutions, faculty assignments, faculty approvals, global student records, and administrator access.</p>
-                    </span>
-                    <span class="portal-card-footer">
-                        <span>Open admin console</span>
-                        <span aria-hidden="true">-&gt;</span>
-                    </span>
-                </a>
+        <!-- Upcoming Events Section -->
+        <section id="eventsSection" style="padding: 8rem 2rem; background: var(--bg-desert);">
+            <div style="max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1fr 2fr; gap: 4rem; align-items: center;">
+                <div class="animate-on-scroll slide-from-left">
+                    <p style="color: var(--primary); font-weight: 700; text-transform: uppercase; letter-spacing: 0.15em; font-size: 0.85rem; margin-bottom: 1rem;">Stay Updated</p>
+                    <h2 style="font-family: var(--font-display); font-size: clamp(2rem, 4vw, 3.5rem); font-weight: 700; color: var(--text-main); line-height: 1.1; margin-bottom: 1.5rem;">News & Events</h2>
+                    <p style="color: var(--text-dim); font-size: 1.1rem; margin-bottom: 2rem;">Join us for upcoming seminars, national-level competitions, and spiritual gatherings.</p>
+                    <button class="btn btn-ghost" style="border-radius: 50px;">View Full Calendar</button>
+                </div>
+                <div class="animate-on-scroll slide-from-right" style="display: flex; flex-direction: column; gap: 1.5rem;">
+                    <!-- Event Item -->
+                    <div style="background: var(--surface); padding: 2rem; border-radius: 20px; border: 1px solid var(--border); display: flex; gap: 2rem; align-items: center; box-shadow: var(--shadow-sm);">
+                        <div style="background: var(--primary-glow); color: var(--primary); padding: 1rem; border-radius: 16px; text-align: center; min-width: 90px;">
+                            <strong style="display: block; font-size: 1.8rem; line-height: 1;">15</strong>
+                            <span style="font-size: 0.85rem; text-transform: uppercase; font-weight: 700;">Aug</span>
+                        </div>
+                        <div>
+                            <h4 style="font-size: 1.25rem; color: var(--text-main); margin-bottom: 0.5rem;">Annual SSF Convention</h4>
+                            <p style="color: var(--text-dim); font-size: 0.95rem;">National level gathering for students and scholars featuring keynote speakers.</p>
+                        </div>
+                    </div>
+                    <!-- Event Item -->
+                    <div style="background: var(--surface); padding: 2rem; border-radius: 20px; border: 1px solid var(--border); display: flex; gap: 2rem; align-items: center; box-shadow: var(--shadow-sm);">
+                        <div style="background: var(--primary-glow); color: var(--primary); padding: 1rem; border-radius: 16px; text-align: center; min-width: 90px;">
+                            <strong style="display: block; font-size: 1.8rem; line-height: 1;">22</strong>
+                            <span style="font-size: 0.85rem; text-transform: uppercase; font-weight: 700;">Sep</span>
+                        </div>
+                        <div>
+                            <h4 style="font-size: 1.25rem; color: var(--text-main); margin-bottom: 0.5rem;">Thartheel Finals</h4>
+                            <p style="color: var(--text-dim); font-size: 0.95rem;">Grand finale of the Quranic recitation competition held at HQ.</p>
+                        </div>
+                    </div>
+                </div>
             </div>
         </section>
 
-        <section class="page-section fade-in-up" aria-labelledby="featuresTitle" style="animation-delay: 0.2s;">
-            <p class="section-kicker">New portal features</p>
-            <h2 id="featuresTitle" class="section-title">Built for daily institutional work.</h2>
-            <div class="feature-grid">
-                <article class="feature-card">
-                    <h3>Smart role memory</h3>
-                    <p>The portal remembers the last selected sign-in role and keeps student, faculty, and admin entry points clear and direct.</p>
-                    <div class="feature-meter" aria-hidden="true" style="--value: 88%;"><span></span></div>
-                </article>
-                <article class="feature-card">
-                    <h3>Cleaner authentication</h3>
-                    <p>Sign-in and account creation now include role locking, password visibility control, password strength feedback, and better keyboard handling.</p>
-                    <div class="feature-meter" aria-hidden="true" style="--value: 76%;"><span></span></div>
-                </article>
-                <article class="feature-card">
-                    <h3>Premium interface system</h3>
-                    <p>The shared CSS now supports polished dashboards, responsive cards, accessible focus states, refined tables, and a persistent light/dark theme.</p>
-                    <div class="feature-meter" aria-hidden="true" style="--value: 94%;"><span></span></div>
-                </article>
+        <!-- Testimonials Section -->
+        <section id="testimonialsSection" style="padding: 8rem 2rem; background: var(--surface); overflow: hidden;">
+            <div style="max-width: 1200px; margin: 0 auto; text-align: center;">
+                <p style="color: var(--primary); font-weight: 700; text-transform: uppercase; letter-spacing: 0.15em; font-size: 0.85rem; margin-bottom: 0.75rem;" class="animate-on-scroll slide-up">Voices of Excellence</p>
+                <h2 style="font-family: var(--font-display); font-size: clamp(2.5rem, 5vw, 4rem); font-weight: 700; color: var(--text-main); margin-bottom: 4rem;" class="animate-on-scroll slide-up delay-100">Alumni Success</h2>
+                
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2.5rem;">
+                    <div class="animate-on-scroll slide-up delay-200" style="background: var(--bg-desert); padding: 3rem 2rem; border-radius: 24px; border: 1px solid var(--border); position: relative;">
+                        <span style="position: absolute; top: 1rem; left: 1.5rem; font-size: 4rem; color: var(--border-strong); font-family: var(--font-display); line-height: 1; opacity: 0.5;">"</span>
+                        <p style="color: var(--text-dim); font-style: italic; font-size: 1.1rem; line-height: 1.8; margin-bottom: 2rem; position: relative; z-index: 1;">The rigorous curriculum and devoted faculty at Muhyissunnah completely transformed my approach to Islamic studies. The digital portal made my academic journey incredibly smooth.</p>
+                        <div style="display: flex; align-items: center; justify-content: center; gap: 1rem;">
+                            <div style="width: 48px; height: 48px; border-radius: 50%; background: var(--primary-glow); display: flex; align-items: center; justify-content: center; color: var(--primary); font-weight: 700;">SA</div>
+                            <div style="text-align: left;">
+                                <strong style="display: block; color: var(--text-main);">Salman Ahmed</strong>
+                                <span style="color: var(--text-dim); font-size: 0.85rem;">Class of 2024</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="animate-on-scroll slide-up delay-300" style="background: var(--bg-desert); padding: 3rem 2rem; border-radius: 24px; border: 1px solid var(--border); position: relative;">
+                        <span style="position: absolute; top: 1rem; left: 1.5rem; font-size: 4rem; color: var(--border-strong); font-family: var(--font-display); line-height: 1; opacity: 0.5;">"</span>
+                        <p style="color: var(--text-dim); font-style: italic; font-size: 1.1rem; line-height: 1.8; margin-bottom: 2rem; position: relative; z-index: 1;">As a faculty member, the tools provided by this platform allow me to track student progress with unprecedented clarity. It is truly a marvel of modern educational infrastructure.</p>
+                        <div style="display: flex; align-items: center; justify-content: center; gap: 1rem;">
+                            <div style="width: 48px; height: 48px; border-radius: 50%; background: var(--primary-glow); display: flex; align-items: center; justify-content: center; color: var(--primary); font-weight: 700;">HK</div>
+                            <div style="text-align: left;">
+                                <strong style="display: block; color: var(--text-main);">Ustadh Hakeem</strong>
+                                <span style="color: var(--text-dim); font-size: 0.85rem;">Senior Lecturer</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </section>
 
-        <section class="page-section" aria-labelledby="processTitle">
-            <p class="section-kicker">Admissions flow</p>
-            <h2 id="processTitle" class="section-title">From registration to academic records.</h2>
-            <div class="process-grid">
-                <article class="process-card">
-                    <span class="process-step">1</span>
-                    <h3>Create account</h3>
-                    <p>Families or faculty sign up with the correct role and continue into their workspace.</p>
-                </article>
-                <article class="process-card">
-                    <span class="process-step">2</span>
-                    <h3>Submit profile</h3>
-                    <p>Students and faculty complete the information required for institutional review.</p>
-                </article>
-                <article class="process-card">
-                    <span class="process-step">3</span>
-                    <h3>Approve and assign</h3>
-                    <p>Faculty and admins review applications, approve records, and assign campuses.</p>
-                </article>
-                <article class="process-card">
-                    <span class="process-step">4</span>
-                    <h3>Track academics</h3>
-                    <p>Attendance, marks, remarks, and ID details remain available in the secure portal.</p>
-                </article>
+        <!-- Gallery Section -->
+        <section id="gallerySection" style="padding: 8rem 2rem; background: var(--bg);">
+            <div style="max-width: 1200px; margin: 0 auto; text-align: center;">
+                <p style="color: var(--primary); font-weight: 700; text-transform: uppercase; letter-spacing: 0.15em; font-size: 0.85rem; margin-bottom: 0.75rem;" class="animate-on-scroll slide-up">Campus Life</p>
+                <h2 style="font-family: var(--font-display); font-size: clamp(2.5rem, 5vw, 4rem); font-weight: 700; color: var(--text-main); margin-bottom: 4rem;" class="animate-on-scroll slide-up delay-100">Our Gallery</h2>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; grid-auto-rows: 250px;">
+                    <div class="animate-on-scroll slide-up delay-100" style="background: var(--surface-raised); border-radius: 16px; overflow: hidden; position: relative; grid-row: span 2;">
+                        <div style="position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.5), transparent); z-index: 1; display: flex; align-items: flex-end; padding: 1.5rem;">
+                            <span style="color: #fff; font-weight: 600; font-size: 1.1rem;">Convocation 2024</span>
+                        </div>
+                        <div style="width: 100%; height: 100%; background: var(--border); display: grid; place-items: center; color: var(--text-dim); font-size: 2rem;">📷</div>
+                    </div>
+                    <div class="animate-on-scroll slide-up delay-200" style="background: var(--surface-raised); border-radius: 16px; overflow: hidden; position: relative;">
+                        <div style="position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.5), transparent); z-index: 1; display: flex; align-items: flex-end; padding: 1.5rem;">
+                            <span style="color: #fff; font-weight: 600; font-size: 1.1rem;">Campus Library</span>
+                        </div>
+                        <div style="width: 100%; height: 100%; background: var(--border); display: grid; place-items: center; color: var(--text-dim); font-size: 2rem;">📷</div>
+                    </div>
+                    <div class="animate-on-scroll slide-up delay-300" style="background: var(--surface-raised); border-radius: 16px; overflow: hidden; position: relative; grid-row: span 2;">
+                        <div style="position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.5), transparent); z-index: 1; display: flex; align-items: flex-end; padding: 1.5rem;">
+                            <span style="color: #fff; font-weight: 600; font-size: 1.1rem;">Thartheel Event</span>
+                        </div>
+                        <div style="width: 100%; height: 100%; background: var(--border); display: grid; place-items: center; color: var(--text-dim); font-size: 2rem;">📷</div>
+                    </div>
+                    <div class="animate-on-scroll slide-up delay-400" style="background: var(--surface-raised); border-radius: 16px; overflow: hidden; position: relative;">
+                        <div style="position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.5), transparent); z-index: 1; display: flex; align-items: flex-end; padding: 1.5rem;">
+                            <span style="color: #fff; font-weight: 600; font-size: 1.1rem;">Classroom</span>
+                        </div>
+                        <div style="width: 100%; height: 100%; background: var(--border); display: grid; place-items: center; color: var(--text-dim); font-size: 2rem;">📷</div>
+                    </div>
+                </div>
             </div>
         </section>
+
+        <!-- Our Campuses Section -->
+        <section id="ourCampuses" style="padding: 6rem 2rem; background: var(--bg-desert); border-top: 1px solid var(--border);">
+            <div style="max-width: 1200px; margin: 0 auto;">
+                <div class="animate-on-scroll slide-from-left" style="text-align: center; margin-bottom: 4rem;">
+                    <p style="color: var(--primary); font-weight: 700; text-transform: uppercase; letter-spacing: 0.15em; font-size: 0.85rem; margin-bottom: 0.75rem;">Global Network</p>
+                    <h2 style="font-family: var(--font-display); font-size: clamp(2.5rem, 5vw, 4rem); font-weight: 700; color: var(--text-main);">Our Partner Campuses</h2>
+                </div>
+                
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem;">
+                    <div class="animate-on-scroll slide-up delay-100" style="padding: 1.5rem; border-radius: 16px; background: var(--surface); border: 1px solid var(--border); box-shadow: var(--shadow-sm); display: flex; align-items: center; gap: 1rem; transition: transform 0.2s;"><span style="color: #0066CC; font-size: 1.5rem;">•</span> <strong style="color: var(--text-main);">MSA UKKUDA</strong> <span style="color: var(--text-dim); font-size: 0.85rem; margin-left: auto;">(HQ)</span></div>
+                    <div class="animate-on-scroll slide-up delay-100" style="padding: 1.5rem; border-radius: 16px; background: var(--surface); border: 1px solid var(--border); box-shadow: var(--shadow-sm); display: flex; align-items: center; gap: 1rem; transition: transform 0.2s;"><span style="color: #0066CC; font-size: 1.5rem;">•</span> <strong style="color: var(--text-main);">MSA CHATEKKAL</strong></div>
+                    <div class="animate-on-scroll slide-up delay-200" style="padding: 1.5rem; border-radius: 16px; background: var(--surface); border: 1px solid var(--border); box-shadow: var(--shadow-sm); display: flex; align-items: center; gap: 1rem; transition: transform 0.2s;"><span style="color: #0066CC; font-size: 1.5rem;">•</span> <strong style="color: var(--text-main);">MSA MARIKKALA</strong></div>
+                    <div class="animate-on-scroll slide-up delay-200" style="padding: 1.5rem; border-radius: 16px; background: var(--surface); border: 1px solid var(--border); box-shadow: var(--shadow-sm); display: flex; align-items: center; gap: 1rem; transition: transform 0.2s;"><span style="color: #0066CC; font-size: 1.5rem;">•</span> <strong style="color: var(--text-main);">MSA NAVOOR</strong></div>
+                    <div class="animate-on-scroll slide-up delay-300" style="padding: 1.5rem; border-radius: 16px; background: var(--surface); border: 1px solid var(--border); box-shadow: var(--shadow-sm); display: flex; align-items: center; gap: 1rem; transition: transform 0.2s;"><span style="color: #0066CC; font-size: 1.5rem;">•</span> <strong style="color: var(--text-main);">MSA GOLIYANGADI</strong></div>
+                    <div class="animate-on-scroll slide-up delay-300" style="padding: 1.5rem; border-radius: 16px; background: var(--surface); border: 1px solid var(--border); box-shadow: var(--shadow-sm); display: flex; align-items: center; gap: 1rem; transition: transform 0.2s;"><span style="color: #0066CC; font-size: 1.5rem;">•</span> <strong style="color: var(--text-main);">MSA RENJA</strong></div>
+                    <div class="animate-on-scroll slide-up delay-400" style="padding: 1.5rem; border-radius: 16px; background: var(--surface); border: 1px solid var(--border); box-shadow: var(--shadow-sm); display: flex; align-items: center; gap: 1rem; transition: transform 0.2s;"><span style="color: #0066CC; font-size: 1.5rem;">•</span> <strong style="color: var(--text-main);">MSA KULIYOORPADAVU</strong></div>
+                    <div class="animate-on-scroll slide-up delay-400" style="padding: 1.5rem; border-radius: 16px; background: var(--surface); border: 1px solid var(--border); box-shadow: var(--shadow-sm); display: flex; align-items: center; gap: 1rem; transition: transform 0.2s;"><span style="color: #0066CC; font-size: 1.5rem;">•</span> <strong style="color: var(--text-main);">MSA BAJAL</strong></div>
+                </div>
+            </div>
+        </section>
+
     </main>
 
+    <!-- Ultra-Premium Footer -->
+    <footer class="ultra-footer">
+        <div class="footer-grid">
+            <div class="footer-brand animate-on-scroll slide-from-left">
+                <h4>Muhyissunnah Dars</h4>
+                <p>Delivering a robust, pristine digital infrastructure for academic excellence. Optimized for seamless institutional management and absolute clarity.</p>
+            </div>
+            <div class="footer-col animate-on-scroll slide-up delay-100">
+                <h5>Portals</h5>
+                <ul>
+                    <li><a href="student.html">Student Access</a></li>
+                    <li><a href="teacher.html">Faculty Dashboard</a></li>
+                    <li><a href="admin.html">Administrator Root</a></li>
+                    <li><a href="#" id="footerInstallBtn">Download App</a></li>
+                </ul>
+            </div>
+            <div class="footer-col animate-on-scroll slide-up delay-200">
+                <h5>Institution</h5>
+                <ul>
+                    <li><a href="#">About Us</a></li>
+                    <li><a href="#">Admissions Policy</a></li>
+                    <li><a href="#">Faculty Directory</a></li>
+                    <li><a href="#">Academic Calendar</a></li>
+                </ul>
+            </div>
+            <div class="footer-col animate-on-scroll slide-from-right delay-300">
+                <h5>Support & Legal</h5>
+                <ul>
+                    <li><a href="#">Help Center</a></li>
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">Terms of Service</a></li>
+                    <li><a href="#">Contact Administration</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom animate-on-scroll slide-up delay-400">
+            <span>&copy; 2026 Muhyissunnah Dars Ukkuda. All rights reserved.</span>
+            <div style="display: flex; gap: 1rem;">
+                <span style="display: flex; align-items: center; gap: 0.5rem;"><span style="display: inline-block; width: 8px; height: 8px; background: var(--success); border-radius: 50%;"></span> Systems Operational</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Mobile nav omitted on ultra-premium desktop view, but kept for JS compatibility if needed -->
     <nav class="mobile-entry-bar" aria-label="Mobile portal shortcuts">
         <a id="mobileStudentLink" class="mobile-entry-item" href="student.html">
             <span>ST</span>
@@ -235,7 +374,7 @@
             <div class="auth-modal-header">
                 <div>
                     <h2 id="pwaTitle">Download Portal App</h2>
-                    <p>Access the MSA UKKUDA portal directly from your home screen.</p>
+                    <p>Access the portal directly from your home screen.</p>
                 </div>
                 <button id="closePwaBtn" class="close-modal" type="button">X</button>
             </div>
@@ -255,17 +394,18 @@
             </div>
 
             <div id="pwaGenericInst">
-                <p>Your browser doesn't support automatic installation. You can usually find an "Install" or "Add to Home Screen" option in your browser's menu (⋮ or ≡).</p>
+                <p>Your browser doesn't support automatic installation. You can usually find an "Install" or "Add to Home Screen" option in your browser's menu.</p>
             </div>
         </div>
     </div>
 
+    <!-- Auth Modal -->
     <div id="authModal" class="auth-overlay" aria-hidden="true">
         <div class="auth-modal" role="dialog" aria-modal="true" aria-labelledby="authTitle">
             <div class="auth-modal-header">
                 <div>
-                    <h2 id="authTitle">Welcome Back</h2>
-                    <p id="authSubtitle">Select your role to continue.</p>
+                    <h2 id="authTitle" style="font-family: var(--font-display);">Welcome Back</h2>
+                    <p id="authSubtitle" style="color: var(--text-dim);">Select your role to continue.</p>
                 </div>
                 <button id="closeAuthBtn" class="close-modal" type="button" aria-label="Close authentication dialog">X</button>
             </div>
@@ -283,30 +423,74 @@
             <form id="authForm" novalidate>
                 <div id="nameField" class="input-field hidden">
                     <label class="label" for="authName">Full Name</label>
-                    <input type="text" id="authName" class="input" autocomplete="name" placeholder="Your name or family name">
+                    <input type="text" id="authName" class="input" autocomplete="name" placeholder="Your full legal name">
                 </div>
 
                 <div class="input-field">
                     <label class="label" for="authEmail">Email Address</label>
-                    <input type="email" id="authEmail" class="input" autocomplete="email" required placeholder="name@example.com">
+                    <input type="email" id="authEmail" class="input" autocomplete="email" required placeholder="name@institution.edu">
                 </div>
 
                 <div class="input-field">
                     <label class="label" for="authPassword">Password</label>
-                    <div class="password-row">
-                        <input type="password" id="authPassword" class="input" autocomplete="current-password" required placeholder="Enter password">
-                        <button id="passwordToggleBtn" class="password-toggle" type="button" aria-label="Show password">Show</button>
+                    <div class="password-row" style="display: flex; position: relative;">
+                        <input type="password" id="authPassword" class="input" style="width: 100%; padding-right: 60px;" autocomplete="current-password" required placeholder="Enter secure password">
+                        <button id="passwordToggleBtn" class="password-toggle" type="button" aria-label="Show password" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; font-size: 0.85rem; color: var(--primary); cursor: pointer; font-weight: 600;">Show</button>
+                    </div>
+                    <div style="display: flex; justify-content: flex-end; margin-top: 0.5rem;">
+                        <a href="#" id="forgotPasswordLink" style="font-size: 0.85rem; color: var(--primary); text-decoration: none; font-weight: 500;">Forgot Password?</a>
                     </div>
                 </div>
-                <div id="passwordStrength" class="password-strength" data-score="0" aria-hidden="true"><span></span></div>
+                <!-- Password Strength Meter -->
+                <div id="passwordStrengthContainer" class="hidden" style="margin-top: 0.5rem;">
+                    <div style="display: flex; gap: 4px; height: 4px; border-radius: 2px; overflow: hidden;">
+                        <div id="strengthBar1" style="flex: 1; background: var(--border-strong); transition: background 0.3s;"></div>
+                        <div id="strengthBar2" style="flex: 1; background: var(--border-strong); transition: background 0.3s;"></div>
+                        <div id="strengthBar3" style="flex: 1; background: var(--border-strong); transition: background 0.3s;"></div>
+                        <div id="strengthBar4" style="flex: 1; background: var(--border-strong); transition: background 0.3s;"></div>
+                    </div>
+                    <p id="strengthText" style="font-size: 0.75rem; color: var(--text-dim); margin-top: 0.25rem; text-align: right;">Weak</p>
+                </div>
+                <div id="passwordStrength" class="password-strength hidden" data-score="0" aria-hidden="true"><span></span></div>
 
                 <p id="authError" class="auth-error hidden"></p>
-                <button type="submit" id="authSubmitBtn" class="btn btn-main btn-block">Sign In</button>
+                <button type="submit" id="authSubmitBtn" class="btn btn-main btn-block" style="margin-top: 1.5rem; padding: 1rem; border-radius: 12px;">Authenticate</button>
             </form>
         </div>
     </div>
 
-    <script type="module" src="app.js?v=2"></script>
+    <script type="module" src="app.js?v=4"></script>
+
+    <!-- Scroll Animations Logic -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const observerOptions = {
+                root: null,
+                rootMargin: '0px',
+                threshold: 0.15
+            };
+
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('is-visible');
+                        // Optional: stop observing once animated
+                        // observer.unobserve(entry.target); 
+                    }
+                });
+            }, observerOptions);
+
+            const animatedElements = document.querySelectorAll('.animate-on-scroll');
+            animatedElements.forEach(el => observer.observe(el));
+            
+            // Immediately trigger hero animations if already in viewport on load
+            setTimeout(() => {
+                document.querySelectorAll('.hero-section .animate-on-scroll').forEach(el => {
+                    el.classList.add('is-visible');
+                });
+            }, 100);
+        });
+    </script>
 
     <!-- PWA Registration -->
     <script>

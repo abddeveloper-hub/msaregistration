@@ -65,8 +65,10 @@
                 <div class="nav-item" data-target="viewSubjects">Manage Subjects</div>
                 <div class="nav-item" data-target="viewMarks">Manage Marks</div>
                 <div class="nav-item" data-target="viewAttendance">Attendance</div>
+                <div class="nav-item" data-target="viewAnnouncements">Class Announcements</div>
                 <div class="nav-item" data-target="viewRemarks">Remarks</div>
                 <div class="nav-item" data-target="viewCalendar">Academic Calendar</div>
+                <div class="nav-item" data-target="viewLeave">Leave Management</div>
                 <div class="nav-item" data-target="viewMessages">Messages</div>
             </nav>
 
@@ -285,6 +287,83 @@
                         <div class="input-field"><label class="label">Select Student</label><select id="remStudent" class="input"></select></div>
                         <div class="input-field"><label class="label">Remark / Note</label><textarea id="remText" class="input" rows="4"></textarea></div>
                         <button class="btn btn-main" id="saveRemarkBtn">Add Remark</button>
+                    </div>
+                </div>
+
+                <!-- Announcements -->
+                <div id="viewAnnouncements" class="dashboard-section hidden">
+                    <div class="view-header" style="margin-bottom: 2rem;">
+                        <h2 class="view-title">Class Announcements</h2>
+                        <p class="view-desc">Broadcast messages to all students in your assigned batches.</p>
+                    </div>
+                    <div class="form-section">
+                        <div class="input-field">
+                            <label class="label">Select Batch</label>
+                            <select id="announcementBatch" class="input">
+                                <option value="all">All My Batches</option>
+                            </select>
+                        </div>
+                        <div class="input-field">
+                            <label class="label">Announcement Title</label>
+                            <input type="text" id="announcementTitle" class="input" placeholder="e.g. Change in exam schedule">
+                        </div>
+                        <div class="input-field">
+                            <label class="label">Message Content</label>
+                            <textarea id="announcementText" class="input" rows="4" placeholder="Type your announcement here..."></textarea>
+                        </div>
+                        <button class="btn btn-main" id="postAnnouncementBtn">Post Announcement</button>
+                    </div>
+                    
+                    <div style="margin-top: 2rem;">
+                        <h3>Recent Announcements</h3>
+                        <div style="background: var(--surface); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--border); border-left: 4px solid var(--primary); margin-top: 1rem;">
+                            <h4 style="margin-bottom: 0.5rem; color: var(--text-main);">Reminder: Upcoming Fiqh Assessment</h4>
+                            <p style="color: var(--text-dim); font-size: 0.95rem; margin-bottom: 0.5rem;">Please ensure all assignments are submitted before the assessment on Friday.</p>
+                            <span style="font-size: 0.8rem; color: var(--muted);">Posted on: Oct 12, 2026</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Leave Management -->
+                <div id="viewLeave" class="dashboard-section hidden">
+                    <div class="view-header" style="margin-bottom: 2rem;">
+                        <h2 class="view-title">Leave Management</h2>
+                        <p class="view-desc">Apply for leave and view your schedule.</p>
+                    </div>
+                    <div class="form-section grid-2">
+                        <div class="input-field">
+                            <label class="label">Start Date</label>
+                            <input type="date" id="leaveStart" class="input">
+                        </div>
+                        <div class="input-field">
+                            <label class="label">End Date</label>
+                            <input type="date" id="leaveEnd" class="input">
+                        </div>
+                        <div class="input-field" style="grid-column: span 2;">
+                            <label class="label">Reason for Leave</label>
+                            <textarea id="leaveReason" class="input" rows="3"></textarea>
+                        </div>
+                    </div>
+                    <button class="btn btn-main" id="applyLeaveBtn">Apply for Leave</button>
+                    
+                    <div style="margin-top: 3rem;">
+                        <h3>Leave History</h3>
+                        <table class="data-table" style="margin-top: 1rem;">
+                            <thead>
+                                <tr>
+                                    <th>Date Range</th>
+                                    <th>Reason</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Sep 10, 2026 - Sep 11, 2026</td>
+                                    <td>Personal emergency</td>
+                                    <td><span style="color: var(--success); font-weight: bold;">Approved</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
 

@@ -57,8 +57,9 @@
             </div>
             
             <nav style="flex: 1; display: flex; flex-direction: column; gap: 0.5rem;">
-                <div class="nav-item" data-target="viewMarks">My Marks</div>
-                <div class="nav-item" data-target="viewAttendance">My Attendance</div>
+                <div class="nav-item" data-target="viewDashboard">Dashboard</div>
+                <div class="nav-item" data-target="viewAssignments">Assignments</div>
+                <div class="nav-item" data-target="viewCalendar">Calendar</div>
                 <div class="nav-item" data-target="viewMessages">Messages</div>
             </nav>
 
@@ -227,7 +228,7 @@
                     <p>This student application is currently being reviewed by the administration.</p>
                 </div>
 
-                <div id="admittedDetailSection" class="hidden">
+                <div id="admittedDetailSection" class="dashboard-section hidden">
                     <!-- Performance Overview -->
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 2rem;">
                         <div class="card" style="text-align: center; padding: 1.5rem; border: 1px solid var(--border); background: var(--glass-heavy);">
@@ -337,6 +338,81 @@
                     </div>
                 </div>
 
+                <!-- VIEW: Assignments & Tasks -->
+                <div id="viewAssignments" class="dashboard-section hidden">
+                    <div class="view-header">
+                        <h2 class="view-title">Assignments & Tasks</h2>
+                        <p class="view-desc">Track your pending assignments and project deadlines.</p>
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 1rem; margin-top: 2rem;">
+                        <div class="card" style="padding: 1.5rem; background: var(--surface); border: 1px solid var(--border); border-left: 4px solid var(--warning); border-radius: 8px;">
+                            <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                                <div>
+                                    <h3 style="font-size: 1.25rem; color: var(--text-main); margin-bottom: 0.5rem;">Fiqh Assignment 1</h3>
+                                    <p style="color: var(--text-dim); font-size: 0.95rem;">Complete the exercises on chapter 3 regarding Taharah.</p>
+                                </div>
+                                <span class="badge" style="background: var(--warning); color: #fff; padding: 0.25rem 0.75rem; border-radius: 50px; font-size: 0.8rem; font-weight: bold;">Pending</span>
+                            </div>
+                            <div style="margin-top: 1rem; color: var(--text-dim); font-size: 0.85rem;">
+                                <strong>Due:</strong> Oct 25, 2026
+                            </div>
+                        </div>
+                        <div class="card" style="padding: 1.5rem; background: var(--surface); border: 1px solid var(--border); border-left: 4px solid var(--success); border-radius: 8px;">
+                            <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                                <div>
+                                    <h3 style="font-size: 1.25rem; color: var(--text-main); margin-bottom: 0.5rem;">Aqeedah Essay</h3>
+                                    <p style="color: var(--text-dim); font-size: 0.95rem;">Write a 5-page essay on the attributes of Allah.</p>
+                                </div>
+                                <span class="badge" style="background: var(--success); color: #fff; padding: 0.25rem 0.75rem; border-radius: 50px; font-size: 0.8rem; font-weight: bold;">Submitted</span>
+                            </div>
+                            <div style="margin-top: 1rem; color: var(--text-dim); font-size: 0.85rem;">
+                                <strong>Due:</strong> Oct 15, 2026
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VIEW: Academic Calendar -->
+                <div id="viewCalendar" class="dashboard-section hidden">
+                    <div class="view-header">
+                        <h2 class="view-title">Academic Calendar</h2>
+                        <p class="view-desc">Important dates and events for the current academic year.</p>
+                    </div>
+                    <div style="margin-top: 2rem; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; overflow: hidden;">
+                        <table class="data-table" style="margin: 0;">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Event</th>
+                                    <th>Description</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Aug 15, 2026</td>
+                                    <td><strong style="color: var(--primary);">Annual SSF Convention</strong></td>
+                                    <td>National level gathering at HQ.</td>
+                                </tr>
+                                <tr>
+                                    <td>Sep 22, 2026</td>
+                                    <td><strong style="color: var(--primary);">Thartheel Finals</strong></td>
+                                    <td>Grand finale of the Quranic recitation competition.</td>
+                                </tr>
+                                <tr>
+                                    <td>Nov 01, 2026</td>
+                                    <td><strong style="color: var(--warning);">Mid-Term Exams</strong></td>
+                                    <td>First semester examinations commence.</td>
+                                </tr>
+                                <tr>
+                                    <td>Dec 15, 2026</td>
+                                    <td><strong style="color: var(--success);">Winter Vacation</strong></td>
+                                    <td>Campus closed for winter break.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
             </div>
         </main>
     </div>
@@ -405,10 +481,26 @@
             if (window.innerWidth > 900) toggleMenu(false);
         });
         
-        // Auto-close on nav click
+        // Sidebar Nav Click Logic
         document.querySelectorAll('.nav-item').forEach(item => {
-            item.addEventListener('click', () => {
+            item.addEventListener('click', (e) => {
                 if(window.innerWidth <= 900) toggleMenu(false);
+                
+                // Reset active class
+                document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+                e.target.classList.add('active');
+
+                const targetId = e.target.getAttribute('data-target');
+                if(targetId) {
+                    // Hide all dashboard sections
+                    document.querySelectorAll('.dashboard-section').forEach(sec => sec.classList.add('hidden'));
+                    
+                    if(targetId === 'viewDashboard') {
+                        document.getElementById('admittedDetailSection')?.classList.remove('hidden');
+                    } else {
+                        document.getElementById(targetId)?.classList.remove('hidden');
+                    }
+                }
             });
         });
     </script>

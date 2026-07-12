@@ -1,85 +1,87 @@
 /* Google Fonts are now loaded via <link> preconnect in HTML for better mobile performance */
 
 :root {
-    color-scheme: dark;
-    --font-ui: 'Inter', 'Cairo', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    --font-display: 'Playfair Display', 'Cairo', Georgia, serif;
+    color-scheme: light;
+    --font-ui: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --font-display: 'Playfair Display', Georgia, serif;
     --font-arabic: 'Cairo', serif;
 
-    --bg: #09090B;
-    --bg-desert: #09090B;
-    --surface: #18181B;
-    --surface-solid: #18181B;
-    --surface-raised: #27272A;
-    --surface-hover: #27272A;
-    --glass: #18181B;
-    --glass-heavy: #27272A;
-    --border: #27272A;
-    --border-strong: #3F3F46;
+    /* Ultra-Premium Light Theme Base */
+    --bg: #FFFFFF;
+    --bg-desert: #FAFAFA;
+    --surface: #FFFFFF;
+    --surface-solid: #FFFFFF;
+    --surface-raised: #F5F5F7;
+    --surface-hover: #F5F5F7;
+    --glass: rgba(255, 255, 255, 0.75);
+    --glass-heavy: rgba(255, 255, 255, 0.9);
+    --border: rgba(0, 0, 0, 0.06);
+    --border-strong: rgba(0, 0, 0, 0.15);
 
-    --text-main: #F8FAFC;
+    --text-main: #1D1D1F;
     --text: var(--text-main);
-    --text-dim: #A1A1AA;
-    --muted: #71717A;
+    --text-dim: #86868B;
+    --muted: #86868B;
 
-    --primary: #10B981;
-    --primary-lapis: #3B82F6;
-    --primary-glow: rgba(16, 185, 129, 0.2);
-    --secondary: #059669;
-    --secondary-emerald: #059669;
-    --accent: #10B981;
-    --success: #10B981;
-    --error: #EF4444;
-    --warning: #F59E0B;
-    --success-glow: rgba(16, 185, 129, 0.15);
-    --error-glow: rgba(239, 68, 68, 0.15);
-    --gold-base: #F59E0B;
-    --gold-highlight: #FCD34D;
-    --gold-gradient: linear-gradient(135deg, #FCD34D 0%, #F59E0B 100%);
+    --primary: #0066CC;
+    --primary-lapis: #007AFF;
+    --primary-glow: rgba(0, 102, 204, 0.15);
+    --secondary: #000000;
+    --secondary-emerald: #34C759;
+    --accent: #0066CC;
+    --success: #34C759;
+    --error: #FF3B30;
+    --warning: #FF9500;
+    --success-glow: rgba(52, 199, 89, 0.15);
+    --error-glow: rgba(255, 59, 48, 0.15);
+    --gold-base: #1D1D1F;
+    --gold-highlight: #1D1D1F;
+    --gold-gradient: linear-gradient(135deg, #0066CC 0%, #007AFF 100%);
 
-    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-    --radius: 20px;
+    --shadow-sm: 0 4px 14px 0 rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 10px 20px rgba(0, 0, 0, 0.08);
+    --shadow-lg: 0 20px 40px rgba(0, 0, 0, 0.12);
+    --radius: 24px;
     --radius-sm: 12px;
-    --ring: 0 0 0 3px rgba(16, 185, 129, 0.2);
+    --ring: 0 0 0 4px rgba(0, 102, 204, 0.2);
 }
 
 :root[data-theme="light"] {
     color-scheme: light;
-    --bg: #F9FAFB;
-    --bg-desert: #F9FAFB;
-    --surface: #FFFFFF;
-    --surface-solid: #FFFFFF;
-    --surface-raised: #F3F4F6;
-    --surface-hover: #F3F4F6;
-    --glass: #FFFFFF;
-    --glass-heavy: #F3F4F6;
-    --border: #E5E7EB;
-    --border-strong: #D1D5DB;
+    --bg: #f8f9fa;
+    --bg-desert: #f8f9fa;
+    --surface: #ffffff;
+    --surface-solid: #ffffff;
+    --surface-raised: #f1f3f5;
+    --surface-hover: #f1f3f5;
+    --glass: rgba(255, 255, 255, 0.8);
+    --glass-heavy: rgba(241, 243, 245, 0.9);
+    --border: #e9ecef;
+    --border-strong: #d4af37;
 
-    --text-main: #0F172A;
+    --text-main: #0f172a;
     --text: var(--text-main);
-    --text-dim: #64748B;
-    --muted: #94A3B8;
+    --text-dim: #475569;
+    --muted: #64748b;
 
-    --primary: #10B981;
-    --primary-lapis: #2563EB;
-    --primary-glow: rgba(16, 185, 129, 0.15);
-    --secondary: #059669;
-    --secondary-emerald: #059669;
-    --accent: #10B981;
-    --success: #10B981;
-    --error: #EF4444;
-    --warning: #F59E0B;
+    --primary: #d4af37;
+    --primary-lapis: #b28a2a;
+    --primary-glow: rgba(212, 175, 55, 0.15);
+    --secondary: #2563eb;
+    --secondary-emerald: #10b981;
+    --accent: #d4af37;
+    --success: #10b981;
+    --error: #ef4444;
+    --warning: #f59e0b;
     --success-glow: rgba(16, 185, 129, 0.1);
     --error-glow: rgba(239, 68, 68, 0.1);
-    --gold-base: #F59E0B;
-    --gold-highlight: #FCD34D;
+    --gold-base: #b28a2a;
+    --gold-highlight: #d4af37;
+    --gold-gradient: linear-gradient(135deg, #d4af37 0%, #b28a2a 100%);
     
-    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
 }
 
 *,
@@ -208,7 +210,7 @@ img {
     gap: 0.75rem;
     color: var(--text-main);
     font-family: var(--font-display);
-    font-size: 1.35rem;
+    font-size: 1.75rem;
     font-weight: 800;
     letter-spacing: 0.02em;
 }
@@ -232,19 +234,23 @@ img {
 }
 
 .app-logo-img {
-    width: 32px;
-    height: 32px;
+    width: 40px;
+    height: 40px;
     object-fit: cover;
     border-radius: 50%;
     flex-shrink: 0;
+    transform: scale(1.8);
+    clip-path: circle(27.5%);
 }
 
 .brand-logo-img {
-    width: 48px;
-    height: 48px;
+    width: 56px;
+    height: 56px;
     object-fit: cover;
     border-radius: 50%;
     flex-shrink: 0;
+    transform: scale(1.8);
+    clip-path: circle(27.5%);
 }
 
 .brand-mark {
@@ -294,10 +300,10 @@ img {
 }
 
 .btn-main {
-    background: var(--gold-gradient);
-    color: #171208;
-    border-color: rgba(255, 255, 255, 0.12);
-    box-shadow: 0 12px 28px var(--primary-glow);
+    background: var(--text-main);
+    color: #FFFFFF;
+    border-color: transparent;
+    box-shadow: 0 4px 14px 0 rgba(0, 0, 0, 0.15);
 }
 
 .btn-main:hover {
@@ -383,7 +389,7 @@ img {
 
 .brand-text strong {
     font-family: var(--font-display);
-    font-size: 1rem;
+    font-size: 1.4rem;
     letter-spacing: 0.08em;
 }
 
@@ -574,6 +580,52 @@ img {
     font-weight: 900;
     text-transform: uppercase;
     letter-spacing: 0.12em;
+}
+
+/* 3D Hover Effects & Micro-Interactions */
+.hover-3d {
+    transition: transform var(--transition-bounce), box-shadow var(--transition-bounce);
+}
+.hover-3d:hover {
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+/* Kinetic Typography */
+.kinetic-text {
+    background: linear-gradient(90deg, var(--primary), var(--secondary), var(--primary));
+    background-size: 200% auto;
+    color: transparent;
+    -webkit-background-clip: text;
+    background-clip: text;
+    animation: kinetic 4s linear infinite;
+}
+@keyframes kinetic {
+    to { background-position: 200% center; }
+}
+
+/* Ripple Effect */
+.ripple {
+    position: relative;
+    overflow: hidden;
+}
+.ripple::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 0;
+    pointer-events: none;
+}
+.ripple:active::after {
+    transform: translate(-50%, -50%) scale(2.5);
+    opacity: 1;
+    transition: transform 0.4s, opacity 0.4s;
 }
 
 .page-section {
@@ -2274,4 +2326,50 @@ body, .portal-card, .glass-card, .nav-wrapper, .modal-content, .input, .btn, .su
     #installAppBtn, .pwa-install-btn, .install-app-btn {
         display: none !important;
     }
+}
+
+/* 3D Hover Effects & Micro-Interactions */
+.hover-3d {
+    transition: transform var(--transition-bounce), box-shadow var(--transition-bounce);
+}
+.hover-3d:hover {
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+/* Kinetic Typography */
+.kinetic-text {
+    background: linear-gradient(90deg, var(--primary), var(--secondary), var(--primary));
+    background-size: 200% auto;
+    color: transparent;
+    -webkit-background-clip: text;
+    background-clip: text;
+    animation: kinetic 4s linear infinite;
+}
+@keyframes kinetic {
+    to { background-position: 200% center; }
+}
+
+/* Ripple Effect */
+.ripple {
+    position: relative;
+    overflow: hidden;
+}
+.ripple::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 0;
+    pointer-events: none;
+}
+.ripple:active::after {
+    transform: translate(-50%, -50%) scale(2.5);
+    opacity: 1;
+    transition: transform 0.4s, opacity 0.4s;
 }

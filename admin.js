@@ -233,11 +233,21 @@ function updateStats() {
                 labels: ['General', 'Sayyids', 'Hafizs', 'Orphans'],
                 datasets: [{
                     data: [Math.max(0, general), sayyids, hafizs, orphans],
-                    backgroundColor: ['rgba(255, 255, 255, 0.1)', 'rgba(216, 173, 74, 0.8)', 'rgba(54, 193, 144, 0.8)', 'rgba(235, 87, 87, 0.8)'],
-                    borderWidth: 0
+                    backgroundColor: ['rgba(255, 255, 255, 0.1)', 'rgba(216, 173, 74, 0.9)', 'rgba(54, 193, 144, 0.9)', 'rgba(235, 87, 87, 0.9)'],
+                    borderWidth: 2,
+                    borderColor: '#0a0a0f',
+                    hoverOffset: 10
                 }]
             },
-            options: { responsive: true, maintainAspectRatio: false }
+            options: { 
+                responsive: true, 
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'bottom', labels: { color: '#a0a0b0', padding: 20, font: { size: 12, family: 'Inter' } } },
+                    tooltip: { backgroundColor: 'rgba(10, 10, 15, 0.9)', titleColor: '#d8ad4a', bodyColor: '#fff', padding: 12, cornerRadius: 8, borderColor: 'rgba(216, 173, 74, 0.3)', borderWidth: 1 }
+                },
+                animation: { animateScale: true, animateRotate: true, duration: 1500, easing: 'easeOutQuart' }
+            }
         });
     }
 
@@ -259,10 +269,21 @@ function updateStats() {
                 datasets: [{
                     data: Object.values(instCounts),
                     backgroundColor: ['#d8ad4a', '#36c190', '#eb5757', '#2f80ed', '#9b51e0', '#f2c94c'],
-                    borderWidth: 0
+                    borderWidth: 2,
+                    borderColor: '#0a0a0f',
+                    hoverOffset: 10
                 }]
             },
-            options: { responsive: true, maintainAspectRatio: false }
+            options: { 
+                responsive: true, 
+                maintainAspectRatio: false,
+                cutout: '65%',
+                plugins: {
+                    legend: { position: 'bottom', labels: { color: '#a0a0b0', padding: 20, font: { size: 12, family: 'Inter' } } },
+                    tooltip: { backgroundColor: 'rgba(10, 10, 15, 0.9)', titleColor: '#36c190', bodyColor: '#fff', padding: 12, cornerRadius: 8, borderColor: 'rgba(54, 193, 144, 0.3)', borderWidth: 1 }
+                },
+                animation: { animateScale: true, animateRotate: true, duration: 1500, easing: 'easeOutQuart' }
+            }
         });
     }
 
@@ -284,6 +305,14 @@ function updateStats() {
         const sortedDates = Object.keys(trendData).sort((a,b) => new Date(a) - new Date(b));
         const sortedCounts = sortedDates.map(d => trendData[d]);
 
+        let gradient = null;
+        if(ctxTrends.getContext) {
+            const ctx = ctxTrends.getContext('2d');
+            gradient = ctx.createLinearGradient(0, 0, 0, 300);
+            gradient.addColorStop(0, 'rgba(54, 193, 144, 0.6)');
+            gradient.addColorStop(1, 'rgba(54, 193, 144, 0.05)');
+        }
+
         window.chartInstances.trends = new Chart(ctxTrends, {
             type: 'line',
             data: {
@@ -292,14 +321,29 @@ function updateStats() {
                     label: 'Registrations',
                     data: sortedCounts,
                     borderColor: '#36c190',
-                    backgroundColor: 'rgba(54, 193, 144, 0.2)',
+                    backgroundColor: gradient || 'rgba(54, 193, 144, 0.2)',
+                    borderWidth: 3,
                     fill: true,
-                    tension: 0.4
+                    tension: 0.4,
+                    pointBackgroundColor: '#121212',
+                    pointBorderColor: '#36c190',
+                    pointBorderWidth: 2,
+                    pointRadius: 4,
+                    pointHoverRadius: 6
                 }]
             },
             options: { 
-                responsive: true, maintainAspectRatio: false,
-                scales: { y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.05)' } }, x: { grid: { display: false } } }
+                responsive: true, 
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: { backgroundColor: 'rgba(10, 10, 15, 0.9)', titleColor: '#fff', bodyColor: '#36c190', padding: 12, cornerRadius: 8, borderColor: 'rgba(54, 193, 144, 0.3)', borderWidth: 1 }
+                },
+                scales: { 
+                    y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.05)', drawBorder: false }, ticks: { color: '#a0a0b0' } }, 
+                    x: { grid: { display: false }, ticks: { color: '#a0a0b0', maxRotation: 45, minRotation: 45 } } 
+                },
+                animation: { duration: 1500, easing: 'easeOutQuart' }
             }
         });
     }
@@ -318,13 +362,22 @@ function updateStats() {
             data: {
                 labels: campuses,
                 datasets: [
-                    { label: 'Students', data: studentData, backgroundColor: '#d8ad4a' },
-                    { label: 'Faculty', data: facultyData, backgroundColor: '#36c190' }
+                    { label: 'Students', data: studentData, backgroundColor: '#d8ad4a', borderRadius: 6 },
+                    { label: 'Faculty', data: facultyData, backgroundColor: '#36c190', borderRadius: 6 }
                 ]
             },
             options: { 
-                responsive: true, maintainAspectRatio: false,
-                scales: { y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.05)' } }, x: { grid: { display: false } } }
+                responsive: true, 
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'top', labels: { color: '#a0a0b0', padding: 15, font: { size: 12, family: 'Inter' } } },
+                    tooltip: { backgroundColor: 'rgba(10, 10, 15, 0.9)', padding: 12, cornerRadius: 8, borderColor: 'rgba(255, 255, 255, 0.1)', borderWidth: 1 }
+                },
+                scales: { 
+                    y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.05)', drawBorder: false }, ticks: { color: '#a0a0b0' } }, 
+                    x: { grid: { display: false }, ticks: { color: '#a0a0b0', maxRotation: 45, minRotation: 45 } } 
+                },
+                animation: { duration: 1500, easing: 'easeOutQuart' }
             }
         });
     }

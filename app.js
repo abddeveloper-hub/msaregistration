@@ -15,7 +15,10 @@ const statEnrollment = $("#statEnrollment");
 const statInstitutions = $("#statInstitutions");
 const statFaculty = $("#statFaculty");
 const authModal = $("#authModal");
-const navLoginBtn = $("#navLoginBtn");
+const loginMenuToggleBtn = $("#loginMenuToggleBtn");
+const loginDropdownMenu = $("#loginDropdownMenu");
+const dropStudentBtn = $("#dropStudentBtn");
+const dropFacultyBtn = $("#dropFacultyBtn");
 const heroLoginBtn = $("#heroLoginBtn");
 const closeAuthBtn = $("#closeAuthBtn");
 const navLogoutBtn = $("#navLogoutBtn");
@@ -43,7 +46,14 @@ const authName = $("#authName");
 const authEmail = $("#authEmail");
 const authPassword = $("#authPassword");
 const passwordToggleBtn = $("#passwordToggleBtn");
-const passwordStrength = $("#passwordStrength");
+const passwordStrength = $("#passwordStrength"); // legacy
+const passwordStrengthContainer = $("#passwordStrengthContainer");
+const strengthBar1 = $("#strengthBar1");
+const strengthBar2 = $("#strengthBar2");
+const strengthBar3 = $("#strengthBar3");
+const strengthBar4 = $("#strengthBar4");
+const strengthText = $("#strengthText");
+const forgotPasswordLink = $("#forgotPasswordLink");
 
 let isSignUpMode = false;
 let selectedRole = localStorage.getItem("msaukkuda:lastRole") || "student";
@@ -205,7 +215,7 @@ function friendlyAuthError(error) {
 }
 
 function updatePasswordStrength() {
-    if (!passwordStrength || !authPassword) return;
+    if (!authPassword) return;
     const value = authPassword.value;
     let score = 0;
 
@@ -214,7 +224,21 @@ function updatePasswordStrength() {
     if (/[a-z]/.test(value) && /[A-Z]/.test(value)) score += 1;
     if (/\d/.test(value) || /[^A-Za-z0-9]/.test(value)) score += 1;
 
-    passwordStrength.dataset.score = String(Math.min(score, 4));
+    score = Math.min(score, 4);
+    if (passwordStrength) passwordStrength.dataset.score = String(score); // Legacy support if needed
+
+    if (strengthBar1 && strengthBar2 && strengthBar3 && strengthBar4 && strengthText) {
+        const colors = ['var(--border-strong)', 'var(--error)', 'var(--warning)', 'var(--success)', 'var(--primary)'];
+        const texts = ['', 'Weak', 'Fair', 'Good', 'Strong'];
+        
+        strengthBar1.style.background = score >= 1 ? colors[score] : colors[0];
+        strengthBar2.style.background = score >= 2 ? colors[score] : colors[0];
+        strengthBar3.style.background = score >= 3 ? colors[score] : colors[0];
+        strengthBar4.style.background = score >= 4 ? colors[score] : colors[0];
+        
+        strengthText.textContent = texts[score] || 'Weak';
+        strengthText.style.color = score >= 1 ? colors[score] : colors[0];
+    }
 }
 
 function updateAuthUI() {
@@ -226,7 +250,8 @@ function updateAuthUI() {
     roleStudent?.classList.toggle("active", selectedRole === "student");
     roleFaculty?.classList.toggle("active", selectedRole === "faculty");
     nameFieldContainer?.classList.toggle("hidden", !isSignUpMode);
-    passwordStrength?.classList.toggle("hidden", !isSignUpMode);
+    passwordStrengthContainer?.classList.toggle("hidden", !isSignUpMode);
+    forgotPasswordLink?.classList.toggle("hidden", isSignUpMode);
 
     if (authName) authName.required = isSignUpMode;
     if (authPassword) authPassword.autocomplete = isSignUpMode ? "new-password" : "current-password";
@@ -282,7 +307,19 @@ function closeAuthModal() {
 window.openAuthModal = openAuthModal;
 
 function initAuthUI() {
-    navLoginBtn?.addEventListener("click", () => openAuthModal(selectedRole, false));
+    if (loginMenuToggleBtn) {
+        loginMenuToggleBtn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            loginDropdownMenu?.classList.toggle("hidden");
+        });
+        document.addEventListener("click", () => {
+            loginDropdownMenu?.classList.add("hidden");
+        });
+    }
+
+    if (dropStudentBtn) dropStudentBtn.addEventListener("click", () => openAuthModal("student", true));
+    if (dropFacultyBtn) dropFacultyBtn.addEventListener("click", () => openAuthModal("faculty", true));
+
     heroLoginBtn?.addEventListener("click", () => openAuthModal(selectedRole, false));
     studentCard?.addEventListener("click", (event) => {
         event.preventDefault();
@@ -549,7 +586,7 @@ onAuthStateChanged(auth, async (user) => {
     }
 
     if (!user) {
-        navLoginBtn?.classList.remove("hidden");
+        loginMenuToggleBtn?.classList.remove("hidden");
         navLogoutBtn?.classList.add("hidden");
         if (heroLoginBtn) {
             heroLoginBtn.textContent = "Enter Dashboard";
@@ -558,7 +595,7 @@ onAuthStateChanged(auth, async (user) => {
         return;
     }
 
-    navLoginBtn?.classList.add("hidden");
+    loginMenuToggleBtn?.classList.add("hidden");
     navLogoutBtn?.classList.remove("hidden");
 
     userDocUnsubscribe = onSnapshot(doc(db, "users", user.uid), (snap) => {

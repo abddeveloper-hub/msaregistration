@@ -1,0 +1,69 @@
+:root {
+  color-scheme: light;
+  --primary: #4169e1;
+  --secondary: #12b886;
+  --accent: #ff8a00;
+  --surface: rgba(255, 255, 255, 0.95);
+  --text-main: #172033;
+  --text-dim: #5d6b84;
+  --border: rgba(65, 105, 225, 0.16);
+}
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: linear-gradient(135deg, #f6f9ff 0%, #eef5ff 48%, #fff8eb 100%);
+  color: var(--text-main);
+}
+
+.container {
+  max-width: 760px;
+  margin: 40px auto;
+  padding: 20px;
+}
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 14px 34px rgba(65, 105, 225, 0.12);
+  margin-bottom: 20px;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+input {
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: #fcfdff;
+}
+
+button {
+  padding: 10px 16px;
+  border: none;
+  border-radius: 999px;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+  color: white;
+  cursor: pointer;
+}
+
+button:hover {
+  background: linear-gradient(135deg, #5b7cff 0%, #10b981 100%);
+}
+
+.message {
+  margin-top: 12px;
+  font-weight: bold;
+  color: var(--secondary);
+}
+
+ul {
+  padding-left: 18px;
+  color: var(--text-dim);
+}

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MSA Registration Portal</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <main class="container">
+    <section class="card">
+      <h1>MSA Registration Portal</h1>
+      <p>Register a participant through the new frontend and backend pairing.</p>
+
+      <form id="registration-form">
+        <label for="name">Full Name</label>
+        <input id="name" name="name" type="text" required />
+
+        <label for="email">Email Address</label>
+        <input id="email" name="email" type="email" required />
+
+        <button type="submit">Register</button>
+      </form>
+
+      <div id="message" class="message" aria-live="polite"></div>
+    </section>
+
+    <section class="card">
+      <h2>Recent Registrations</h2>
+      <ul id="registrations-list"></ul>
+    </section>
+  </main>
+
+  <script type="module" src="/app.js"></script>
+</body>
+</html>

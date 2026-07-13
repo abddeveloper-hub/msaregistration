@@ -1,0 +1,9 @@
+{
+  "name": "msa-registration-backend",
+  "version": "1.0.0",
+  "description": "Simple backend for the registration portal",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  }
+}

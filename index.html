@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Muhyissunnah Dars Ukkuda | Official Portal</title>
     <!-- Open Graph / SEO Meta Tags -->
+    <meta name="description" content="Muhyissunnah Dars Ukkuda offers a polished public portal for registration, academic administration, and institutional communication.">
     <meta property="og:title" content="Muhyissunnah Dars Ukkuda | Official Portal">
     <meta property="og:description" content="A pristine digital campus for registration, admissions, attendance, marks, and administrative oversight.">
     <meta property="og:type" content="website">
@@ -29,9 +30,26 @@
     <link rel="manifest" href="manifest.json">
     <script>
         (function() {
-            // Force pristine light theme for ultra-premium aesthetic
-            document.documentElement.dataset.theme = "light";
+            const savedTheme = localStorage.getItem('msaukkuda:theme');
+            if (savedTheme) {
+                document.documentElement.dataset.theme = savedTheme;
+            } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                document.documentElement.dataset.theme = 'dark';
+            } else {
+                document.documentElement.dataset.theme = 'light';
+            }
         })();
+        
+        window.toggleTheme = function() {
+            const currentTheme = document.documentElement.dataset.theme || 'light';
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            document.documentElement.dataset.theme = newTheme;
+            localStorage.setItem('msaukkuda:theme', newTheme);
+            const icon = document.getElementById('themeToggleIcon');
+            if (icon) {
+                icon.textContent = newTheme === 'light' ? '🌙' : '☀️';
+            }
+        };
     </script>
 </head>
 <body class="landing-page">
@@ -41,13 +59,13 @@
             <a class="brand-lockup" href="index.html" aria-label="Muhyissunnah Dars Ukkuda home">
                 <img src="logo.jpg" alt="MSA Ukkuda Logo" class="brand-logo-img">
                 <span class="brand-text">
-                    <strong style="font-family: 'Cairo', sans-serif; letter-spacing: 0.08em; font-size: 1rem; line-height: 1; text-transform: uppercase; font-weight: 700;">Muhyissunnah Dars</strong>
+                    <strong style="font-family: 'Cairo', sans-serif; letter-spacing: 0.08em; font-size: 1.25rem; line-height: 1; text-transform: uppercase; font-weight: 700;">Muhyissunnah Dars</strong>
                     <span style="letter-spacing: 0.15em;">Ukkuda Official Portal</span>
                 </span>
             </a>
 
             <div class="nav-actions" style="position: relative;">
-                <button class="btn btn-ghost icon-btn" onclick="toggleTheme()" title="Toggle Dark/Light Mode" style="display:none;">🌓</button>
+                <button class="btn btn-ghost icon-btn" onclick="toggleTheme()" title="Toggle Dark/Light Mode" style="font-size: 1.25rem;"><span id="themeToggleIcon">🌙</span></button>
                 <button id="installAppBtn" class="btn btn-ghost install-app-btn hidden" type="button">Download App</button>
                 
                 <button class="btn btn-ghost icon-btn" id="loginMenuToggleBtn" type="button" style="font-size: 1.5rem; padding: 0.5rem; line-height: 1;">⋮</button>
@@ -152,6 +170,30 @@
             </div>
         </section>
 
+        <!-- Why Join / Benefits Section -->
+        <section id="benefitsSection" style="padding: 8rem 2rem; background: var(--surface);">
+            <div style="max-width: 1200px; margin: 0 auto;">
+                <div class="section-header">
+                    <p style="color: var(--primary); font-weight: 700; text-transform: uppercase; letter-spacing: 0.15em; font-size: 0.85rem; margin-bottom: 0.75rem;" class="animate-on-scroll slide-from-left">Why Choose Us</p>
+                    <h2 class="animate-on-scroll slide-from-right" style="font-family: var(--font-display); font-size: clamp(2.5rem, 5vw, 4rem); font-weight: 700; color: var(--text-main); margin-bottom: 3rem;">A public portal built for trust, clarity, and access.</h2>
+                </div>
+                <div class="cards-grid">
+                    <div class="portal-card animate-on-scroll slide-up delay-100">
+                        <h3 style="font-size: 1.4rem; color: var(--text-main); margin-bottom: 1rem; font-family: var(--font-display);">Verified Admissions</h3>
+                        <p style="color: var(--text-dim);">Every registration is tracked with transparency so students and families can follow the process with confidence.</p>
+                    </div>
+                    <div class="portal-card animate-on-scroll slide-up delay-200">
+                        <h3 style="font-size: 1.4rem; color: var(--text-main); margin-bottom: 1rem; font-family: var(--font-display);">Clear Academic Oversight</h3>
+                        <p style="color: var(--text-dim);">Faculty and administration can review progress, attendance, and student records in a unified digital space.</p>
+                    </div>
+                    <div class="portal-card animate-on-scroll slide-up delay-300">
+                        <h3 style="font-size: 1.4rem; color: var(--text-main); margin-bottom: 1rem; font-family: var(--font-display);">Community-Centered Support</h3>
+                        <p style="color: var(--text-dim);">A responsive portal experience that keeps families, faculty, and institutions connected at every step.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <!-- Academic Programs Section -->
         <section id="academicPrograms" style="padding: 8rem 2rem; background: var(--surface);">
             <div style="max-width: 1200px; margin: 0 auto;">
@@ -249,6 +291,68 @@
             </div>
         </section>
 
+        <!-- FAQ Section -->
+        <section id="faqSection" style="padding: 8rem 2rem; background: var(--bg-desert); border-top: 1px solid var(--border);">
+            <div style="max-width: 1000px; margin: 0 auto;">
+                <div class="section-header" style="text-align: center; margin-bottom: 3rem;">
+                    <p style="color: var(--primary); font-weight: 700; text-transform: uppercase; letter-spacing: 0.15em; font-size: 0.85rem; margin-bottom: 0.75rem;" class="animate-on-scroll slide-up">Frequently Asked Questions</p>
+                    <h2 class="animate-on-scroll slide-up delay-100" style="font-family: var(--font-display); font-size: clamp(2.2rem, 4vw, 3.2rem); font-weight: 700; color: var(--text-main);">Everything you need to know before getting started.</h2>
+                </div>
+                <div class="faq-list">
+                    <div class="faq-item open reveal-on-scroll">
+                        <button class="faq-question" type="button" aria-expanded="true">
+                            <span>How do I register for the portal?</span>
+                            <span class="faq-icon">+</span>
+                        </button>
+                        <div class="faq-answer">
+                            <p>Use the main dashboard to create an account, choose your role, and complete the registration form with your accurate details.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item reveal-on-scroll">
+                        <button class="faq-question" type="button" aria-expanded="false">
+                            <span>Who can access the student and faculty dashboards?</span>
+                            <span class="faq-icon">+</span>
+                        </button>
+                        <div class="faq-answer">
+                            <p>Students and faculty can sign in through their dedicated portal links, while administrators can access the full management dashboard.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item reveal-on-scroll">
+                        <button class="faq-question" type="button" aria-expanded="false">
+                            <span>Is my information secure?</span>
+                            <span class="faq-icon">+</span>
+                        </button>
+                        <div class="faq-answer">
+                            <p>Yes. The portal uses secure authentication and encrypted cloud storage practices to protect sensitive registration data.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="contactSection" style="padding: 8rem 2rem; background: var(--surface);">
+            <div style="max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 2rem; align-items: center;">
+                <div class="animate-on-scroll slide-from-left">
+                    <p style="color: var(--primary); font-weight: 700; text-transform: uppercase; letter-spacing: 0.15em; font-size: 0.85rem; margin-bottom: 0.75rem;">Need Help?</p>
+                    <h2 style="font-family: var(--font-display); font-size: clamp(2.2rem, 4vw, 3.2rem); font-weight: 700; color: var(--text-main); margin-bottom: 1rem;">Contact administration for registration support and guidance.</h2>
+                    <p style="color: var(--text-dim); font-size: 1.05rem; margin-bottom: 1.5rem;">Whether you’re a student, faculty member, or parent, our support team is ready to help with access and account questions.</p>
+                    <div style="display: flex; flex-wrap: wrap; gap: 1rem; margin-bottom: 1rem;">
+                        <a href="mailto:portal@msaukkuda.org" class="btn btn-main">Email Support</a>
+                        <a href="admin.html" class="btn btn-ghost">Go to Admin Portal</a>
+                    </div>
+                </div>
+                <div class="contact-card animate-on-scroll slide-from-right">
+                    <h3 style="font-size: 1.35rem; color: var(--text-main); margin-bottom: 1rem; font-family: var(--font-display);">Quick Support</h3>
+                    <ul>
+                        <li><strong>Email:</strong> portal@msaukkuda.org</li>
+                        <li><strong>Hours:</strong> Mon–Fri, 9:00 AM to 6:00 PM</li>
+                        <li><strong>Response:</strong> Usually within 24 hours</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
         <!-- Our Campuses Section -->
         <section id="ourCampuses" style="padding: 6rem 2rem; background: var(--bg-desert); border-top: 1px solid var(--border);">
             <div style="max-width: 1200px; margin: 0 auto;">
@@ -291,19 +395,19 @@
             <div class="footer-col animate-on-scroll slide-up delay-200">
                 <h5>Institution</h5>
                 <ul>
-                    <li><a href="#">About Us</a></li>
-                    <li><a href="#">Admissions Policy</a></li>
-                    <li><a href="#">Faculty Directory</a></li>
-                    <li><a href="#">Academic Calendar</a></li>
+                    <li><a href="#aboutInstitution">About Us</a></li>
+                    <li><a href="#academicPrograms">Admissions Policy</a></li>
+                    <li><a href="#ourCampuses">Faculty Directory</a></li>
+                    <li><a href="#eventsSection">Academic Calendar</a></li>
                 </ul>
             </div>
             <div class="footer-col animate-on-scroll slide-from-right delay-300">
                 <h5>Support & Legal</h5>
                 <ul>
-                    <li><a href="#">Help Center</a></li>
-                    <li><a href="#">Privacy Policy</a></li>
-                    <li><a href="#">Terms of Service</a></li>
-                    <li><a href="#">Contact Administration</a></li>
+                    <li><a href="#contactSection">Help Center</a></li>
+                    <li><a href="privacy.html">Privacy Policy</a></li>
+                    <li><a href="terms.html">Terms of Service</a></li>
+                    <li><a href="#contactSection">Contact Administration</a></li>
                 </ul>
             </div>
         </div>

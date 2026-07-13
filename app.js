@@ -186,6 +186,26 @@ document.addEventListener("DOMContentLoaded", () => {
     }, { threshold: 0.1 });
     
     document.querySelectorAll('.reveal-on-scroll').forEach(el => observer.observe(el));
+
+    document.querySelectorAll('.faq-item').forEach((item) => {
+        const button = item.querySelector('.faq-question');
+        const answer = item.querySelector('.faq-answer');
+        if (!button || !answer) return;
+
+        button.addEventListener('click', () => {
+            const isOpen = item.classList.contains('open');
+            document.querySelectorAll('.faq-item.open').forEach((openItem) => {
+                openItem.classList.remove('open');
+                const openButton = openItem.querySelector('.faq-question');
+                if (openButton) openButton.setAttribute('aria-expanded', 'false');
+            });
+
+            if (!isOpen) {
+                item.classList.add('open');
+                button.setAttribute('aria-expanded', 'true');
+            }
+        });
+    });
 });
 
 function showAuthError(message) {

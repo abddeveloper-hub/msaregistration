@@ -282,7 +282,7 @@ html, body {
     /* Move floating buttons up to not overlap bottom nav */
 
     .fab-container {
-        bottom: calc(5.5rem + 1rem) !important;
+        bottom: 2rem !important;
         right: 1.5rem !important;
     }
 
@@ -471,7 +471,7 @@ html, body {
         grid-template-columns: 1fr !important;
     }
     
-    .sidebar, .admin-sidebar {
+    .sidebar, .admin-sidebar, .portal-sidebar {
         position: fixed !important;
         top: 0 !important;
         left: -280px !important; /* Off-screen */
@@ -487,7 +487,7 @@ html, body {
         padding-bottom: calc(2rem + env(safe-area-inset-bottom)) !important;
     }
 
-    .sidebar.active, .admin-sidebar.active {
+    .sidebar.active, .admin-sidebar.active, .portal-sidebar.active {
         transform: translateX(280px) !important;
     }
 

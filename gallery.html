@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Gallery | Muhyissunnah Dars Ukkuda</title>
+    <meta name="description"
+        content="Browse photos from campus life, events, convocations, and academic activities at Muhyissunnah Dars Ukkuda.">
+    <meta property="og:title" content="Gallery | Muhyissunnah Dars Ukkuda">
+    <meta property="og:description" content="Campus life, events, and memories from MSA Ukkuda.">
+    <meta property="og:type" content="website">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap"
+        rel="stylesheet">
+
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="landing.css">
+    <link rel="stylesheet" href="mobile.css">
+
+    <link rel="icon" type="image/jpeg" href="logo.jpg">
+    <link rel="apple-touch-icon" href="logo.jpg">
+    <link rel="manifest" href="manifest.json">
+
+    <script>
+        (function () {
+            document.documentElement.dataset.theme = "light";
+        })();
+    </script>
+
+    <style>
+        body.gallery-page {
+            background: var(--bg);
+            color: var(--text-main);
+            font-family: var(--font-ui);
+            overflow-x: hidden;
+        }
+
+        /* Page Hero */
+        .gallery-hero {
+            padding: 7rem 2rem 4rem;
+            text-align: center;
+            background: radial-gradient(circle at center top, rgba(0, 102, 204, 0.04) 0%, transparent 60%);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .gallery-hero .pill-badge {
+            display: inline-block;
+            margin-bottom: 1.5rem;
+        }
+
+        .gallery-hero h1 {
+            font-family: var(--font-display);
+            font-size: clamp(2.5rem, 6vw, 5rem);
+            font-weight: 700;
+            color: var(--text-main);
+            letter-spacing: -0.02em;
+            margin-bottom: 1rem;
+        }
+
+        .gallery-hero p {
+            color: var(--text-dim);
+            font-size: 1.15rem;
+            max-width: 560px;
+            margin: 0 auto;
+            line-height: 1.7;
+        }
+
+        /* Filter Bar */
+        .gallery-filters {
+            display: flex;
+            gap: 0.75rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            padding: 2rem 2rem;
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+
+        .filter-btn {
+            background: var(--surface-raised);
+            border: 1px solid var(--border);
+            border-radius: 50px;
+            padding: 0.5rem 1.25rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-dim);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: var(--font-ui);
+        }
+
+        .filter-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            background: var(--primary-glow);
+        }
+
+        .filter-btn.active {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: #fff;
+            box-shadow: 0 4px 14px rgba(0, 102, 204, 0.3);
+        }
+
+        /* Masonry Gallery Grid */
+        .gallery-main {
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 3rem 2rem 6rem;
+        }
+
+        .gallery-grid {
+            columns: 3 300px;
+            gap: 1rem;
+        }
+
+        .gallery-item {
+            break-inside: avoid;
+            margin-bottom: 1rem;
+            border-radius: 16px;
+            overflow: hidden;
+            position: relative;
+            cursor: pointer;
+            background: var(--surface-raised);
+            border: 1px solid var(--border);
+            transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s ease;
+            display: block;
+            animation: fadeUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+        }
+
+        .gallery-item:hover {
+            transform: translateY(-4px) scale(1.01);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: auto;
+            display: block;
+            transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .gallery-item:hover img {
+            transform: scale(1.04);
+        }
+
+        .gallery-item-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.65) 0%, rgba(0, 0, 0, 0) 50%);
+            display: flex;
+            align-items: flex-end;
+            padding: 1.25rem;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .gallery-item:hover .gallery-item-overlay {
+            opacity: 1;
+        }
+
+        .gallery-item-label {
+            color: #fff;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .gallery-item-category-tag {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50px;
+            padding: 0.2rem 0.65rem;
+            font-size: 0.72rem;
+            font-weight: 600;
+            color: #fff;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            margin-bottom: 0.4rem;
+        }
+
+        /* Placeholder card */
+        .gallery-placeholder {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            color: var(--text-dim);
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .gallery-placeholder .ph-icon {
+            font-size: 2.5rem;
+            opacity: 0.4;
+        }
+
+        .gallery-placeholder.tall {
+            min-height: 360px;
+        }
+
+        .gallery-placeholder.short {
+            min-height: 200px;
+        }
+
+        .gallery-placeholder.med {
+            min-height: 280px;
+        }
+
+        /* Real image card */
+        .gallery-item.has-image {
+            background: #000;
+        }
+
+        /* Lightbox */
+        .lightbox {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.92);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+        }
+
+        .lightbox.open {
+            display: flex;
+        }
+
+        .lightbox-inner {
+            position: relative;
+            max-width: 90vw;
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .lightbox-inner img {
+            max-width: 90vw;
+            max-height: 78vh;
+            object-fit: contain;
+            border-radius: 12px;
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6);
+        }
+
+        .lightbox-caption {
+            color: #fff;
+            font-size: 1rem;
+            font-weight: 600;
+            text-align: center;
+            opacity: 0.85;
+        }
+
+        .lightbox-close {
+            position: absolute;
+            top: -3rem;
+            right: 0;
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            font-size: 1.1rem;
+            color: #fff;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+
+        .lightbox-close:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .lightbox-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            width: 48px;
+            height: 48px;
+            font-size: 1.5rem;
+            color: #fff;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+
+        .lightbox-nav:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .lightbox-nav.prev {
+            left: -4rem;
+        }
+
+        .lightbox-nav.next {
+            right: -4rem;
+        }
+
+        /* Empty state */
+        .gallery-empty {
+            text-align: center;
+            padding: 5rem 2rem;
+            color: var(--text-dim);
+            display: none;
+        }
+
+        .gallery-empty .empty-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            display: block;
+            opacity: 0.4;
+        }
+
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(24px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .gallery-grid {
+                columns: 2 150px;
+            }
+
+            .lightbox-nav.prev {
+                left: -2.5rem;
+            }
+
+            .lightbox-nav.next {
+                right: -2.5rem;
+            }
+
+            .gallery-hero {
+                padding: 6rem 1.5rem 3rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .gallery-grid {
+                columns: 1;
+            }
+        }
+    </style>
+</head>
+
+<body class="gallery-page landing-page">
+
+    <!-- Navbar -->
+    <header class="nav-wrapper">
+        <nav class="navbar" aria-label="Primary navigation">
+            <a class="brand-lockup" href="index.html" aria-label="Muhyissunnah Dars Ukkuda home">
+                <img src="logo.jpg" alt="MSA Ukkuda Logo" class="brand-logo-img">
+                <span class="brand-text">
+                    <strong style="font-family: 'Cairo', sans-serif; letter-spacing: 0.08em; font-size: 1rem; line-height: 1; text-transform: uppercase; font-weight: 700;">Muhyissunnah Dars</strong>
+                    <span style="letter-spacing: 0.15em;">Ukkuda Official Portal</span>
+                </span>
+            </a>
+            <div class="nav-actions">
+                <a href="index.html" class="btn btn-ghost btn-sm" style="font-size:0.9rem;">&#8592; Home</a>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Page Hero -->
+    <section class="gallery-hero">
+        <div class="pill-badge">Campus Life</div>
+        <h1>Our Gallery</h1>
+        <p>A window into the vibrant academic and cultural life at Muhyissunnah Dars Ukkuda — from convocations to
+            classrooms.</p>
+    </section>
+
+    <!-- Filter Bar -->
+    <div class="gallery-filters" id="galleryFilters" role="group" aria-label="Filter gallery by category">
+        <button class="filter-btn active" data-filter="all">All</button>
+        <button class="filter-btn" data-filter="events">Events</button>
+        <button class="filter-btn" data-filter="campus">Campus</button>
+        <button class="filter-btn" data-filter="academic">Academic</button>
+        <button class="filter-btn" data-filter="posters">Posters</button>
+    </div>
+
+    <!-- Gallery Grid -->
+    <main class="gallery-main" id="galleryMain">
+        <div class="gallery-grid" id="galleryGrid">
+
+            <!-- Real image: Poster -->
+            <div class="gallery-item has-image" data-category="posters" data-caption="Muthaalim Gathering"
+                style="animation-delay:0.05s;">
+                <img src="posters/muthaalim-gathering.png" alt="Muthaalim Gathering poster" loading="lazy">
+                <div class="gallery-item-overlay">
+                    <div>
+                        <div class="gallery-item-category-tag">Poster</div>
+                        <div class="gallery-item-label">Muthaalim Gathering</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Convocation -->
+            <div class="gallery-item" data-category="events" data-caption="Convocation Ceremony 2024"
+                style="animation-delay:0.10s;">
+                <div class="gallery-placeholder tall">
+                    <span class="ph-icon">🎓</span>
+                    <span>Convocation 2024</span>
+                </div>
+                <div class="gallery-item-overlay">
+                    <div>
+                        <div class="gallery-item-category-tag">Event</div>
+                        <div class="gallery-item-label">Convocation Ceremony 2024</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Library -->
+            <div class="gallery-item" data-category="campus" data-caption="Campus Library"
+                style="animation-delay:0.15s;">
+                <div class="gallery-placeholder short">
+                    <span class="ph-icon">📚</span>
+                    <span>Campus Library</span>
+                </div>
+                <div class="gallery-item-overlay">
+                    <div>
+                        <div class="gallery-item-category-tag">Campus</div>
+                        <div class="gallery-item-label">Campus Library</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Thartheel -->
+            <div class="gallery-item" data-category="events" data-caption="Thartheel Recitation Event"
+                style="animation-delay:0.20s;">
+                <div class="gallery-placeholder tall">
+                    <span class="ph-icon">🎙️</span>
+                    <span>Thartheel Event</span>
+                </div>
+                <div class="gallery-item-overlay">
+                    <div>
+                        <div class="gallery-item-category-tag">Event</div>
+                        <div class="gallery-item-label">Thartheel Recitation Event</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Classroom -->
+            <div class="gallery-item" data-category="academic" data-caption="Classroom Session"
+                style="animation-delay:0.25s;">
+                <div class="gallery-placeholder med">
+                    <span class="ph-icon">🏫</span>
+                    <span>Classroom</span>
+                </div>
+                <div class="gallery-item-overlay">
+                    <div>
+                        <div class="gallery-item-category-tag">Academic</div>
+                        <div class="gallery-item-label">Classroom Session</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Annual Day -->
+            <div class="gallery-item" data-category="events" data-caption="Annual Day Celebration"
+                style="animation-delay:0.30s;">
+                <div class="gallery-placeholder short">
+                    <span class="ph-icon">🌟</span>
+                    <span>Annual Day</span>
+                </div>
+                <div class="gallery-item-overlay">
+                    <div>
+                        <div class="gallery-item-category-tag">Event</div>
+                        <div class="gallery-item-label">Annual Day Celebration</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Campus Grounds -->
+            <div class="gallery-item" data-category="campus" data-caption="Campus Grounds"
+                style="animation-delay:0.35s;">
+                <div class="gallery-placeholder med">
+                    <span class="ph-icon">🌿</span>
+                    <span>Campus Grounds</span>
+                </div>
+                <div class="gallery-item-overlay">
+                    <div>
+                        <div class="gallery-item-category-tag">Campus</div>
+                        <div class="gallery-item-label">Campus Grounds</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Exam Hall -->
+            <div class="gallery-item" data-category="academic" data-caption="Examination Hall"
+                style="animation-delay:0.40s;">
+                <div class="gallery-placeholder tall">
+                    <span class="ph-icon">📝</span>
+                    <span>Exam Hall</span>
+                </div>
+                <div class="gallery-item-overlay">
+                    <div>
+                        <div class="gallery-item-category-tag">Academic</div>
+                        <div class="gallery-item-label">Examination Hall</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SSF Competition -->
+            <div class="gallery-item" data-category="events" data-caption="SSF National Competition"
+                style="animation-delay:0.45s;">
+                <div class="gallery-placeholder short">
+                    <span class="ph-icon">🏆</span>
+                    <span>SSF Competition</span>
+                </div>
+                <div class="gallery-item-overlay">
+                    <div>
+                        <div class="gallery-item-category-tag">Event</div>
+                        <div class="gallery-item-label">SSF National Competition</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Campus Masjid -->
+            <div class="gallery-item" data-category="campus" data-caption="Campus Masjid"
+                style="animation-delay:0.50s;">
+                <div class="gallery-placeholder med">
+                    <span class="ph-icon">🕌</span>
+                    <span>Campus Masjid</span>
+                </div>
+                <div class="gallery-item-overlay">
+                    <div>
+                        <div class="gallery-item-category-tag">Campus</div>
+                        <div class="gallery-item-label">Campus Masjid</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Faculty Meeting -->
+            <div class="gallery-item" data-category="academic" data-caption="Faculty Meeting"
+                style="animation-delay:0.55s;">
+                <div class="gallery-placeholder short">
+                    <span class="ph-icon">👨‍🏫</span>
+                    <span>Faculty Meeting</span>
+                </div>
+                <div class="gallery-item-overlay">
+                    <div>
+                        <div class="gallery-item-category-tag">Academic</div>
+                        <div class="gallery-item-label">Faculty Meeting</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cultural Programme -->
+            <div class="gallery-item" data-category="events" data-caption="Cultural Programme"
+                style="animation-delay:0.60s;">
+                <div class="gallery-placeholder tall">
+                    <span class="ph-icon">🎭</span>
+                    <span>Cultural Programme</span>
+                </div>
+                <div class="gallery-item-overlay">
+                    <div>
+                        <div class="gallery-item-category-tag">Event</div>
+                        <div class="gallery-item-label">Cultural Programme</div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Empty State -->
+        <div class="gallery-empty" id="galleryEmpty">
+            <span class="empty-icon">🖼️</span>
+            <p>No items in this category yet. Check back soon!</p>
+        </div>
+    </main>
+
+    <!-- Lightbox -->
+    <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Image viewer">
+        <div class="lightbox-inner" id="lightboxInner">
+            <button class="lightbox-close" id="lightboxClose" aria-label="Close lightbox">&#10005;</button>
+            <button class="lightbox-nav prev" id="lightboxPrev" aria-label="Previous image">&#8249;</button>
+            <img id="lightboxImg" src="" alt="">
+            <p class="lightbox-caption" id="lightboxCaption"></p>
+            <button class="lightbox-nav next" id="lightboxNext" aria-label="Next image">&#8250;</button>
+        </div>
+    </div>
+
+    <!-- Mobile Nav Bar -->
+    <nav class="mobile-entry-bar" aria-label="Mobile portal shortcuts">
+        <a class="mobile-entry-item" href="index.html">
+            <span>🏠</span>
+            <strong>Home</strong>
+        </a>
+        <a class="mobile-entry-item" href="student.html">
+            <span>ST</span>
+            <strong>Student</strong>
+        </a>
+        <a class="mobile-entry-item" href="teacher.html">
+            <span>FC</span>
+            <strong>Faculty</strong>
+        </a>
+        <a class="mobile-entry-item" href="admin.html">
+            <span>AD</span>
+            <strong>Admin</strong>
+        </a>
+    </nav>
+
+    <script>
+        (function () {
+            const grid = document.getElementById('galleryGrid');
+            const empty = document.getElementById('galleryEmpty');
+            const filters = document.querySelectorAll('.filter-btn');
+            const items = Array.from(grid.querySelectorAll('.gallery-item'));
+
+            // ── Filter ──────────────────────────────────────────────────────
+            filters.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    filters.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    const filter = btn.dataset.filter;
+                    let visible = 0;
+                    items.forEach(item => {
+                        const show = filter === 'all' || item.dataset.category === filter;
+                        item.style.display = show ? 'block' : 'none';
+                        if (show) {
+                            item.style.animation = 'none';
+                            void item.offsetWidth;
+                            item.style.animationDelay = (visible * 0.06) + 's';
+                            item.style.animation = 'fadeUp 0.5s cubic-bezier(0.16,1,0.3,1) both';
+                            visible++;
+                        }
+                    });
+                    empty.style.display = visible === 0 ? 'block' : 'none';
+                });
+            });
+
+            // ── Lightbox ─────────────────────────────────────────────────────
+            const lightbox = document.getElementById('lightbox');
+            const lightboxImg = document.getElementById('lightboxImg');
+            const lightboxCap = document.getElementById('lightboxCaption');
+            const closeBtn = document.getElementById('lightboxClose');
+            const prevBtn = document.getElementById('lightboxPrev');
+            const nextBtn = document.getElementById('lightboxNext');
+            let currentIndex = 0;
+            let visibleItems = [];
+
+            function getVisible() {
+                return items.filter(i => i.style.display !== 'none' && i.classList.contains('has-image'));
+            }
+
+            function openLightbox(item) {
+                visibleItems = getVisible();
+                currentIndex = visibleItems.indexOf(item);
+                showSlide(currentIndex);
+                lightbox.classList.add('open');
+                document.body.style.overflow = 'hidden';
+            }
+
+            function closeLightbox() {
+                lightbox.classList.remove('open');
+                document.body.style.overflow = '';
+            }
+
+            function showSlide(index) {
+                const item = visibleItems[index];
+                if (!item) return;
+                const img = item.querySelector('img');
+                lightboxImg.src = img ? img.src : '';
+                lightboxImg.alt = img ? img.alt : '';
+                lightboxCap.textContent = item.dataset.caption || '';
+                currentIndex = index;
+                const multi = visibleItems.length > 1;
+                prevBtn.style.display = multi ? 'flex' : 'none';
+                nextBtn.style.display = multi ? 'flex' : 'none';
+            }
+
+            items.forEach(item => {
+                if (item.classList.contains('has-image')) {
+                    item.addEventListener('click', () => openLightbox(item));
+                }
+            });
+
+            closeBtn.addEventListener('click', closeLightbox);
+            lightbox.addEventListener('click', e => { if (e.target === lightbox) closeLightbox(); });
+            prevBtn.addEventListener('click', e => {
+                e.stopPropagation();
+                showSlide((currentIndex - 1 + visibleItems.length) % visibleItems.length);
+            });
+            nextBtn.addEventListener('click', e => {
+                e.stopPropagation();
+                showSlide((currentIndex + 1) % visibleItems.length);
+            });
+            document.addEventListener('keydown', e => {
+                if (!lightbox.classList.contains('open')) return;
+                if (e.key === 'Escape') closeLightbox();
+                if (e.key === 'ArrowLeft') prevBtn.click();
+                if (e.key === 'ArrowRight') nextBtn.click();
+            });
+        })();
+    </script>
+
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js').catch(err => console.log('SW failed:', err));
+            });
+        }
+    </script>
+</body>
+
+</html>

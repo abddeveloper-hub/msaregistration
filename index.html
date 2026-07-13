@@ -41,7 +41,7 @@
             <a class="brand-lockup" href="index.html" aria-label="Muhyissunnah Dars Ukkuda home">
                 <img src="logo.jpg" alt="MSA Ukkuda Logo" class="brand-logo-img">
                 <span class="brand-text">
-                    <strong style="font-family: var(--font-display); letter-spacing: 0;">Muhyissunnah Dars</strong>
+                    <strong style="font-family: 'Cairo', sans-serif; letter-spacing: 0.08em; font-size: 1rem; line-height: 1; text-transform: uppercase; font-weight: 700;">Muhyissunnah Dars</strong>
                     <span style="letter-spacing: 0.15em;">Ukkuda Official Portal</span>
                 </span>
             </a>
@@ -53,6 +53,7 @@
                 <button class="btn btn-ghost icon-btn" id="loginMenuToggleBtn" type="button" style="font-size: 1.5rem; padding: 0.5rem; line-height: 1;">⋮</button>
                 
                 <div id="loginDropdownMenu" class="hidden" style="position: absolute; top: calc(100% + 0.5rem); right: 0; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); box-shadow: 0 10px 25px rgba(0,0,0,0.1); display: flex; flex-direction: column; min-width: 200px; z-index: 100; overflow: hidden;">
+                    <a href="gallery.html" class="btn btn-ghost" style="border-radius: 0; border: none; border-bottom: 1px solid var(--border); justify-content: flex-start; padding: 1rem; text-decoration: none;">🖼️ Gallery</a>
                     <button id="dropStudentBtn" class="btn btn-ghost" style="border-radius: 0; border: none; border-bottom: 1px solid var(--border); justify-content: flex-start; padding: 1rem;">Student Login</button>
                     <button id="dropFacultyBtn" class="btn btn-ghost" style="border-radius: 0; border: none; border-bottom: 1px solid var(--border); justify-content: flex-start; padding: 1rem;">Faculty Login</button>
                     <button id="navAdminBtn" class="btn btn-ghost" style="border-radius: 0; border: none; justify-content: flex-start; padding: 1rem;">Admin Login</button>
@@ -248,40 +249,6 @@
             </div>
         </section>
 
-        <!-- Gallery Section -->
-        <section id="gallerySection" style="padding: 8rem 2rem; background: var(--bg);">
-            <div style="max-width: 1200px; margin: 0 auto; text-align: center;">
-                <p style="color: var(--primary); font-weight: 700; text-transform: uppercase; letter-spacing: 0.15em; font-size: 0.85rem; margin-bottom: 0.75rem;" class="animate-on-scroll slide-up">Campus Life</p>
-                <h2 style="font-family: var(--font-display); font-size: clamp(2.5rem, 5vw, 4rem); font-weight: 700; color: var(--text-main); margin-bottom: 4rem;" class="animate-on-scroll slide-up delay-100">Our Gallery</h2>
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; grid-auto-rows: 250px;">
-                    <div class="animate-on-scroll slide-up delay-100" style="background: var(--surface-raised); border-radius: 16px; overflow: hidden; position: relative; grid-row: span 2;">
-                        <div style="position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.5), transparent); z-index: 1; display: flex; align-items: flex-end; padding: 1.5rem;">
-                            <span style="color: #fff; font-weight: 600; font-size: 1.1rem;">Convocation 2024</span>
-                        </div>
-                        <div style="width: 100%; height: 100%; background: var(--border); display: grid; place-items: center; color: var(--text-dim); font-size: 2rem;">📷</div>
-                    </div>
-                    <div class="animate-on-scroll slide-up delay-200" style="background: var(--surface-raised); border-radius: 16px; overflow: hidden; position: relative;">
-                        <div style="position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.5), transparent); z-index: 1; display: flex; align-items: flex-end; padding: 1.5rem;">
-                            <span style="color: #fff; font-weight: 600; font-size: 1.1rem;">Campus Library</span>
-                        </div>
-                        <div style="width: 100%; height: 100%; background: var(--border); display: grid; place-items: center; color: var(--text-dim); font-size: 2rem;">📷</div>
-                    </div>
-                    <div class="animate-on-scroll slide-up delay-300" style="background: var(--surface-raised); border-radius: 16px; overflow: hidden; position: relative; grid-row: span 2;">
-                        <div style="position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.5), transparent); z-index: 1; display: flex; align-items: flex-end; padding: 1.5rem;">
-                            <span style="color: #fff; font-weight: 600; font-size: 1.1rem;">Thartheel Event</span>
-                        </div>
-                        <div style="width: 100%; height: 100%; background: var(--border); display: grid; place-items: center; color: var(--text-dim); font-size: 2rem;">📷</div>
-                    </div>
-                    <div class="animate-on-scroll slide-up delay-400" style="background: var(--surface-raised); border-radius: 16px; overflow: hidden; position: relative;">
-                        <div style="position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.5), transparent); z-index: 1; display: flex; align-items: flex-end; padding: 1.5rem;">
-                            <span style="color: #fff; font-weight: 600; font-size: 1.1rem;">Classroom</span>
-                        </div>
-                        <div style="width: 100%; height: 100%; background: var(--border); display: grid; place-items: center; color: var(--text-dim); font-size: 2rem;">📷</div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
         <!-- Our Campuses Section -->
         <section id="ourCampuses" style="padding: 6rem 2rem; background: var(--bg-desert); border-top: 1px solid var(--border);">
             <div style="max-width: 1200px; margin: 0 auto;">
@@ -362,8 +329,12 @@
             <span>AD</span>
             <strong>Admin</strong>
         </a>
+        <a class="mobile-entry-item" href="gallery.html">
+            <span style="background: var(--primary-glow); font-size: 1rem;">🖼️</span>
+            <strong>Gallery</strong>
+        </a>
         <button id="mobileInstallBtn" class="mobile-entry-item" type="button" style="background:none; border:none; color:inherit;">
-            <span>📥</span>
+            <span style="background: var(--surface-raised); font-size: 1rem;">📥</span>
             <strong>Download</strong>
         </button>
     </nav>

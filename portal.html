@@ -9,6 +9,20 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head>
 <body class="animate-fade-in">
+    <!-- Mobile Top Bar -->
+    <div class="mobile-top-bar" style="display:none;">
+        <button class="menu-toggle" id="mobileMenuBtn" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="sidebarMenu">
+            <span></span><span></span><span></span>
+        </button>
+        <div class="app-logo" style="margin:0;">
+            <div class="dot"></div>
+            The Ledger
+        </div>
+        <div style="width:40px;"></div>
+    </div>
+
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
     <div class="orb-container">
         <div class="orb orb-1"></div>
         <div class="orb orb-2"></div>
@@ -17,7 +31,7 @@
 
     <div class="portal-layout">
         <!-- Sidebar -->
-        <aside class="portal-sidebar">
+        <aside class="portal-sidebar" id="sidebarMenu">
             <div class="app-logo">
                 <div class="dot"></div>
                 The Ledger
@@ -165,26 +179,36 @@
         </main>
     </div>
 
-    <!-- Mobile Bottom Navigation -->
-    <div class="mobile-bottom-nav">
-        <div class="m-nav-item active" data-m-tab="dashboard">
-            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
-            <span>Home</span>
-        </div>
-        <div class="m-nav-item" data-m-tab="idcard">
-            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2"></path></svg>
-            <span>ID</span>
-        </div>
-        <div class="m-nav-item" data-m-tab="profile">
-            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
-            <span>Profile</span>
-        </div>
-        <div class="m-nav-item" data-m-tab="academics">
-            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
-            <span>Grade</span>
-        </div>
-    </div>
+    <!-- Mobile Bottom Navigation removed in favor of sidebar drawer -->
 
     <script type="module" src="portal.js"></script>
+    <script>
+        const menuBtn = document.getElementById('mobileMenuBtn');
+        const sidebar = document.getElementById('sidebarMenu');
+        const overlay = document.getElementById('sidebarOverlay');
+
+        function toggleMenu(forceOpen) {
+            const shouldOpen = typeof forceOpen === 'boolean' ? forceOpen : !sidebar.classList.contains('active');
+            sidebar.classList.toggle('active', shouldOpen);
+            overlay.classList.toggle('active', shouldOpen);
+            document.body.classList.toggle('drawer-open', shouldOpen);
+            menuBtn?.setAttribute('aria-expanded', String(shouldOpen));
+        }
+
+        menuBtn?.addEventListener('click', () => toggleMenu());
+        overlay?.addEventListener('click', () => toggleMenu(false));
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape') toggleMenu(false);
+        });
+        window.addEventListener('resize', () => {
+            if (window.innerWidth > 900) toggleMenu(false);
+        });
+
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', () => {
+                if(window.innerWidth <= 900) toggleMenu(false);
+            });
+        });
+    </script>
 </body>
 </html>

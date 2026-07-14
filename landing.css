@@ -47,10 +47,7 @@ body.landing-page {
     justify-content: center;
     padding: 8rem 2rem 4rem;
     position: relative;
-    background:
-        radial-gradient(circle at top left, color-mix(in srgb, var(--accent) 12%, transparent), transparent 24%),
-        radial-gradient(circle at top right, color-mix(in srgb, var(--primary) 14%, transparent), transparent 24%),
-        linear-gradient(135deg, color-mix(in srgb, var(--surface) 92%, var(--bg)) 0%, var(--bg) 100%);
+    background: var(--bg);
 }
 
 .hero-inner {
@@ -66,7 +63,7 @@ body.landing-page {
 
 .pill-badge {
     border: 1px solid var(--border-strong);
-    background: linear-gradient(135deg, var(--accent-soft) 0%, var(--surface-raised) 100%);
+    background: var(--surface-raised);
     color: var(--text-main);
     padding: 0.5rem 1.25rem;
     font-size: 0.75rem;
@@ -75,7 +72,6 @@ body.landing-page {
     text-transform: uppercase;
     border-radius: 50px;
     margin-bottom: 2rem;
-    box-shadow: var(--shadow-sm);
 }
 
 .hero-content h1 {
@@ -137,20 +133,20 @@ body.landing-page {
 }
 
 .portal-card {
-    background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(243,247,255,0.95) 100%) !important;
+    background: var(--surface) !important;
     border: 1px solid var(--border) !important;
-    border-radius: 24px !important;
+    border-radius: var(--radius) !important;
     padding: 3rem 2.5rem !important;
-    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    transition: all 0.2s ease-in-out !important;
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03) !important;
+    box-shadow: var(--shadow-sm) !important;
 }
 
 .portal-card:hover {
-    transform: translateY(-8px) scale(1.01) !important;
-    box-shadow: 0 20px 44px rgba(65, 105, 225, 0.16) !important;
+    transform: translateY(-2px) !important;
+    box-shadow: var(--shadow-md) !important;
     border-color: var(--primary) !important;
 }
 
@@ -162,11 +158,11 @@ body.landing-page {
 }
 
 .portal-initial {
-    background: var(--gold-gradient) !important;
+    background: var(--primary) !important;
     color: #FFFFFF !important;
     width: 56px !important;
     height: 56px !important;
-    border-radius: 16px !important;
+    border-radius: var(--radius-sm) !important;
     font-family: var(--font-display) !important;
     font-weight: 700 !important;
     display: flex;

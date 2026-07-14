@@ -95,6 +95,9 @@ function setQueueStatus(message, isError = false) {
 // Auth State
 let userProfileUnsub = null;
 onAuthStateChanged(auth, (user) => {
+    const splash = document.getElementById("appSplashScreen");
+    if (splash) splash.classList.add("hidden");
+
     if (userProfileUnsub) {
         userProfileUnsub();
         userProfileUnsub = null;

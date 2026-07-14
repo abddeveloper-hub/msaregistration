@@ -34,9 +34,7 @@ html, body {
         padding: 1.5rem 1.25rem 6rem;
     }
 
-    .mobile-bottom-nav {
-        display: flex !important;
-    }
+    /* removed mobile-bottom-nav display flex */
 
     .grid-3 {
         grid-template-columns: 1fr 1fr !important;
@@ -91,10 +89,7 @@ html, body {
         border-radius: 2rem !important;
     }
 
-    /* Hide the 3-dots login menu toggle on mobile since bottom bar has the options */
-    #loginMenuToggleBtn, #loginDropdownMenu {
-        display: none !important;
-    }
+    /* Removed the hiding of 3-dots login menu toggle on mobile as per user request */
 
     /* Registration app container */
     .app-container {
@@ -436,10 +431,7 @@ html, body {
         min-height: auto;
     }
 
-    /* Show mobile portal links bar */
-    .mobile-portal-links {
-        display: flex !important;
-    }
+    /* Show mobile portal links bar removed */
 }
 
 @media (max-width: 600px) {

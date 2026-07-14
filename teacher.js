@@ -2296,3 +2296,185 @@ document.getElementById('pwaInstallActionBtn')?.addEventListener("click", () => 
 pwaModal?.addEventListener("click", (e) => {
     if (e.target === pwaModal) closePwaModal();
 });
+
+// Gallery Photo Upload Logic
+const galleryUploadForm = document.getElementById('galleryUploadForm');
+const galleryPhotoInput = document.getElementById('galleryPhotoInput');
+const galleryPhotoPreview = document.getElementById('galleryPhotoPreview');
+const galleryPhotoPreviewContainer = document.getElementById('galleryPhotoPreviewContainer');
+const galleryUploadBtn = document.getElementById('galleryUploadBtn');
+const galleryUploadMsg = document.getElementById('galleryUploadMsg');
+const galleryPhotoTitle = document.getElementById('galleryPhotoTitle');
+const galleryPhotoDesc = document.getElementById('galleryPhotoDesc');
+
+let currentBase64Image = null;
+
+if (galleryPhotoInput) {
+    galleryPhotoInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                const img = new Image();
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    const MAX_WIDTH = 1200;
+                    const MAX_HEIGHT = 1200;
+                    let width = img.width;
+                    let height = img.height;
+
+                    if (width > height) {
+                        if (width > MAX_WIDTH) {
+                            height *= MAX_WIDTH / width;
+                            width = MAX_WIDTH;
+                        }
+                    } else {
+                        if (height > MAX_HEIGHT) {
+                            width *= MAX_HEIGHT / height;
+                            height = MAX_HEIGHT;
+                        }
+                    }
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+                    
+                    const base64Str = canvas.toDataURL('image/jpeg', 0.8);
+                    currentBase64Image = base64Str;
+                    galleryPhotoPreview.src = base64Str;
+                    galleryPhotoPreviewContainer.style.display = 'block';
+                };
+                img.src = event.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+}
+
+if (galleryUploadForm) {
+    galleryUploadForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        if (!currentBase64Image) {
+            galleryUploadMsg.textContent = "Please select a valid image.";
+            galleryUploadMsg.style.color = "var(--error)";
+            return;
+        }
+        
+        const title = galleryPhotoTitle.value.trim();
+        if (!title) return;
+        
+        const description = galleryPhotoDesc ? galleryPhotoDesc.value.trim() : "";
+        
+        galleryUploadBtn.disabled = true;
+        galleryUploadBtn.textContent = "Uploading...";
+        galleryUploadMsg.textContent = "";
+        
+        try {
+            await addDoc(collection(db, "gallery"), {
+                title: title,
+                description: description,
+                url: currentBase64Image,
+                uploadedBy: auth.currentUser ? auth.currentUser.uid : "faculty",
+                createdAt: new Date().toISOString()
+            });
+            
+            galleryUploadMsg.textContent = "Photo uploaded successfully!";
+            galleryUploadMsg.style.color = "var(--success)";
+            galleryUploadForm.reset();
+            galleryPhotoPreviewContainer.style.display = 'none';
+            currentBase64Image = null;
+            
+            setTimeout(() => {
+                galleryUploadMsg.textContent = "";
+            }, 3000);
+        } catch (error) {
+            console.error("Gallery Upload Error:", error);
+            galleryUploadMsg.textContent = "Failed to upload photo. Please try again.";
+            galleryUploadMsg.style.color = "var(--error)";
+        } finally {
+            galleryUploadBtn.disabled = false;
+            galleryUploadBtn.textContent = "Upload to Gallery";
+        }
+    });
+}
+
+// YouTube Video Upload Logic
+const videoUploadForm = document.getElementById('videoUploadForm');
+const videoTitle = document.getElementById('videoTitle');
+const videoUrlInput = document.getElementById('videoUrlInput');
+const videoPreviewContainer = document.getElementById('videoPreviewContainer');
+const videoThumbnailPreview = document.getElementById('videoThumbnailPreview');
+const videoUploadBtn = document.getElementById('videoUploadBtn');
+const videoUploadMsg = document.getElementById('videoUploadMsg');
+
+let currentVideoId = null;
+
+function extractYouTubeID(url) {
+    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+    const match = url.match(regExp);
+    return (match && match[2].length === 11) ? match[2] : null;
+}
+
+if (videoUrlInput) {
+    videoUrlInput.addEventListener('input', () => {
+        const url = videoUrlInput.value.trim();
+        const videoId = extractYouTubeID(url);
+        
+        if (videoId) {
+            currentVideoId = videoId;
+            const thumbnailUrl = `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
+            videoThumbnailPreview.src = thumbnailUrl;
+            videoPreviewContainer.style.display = 'block';
+        } else {
+            currentVideoId = null;
+            videoPreviewContainer.style.display = 'none';
+        }
+    });
+}
+
+if (videoUploadForm) {
+    videoUploadForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        if (!currentVideoId) {
+            videoUploadMsg.textContent = "Please enter a valid YouTube link.";
+            videoUploadMsg.style.color = "var(--error)";
+            return;
+        }
+        
+        const title = videoTitle.value.trim();
+        if (!title) return;
+        
+        videoUploadBtn.disabled = true;
+        videoUploadBtn.textContent = "Adding...";
+        videoUploadMsg.textContent = "";
+        
+        try {
+            const thumbnailUrl = `https://img.youtube.com/vi/${currentVideoId}/hqdefault.jpg`;
+            await addDoc(collection(db, "videos"), {
+                title: title,
+                videoId: currentVideoId,
+                thumbnail: thumbnailUrl,
+                uploadedBy: auth.currentUser ? auth.currentUser.uid : "faculty",
+                createdAt: new Date().toISOString()
+            });
+            
+            videoUploadMsg.textContent = "Program added successfully!";
+            videoUploadMsg.style.color = "var(--success)";
+            videoUploadForm.reset();
+            videoPreviewContainer.style.display = 'none';
+            currentVideoId = null;
+            
+            setTimeout(() => {
+                videoUploadMsg.textContent = "";
+            }, 3000);
+        } catch (error) {
+            console.error("Video Upload Error:", error);
+            videoUploadMsg.textContent = "Failed to add program. Please try again.";
+            videoUploadMsg.style.color = "var(--error)";
+        } finally {
+            videoUploadBtn.disabled = false;
+            videoUploadBtn.textContent = "Add Video Program";
+        }
+    });
+}

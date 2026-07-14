@@ -131,6 +131,19 @@ function loadPublicStats() {
     }, (error) => {
         console.warn("Unable to load institution stats:", error);
     });
+
+    const banner = document.getElementById('globalAnnouncementBanner');
+    const textEl = document.getElementById('globalAnnouncementText');
+    if (banner && textEl) {
+        onSnapshot(doc(db, "settings", "announcements"), (docSnap) => {
+            if (docSnap.exists() && docSnap.data().active && docSnap.data().text) {
+                textEl.innerHTML = docSnap.data().text;
+                banner.classList.remove('hidden');
+            } else {
+                banner.classList.add('hidden');
+            }
+        });
+    }
 }
 
 function applyTheme(theme) {
@@ -292,114 +305,7 @@ function setRole(role) {
     updateAuthUI();
 }
 
-function openAuthModal(role = selectedRole, isFixed = false) {
-    if (!authModal) return;
-
-    if (auth.currentUser) {
-        // If already logged in, fetch role and redirect immediately
-        const uid = auth.currentUser.uid;
-        getDoc(doc(db, "users", uid)).then(snap => {
-            const role = snap.exists() ? snap.data().role : selectedRole;
-            if (role === "admin") window.location.href = "admin.html";
-            else if (role === "faculty") window.location.href = "teacher.html";
-            else window.location.href = "student.html";
-        }).catch(() => {
-            window.location.href = "student.html";
-        });
-        return;
-    }
-
-    setRole(role);
-    authModal.dataset.fixedRole = String(Boolean(isFixed));
-    authModal.classList.add("active");
-    authModal.setAttribute("aria-hidden", "false");
-    updateAuthUI();
-    window.setTimeout(() => authEmail?.focus(), 60);
-}
-
-function closeAuthModal() {
-    if (!authModal) return;
-    authModal.classList.remove("active");
-    authModal.setAttribute("aria-hidden", "true");
-    clearAuthError();
-}
-
-window.openAuthModal = openAuthModal;
-
-function initAuthUI() {
-    if (loginMenuToggleBtn) {
-        loginMenuToggleBtn.addEventListener("click", (e) => {
-            e.stopPropagation();
-            loginDropdownMenu?.classList.toggle("hidden");
-        });
-        document.addEventListener("click", () => {
-            loginDropdownMenu?.classList.add("hidden");
-        });
-    }
-
-    if (dropStudentBtn) dropStudentBtn.addEventListener("click", () => openAuthModal("student", true));
-    if (dropFacultyBtn) dropFacultyBtn.addEventListener("click", () => openAuthModal("faculty", true));
-
-    heroLoginBtn?.addEventListener("click", () => openAuthModal(selectedRole, false));
-    studentCard?.addEventListener("click", (event) => {
-        event.preventDefault();
-        openAuthModal("student", true);
-    });
-    facultyCard?.addEventListener("click", (event) => {
-        event.preventDefault();
-        openAuthModal("faculty", true);
-    });
-    mobileStudentLink?.addEventListener("click", (event) => {
-        event.preventDefault();
-        openAuthModal("student", true);
-    });
-    mobileFacultyLink?.addEventListener("click", (event) => {
-        event.preventDefault();
-        openAuthModal("faculty", true);
-    });
-    const mobileAdminLink = $("#mobileAdminLink");
-    mobileAdminLink?.addEventListener("click", (event) => {
-        // Direct link to admin portal is preferred for root access
-        // No preventDefault here to allow normal navigation
-    });
-
-    closeAuthBtn?.addEventListener("click", closeAuthModal);
-    navAdminBtn?.addEventListener("click", () => window.location.href = "admin.html");
-
-    authModal?.addEventListener("click", (event) => {
-        if (event.target === authModal) closeAuthModal();
-    });
-
-    document.addEventListener("keydown", (event) => {
-        if (event.key === "Escape" && authModal?.classList.contains("active")) {
-            closeAuthModal();
-        }
-    });
-
-    tabSignIn?.addEventListener("click", () => {
-        isSignUpMode = false;
-        updateAuthUI();
-    });
-
-    tabSignUp?.addEventListener("click", () => {
-        isSignUpMode = true;
-        updateAuthUI();
-    });
-
-    roleStudent?.addEventListener("click", () => setRole("student"));
-    roleFaculty?.addEventListener("click", () => setRole("faculty"));
-
-    passwordToggleBtn?.addEventListener("click", () => {
-        if (!authPassword) return;
-        const isHidden = authPassword.type === "password";
-        authPassword.type = isHidden ? "text" : "password";
-        passwordToggleBtn.textContent = isHidden ? "Hide" : "Show";
-        passwordToggleBtn.setAttribute("aria-label", isHidden ? "Hide password" : "Show password");
-    });
-
-    authPassword?.addEventListener("input", updatePasswordStrength);
-    updateAuthUI();
-}
+// Auth Modal functions removed as they are now handled in login.js
 
 function initPwaInstall() {
     window.addEventListener("beforeinstallprompt", (event) => {
@@ -464,91 +370,7 @@ function initPwaInstall() {
     });
 }
 
-if (authForm) {
-    authForm.addEventListener("submit", async (event) => {
-        event.preventDefault();
-        clearAuthError();
-
-        const email = authEmail?.value.trim() || "";
-        const password = authPassword?.value || "";
-        const fullName = authName?.value.trim() || "";
-
-        if (!email || !password) {
-            showAuthError("Email and password are required.");
-            return;
-        }
-
-        if (isSignUpMode && !fullName) {
-            showAuthError("Full name is required for account creation.");
-            return;
-        }
-
-        if (isSignUpMode && password.length < 6) {
-            showAuthError("Password must be at least 6 characters.");
-            return;
-        }
-
-        authSubmitBtn.disabled = true;
-        authSubmitBtn.textContent = "Processing...";
-
-        try {
-            let userData = null;
-            if (isSignUpMode) {
-                const userCred = await createUserWithEmailAndPassword(auth, email, password);
-                const finalRole = email.toLowerCase() === "admin@msaukkuda.com" ? "admin" : selectedRole;
-
-                userData = {
-                    uid: userCred.user.uid,
-                    email,
-                    fullName,
-                    role: finalRole,
-                    status: finalRole === "admin" ? "admitted" : "unsubmitted",
-                    createdAt: new Date().toISOString()
-                };
-                await setDoc(doc(db, "users", userCred.user.uid), userData);
-            } else {
-                const userCred = await signInWithEmailAndPassword(auth, email, password);
-                const userSnap = await getDoc(doc(db, "users", userCred.user.uid));
-                if (userSnap.exists()) {
-                    userData = userSnap.data();
-                }
-                
-                // Security Device Tracking
-                try {
-                    const ipRes = await fetch('https://api.ipify.org?format=json');
-                    const ipData = await ipRes.json();
-                    await addDoc(collection(db, "securityLogs"), {
-                        uid: userCred.user.uid,
-                        email: email,
-                        role: userData ? userData.role : 'unknown',
-                        ip: ipData.ip,
-                        userAgent: navigator.userAgent,
-                        timestamp: new Date().toISOString()
-                    });
-                } catch(e) { console.error("Failed to log security event", e); }
-            }
-
-            authSubmitBtn.textContent = "Opening Portal...";
-            
-            const targetRole = userData ? userData.role : selectedRole;
-            
-            if (targetRole === "admin") window.location.href = "admin.html";
-            else if (targetRole === "faculty") window.location.href = "teacher.html";
-            else window.location.href = "student.html";
-
-            window.setTimeout(() => {
-                if (authSubmitBtn) {
-                    authSubmitBtn.disabled = false;
-                    updateAuthUI();
-                }
-            }, 4500);
-        } catch (error) {
-            showAuthError(friendlyAuthError(error));
-            authSubmitBtn.disabled = false;
-            authSubmitBtn.textContent = isSignUpMode ? "Create Account" : "Sign In";
-        }
-    });
-}
+// form submmission is now handled by login.js
 
 navLogoutBtn?.addEventListener("click", () => signOut(auth).catch(error => {
     console.error("Logout Error:", error);
@@ -597,6 +419,17 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         });
     }
+
+    // Three dots login menu logic
+    if (loginMenuToggleBtn) {
+        loginMenuToggleBtn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            loginDropdownMenu?.classList.toggle("hidden");
+        });
+        document.addEventListener("click", () => {
+            loginDropdownMenu?.classList.add("hidden");
+        });
+    }
 });
 
 onAuthStateChanged(auth, async (user) => {
@@ -610,7 +443,7 @@ onAuthStateChanged(auth, async (user) => {
         navLogoutBtn?.classList.add("hidden");
         if (heroLoginBtn) {
             heroLoginBtn.textContent = "Enter Dashboard";
-            heroLoginBtn.onclick = () => openAuthModal(selectedRole, false);
+            heroLoginBtn.onclick = () => window.location.href = "login.html";
         }
         return;
     }

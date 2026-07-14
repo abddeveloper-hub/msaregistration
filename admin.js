@@ -8,6 +8,19 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 enableMultiTabIndexedDbPersistence(db).catch((err) => console.warn("Offline persistence error:", err.code));
 
+const banner = document.getElementById('globalAnnouncementBanner');
+const textEl = document.getElementById('globalAnnouncementText');
+if (banner && textEl) {
+    onSnapshot(doc(db, "settings", "announcements"), (docSnap) => {
+        if (docSnap.exists() && docSnap.data().active && docSnap.data().text) {
+            textEl.innerHTML = docSnap.data().text;
+            banner.classList.remove('hidden');
+        } else {
+            banner.classList.add('hidden');
+        }
+    });
+}
+
 // Secondary Auth App for creating users without logging out
 const secondaryApp = initializeApp(firebaseConfig, "Secondary");
 const secondaryAuth = getAuth(secondaryApp);
@@ -47,6 +60,9 @@ function isStudentApplication(record) {
 // Auth State
 let adminDocUnsub = null;
 onAuthStateChanged(auth, (user) => {
+    const splash = document.getElementById("appSplashScreen");
+    if (splash) splash.classList.add("hidden");
+
     if (adminDocUnsub) {
         adminDocUnsub();
         adminDocUnsub = null;
@@ -380,6 +396,107 @@ function updateStats() {
                 animation: { duration: 1500, easing: 'easeOutQuart' }
             }
         });
+    }
+
+    // 5. Global Academic Performance
+    renderAcademicChart(students, allInstitutions);
+}
+
+async function renderAcademicChart(students, allInstitutions) {
+    const ctxPerf = document.getElementById('chartAcademicPerf');
+    if (!ctxPerf) return;
+    if (window.chartInstances.perf) window.chartInstances.perf.destroy();
+
+    // To prevent blocking, we'll map campuses to data but doing it efficiently
+    // For a real large app, you'd aggregate this on the backend via Cloud Functions
+    // Here we do a lightweight aggregation if possible or just mock/partial data
+    
+    // As fetching all marks for all students might be heavy, we will fetch for the first 50 students as a sample
+    const sampleStudents = students.slice(0, 50);
+    const campusData = {};
+    allInstitutions.forEach(inst => {
+        campusData[inst.name] = { totalMarks: 0, marksCount: 0, totalAtt: 0, attCount: 0 };
+    });
+
+    try {
+        for (let s of sampleStudents) {
+            const campus = getRecordCampusName(s);
+            if (!campusData[campus]) campusData[campus] = { totalMarks: 0, marksCount: 0, totalAtt: 0, attCount: 0 };
+            
+            // Marks
+            const marksSnap = await getDocs(limit(collection(db, `users/${s.id}/marks`), 5));
+            marksSnap.forEach(m => {
+                campusData[campus].totalMarks += parseFloat(m.data().percentage || 0);
+                campusData[campus].marksCount++;
+            });
+            
+            // Attendance
+            const attSnap = await getDocs(limit(collection(db, `users/${s.id}/attendance`), 20));
+            attSnap.forEach(a => {
+                if(a.data().status === 'present') campusData[campus].totalAtt++;
+                campusData[campus].attCount++;
+            });
+        }
+
+        const labels = [];
+        const marksAvg = [];
+        const attAvg = [];
+
+        Object.keys(campusData).forEach(c => {
+            const data = campusData[c];
+            if (data.marksCount > 0 || data.attCount > 0) {
+                labels.push(c);
+                marksAvg.push(data.marksCount > 0 ? (data.totalMarks / data.marksCount) : 0);
+                attAvg.push(data.attCount > 0 ? ((data.totalAtt / data.attCount) * 100) : 0);
+            }
+        });
+
+        window.chartInstances.perf = new Chart(ctxPerf, {
+            type: 'radar',
+            data: {
+                labels: labels.length ? labels : ['Sample Inst A', 'Sample Inst B'],
+                datasets: [
+                    {
+                        label: 'Average Marks (%)',
+                        data: marksAvg.length ? marksAvg : [0, 0],
+                        backgroundColor: 'rgba(54, 193, 144, 0.2)',
+                        borderColor: '#36c190',
+                        pointBackgroundColor: '#36c190',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: '#36c190'
+                    },
+                    {
+                        label: 'Attendance (%)',
+                        data: attAvg.length ? attAvg : [0, 0],
+                        backgroundColor: 'rgba(216, 173, 74, 0.2)',
+                        borderColor: '#d8ad4a',
+                        pointBackgroundColor: '#d8ad4a',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: '#d8ad4a'
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    r: {
+                        angleLines: { color: 'rgba(255,255,255,0.1)' },
+                        grid: { color: 'rgba(255,255,255,0.1)' },
+                        pointLabels: { color: '#a0a0b0', font: { family: 'Inter', size: 12 } },
+                        ticks: { color: '#a0a0b0', backdropColor: 'transparent', min: 0, max: 100 }
+                    }
+                },
+                plugins: {
+                    legend: { position: 'top', labels: { color: '#a0a0b0', font: { family: 'Inter' } } },
+                    tooltip: { backgroundColor: 'rgba(10, 10, 15, 0.9)', titleColor: '#fff', bodyColor: '#fff', padding: 12, cornerRadius: 8, borderColor: 'rgba(255,255,255,0.1)', borderWidth: 1 }
+                }
+            }
+        });
+    } catch(e) {
+        console.warn("Chart Error:", e);
     }
 }
 
@@ -922,3 +1039,274 @@ window.deleteRecord = async (col, id) => {
         console.error("Delete Error:", e);
     }
 };
+
+// 7. ANNOUNCEMENTS MANAGER
+const saveAnnouncementBtn = document.getElementById('saveAnnouncementBtn');
+if (saveAnnouncementBtn) {
+    // Load initial
+    onSnapshot(doc(db, "settings", "announcements"), (docSnap) => {
+        if (docSnap.exists()) {
+            const data = docSnap.data();
+            document.getElementById('adminAnnouncementText').value = data.text || '';
+            document.getElementById('adminAnnouncementActive').checked = data.active || false;
+        }
+    });
+
+    saveAnnouncementBtn.addEventListener('click', async () => {
+        const text = document.getElementById('adminAnnouncementText').value;
+        const active = document.getElementById('adminAnnouncementActive').checked;
+        try {
+            await setDoc(doc(db, "settings", "announcements"), { text, active });
+            alert("Announcement saved successfully!");
+        } catch(e) {
+            alert("Error saving announcement: " + e.message);
+        }
+    });
+}
+
+// 8. GALLERY MANAGER
+const galleryAdminGrid = document.getElementById('galleryAdminGrid');
+if (galleryAdminGrid) {
+    // Render Admin Gallery Grid
+    onSnapshot(collection(db, "gallery"), (snap) => {
+        galleryAdminGrid.innerHTML = '';
+        snap.forEach(docSnap => {
+            const data = docSnap.data();
+            const id = docSnap.id;
+            const item = document.createElement('div');
+            item.className = 'portal-card';
+            item.style.padding = '0.5rem';
+            item.innerHTML = `
+                <img src="${data.image || data.imgUrl}" alt="${data.title}" style="width:100%; height:120px; object-fit:cover; border-radius:var(--radius-sm);">
+                <div style="padding: 0.5rem 0;">
+                    <h4 style="font-size:0.9rem;">${data.title}</h4>
+                    <p style="font-size:0.75rem; color:var(--text-dim); margin-bottom:0.5rem;">${data.desc || ''}</p>
+                    <div style="display:flex; justify-content:space-between;">
+                        <button class="btn btn-ghost" style="color:var(--error); padding:0.5rem;" onclick="deleteRecord('gallery', '${id}')">Delete</button>
+                    </div>
+                </div>
+            `;
+            galleryAdminGrid.appendChild(item);
+        });
+    });
+
+    const videoAdminGrid = document.getElementById('videoAdminGrid');
+    if (videoAdminGrid) {
+        onSnapshot(collection(db, "videos"), (snap) => {
+            videoAdminGrid.innerHTML = '';
+            snap.forEach(docSnap => {
+                const data = docSnap.data();
+                const id = docSnap.id;
+                const item = document.createElement('div');
+                item.className = 'portal-card';
+                item.style.padding = '0.5rem';
+                item.innerHTML = `
+                    <img src="${data.thumbnail}" alt="${data.title}" style="width:100%; height:120px; object-fit:cover; border-radius:var(--radius-sm);">
+                    <div style="padding: 0.5rem 0;">
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <h4 style="font-size:0.9rem; margin:0;">${data.title}</h4>
+                            <span class="badge" style="font-size:0.6rem; padding:0.1rem 0.3rem; background:var(--glass-border);">${data.category || 'N/A'}</span>
+                        </div>
+                        <p style="font-size:0.75rem; color:var(--text-dim); margin:0.3rem 0;">${data.speaker ? '🎤 ' + data.speaker : ''}</p>
+                        <p style="font-size:0.75rem; color:var(--text-dim); margin:0 0 0.5rem 0;">${data.date ? '📅 ' + data.date : ''}</p>
+                        <div style="display:flex; justify-content:space-between; margin-top:0.5rem;">
+                            <button class="btn btn-ghost" style="color:var(--error); padding:0.5rem;" onclick="deleteRecord('videos', '${id}')">Delete</button>
+                        </div>
+                    </div>
+                `;
+                videoAdminGrid.appendChild(item);
+            });
+        });
+    }
+}
+
+// Gallery Photo Upload Logic
+const galleryUploadForm = document.getElementById('galleryUploadForm');
+const galleryPhotoInput = document.getElementById('galleryPhotoInput');
+const galleryPhotoPreview = document.getElementById('galleryPhotoPreview');
+const galleryPhotoPreviewContainer = document.getElementById('galleryPhotoPreviewContainer');
+const galleryUploadBtn = document.getElementById('galleryUploadBtn');
+const galleryUploadMsg = document.getElementById('galleryUploadMsg');
+const galleryPhotoTitle = document.getElementById('galleryPhotoTitle');
+const galleryPhotoDesc = document.getElementById('galleryPhotoDesc');
+
+let currentBase64Image = null;
+
+if (galleryPhotoInput) {
+    galleryPhotoInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                const img = new Image();
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    const MAX_WIDTH = 1200;
+                    const MAX_HEIGHT = 1200;
+                    let width = img.width;
+                    let height = img.height;
+
+                    if (width > height) {
+                        if (width > MAX_WIDTH) {
+                            height *= MAX_WIDTH / width;
+                            width = MAX_WIDTH;
+                        }
+                    } else {
+                        if (height > MAX_HEIGHT) {
+                            width *= MAX_HEIGHT / height;
+                            height = MAX_HEIGHT;
+                        }
+                    }
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+                    
+                    const base64Str = canvas.toDataURL('image/jpeg', 0.8);
+                    currentBase64Image = base64Str;
+                    galleryPhotoPreview.src = base64Str;
+                    galleryPhotoPreviewContainer.style.display = 'block';
+                };
+                img.src = event.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+}
+
+if (galleryUploadForm) {
+    galleryUploadForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        if (!currentBase64Image) {
+            galleryUploadMsg.textContent = "Please select a valid image.";
+            galleryUploadMsg.style.color = "var(--error)";
+            return;
+        }
+        
+        const title = galleryPhotoTitle.value.trim();
+        if (!title) return;
+        
+        const description = galleryPhotoDesc ? galleryPhotoDesc.value.trim() : "";
+        
+        galleryUploadBtn.disabled = true;
+        galleryUploadBtn.textContent = "Uploading...";
+        galleryUploadMsg.textContent = "";
+        
+        try {
+            await addDoc(collection(db, "gallery"), {
+                title: title,
+                description: description,
+                url: currentBase64Image,
+                uploadedBy: auth.currentUser ? auth.currentUser.uid : "admin",
+                createdAt: new Date().toISOString()
+            });
+            
+            galleryUploadMsg.textContent = "Photo uploaded successfully!";
+            galleryUploadMsg.style.color = "var(--success)";
+            galleryUploadForm.reset();
+            galleryPhotoPreviewContainer.style.display = 'none';
+            currentBase64Image = null;
+            
+            setTimeout(() => {
+                galleryUploadMsg.textContent = "";
+            }, 3000);
+        } catch (error) {
+            console.error("Gallery Upload Error:", error);
+            galleryUploadMsg.textContent = "Failed to upload photo: " + error.message;
+            galleryUploadMsg.style.color = "var(--error)";
+        } finally {
+            galleryUploadBtn.disabled = false;
+            galleryUploadBtn.textContent = "Upload to Gallery";
+        }
+    });
+}
+
+// YouTube Video Upload Logic
+const videoUploadForm = document.getElementById('videoUploadForm');
+const videoTitle = document.getElementById('videoTitle');
+const videoUrlInput = document.getElementById('videoUrlInput');
+const videoPreviewContainer = document.getElementById('videoPreviewContainer');
+const videoThumbnailPreview = document.getElementById('videoThumbnailPreview');
+const videoUploadBtn = document.getElementById('videoUploadBtn');
+const videoUploadMsg = document.getElementById('videoUploadMsg');
+
+let currentVideoId = null;
+
+function extractYouTubeID(url) {
+    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+    const match = url.match(regExp);
+    return (match && match[2].length === 11) ? match[2] : null;
+}
+
+if (videoUrlInput) {
+    videoUrlInput.addEventListener('input', () => {
+        const url = videoUrlInput.value.trim();
+        const videoId = extractYouTubeID(url);
+        
+        if (videoId) {
+            currentVideoId = videoId;
+            const thumbnailUrl = `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
+            videoThumbnailPreview.src = thumbnailUrl;
+            videoPreviewContainer.style.display = 'block';
+        } else {
+            currentVideoId = null;
+            videoPreviewContainer.style.display = 'none';
+        }
+    });
+}
+
+if (videoUploadForm) {
+    videoUploadForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        if (!currentVideoId) {
+            videoUploadMsg.textContent = "Please enter a valid YouTube link.";
+            videoUploadMsg.style.color = "var(--error)";
+            return;
+        }
+        
+        const title = videoTitle.value.trim();
+        const date = document.getElementById('videoDate').value;
+        const category = document.getElementById('videoCategory').value;
+        const speaker = document.getElementById('videoSpeaker').value.trim();
+        const desc = document.getElementById('videoDesc').value.trim();
+        
+        if (!title) return;
+        
+        videoUploadBtn.disabled = true;
+        videoUploadBtn.textContent = "Adding...";
+        videoUploadMsg.textContent = "";
+        
+        try {
+            const thumbnailUrl = `https://img.youtube.com/vi/${currentVideoId}/hqdefault.jpg`;
+            await addDoc(collection(db, "videos"), {
+                title: title,
+                date: date,
+                category: category,
+                speaker: speaker,
+                description: desc,
+                videoId: currentVideoId,
+                thumbnail: thumbnailUrl,
+                uploadedBy: auth.currentUser ? auth.currentUser.uid : "admin",
+                createdAt: new Date().toISOString()
+            });
+            
+            videoUploadMsg.textContent = "Program added successfully!";
+            videoUploadMsg.style.color = "var(--success)";
+            videoUploadForm.reset();
+            videoPreviewContainer.style.display = 'none';
+            currentVideoId = null;
+            
+            setTimeout(() => {
+                videoUploadMsg.textContent = "";
+            }, 3000);
+        } catch (error) {
+            console.error("Video Upload Error:", error);
+            videoUploadMsg.textContent = "Failed to add program: " + error.message;
+            videoUploadMsg.style.color = "var(--error)";
+        } finally {
+            videoUploadBtn.disabled = false;
+            videoUploadBtn.textContent = "Add Video Program";
+        }
+    });
+}

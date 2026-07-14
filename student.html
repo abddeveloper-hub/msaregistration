@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://www.gstatic.com" crossorigin>
     <!-- Google Fonts: loaded as <link> (non-blocking) instead of CSS @import -->
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Inter:wght@400;500;600&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Inter:wght@400;500;600&family=Playfair+Display:wght@600;700&family=Aref+Ruqaa:wght@400;700&family=Amiri:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="mobile.css">
     <!-- PWA Support -->
@@ -17,8 +17,8 @@
     <meta name="theme-color" content="#0a0a0f">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <link rel="icon" type="image/jpeg" href="logo.jpg">
-    <link rel="apple-touch-icon" href="logo.jpg">
+    <link rel="icon" type="image/jpeg" href="logo.png">
+    <link rel="apple-touch-icon" href="logo.png">
     <script>
         (function() {
             const theme = localStorage.getItem("msaukkuda:theme") || "dark";
@@ -30,9 +30,21 @@
         })();
     </script>
     <link rel="manifest" href="./manifest.json">
-    <link rel="apple-touch-icon" href="./logo.jpg">
+    <link rel="apple-touch-icon" href="./logo.png">
 </head>
 <body>
+    <div id="appSplashScreen" class="app-splash-screen">
+        <div class="brand-lockup" style="display: flex; align-items: center; gap: 1rem; text-decoration: none; color: var(--text-main);">
+            <img src="logo.png" alt="MSA Ukkuda Logo" class="brand-logo-img">
+            <span style="display: flex; flex-direction: column; justify-content: center; text-align: left;">
+                <strong style="font-family: 'Cairo', sans-serif; letter-spacing: 0.08em; font-size: 1.5rem; line-height: 1; text-transform: uppercase; font-weight: 700;"><span class="arabic-brand-text" dir="rtl">محيي السنة درس</span></strong>
+                <span style="letter-spacing: 0.15em; font-size: 0.85rem; text-transform: uppercase; color: var(--text-dim); margin-top: 0.25rem;">Ukkuda Official Portal</span>
+            </span>
+        </div>
+    </div>
+    <div id="globalAnnouncementBanner" class="global-banner hidden">
+        <span id="globalAnnouncementText"></span>
+    </div>
     <div class="portal-layout">
         <!-- Mobile Top Bar -->
         <div class="mobile-top-bar" style="display:none;">
@@ -40,7 +52,7 @@
                 <span></span><span></span><span></span>
             </button>
             <div class="app-logo" style="margin:0;">
-                <img src="logo.jpg" alt="Logo" class="app-logo-img">
+                <img src="logo.png" alt="Logo" class="app-logo-img">
                 <span style="font-family: 'Cinzel', serif; font-size: 1.2rem;">MSA UKKUDA Portal</span>
             </div>
             <div style="width:40px;"></div> <!-- Spacer -->
@@ -52,7 +64,7 @@
         <aside class="sidebar" id="sidebarMenu">
             <div style="font-family: 'Amiri', serif; font-size: 2rem; color: var(--gold-base); text-align: center; margin-bottom: 1rem;">﷽</div>
             <div class="app-logo" style="justify-content: center; margin-bottom: 3rem;">
-                <img src="logo.jpg" alt="Logo" class="app-logo-img">
+                <img src="logo.png" alt="Logo" class="app-logo-img">
                 <span style="font-family: 'Cinzel', serif;">MSA UKKUDA Portal</span>
             </div>
             
@@ -83,9 +95,9 @@
                     <!-- Injected via JS -->
                 </div>
 
-                <div id="studentsLoadingMsg" class="status-banner" style="margin-top: 2rem;">
-                    <h3>Loading students...</h3>
-                    <p>Your registered student applications will appear here.</p>
+                <div id="studentsLoadingMsg" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; margin-top: 2rem;">
+                    <div class="form-section skeleton" style="height: 120px; border-radius: 12px;"></div>
+                    <div class="form-section skeleton" style="height: 120px; border-radius: 12px;"></div>
                 </div>
 
                 <div id="noStudentsMsg" class="status-banner hidden" style="margin-top: 2rem;">
@@ -103,9 +115,16 @@
                 </div>
 
                 <form id="registrationForm">
-                    <!-- Personal Info -->
-                    <div class="form-section">
-                        <h3>Personal Information</h3>
+                    <div class="wizard-nav" id="wizardNav">
+                        <div class="wizard-step-indicator active" id="indicator1">1</div>
+                        <div class="wizard-step-indicator" id="indicator2">2</div>
+                        <div class="wizard-step-indicator" id="indicator3">3</div>
+                    </div>
+
+                    <!-- STEP 1: Personal Info & Family -->
+                    <div class="wizard-step active" id="wizardStep1">
+                        <div class="form-section">
+                            <h3>Personal Information</h3>
                         <div class="grid-2">
                             <div class="input-field"><label class="label">Full Name of Student</label><input type="text" id="stuName" class="input" required></div>
                             <div class="input-field"><label class="label">Student Identifier (e.g. Nickname)</label><input type="text" id="stuUsername" class="input" required placeholder="To help you identify this student"></div>
@@ -147,8 +166,16 @@
                     </div>
 
                     <!-- Education Details -->
-                    <div class="form-section">
-                        <h3>Educational Background</h3>
+                        <div class="wizard-actions">
+                            <button type="button" class="btn btn-ghost" onclick="showAccountDashboard()">Cancel</button>
+                            <button type="button" class="btn btn-primary" onclick="nextWizardStep(2)">Next Step &rarr;</button>
+                        </div>
+                    </div>
+
+                    <!-- STEP 2: Education Details -->
+                    <div class="wizard-step" id="wizardStep2">
+                        <div class="form-section">
+                            <h3>Educational Background</h3>
                         <div class="input-field" style="margin-bottom: 2rem; border-bottom: 1px solid var(--border); padding-bottom: 1rem;">
                             <label class="label">Dars Education</label>
                             <select id="stuDarsType" class="input" style="margin-bottom: 1rem;">
@@ -176,8 +203,16 @@
                     </div>
 
                     <!-- Institutional Details -->
-                    <div class="form-section">
-                        <h3>Enrollment Preferences</h3>
+                        <div class="wizard-actions">
+                            <button type="button" class="btn btn-ghost" onclick="prevWizardStep(1)">&larr; Previous</button>
+                            <button type="button" class="btn btn-primary" onclick="nextWizardStep(3)">Next Step &rarr;</button>
+                        </div>
+                    </div>
+
+                    <!-- STEP 3: Institutional Details & Submit -->
+                    <div class="wizard-step" id="wizardStep3">
+                        <div class="form-section">
+                            <h3>Enrollment Preferences</h3>
                         <div class="grid-2">
                             <div class="input-field">
                                 <label class="label">Select Off-Campus (Institution)</label>
@@ -204,8 +239,11 @@
                         </div>
                     </div>
 
-                    <button type="submit" id="submitRegBtn" class="btn btn-main" style="width: 100%;">Submit Registration</button>
-                    <button type="button" class="btn btn-ghost" onclick="showAccountDashboard()" style="width: 100%; margin-top: 1rem;">Cancel</button>
+                        <div class="wizard-actions">
+                            <button type="button" class="btn btn-ghost" onclick="prevWizardStep(2)">&larr; Previous</button>
+                            <button type="submit" id="submitRegBtn" class="btn btn-main">Submit Registration</button>
+                        </div>
+                    </div>
                 </form>
             </div>
 
@@ -246,7 +284,7 @@
                     <!-- ID Card -->
                     <div class="id-card" style="margin-bottom: 3rem;">
                         <div class="id-header">
-                            <h4>Muhyissunnah Dars Ukkuda</h4>
+                            <h4><span class="arabic-brand-text" dir="rtl">محيي السنة درس عكودا</span></h4>
                             <span style="font-size: 0.7rem; color: var(--text-dim); text-transform: uppercase;">Official Student ID</span>
                         </div>
                         <img id="idPhotoDisplay" src="" alt="Student Photo" class="id-photo">

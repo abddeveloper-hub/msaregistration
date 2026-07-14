@@ -14,7 +14,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <!-- Apple-esque Typography: Playfair for massive headers, Inter for crisp UI -->
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Aref+Ruqaa:wght@400;700&family=Amiri:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
     
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="landing.css">
@@ -25,8 +25,8 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js" defer></script>
-    <link rel="icon" type="image/jpeg" href="logo.jpg">
-    <link rel="apple-touch-icon" href="logo.jpg">
+    <link rel="icon" type="image/jpeg" href="logo.png">
+    <link rel="apple-touch-icon" href="logo.png">
     <link rel="manifest" href="manifest.json">
     <script>
         (function() {
@@ -53,13 +53,16 @@
     </script>
 </head>
 <body class="landing-page">
+    <div id="globalAnnouncementBanner" class="global-banner hidden">
+        <span id="globalAnnouncementText"></span>
+    </div>
 
     <header class="nav-wrapper">
         <nav class="navbar" aria-label="Primary navigation">
             <a class="brand-lockup" href="index.html" aria-label="Muhyissunnah Dars Ukkuda home">
-                <img src="logo.jpg" alt="MSA Ukkuda Logo" class="brand-logo-img">
+                <img src="logo.png" alt="MSA Ukkuda Logo" class="brand-logo-img">
                 <span class="brand-text">
-                    <strong style="font-family: 'Cairo', sans-serif; letter-spacing: 0.08em; font-size: 1.25rem; line-height: 1; text-transform: uppercase; font-weight: 700;">Muhyissunnah Dars</strong>
+                    <strong style="font-family: 'Cairo', sans-serif; letter-spacing: 0.08em; font-size: 1.25rem; line-height: 1; text-transform: uppercase; font-weight: 700;"><span class="arabic-brand-text" dir="rtl">محيي السنة درس</span></strong>
                     <span style="letter-spacing: 0.15em;">Ukkuda Official Portal</span>
                 </span>
             </a>
@@ -71,10 +74,12 @@
                 <button class="btn btn-ghost icon-btn" id="loginMenuToggleBtn" type="button" style="font-size: 1.5rem; padding: 0.5rem; line-height: 1;">⋮</button>
                 
                 <div id="loginDropdownMenu" class="hidden" style="position: absolute; top: calc(100% + 0.5rem); right: 0; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); box-shadow: 0 10px 25px rgba(0,0,0,0.1); display: flex; flex-direction: column; min-width: 200px; z-index: 100; overflow: hidden;">
+                    <a href="academic.html" class="btn btn-ghost" style="border-radius: 0; border: none; border-bottom: 1px solid var(--border); justify-content: flex-start; padding: 1rem; text-decoration: none;">📚 Academic Programs</a>
+                    <a href="events.html" class="btn btn-ghost" style="border-radius: 0; border: none; border-bottom: 1px solid var(--border); justify-content: flex-start; padding: 1rem; text-decoration: none;">📅 News & Events</a>
                     <a href="gallery.html" class="btn btn-ghost" style="border-radius: 0; border: none; border-bottom: 1px solid var(--border); justify-content: flex-start; padding: 1rem; text-decoration: none;">🖼️ Gallery</a>
-                    <button id="dropStudentBtn" class="btn btn-ghost" style="border-radius: 0; border: none; border-bottom: 1px solid var(--border); justify-content: flex-start; padding: 1rem;">Student Login</button>
-                    <button id="dropFacultyBtn" class="btn btn-ghost" style="border-radius: 0; border: none; border-bottom: 1px solid var(--border); justify-content: flex-start; padding: 1rem;">Faculty Login</button>
-                    <button id="navAdminBtn" class="btn btn-ghost" style="border-radius: 0; border: none; justify-content: flex-start; padding: 1rem;">Admin Login</button>
+                    <a href="videos.html" class="btn btn-ghost" style="border-radius: 0; border: none; border-bottom: 1px solid var(--border); justify-content: flex-start; padding: 1rem; text-decoration: none;">▶️ Videos</a>
+                    <a href="login.html" class="btn btn-ghost" style="border-radius: 0; border: none; border-bottom: 1px solid var(--border); justify-content: flex-start; padding: 1rem; text-decoration: none;">🔑 Login</a>
+                    <a href="login.html?signup=true" class="btn btn-ghost" style="border-radius: 0; border: none; justify-content: flex-start; padding: 1rem; text-decoration: none;">📝 New Registration</a>
                 </div>
                 
                 <button id="navLogoutBtn" class="btn btn-ghost btn-sm hidden" type="button">Log Out</button>
@@ -120,7 +125,7 @@
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 4rem;">
                     <div class="animate-on-scroll slide-up delay-100">
                         <p style="color: var(--text-dim); font-size: 1.15rem; line-height: 1.8; margin-bottom: 2rem;">
-                            For over a decade, Muhyissunnah Dars Ukkuda has stood at the intersection of rigorous Islamic scholarship and modern academic infrastructure. We have proudly graduated thousands of students who now serve as community leaders, esteemed educators, and global professionals.
+                            For over a decade, <span class="arabic-brand-text" dir="rtl">محيي السنة درس عكودا</span> has stood at the intersection of rigorous Islamic scholarship and modern academic infrastructure. We have proudly graduated thousands of students who now serve as community leaders, esteemed educators, and global professionals.
                         </p>
                         <p style="color: var(--text-dim); font-size: 1.15rem; line-height: 1.8;">
                             Our uncompromising commitment to holistic education has earned us recognition as a premier center of learning. By maintaining a highly selective faculty verification standard, we ensure that every student is guided by the most qualified scholars in their respective fields.
@@ -194,68 +199,9 @@
             </div>
         </section>
 
-        <!-- Academic Programs Section -->
-        <section id="academicPrograms" style="padding: 8rem 2rem; background: var(--surface);">
-            <div style="max-width: 1200px; margin: 0 auto;">
-                <div class="section-header">
-                    <p style="color: var(--primary); font-weight: 700; text-transform: uppercase; letter-spacing: 0.15em; font-size: 0.85rem; margin-bottom: 0.75rem;" class="animate-on-scroll slide-from-left">Our Curriculum</p>
-                    <h2 class="animate-on-scroll slide-from-right" style="font-family: var(--font-display); font-size: clamp(2.5rem, 5vw, 4rem); font-weight: 700; color: var(--text-main); margin-bottom: 3rem;">Academic Programs</h2>
-                </div>
-                <div class="cards-grid">
-                    <div class="portal-card animate-on-scroll slide-up delay-100">
-                        <h3 style="font-size: 1.5rem; color: var(--text-main); margin-bottom: 1rem; font-family: var(--font-display);">Islamic Theology</h3>
-                        <p style="color: var(--text-dim); margin-bottom: 1.5rem;">Comprehensive study of Aqeedah, Fiqh, and Tafseer, preparing students for deep spiritual and community leadership.</p>
-                        <a href="#" style="color: var(--primary); font-weight: 600; text-decoration: none; margin-top: auto;">Explore Syllabus &rarr;</a>
-                    </div>
-                    <div class="portal-card animate-on-scroll slide-up delay-200">
-                        <h3 style="font-size: 1.5rem; color: var(--text-main); margin-bottom: 1rem; font-family: var(--font-display);">Arabic Linguistics</h3>
-                        <p style="color: var(--text-dim); margin-bottom: 1.5rem;">Mastery of classical Arabic grammar, literature, and rhetoric to access original scholarly texts.</p>
-                        <a href="#" style="color: var(--primary); font-weight: 600; text-decoration: none; margin-top: auto;">Explore Syllabus &rarr;</a>
-                    </div>
-                    <div class="portal-card animate-on-scroll slide-up delay-300">
-                        <h3 style="font-size: 1.5rem; color: var(--text-main); margin-bottom: 1rem; font-family: var(--font-display);">Modern Sciences integration</h3>
-                        <p style="color: var(--text-dim); margin-bottom: 1.5rem;">Bridging traditional scholarship with contemporary academic disciplines for well-rounded graduates.</p>
-                        <a href="#" style="color: var(--primary); font-weight: 600; text-decoration: none; margin-top: auto;">Explore Syllabus &rarr;</a>
-                    </div>
-                </div>
-            </div>
-        </section>
 
-        <!-- Upcoming Events Section -->
-        <section id="eventsSection" style="padding: 8rem 2rem; background: var(--bg-desert);">
-            <div style="max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1fr 2fr; gap: 4rem; align-items: center;">
-                <div class="animate-on-scroll slide-from-left">
-                    <p style="color: var(--primary); font-weight: 700; text-transform: uppercase; letter-spacing: 0.15em; font-size: 0.85rem; margin-bottom: 1rem;">Stay Updated</p>
-                    <h2 style="font-family: var(--font-display); font-size: clamp(2rem, 4vw, 3.5rem); font-weight: 700; color: var(--text-main); line-height: 1.1; margin-bottom: 1.5rem;">News & Events</h2>
-                    <p style="color: var(--text-dim); font-size: 1.1rem; margin-bottom: 2rem;">Join us for upcoming seminars, national-level competitions, and spiritual gatherings.</p>
-                    <button class="btn btn-ghost" style="border-radius: 50px;">View Full Calendar</button>
-                </div>
-                <div class="animate-on-scroll slide-from-right" style="display: flex; flex-direction: column; gap: 1.5rem;">
-                    <!-- Event Item -->
-                    <div style="background: var(--surface); padding: 2rem; border-radius: 20px; border: 1px solid var(--border); display: flex; gap: 2rem; align-items: center; box-shadow: var(--shadow-sm);">
-                        <div style="background: var(--primary-glow); color: var(--primary); padding: 1rem; border-radius: 16px; text-align: center; min-width: 90px;">
-                            <strong style="display: block; font-size: 1.8rem; line-height: 1;">15</strong>
-                            <span style="font-size: 0.85rem; text-transform: uppercase; font-weight: 700;">Aug</span>
-                        </div>
-                        <div>
-                            <h4 style="font-size: 1.25rem; color: var(--text-main); margin-bottom: 0.5rem;">Annual SSF Convention</h4>
-                            <p style="color: var(--text-dim); font-size: 0.95rem;">National level gathering for students and scholars featuring keynote speakers.</p>
-                        </div>
-                    </div>
-                    <!-- Event Item -->
-                    <div style="background: var(--surface); padding: 2rem; border-radius: 20px; border: 1px solid var(--border); display: flex; gap: 2rem; align-items: center; box-shadow: var(--shadow-sm);">
-                        <div style="background: var(--primary-glow); color: var(--primary); padding: 1rem; border-radius: 16px; text-align: center; min-width: 90px;">
-                            <strong style="display: block; font-size: 1.8rem; line-height: 1;">22</strong>
-                            <span style="font-size: 0.85rem; text-transform: uppercase; font-weight: 700;">Sep</span>
-                        </div>
-                        <div>
-                            <h4 style="font-size: 1.25rem; color: var(--text-main); margin-bottom: 0.5rem;">Thartheel Finals</h4>
-                            <p style="color: var(--text-dim); font-size: 0.95rem;">Grand finale of the Quranic recitation competition held at HQ.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
+
+
 
         <!-- Testimonials Section -->
         <section id="testimonialsSection" style="padding: 8rem 2rem; background: var(--surface); overflow: hidden;">
@@ -266,7 +212,7 @@
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2.5rem;">
                     <div class="animate-on-scroll slide-up delay-200" style="background: var(--bg-desert); padding: 3rem 2rem; border-radius: 24px; border: 1px solid var(--border); position: relative;">
                         <span style="position: absolute; top: 1rem; left: 1.5rem; font-size: 4rem; color: var(--border-strong); font-family: var(--font-display); line-height: 1; opacity: 0.5;">"</span>
-                        <p style="color: var(--text-dim); font-style: italic; font-size: 1.1rem; line-height: 1.8; margin-bottom: 2rem; position: relative; z-index: 1;">The rigorous curriculum and devoted faculty at Muhyissunnah completely transformed my approach to Islamic studies. The digital portal made my academic journey incredibly smooth.</p>
+                        <p style="color: var(--text-dim); font-style: italic; font-size: 1.1rem; line-height: 1.8; margin-bottom: 2rem; position: relative; z-index: 1;">The rigorous curriculum and devoted faculty at <span class="arabic-brand-text" dir="rtl">محيي السنة</span> completely transformed my approach to Islamic studies. The digital portal made my academic journey incredibly smooth.</p>
                         <div style="display: flex; align-items: center; justify-content: center; gap: 1rem;">
                             <div style="width: 48px; height: 48px; border-radius: 50%; background: var(--primary-glow); display: flex; align-items: center; justify-content: center; color: var(--primary); font-weight: 700;">SA</div>
                             <div style="text-align: left;">
@@ -380,7 +326,7 @@
     <footer class="ultra-footer">
         <div class="footer-grid">
             <div class="footer-brand animate-on-scroll slide-from-left">
-                <h4>Muhyissunnah Dars</h4>
+                <h4><span class="arabic-brand-text" dir="rtl">محيي السنة درس</span></h4>
                 <p>Delivering a robust, pristine digital infrastructure for academic excellence. Optimized for seamless institutional management and absolute clarity.</p>
             </div>
             <div class="footer-col animate-on-scroll slide-up delay-100">
@@ -412,7 +358,7 @@
             </div>
         </div>
         <div class="footer-bottom animate-on-scroll slide-up delay-400">
-            <span>&copy; 2026 Muhyissunnah Dars Ukkuda. All rights reserved.</span>
+            <span>&copy; 2026 <span class="arabic-brand-text" dir="rtl">محيي السنة درس عكودا</span>. All rights reserved.</span>
             <div style="display: flex; gap: 1rem;">
                 <span style="display: flex; align-items: center; gap: 0.5rem;"><span style="display: inline-block; width: 8px; height: 8px; background: var(--success); border-radius: 50%;"></span> Systems Operational</span>
             </div>
@@ -421,26 +367,22 @@
 
     <!-- Mobile nav omitted on ultra-premium desktop view, but kept for JS compatibility if needed -->
     <nav class="mobile-entry-bar" aria-label="Mobile portal shortcuts">
-        <a id="mobileStudentLink" class="mobile-entry-item" href="student.html">
-            <span>ST</span>
-            <strong>Student</strong>
+        <a class="mobile-entry-item" href="index.html">
+            <span style="background: var(--surface-raised); font-size: 1rem;">🏠</span>
+            <strong>Home</strong>
         </a>
-        <a id="mobileFacultyLink" class="mobile-entry-item" href="teacher.html">
-            <span>FC</span>
-            <strong>Faculty</strong>
+        <a class="mobile-entry-item" href="academic.html">
+            <span style="background: rgba(10, 132, 255, 0.1); color: #0a84ff; font-size: 1rem;">📚</span>
+            <strong>Programs</strong>
         </a>
-        <a id="mobileAdminLink" class="mobile-entry-item" href="admin.html">
-            <span>AD</span>
-            <strong>Admin</strong>
+        <a class="mobile-entry-item" href="events.html">
+            <span style="background: rgba(255, 159, 10, 0.1); color: #ff9f0a; font-size: 1rem;">📅</span>
+            <strong>Events</strong>
         </a>
-        <a class="mobile-entry-item" href="gallery.html">
-            <span style="background: var(--primary-glow); font-size: 1rem;">🖼️</span>
-            <strong>Gallery</strong>
+        <a class="mobile-entry-item highlight" href="login.html" style="background: var(--primary); color: white;">
+            <span style="background: rgba(255,255,255,0.2); font-size: 1rem;">🔒</span>
+            <strong>Login</strong>
         </a>
-        <button id="mobileInstallBtn" class="mobile-entry-item" type="button" style="background:none; border:none; color:inherit;">
-            <span style="background: var(--surface-raised); font-size: 1rem;">📥</span>
-            <strong>Download</strong>
-        </button>
     </nav>
 
     <!-- PWA Installation Instructions Modal -->
@@ -474,65 +416,7 @@
         </div>
     </div>
 
-    <!-- Auth Modal -->
-    <div id="authModal" class="auth-overlay" aria-hidden="true">
-        <div class="auth-modal" role="dialog" aria-modal="true" aria-labelledby="authTitle">
-            <div class="auth-modal-header">
-                <div>
-                    <h2 id="authTitle" style="font-family: var(--font-display);">Welcome Back</h2>
-                    <p id="authSubtitle" style="color: var(--text-dim);">Select your role to continue.</p>
-                </div>
-                <button id="closeAuthBtn" class="close-modal" type="button" aria-label="Close authentication dialog">X</button>
-            </div>
 
-            <div id="roleSelector" class="tab-nav" role="tablist" aria-label="Account role">
-                <button id="roleStudent" class="tab active" type="button" data-role="student">Student</button>
-                <button id="roleFaculty" class="tab" type="button" data-role="faculty">Faculty</button>
-            </div>
-
-            <div class="tab-nav" role="tablist" aria-label="Authentication mode">
-                <button id="tabSignIn" class="tab active" type="button">Sign In</button>
-                <button id="tabSignUp" class="tab" type="button">Create Account</button>
-            </div>
-
-            <form id="authForm" novalidate>
-                <div id="nameField" class="input-field hidden">
-                    <label class="label" for="authName">Full Name</label>
-                    <input type="text" id="authName" class="input" autocomplete="name" placeholder="Your full legal name">
-                </div>
-
-                <div class="input-field">
-                    <label class="label" for="authEmail">Email Address</label>
-                    <input type="email" id="authEmail" class="input" autocomplete="email" required placeholder="name@institution.edu">
-                </div>
-
-                <div class="input-field">
-                    <label class="label" for="authPassword">Password</label>
-                    <div class="password-row" style="display: flex; position: relative;">
-                        <input type="password" id="authPassword" class="input" style="width: 100%; padding-right: 60px;" autocomplete="current-password" required placeholder="Enter secure password">
-                        <button id="passwordToggleBtn" class="password-toggle" type="button" aria-label="Show password" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; font-size: 0.85rem; color: var(--primary); cursor: pointer; font-weight: 600;">Show</button>
-                    </div>
-                    <div style="display: flex; justify-content: flex-end; margin-top: 0.5rem;">
-                        <a href="#" id="forgotPasswordLink" style="font-size: 0.85rem; color: var(--primary); text-decoration: none; font-weight: 500;">Forgot Password?</a>
-                    </div>
-                </div>
-                <!-- Password Strength Meter -->
-                <div id="passwordStrengthContainer" class="hidden" style="margin-top: 0.5rem;">
-                    <div style="display: flex; gap: 4px; height: 4px; border-radius: 2px; overflow: hidden;">
-                        <div id="strengthBar1" style="flex: 1; background: var(--border-strong); transition: background 0.3s;"></div>
-                        <div id="strengthBar2" style="flex: 1; background: var(--border-strong); transition: background 0.3s;"></div>
-                        <div id="strengthBar3" style="flex: 1; background: var(--border-strong); transition: background 0.3s;"></div>
-                        <div id="strengthBar4" style="flex: 1; background: var(--border-strong); transition: background 0.3s;"></div>
-                    </div>
-                    <p id="strengthText" style="font-size: 0.75rem; color: var(--text-dim); margin-top: 0.25rem; text-align: right;">Weak</p>
-                </div>
-                <div id="passwordStrength" class="password-strength hidden" data-score="0" aria-hidden="true"><span></span></div>
-
-                <p id="authError" class="auth-error hidden"></p>
-                <button type="submit" id="authSubmitBtn" class="btn btn-main btn-block" style="margin-top: 1.5rem; padding: 1rem; border-radius: 12px;">Authenticate</button>
-            </form>
-        </div>
-    </div>
 
     <script type="module" src="app.js?v=4"></script>
 
@@ -577,3 +461,5 @@
     </script>
 </body>
 </html>
+
+

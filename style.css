@@ -74,6 +74,84 @@
     max-height: 220px;
 }
 
+/* ==========================================
+   GLOBAL BANNER & SKELETON LOADERS
+   ========================================== */
+.app-splash-screen {
+    position: fixed;
+    inset: 0;
+    background: var(--bg);
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.4s ease, visibility 0.4s ease;
+}
+
+.app-splash-screen.hidden {
+    opacity: 0;
+    visibility: hidden;
+}
+
+.app-splash-screen .brand-lockup {
+    animation: pulseLogo 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulseLogo {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(0.95); opacity: 0.8; }
+}
+
+.global-banner {
+    background: linear-gradient(90deg, var(--primary), var(--secondary));
+    color: #fff;
+    text-align: center;
+    padding: 0.75rem 1rem;
+    font-weight: 600;
+    font-size: 0.9rem;
+    z-index: 2000;
+    position: relative;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.global-banner.hidden {
+    display: none !important;
+}
+
+.skeleton {
+    position: relative;
+    overflow: hidden;
+    background-color: var(--glass-heavy) !important;
+    border-color: transparent !important;
+    color: transparent !important;
+    pointer-events: none;
+}
+
+.skeleton::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    transform: translateX(-100%);
+    background-image: linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 0) 0,
+        rgba(255, 255, 255, 0.05) 20%,
+        rgba(255, 255, 255, 0.1) 60%,
+        rgba(255, 255, 255, 0)
+    );
+    animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+    100% {
+        transform: translateX(100%);
+    }
+}
+
 :root {
     color-scheme: light;
     --font-ui: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
@@ -358,23 +436,24 @@ img {
 }
 
 .app-logo-img {
-    width: 40px;
-    height: 40px;
+    width: 44px;
+    height: 44px;
     object-fit: cover;
-    border-radius: 50%;
+    /* zoom in by 20% to hide the black edges */
+    transform: scale(1.25);
+    clip-path: circle(40%);
     flex-shrink: 0;
-    transform: scale(1.8);
-    clip-path: circle(27.5%);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
 
 .brand-logo-img {
     width: 56px;
     height: 56px;
     object-fit: cover;
-    border-radius: 50%;
+    transform: scale(1.25);
+    clip-path: circle(40%);
     flex-shrink: 0;
-    transform: scale(1.8);
-    clip-path: circle(27.5%);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
 
 .brand-mark {
@@ -1784,6 +1863,7 @@ table th {
     .admin-main,
     .main-content {
         padding: 1.1rem;
+        padding-bottom: 6rem; /* Prevent overlap with mobile entry bar */
     }
 
     .mobile-bottom-nav,
@@ -1798,8 +1878,8 @@ table th {
         inset-inline: 0;
         inset-block-end: 0;
         z-index: 1600;
-        display: grid;
-        grid-template-columns: repeat(5, minmax(0, 1fr));
+        display: flex;
+        justify-content: space-around;
         gap: 0.3rem;
         padding: 0.5rem 0.5rem calc(0.5rem + env(safe-area-inset-bottom));
         border-top: 1px solid var(--border);
@@ -1809,6 +1889,7 @@ table th {
     }
 
     .mobile-entry-item {
+        flex: 1;
         min-height: 54px;
         border: 1px solid var(--border);
         border-radius: var(--radius);
@@ -1816,6 +1897,7 @@ table th {
         display: grid;
         grid-template-columns: auto 1fr;
         align-items: center;
+        justify-content: center;
         gap: 0.35rem;
         padding: 0.4rem 0.35rem;
         font-size: 0.72rem;
@@ -2446,6 +2528,65 @@ body, .portal-card, .glass-card, .nav-wrapper, .modal-content, .input, .btn, .su
 .analytics-dashboard { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 2rem; }
 @media (max-width: 900px) { .analytics-dashboard { grid-template-columns: 1fr; } }
 
+/* Wizard CSS */
+.wizard-nav {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 2rem;
+    position: relative;
+    padding: 0 1rem;
+}
+.wizard-nav::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 10%;
+    right: 10%;
+    height: 2px;
+    background: var(--border);
+    z-index: 1;
+    transform: translateY(-50%);
+}
+.wizard-step-indicator {
+    position: relative;
+    z-index: 2;
+    background: var(--surface);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    border: 2px solid var(--border);
+    color: var(--text-dim);
+    transition: all 0.3s ease;
+}
+.wizard-step-indicator.active {
+    border-color: var(--gold-base);
+    color: var(--gold-base);
+    box-shadow: 0 0 15px rgba(212, 175, 55, 0.3);
+}
+.wizard-step-indicator.completed {
+    background: var(--gold-base);
+    color: var(--bg);
+    border-color: var(--gold-base);
+}
+.wizard-step {
+    display: none;
+    animation: fadeUp 0.3s ease;
+}
+.wizard-step.active {
+    display: block;
+}
+.wizard-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 2rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border);
+}
+
 /* Hide install button when already running as a PWA app */
 @media all and (display-mode: standalone) {
     #installAppBtn, .pwa-install-btn, .install-app-btn {
@@ -2497,4 +2638,15 @@ body, .portal-card, .glass-card, .nav-wrapper, .modal-content, .input, .btn, .su
     transform: translate(-50%, -50%) scale(2.5);
     opacity: 1;
     transition: transform 0.4s, opacity 0.4s;
+}
+
+/* Arabic Calligraphy Style for Brand Text */
+.arabic-brand-text {
+    font-family: 'Aref Ruqaa', 'Amiri', 'Cairo', serif !important;
+    font-size: 1.35em; /* Slightly larger to match Latin proportions */
+    font-weight: 700;
+    line-height: 1;
+    display: inline-block;
+    vertical-align: baseline;
+    letter-spacing: normal !important;
 }

@@ -10,6 +10,19 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 enableMultiTabIndexedDbPersistence(db).catch((err) => console.warn("Offline persistence error:", err.code));
 
+const banner = document.getElementById('globalAnnouncementBanner');
+const textEl = document.getElementById('globalAnnouncementText');
+if (banner && textEl) {
+    onSnapshot(doc(db, "settings", "announcements"), (docSnap) => {
+        if (docSnap.exists() && docSnap.data().active && docSnap.data().text) {
+            textEl.innerHTML = docSnap.data().text;
+            banner.classList.remove('hidden');
+        } else {
+            banner.classList.add('hidden');
+        }
+    });
+}
+
 // DOM Elements
 const logoutBtn = document.getElementById('logoutBtn');
 const submitRegBtn = document.getElementById('submitRegBtn');
@@ -65,11 +78,71 @@ function setInputValue(id, value) {
     if (input && value !== undefined && value !== null) input.value = value;
 }
 
+// Wizard Logic
+window.nextWizardStep = function(step) {
+    // Basic validation before moving
+    if (step === 2) {
+        const requiredIds = ['stuName', 'stuUsername', 'stuDob', 'stuBlood', 'stuPhone', 'stuAadhar', 'stuFatherName', 'stuFatherPhone', 'stuAddress'];
+        for (let id of requiredIds) {
+            const el = document.getElementById(id);
+            if (el && !el.value) {
+                alert("Please fill all required fields in this step.");
+                el.focus();
+                return;
+            }
+        }
+    } else if (step === 3) {
+        const stuSchoolLevel = document.getElementById('stuSchoolLevel');
+        if (stuSchoolLevel && !stuSchoolLevel.value) {
+            alert("Please select a schooling level.");
+            stuSchoolLevel.focus();
+            return;
+        }
+    }
+
+    document.querySelectorAll('.wizard-step').forEach(s => s.classList.remove('active'));
+    document.getElementById('wizardStep' + step).classList.add('active');
+    
+    document.querySelectorAll('.wizard-step-indicator').forEach((ind, index) => {
+        if (index + 1 < step) {
+            ind.classList.add('completed');
+            ind.classList.remove('active');
+        } else if (index + 1 === step) {
+            ind.classList.add('active');
+            ind.classList.remove('completed');
+        } else {
+            ind.classList.remove('active');
+            ind.classList.remove('completed');
+        }
+    });
+};
+
+window.prevWizardStep = function(step) {
+    document.querySelectorAll('.wizard-step').forEach(s => s.classList.remove('active'));
+    document.getElementById('wizardStep' + step).classList.add('active');
+    
+    document.querySelectorAll('.wizard-step-indicator').forEach((ind, index) => {
+        if (index + 1 < step) {
+            ind.classList.add('completed');
+            ind.classList.remove('active');
+        } else if (index + 1 === step) {
+            ind.classList.add('active');
+            ind.classList.remove('completed');
+        } else {
+            ind.classList.remove('active');
+            ind.classList.remove('completed');
+        }
+    });
+};
+
 // Auth State
 let parentDocUnsub = null;
 let studentsSnapUnsub = null;
 
 onAuthStateChanged(auth, async (user) => {
+    const splash = document.getElementById("appSplashScreen");
+    if (splash) splash.classList.add("hidden");
+
     // Cleanup previous listeners
     if (parentDocUnsub) { parentDocUnsub(); parentDocUnsub = null; }
     if (studentsSnapUnsub) { studentsSnapUnsub(); studentsSnapUnsub = null; }
@@ -187,6 +260,7 @@ window.showNewStudentForm = () => {
     syncNav('navNewStudent');
     document.getElementById('registrationForm').reset();
     base64Photo = null;
+    if (window.nextWizardStep) window.nextWizardStep(1);
 };
 
 // Nav Click Handlers

@@ -91,6 +91,11 @@ html, body {
         border-radius: 2rem !important;
     }
 
+    /* Hide the 3-dots login menu toggle on mobile since bottom bar has the options */
+    #loginMenuToggleBtn, #loginDropdownMenu {
+        display: none !important;
+    }
+
     /* Registration app container */
     .app-container {
         flex-direction: column;
@@ -108,7 +113,7 @@ html, body {
     }
 
     .app-content {
-        padding: 2rem 1.25rem 4rem;
+        padding: 2rem 1.25rem 6rem;
         max-height: none;
     }
 

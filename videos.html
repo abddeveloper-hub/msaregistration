@@ -4,10 +4,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Gallery | Muhyissunnah Dars Ukkuda</title>
+    <title>Programs | Muhyissunnah Dars Ukkuda</title>
     <meta name="description"
         content="Browse photos from campus life, events, convocations, and academic activities at Muhyissunnah Dars Ukkuda.">
-    <meta property="og:title" content="Gallery | Muhyissunnah Dars Ukkuda">
+    <meta property="og:title" content="Programs | Muhyissunnah Dars Ukkuda">
     <meta property="og:description" content="Campus life, events, and memories from MSA Ukkuda.">
     <meta property="og:type" content="website">
 
@@ -50,7 +50,7 @@
     </script>
 
     <style>
-        body.gallery-page {
+        body.Programs-page {
             background: var(--bg);
             color: var(--text-main);
             font-family: var(--font-ui);
@@ -58,19 +58,19 @@
         }
 
         /* Page Hero */
-        .gallery-hero {
+        .Programs-hero {
             padding: 7rem 2rem 4rem;
             text-align: center;
             background: radial-gradient(circle at center top, rgba(0, 102, 204, 0.04) 0%, transparent 60%);
             border-bottom: 1px solid var(--border);
         }
 
-        .gallery-hero .pill-badge {
+        .Programs-hero .pill-badge {
             display: inline-block;
             margin-bottom: 1.5rem;
         }
 
-        .gallery-hero h1 {
+        .Programs-hero h1 {
             font-family: var(--font-display);
             font-size: clamp(2.5rem, 6vw, 5rem);
             font-weight: 700;
@@ -79,7 +79,7 @@
             margin-bottom: 1rem;
         }
 
-        .gallery-hero p {
+        .Programs-hero p {
             color: var(--text-dim);
             font-size: 1.15rem;
             max-width: 560px;
@@ -88,7 +88,7 @@
         }
 
         /* Filter Bar */
-        .gallery-filters {
+        .Programs-filters {
             display: flex;
             gap: 0.75rem;
             justify-content: center;
@@ -129,19 +129,19 @@
             box-shadow: 0 4px 14px rgba(0, 102, 204, 0.3);
         }
 
-        /* Masonry Gallery Grid */
-        .gallery-main {
+        /* Masonry Programs Grid */
+        .videos-main {
             max-width: 1300px;
             margin: 0 auto;
             padding: 3rem 2rem 6rem;
         }
 
-        .gallery-grid {
+        .videos-grid {
             columns: 3 300px;
             gap: 1rem;
         }
 
-        .gallery-item {
+        .videos-item {
             break-inside: avoid;
             margin-bottom: 1rem;
             border-radius: 16px;
@@ -155,23 +155,23 @@
             animation: fadeUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
         }
 
-        .gallery-item:hover {
+        .videos-item:hover {
             transform: translateY(-4px) scale(1.01);
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
         }
 
-        .gallery-item img {
+        .videos-item img {
             width: 100%;
             height: auto;
             display: block;
             transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        .gallery-item:hover img {
+        .videos-item:hover img {
             transform: scale(1.04);
         }
 
-        .gallery-item-overlay {
+        .videos-item-overlay {
             position: absolute;
             inset: 0;
             background: linear-gradient(to top, rgba(0, 0, 0, 0.65) 0%, rgba(0, 0, 0, 0) 50%);
@@ -182,17 +182,17 @@
             transition: opacity 0.3s ease;
         }
 
-        .gallery-item:hover .gallery-item-overlay {
+        .videos-item:hover .videos-item-overlay {
             opacity: 1;
         }
 
-        .gallery-item-label {
+        .videos-item-label {
             color: #fff;
             font-weight: 600;
             font-size: 0.95rem;
         }
 
-        .gallery-item-category-tag {
+        .videos-item-category-tag {
             display: inline-block;
             background: rgba(255, 255, 255, 0.2);
             border: 1px solid rgba(255, 255, 255, 0.3);
@@ -207,7 +207,7 @@
         }
 
         /* Placeholder card */
-        .gallery-placeholder {
+        .Programs-placeholder {
             width: 100%;
             display: flex;
             flex-direction: column;
@@ -219,25 +219,25 @@
             font-weight: 500;
         }
 
-        .gallery-placeholder .ph-icon {
+        .Programs-placeholder .ph-icon {
             font-size: 2.5rem;
             opacity: 0.4;
         }
 
-        .gallery-placeholder.tall {
+        .Programs-placeholder.tall {
             min-height: 360px;
         }
 
-        .gallery-placeholder.short {
+        .Programs-placeholder.short {
             min-height: 200px;
         }
 
-        .gallery-placeholder.med {
+        .Programs-placeholder.med {
             min-height: 280px;
         }
 
         /* Real image card */
-        .gallery-item.has-image {
+        .videos-item.has-image {
             background: #000;
         }
 
@@ -337,14 +337,14 @@
         }
 
         /* Empty state */
-        .gallery-empty {
+        .videos-empty {
             text-align: center;
             padding: 5rem 2rem;
             color: var(--text-dim);
             display: none;
         }
 
-        .gallery-empty .empty-icon {
+        .videos-empty .empty-icon {
             font-size: 3rem;
             margin-bottom: 1rem;
             display: block;
@@ -364,7 +364,7 @@
         }
 
         @media (max-width: 768px) {
-            .gallery-grid {
+            .videos-grid {
                 columns: 2 150px;
             }
 
@@ -376,20 +376,20 @@
                 right: -2.5rem;
             }
 
-            .gallery-hero {
+            .Programs-hero {
                 padding: 6rem 1.5rem 3rem;
             }
         }
 
         @media (max-width: 480px) {
-            .gallery-grid {
+            .videos-grid {
                 columns: 1;
             }
         }
     </style>
 </head>
 
-<body class="gallery-page">
+<body class="Programs-page">
     <div id="globalAnnouncementBanner" class="global-banner hidden">
         <span id="globalAnnouncementText"></span>
     </div>
@@ -423,15 +423,15 @@
     </header>
 
     <!-- Page Hero -->
-    <section class="gallery-hero">
+    <section class="Programs-hero">
         <div class="pill-badge">Campus Life</div>
-        <h1>Our Gallery</h1>
+        <h1>YouTube Videos</h1>
         <p>A window into the vibrant academic and cultural life at <span class="arabic-brand-text" dir="rtl">محيي السنة درس عكودا</span> — from convocations to
             classrooms.</p>
     </section>
 
     <!-- Filter Bar -->
-    <div class="gallery-filters" id="galleryFilters" role="group" aria-label="Filter gallery by category">
+    <div class="Programs-filters" id="ProgramsFilters" role="group" aria-label="Filter Programs by category">
         <button class="filter-btn active" data-filter="all">All</button>
         <button class="filter-btn" data-filter="events">Events</button>
         <button class="filter-btn" data-filter="campus">Campus</button>
@@ -439,18 +439,18 @@
         <button class="filter-btn" data-filter="posters">Posters</button>
     </div>
 
-    <!-- Gallery Grid -->
-    <main class="gallery-main" id="galleryMain">
-        <div class="gallery-grid" id="galleryGrid">
-            <div class="gallery-item skeleton" style="height: 250px; border-radius: 12px; margin-bottom: 1.5rem;"></div>
-            <div class="gallery-item skeleton" style="height: 350px; border-radius: 12px; margin-bottom: 1.5rem;"></div>
-            <div class="gallery-item skeleton" style="height: 200px; border-radius: 12px; margin-bottom: 1.5rem;"></div>
-            <div class="gallery-item skeleton" style="height: 300px; border-radius: 12px; margin-bottom: 1.5rem;"></div>
-            <div class="gallery-item skeleton" style="height: 280px; border-radius: 12px; margin-bottom: 1.5rem;"></div>
-            <div class="gallery-item skeleton" style="height: 220px; border-radius: 12px; margin-bottom: 1.5rem;"></div>
+    <!-- Programs Grid -->
+    <main class="videos-main" id="videosMain">
+        <div class="videos-grid" id="videosGrid">
+            <div class="videos-item skeleton" style="height: 250px; border-radius: 12px; margin-bottom: 1.5rem;"></div>
+            <div class="videos-item skeleton" style="height: 350px; border-radius: 12px; margin-bottom: 1.5rem;"></div>
+            <div class="videos-item skeleton" style="height: 200px; border-radius: 12px; margin-bottom: 1.5rem;"></div>
+            <div class="videos-item skeleton" style="height: 300px; border-radius: 12px; margin-bottom: 1.5rem;"></div>
+            <div class="videos-item skeleton" style="height: 280px; border-radius: 12px; margin-bottom: 1.5rem;"></div>
+            <div class="videos-item skeleton" style="height: 220px; border-radius: 12px; margin-bottom: 1.5rem;"></div>
         </div>
 
-        <div class="gallery-empty" id="galleryEmpty">
+        <div class="videos-empty" id="videosEmpty">
             <span class="empty-icon">🏜️</span>
             <h3>No Images Found</h3>
             <p>Try selecting a different filter category.</p>
@@ -461,8 +461,10 @@
     <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Image viewer">
         <div class="lightbox-inner" id="lightboxInner">
             <button class="lightbox-close" id="lightboxClose" aria-label="Close lightbox">&#10005;</button>
-            <button class="lightbox-nav prev" id="lightboxPrev" aria-label="Previous image">&#8249;</button>
-            <img id="lightboxImg" src="" alt="">
+            <button class="lightbox-nav prev" id="lightboxPrev" aria-label="Previous video">&#8249;</button>
+            <div style="width: 80%; max-width: 900px; aspect-ratio: 16/9; margin: 0 auto; background: black; border-radius: 12px; overflow: hidden; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);">
+                <iframe id="lightboxIframe" src="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="width: 100%; height: 100%;"></iframe>
+            </div>
             <p class="lightbox-caption" id="lightboxCaption"></p>
             <button class="lightbox-nav next" id="lightboxNext" aria-label="Next image">&#8250;</button>
         </div>
@@ -488,7 +490,7 @@
         </a>
     </nav>
 
-    <script type="module" src="gallery.js"></script>
+    <script type="module" src="videos.js"></script>
 
     <script>
         if ('serviceWorker' in navigator) {

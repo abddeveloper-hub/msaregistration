@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | Muhyissunnah Dars</title>
+    <!-- Apple-esque Typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Aref+Ruqaa:wght@400;700&family=Amiri:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* Specific styles for Unified Login Layout */
+        body.unified-login-page {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f8fafc; /* light modern background */
+            font-family: 'Inter', sans-serif;
+            color: #0f172a;
+        }
+
+        /* Support for dark mode if user has system dark mode */
+        @media (prefers-color-scheme: dark) {
+            body.unified-login-page {
+                background: #0a0a0f;
+                color: #f8fafc;
+            }
+        }
+
+        .login-split-container {
+            display: flex;
+            width: 90%;
+            max-width: 1200px;
+            min-height: 80vh;
+            margin: 2rem 0; /* Add margin so it doesn't hit screen edges if it grows */
+            background: #ffffff;
+            border-radius: 24px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        
+        @media (prefers-color-scheme: dark) {
+            .login-split-container {
+                background: #1e1e24;
+                box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            }
+        }
+
+        /* Left Panel */
+        .login-left-panel {
+            flex: 1;
+            background: linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%);
+            color: white;
+            padding: 4rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+        }
+
+        .login-logo {
+            width: 64px;
+            height: 64px;
+            background: white;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 3rem;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        
+        .login-logo img {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+        }
+
+        .login-branding h1 {
+            font-size: 3.5rem;
+            line-height: 1.1;
+            font-weight: 700;
+            margin: 0 0 1.5rem 0;
+            letter-spacing: -0.03em;
+        }
+
+        .login-branding p {
+            font-size: 1.125rem;
+            line-height: 1.6;
+            opacity: 0.9;
+            max-width: 400px;
+        }
+
+        .login-footer-left {
+            font-size: 0.875rem;
+            opacity: 0.7;
+        }
+
+        /* Right Panel */
+        .login-right-panel {
+            flex: 1.1;
+            padding: 3rem; /* reduced from 4rem to give form more vertical space */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+
+        .login-form-container {
+            width: 100%;
+            max-width: 420px;
+            margin: auto 0;
+        }
+
+        .login-form-container h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin: 0 0 0.5rem 0;
+            letter-spacing: -0.02em;
+        }
+
+        .login-form-container > p {
+            color: #64748b;
+            margin: 0 0 2.5rem 0;
+            font-size: 0.95rem;
+        }
+        
+        @media (prefers-color-scheme: dark) {
+            .login-form-container > p { color: #94a3b8; }
+        }
+
+        .input-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #334155;
+        }
+        
+        @media (prefers-color-scheme: dark) {
+            .input-group label { color: #cbd5e1; }
+        }
+
+        .input-icon-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-icon-wrapper span {
+            position: absolute;
+            left: 1rem;
+            color: #94a3b8;
+            font-size: 1.2rem;
+        }
+
+        .input-icon-wrapper input {
+            width: 100%;
+            padding: 1rem 1rem 1rem 3rem;
+            background: #f1f5f9;
+            border: 1px solid transparent;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            font-family: 'Inter', sans-serif;
+            color: #0f172a;
+            transition: all 0.2s ease;
+            box-sizing: border-box;
+        }
+        
+        @media (prefers-color-scheme: dark) {
+            .input-icon-wrapper input {
+                background: #0a0a0f;
+                color: #f8fafc;
+                border-color: #334155;
+            }
+        }
+
+        .input-icon-wrapper input:focus {
+            outline: none;
+            border-color: #3b82f6;
+            background: #ffffff;
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+        }
+        
+        @media (prefers-color-scheme: dark) {
+            .input-icon-wrapper input:focus { background: #1e1e24; }
+        }
+
+        /* Role Selector */
+        .role-selector-section {
+            margin-bottom: 2.5rem;
+        }
+
+        .role-selector-section label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            color: #334155;
+        }
+        
+        @media (prefers-color-scheme: dark) {
+            .role-selector-section label { color: #cbd5e1; }
+        }
+
+        .role-cards {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .role-card {
+            flex: 1 1 calc(33% - 1rem);
+            min-width: 90px;
+            background: #f8fafc;
+            border: 2px solid transparent;
+            border-radius: 12px;
+            padding: 1rem 0.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        @media (prefers-color-scheme: dark) {
+            .role-card { background: #0a0a0f; border-color: #334155; }
+        }
+
+        .role-card:hover {
+            background: #f1f5f9;
+        }
+        
+        @media (prefers-color-scheme: dark) {
+            .role-card:hover { background: #1e1e24; }
+        }
+
+        .role-card.active {
+            background: rgba(59, 130, 246, 0.05);
+            border-color: #3b82f6;
+            color: #3b82f6;
+        }
+
+        .role-card .role-icon {
+            font-size: 1.5rem;
+        }
+
+        .role-card .role-name {
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+        /* Submit Button */
+        .login-btn {
+            width: 100%;
+            padding: 1rem;
+            background: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .login-btn:hover {
+            background: #2563eb;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4);
+        }
+
+        .toggle-mode-wrapper {
+            text-align: center;
+            margin-top: 1.5rem;
+            font-size: 0.9rem;
+            color: #64748b;
+        }
+        
+        .toggle-mode-wrapper a {
+            color: #3b82f6;
+            font-weight: 600;
+            text-decoration: none;
+        }
+        
+        .toggle-mode-wrapper a:hover {
+            text-decoration: underline;
+        }
+
+        .login-footer-right {
+            margin-top: auto;
+            width: 100%;
+            text-align: center;
+            font-size: 0.875rem;
+            padding-top: 2rem;
+        }
+        
+        .login-footer-right a {
+            color: #64748b;
+            text-decoration: none;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .login-footer-right a:hover {
+            color: #0f172a;
+        }
+        
+        @media (prefers-color-scheme: dark) {
+            .login-footer-right a:hover { color: #f8fafc; }
+        }
+
+        .login-error {
+            background: #fee2e2;
+            color: #ef4444;
+            padding: 0.75rem;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            border: 1px solid #fca5a5;
+        }
+        
+        .login-error.hidden {
+            display: none;
+        }
+        
+        @media (prefers-color-scheme: dark) {
+            .login-error { background: rgba(239, 68, 68, 0.1); border-color: rgba(239, 68, 68, 0.3); }
+        }
+
+        /* Responsive Layout */
+        @media (max-width: 900px) {
+            .login-split-container {
+                flex-direction: column;
+                height: auto;
+                min-height: 95vh;
+                margin: 1rem;
+            }
+            .login-left-panel {
+                padding: 3rem 2rem;
+                flex: none;
+            }
+            .login-branding h1 {
+                font-size: 2.5rem;
+            }
+            .login-right-panel {
+                padding: 3rem 2rem;
+                min-height: 60vh; /* ensure form gets enough space */
+            }
+            .login-footer-right {
+                margin-top: 3rem;
+                padding-top: 0;
+            }
+        }
+    </style>
+</head>
+<body class="unified-login-page">
+    <div class="login-split-container">
+        <!-- Left Side: Branding/Gradient -->
+        <div class="login-left-panel">
+            <div class="login-branding">
+                <div class="brand-lockup" style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 3rem; color: white;">
+                    <img src="logo.png" alt="MSA Ukkuda Logo" class="brand-logo-img">
+                    <span class="brand-text" style="display: flex; flex-direction: column; justify-content: center;">
+                        <strong style="font-family: 'Cairo', sans-serif; letter-spacing: 0.08em; font-size: 1.25rem; line-height: 1; text-transform: uppercase; font-weight: 700; color: white;"><span class="arabic-brand-text" dir="rtl">محيي السنة درس</span></strong>
+                        <span style="letter-spacing: 0.15em; font-size: 0.75rem; text-transform: uppercase; color: rgba(255,255,255,0.8);">Ukkuda Official Portal</span>
+                    </span>
+                </div>
+                <h1>Unlock the<br>Arena.</h1>
+                <p>Join thousands of students and manage your academic journey with precision and style.</p>
+            </div>
+            <div class="login-footer-left">
+                &copy; 2026 <span class="arabic-brand-text" dir="rtl">محيي السنة درس عكودا</span>. All rights reserved.
+            </div>
+        </div>
+
+        <!-- Right Side: Form -->
+        <div class="login-right-panel">
+            <div class="login-form-container">
+                <h2 id="formTitle">Sign In</h2>
+                <p id="formSubtitle">Enter your credentials to continue</p>
+                
+                <form id="unifiedLoginForm">
+                    <div id="nameFieldContainer" class="input-group hidden">
+                        <label>Full Name</label>
+                        <div class="input-icon-wrapper">
+                            <span>👤</span>
+                            <input type="text" id="loginName" placeholder="John Doe">
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label>Email Address</label>
+                        <div class="input-icon-wrapper">
+                            <span>✉️</span>
+                            <input type="email" id="loginEmail" placeholder="admin@mdu.edu" required>
+                        </div>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label>Password</label>
+                        <div class="input-icon-wrapper">
+                            <span>🔒</span>
+                            <input type="password" id="loginPassword" placeholder="••••••••" required>
+                        </div>
+                    </div>
+
+                    <div class="role-selector-section" id="roleSelectorSection">
+                        <label>Login As</label>
+                        <div class="role-cards" id="roleCardsContainer">
+                            <div class="role-card active" data-role="student">
+                                <span class="role-icon">🎓</span>
+                                <span class="role-name">Student</span>
+                            </div>
+                            <div class="role-card" data-role="faculty">
+                                <span class="role-icon">👨‍🏫</span>
+                                <span class="role-name">Teacher</span>
+                            </div>
+                            <div class="role-card" data-role="admin">
+                                <span class="role-icon">🛡️</span>
+                                <span class="role-name">Admin</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div id="loginError" class="login-error hidden"></div>
+
+                    <button type="submit" id="submitLoginBtn" class="login-btn">Sign In &rarr;</button>
+                    
+                    <div class="toggle-mode-wrapper">
+                        <span id="toggleModeText">Don't have an account? <a href="#" id="toggleModeLink">Sign up</a></span>
+                    </div>
+                </form>
+            </div>
+            <div class="login-footer-right">
+                <a href="index.html">🌐 Public Portal</a>
+            </div>
+        </div>
+    </div>
+    
+    <script type="module" src="login.js"></script>
+</body>
+</html>

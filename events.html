@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>News & Events | Muhyissunnah Dars Ukkuda</title>
+    <!-- Open Graph / SEO Meta Tags -->
+    <meta name="description" content="Latest News and Upcoming Events at Muhyissunnah Dars Ukkuda.">
+    
+    <!-- Preconnect to critical origins for faster mobile loading -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Aref+Ruqaa:wght@400;700&family=Amiri:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="landing.css">
+    <link rel="stylesheet" href="mobile.css">
+    
+    <meta name="theme-color" content="#FFFFFF">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <link rel="icon" type="image/jpeg" href="logo.png">
+    <script>
+        (function() {
+            const savedTheme = localStorage.getItem('msaukkuda:theme');
+            if (savedTheme) {
+                document.documentElement.dataset.theme = savedTheme;
+            } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                document.documentElement.dataset.theme = 'dark';
+            } else {
+                document.documentElement.dataset.theme = 'light';
+            }
+        })();
+        
+        window.toggleTheme = function() {
+            const currentTheme = document.documentElement.dataset.theme || 'light';
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            document.documentElement.dataset.theme = newTheme;
+            localStorage.setItem('msaukkuda:theme', newTheme);
+            const icon = document.getElementById('themeToggleIcon');
+            if (icon) {
+                icon.textContent = newTheme === 'light' ? '🌙' : '☀️';
+            }
+        };
+    </script>
+</head>
+<body class="landing-page">
+    <header class="nav-wrapper">
+        <nav class="navbar" aria-label="Primary navigation">
+            <a class="brand-lockup" href="index.html" aria-label="Muhyissunnah Dars Ukkuda home">
+                <img src="logo.png" alt="MSA Ukkuda Logo" class="brand-logo-img">
+                <span class="brand-text">
+                    <strong style="font-family: 'Cairo', sans-serif; letter-spacing: 0.08em; font-size: 1.25rem; line-height: 1; text-transform: uppercase; font-weight: 700;"><span class="arabic-brand-text" dir="rtl">محيي السنة درس</span></strong>
+                    <span style="letter-spacing: 0.15em;">Ukkuda Official Portal</span>
+                </span>
+            </a>
+
+            <div class="nav-actions" style="position: relative;">
+                <button class="btn btn-ghost icon-btn" onclick="toggleTheme()" title="Toggle Dark/Light Mode" style="font-size: 1.25rem;"><span id="themeToggleIcon">🌙</span></button>
+                
+                <button class="btn btn-ghost icon-btn" id="loginMenuToggleBtn" type="button" style="font-size: 1.5rem; padding: 0.5rem; line-height: 1;">⋮</button>
+                
+                <div id="loginDropdownMenu" class="hidden" style="position: absolute; top: calc(100% + 0.5rem); right: 0; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); box-shadow: 0 10px 25px rgba(0,0,0,0.1); display: flex; flex-direction: column; min-width: 200px; z-index: 100; overflow: hidden;">
+                    <a href="academic.html" class="btn btn-ghost" style="border-radius: 0; border: none; border-bottom: 1px solid var(--border); justify-content: flex-start; padding: 1rem; text-decoration: none;">📚 Academic Programs</a>
+                    <a href="events.html" class="btn btn-ghost" style="border-radius: 0; border: none; border-bottom: 1px solid var(--border); justify-content: flex-start; padding: 1rem; text-decoration: none;">📅 News & Events</a>
+                    <a href="gallery.html" class="btn btn-ghost" style="border-radius: 0; border: none; border-bottom: 1px solid var(--border); justify-content: flex-start; padding: 1rem; text-decoration: none;">🖼️ Gallery</a>
+                    <a href="videos.html" class="btn btn-ghost" style="border-radius: 0; border: none; border-bottom: 1px solid var(--border); justify-content: flex-start; padding: 1rem; text-decoration: none;">▶️ Videos</a>
+                    <a href="login.html" class="btn btn-ghost" style="border-radius: 0; border: none; border-bottom: 1px solid var(--border); justify-content: flex-start; padding: 1rem; text-decoration: none;">🔑 Login</a>
+                    <a href="login.html?signup=true" class="btn btn-ghost" style="border-radius: 0; border: none; justify-content: flex-start; padding: 1rem; text-decoration: none;">📝 New Registration</a>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main id="mainContent" style="padding-top: 5rem;">
+        <!-- Upcoming Events Section -->
+        <section id="eventsSection" style="padding: 4rem 2rem; background: var(--bg-desert); min-height: calc(100vh - 10rem);">
+            <div style="max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1fr 2fr; gap: 4rem; align-items: center;">
+                <div class="animate-on-scroll slide-from-left">
+                    <p style="color: var(--primary); font-weight: 700; text-transform: uppercase; letter-spacing: 0.15em; font-size: 0.85rem; margin-bottom: 1rem;">Stay Updated</p>
+                    <h2 style="font-family: var(--font-display); font-size: clamp(2rem, 4vw, 3.5rem); font-weight: 700; color: var(--text-main); line-height: 1.1; margin-bottom: 1.5rem;">News & Events</h2>
+                    <p style="color: var(--text-dim); font-size: 1.1rem; margin-bottom: 2rem;">Join us for upcoming seminars, national-level competitions, and spiritual gatherings.</p>
+                    <button class="btn btn-ghost" style="border-radius: 50px;">View Full Calendar</button>
+                </div>
+                <div class="animate-on-scroll slide-from-right" style="display: flex; flex-direction: column; gap: 1.5rem;">
+                    <!-- Event Item -->
+                    <div style="background: var(--surface); padding: 2rem; border-radius: 20px; border: 1px solid var(--border); display: flex; gap: 2rem; align-items: center; box-shadow: var(--shadow-sm);">
+                        <div style="background: var(--primary-glow); color: var(--primary); padding: 1rem; border-radius: 16px; text-align: center; min-width: 90px;">
+                            <strong style="display: block; font-size: 1.8rem; line-height: 1;">15</strong>
+                            <span style="font-size: 0.85rem; text-transform: uppercase; font-weight: 700;">Aug</span>
+                        </div>
+                        <div>
+                            <h4 style="font-size: 1.25rem; color: var(--text-main); margin-bottom: 0.5rem;">Annual SSF Convention</h4>
+                            <p style="color: var(--text-dim); font-size: 0.95rem;">National level gathering for students and scholars featuring keynote speakers.</p>
+                        </div>
+                    </div>
+                    <!-- Event Item -->
+                    <div style="background: var(--surface); padding: 2rem; border-radius: 20px; border: 1px solid var(--border); display: flex; gap: 2rem; align-items: center; box-shadow: var(--shadow-sm);">
+                        <div style="background: var(--primary-glow); color: var(--primary); padding: 1rem; border-radius: 16px; text-align: center; min-width: 90px;">
+                            <strong style="display: block; font-size: 1.8rem; line-height: 1;">22</strong>
+                            <span style="font-size: 0.85rem; text-transform: uppercase; font-weight: 700;">Sep</span>
+                        </div>
+                        <div>
+                            <h4 style="font-size: 1.25rem; color: var(--text-main); margin-bottom: 0.5rem;">Thartheel Finals</h4>
+                            <p style="color: var(--text-dim); font-size: 0.95rem;">Grand finale of the Quranic recitation competition held at HQ.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    
+    <nav class="mobile-entry-bar">
+        <a class="mobile-entry-item" href="index.html">
+            <span style="background: var(--surface-raised); font-size: 1rem;">🏠</span>
+            <strong>Home</strong>
+        </a>
+        <a class="mobile-entry-item" href="academic.html">
+            <span style="background: rgba(10, 132, 255, 0.1); color: #0a84ff; font-size: 1rem;">📚</span>
+            <strong>Academic</strong>
+        </a>
+        <a class="mobile-entry-item" href="events.html">
+            <span style="background: rgba(255, 159, 10, 0.1); color: #ff9f0a; font-size: 1rem;">📅</span>
+            <strong>Events</strong>
+        </a>
+        <a class="mobile-entry-item" href="videos.html">
+            <span style="background: rgba(239, 68, 68, 0.1); color: #ef4444; font-size: 1rem;">▶️</span>
+            <strong>Videos</strong>
+        </a>
+        <a class="mobile-entry-item" href="gallery.html">
+            <span style="background: rgba(52, 199, 89, 0.1); color: #34c759; font-size: 1rem;">🖼️</span>
+            <strong>Gallery</strong>
+        </a>
+    </nav>
+
+    <script>
+        const loginMenuToggleBtn = document.getElementById('loginMenuToggleBtn');
+        const loginDropdownMenu = document.getElementById('loginDropdownMenu');
+        if (loginMenuToggleBtn && loginDropdownMenu) {
+            loginMenuToggleBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                loginDropdownMenu.classList.toggle('hidden');
+            });
+            document.addEventListener('click', (e) => {
+                if (!loginMenuToggleBtn.contains(e.target) && !loginDropdownMenu.contains(e.target)) {
+                    loginDropdownMenu.classList.add('hidden');
+                }
+            });
+        }
+    </script>
+</body>
+</html>

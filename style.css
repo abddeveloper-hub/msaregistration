@@ -626,6 +626,54 @@ img {
     letter-spacing: 0.12em;
 }
 
+/* Navigation Links on Desktop */
+.nav-links {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    margin-left: 2rem;
+    margin-right: auto;
+}
+
+.nav-links a {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--text-dim);
+    text-decoration: none;
+    transition: all 0.2s ease;
+    padding: 0.4rem 0.75rem;
+    border-radius: var(--radius-sm);
+}
+
+.nav-links a:hover {
+    color: var(--text-main);
+    background-color: var(--surface-raised);
+}
+
+.nav-links a.active {
+    color: var(--primary);
+    background-color: color-mix(in srgb, var(--primary) 10%, transparent);
+}
+
+.nav-links a.nav-login-btn {
+    background-color: var(--primary);
+    color: white !important;
+    padding: 0.4rem 1.25rem;
+    border-radius: 9999px;
+    font-weight: 600;
+    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25);
+}
+
+.nav-links a.nav-login-btn:hover {
+    background-color: var(--primary-lapis);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(79, 70, 229, 0.35);
+}
+
+#loginMenuToggleBtn {
+    display: none !important;
+}
+
 .nav-actions {
     display: flex;
     align-items: center;
@@ -1798,7 +1846,11 @@ table th {
     }
 
     .nav-links {
-        display: none;
+        display: none !important;
+    }
+
+    #loginMenuToggleBtn {
+        display: inline-flex !important;
     }
 
     .hero-section {

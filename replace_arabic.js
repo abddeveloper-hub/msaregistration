@@ -1,4 +1,4 @@
-const fs = require('fs');
+﻿const fs = require('fs');
 const path = require('path');
 
 const dir = 'c:\\Users\\ABDUL WAHID\\OneDrive\\Desktop\\registration';
@@ -7,9 +7,9 @@ function processHtmlFile(filePath) {
     let content = fs.readFileSync(filePath, 'utf8');
     const originalContent = content;
 
-    // 1. Add Google Fonts
-    const fontStrToAdd = '&family=Aref+Ruqaa:wght@400;700&family=Amiri:ital,wght@0,400;0,700;1,400;1,700';
-    if (!content.includes('Aref+Ruqaa')) {
+    // 1. Add Google Fonts (Cairo for branding)
+    const fontStrToAdd = '&family=Cairo:wght@400;700';
+    if (!content.includes('family=Cairo')) {
         if (content.includes('family=Playfair+Display')) {
             content = content.replace(/family=Playfair\+Display[^&"']*/, match => match + fontStrToAdd);
         } else if (content.includes('family=Inter')) {
@@ -36,14 +36,13 @@ function processHtmlFile(filePath) {
             else if (tag.startsWith('</style>')) inStyle = false;
         } else {
             if (!inTitle && !inScript && !inStyle && p.trim() !== '') {
-                // Let's use a function replacer
                 p = p.replace(/Muhyissunnah Dars Ukkuda|Muhyissunnah Dars|Muhyissunnah/gi, (match) => {
                     if (match.toLowerCase() === 'muhyissunnah dars ukkuda') {
-                        return '<span class="arabic-brand-text" dir="rtl">محيي السنة درس عكودا</span>';
+                        return '<span class="brand-text-styled">Muhyissunnah Dars Ukkuda</span>';
                     } else if (match.toLowerCase() === 'muhyissunnah dars') {
-                        return '<span class="arabic-brand-text" dir="rtl">محيي السنة درس</span>';
+                        return '<span class="brand-text-styled">Muhyissunnah Dars</span>';
                     } else {
-                        return '<span class="arabic-brand-text" dir="rtl">محيي السنة</span>';
+                        return '<span class="brand-text-styled">Muhyissunnah</span>';
                     }
                 });
                 parts[i] = p;

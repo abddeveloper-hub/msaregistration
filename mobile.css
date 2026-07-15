@@ -34,8 +34,6 @@ html, body {
         padding: 1.5rem 1.25rem 6rem;
     }
 
-    /* removed mobile-bottom-nav display flex */
-
     .grid-3 {
         grid-template-columns: 1fr 1fr !important;
     }
@@ -88,8 +86,6 @@ html, body {
         width: 95% !important;
         border-radius: 2rem !important;
     }
-
-    /* Removed the hiding of 3-dots login menu toggle on mobile as per user request */
 
     /* Registration app container */
     .app-container {
@@ -279,8 +275,6 @@ html, body {
         grid-column: auto !important;
     }
 
-    /* Move floating buttons up to not overlap bottom nav */
-
     .fab-container {
         bottom: 2rem !important;
         right: 1.5rem !important;
@@ -375,6 +369,73 @@ html, body {
         font-size: 0.9rem !important;
         text-align: center;
     }
+
+    /* ---- Landing Page: Contact section 2-col grid -> 1 col ---- */
+    #contactSection > div {
+        grid-template-columns: 1fr !important;
+        gap: 2rem !important;
+    }
+
+    /* ---- Landing Page: About section inner grid -> 1 col ---- */
+    #aboutInstitution > div > div:last-child {
+        grid-template-columns: 1fr !important;
+    }
+
+    /* ---- Landing Page: Hero padding fix ---- */
+    .hero-section {
+        padding: 6rem 1.25rem 4rem !important;
+        min-height: auto;
+    }
+
+    .hero-content h1 {
+        font-size: clamp(2.25rem, 8vw, 3.5rem) !important;
+    }
+
+    .hero-lead {
+        font-size: 1rem !important;
+    }
+
+    /* ---- Landing Page: Campus grid -> 2 col on tablet ---- */
+    #ourCampuses > div > div:last-child {
+        grid-template-columns: 1fr 1fr !important;
+    }
+
+    /* ---- Landing Page: Portal/Benefit cards ---- */
+    .cards-grid {
+        grid-template-columns: 1fr !important;
+    }
+
+    /* ---- Landing Page: Footer ---- */
+    .ultra-footer {
+        padding: 4rem 1.5rem 2rem;
+    }
+
+    .footer-grid {
+        grid-template-columns: 1fr 1fr !important;
+        gap: 2.5rem !important;
+    }
+
+    .footer-bottom {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+    }
+
+    /* ---- Section padding reduction for mobile ---- */
+    #aboutInstitution,
+    #benefitsSection,
+    #faqSection,
+    #contactSection {
+        padding: 4rem 1.25rem !important;
+    }
+
+    #ourCampuses {
+        padding: 4rem 1.25rem !important;
+    }
+
+    .section-header {
+        margin-bottom: 2.5rem !important;
+    }
 }
 
 /* ---- Small Phones ---- */
@@ -383,9 +444,10 @@ html, body {
         font-size: 1.25rem !important;
     }
 
+    /* Match new rectangular btn system — do NOT use pill padding */
     .btn {
-        padding: 0.9rem 1.25rem;
-        font-size: 0.9rem;
+        padding: 0.6rem 1rem;
+        font-size: 0.875rem;
     }
 
     .m-nav-item span {
@@ -404,6 +466,17 @@ html, body {
     .admin-main,
     .portal-main {
         padding: 1rem 1rem 6rem !important;
+    }
+
+    /* Campus grid -> 1 col on very small phones */
+    #ourCampuses > div > div:last-child {
+        grid-template-columns: 1fr !important;
+    }
+
+    /* Footer -> 1 col on small phones */
+    .footer-grid {
+        grid-template-columns: 1fr !important;
+        gap: 2rem !important;
     }
 }
 
@@ -430,8 +503,6 @@ html, body {
         width: calc(100% - 2rem);
         min-height: auto;
     }
-
-    /* Show mobile portal links bar removed */
 }
 
 @media (max-width: 600px) {
@@ -463,6 +534,99 @@ html, body {
     padding: 0 1rem;
 }
 
+/* ==========================================
+   MOBILE ENTRY BAR (Landing Page Bottom Nav)
+   ========================================== */
+.mobile-entry-bar {
+    display: none;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.06);
+    /* Safe area padding for iPhone notch */
+    padding-bottom: env(safe-area-inset-bottom);
+}
+
+.mobile-entry-bar {
+    display: flex;
+    justify-content: space-around;
+    align-items: stretch;
+}
+
+.mobile-entry-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    padding: 0.6rem 0.5rem;
+    text-decoration: none;
+    color: var(--text-dim);
+    font-size: 0.65rem;
+    font-weight: 600;
+    flex: 1;
+    transition: color var(--transition-snappy), background var(--transition-snappy);
+}
+
+.mobile-entry-item:hover,
+.mobile-entry-item:focus {
+    color: var(--primary);
+    background: var(--primary-glow);
+}
+
+.mobile-entry-item span {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    flex-shrink: 0;
+}
+
+.mobile-entry-item strong {
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+}
+
+/* Highlight item (Login CTA) */
+.mobile-entry-item.highlight {
+    color: #fff;
+    background: var(--primary);
+    border-radius: 0;
+}
+
+.mobile-entry-item.highlight:hover {
+    background: var(--primary-lapis);
+    color: #fff;
+}
+
+/* On desktop: hide the mobile entry bar */
+@media (min-width: 769px) {
+    .mobile-entry-bar {
+        display: none !important;
+    }
+}
+
+/* On mobile: show it and add bottom padding to body content */
+@media (max-width: 768px) {
+    .mobile-entry-bar {
+        display: flex;
+    }
+
+    /* Push footer above mobile nav */
+    body.landing-page {
+        padding-bottom: calc(60px + env(safe-area-inset-bottom));
+    }
+}
+
 @media (max-width: 900px) {
     .portal-layout, .admin-layout {
         grid-template-columns: 1fr !important;
@@ -471,7 +635,7 @@ html, body {
     .sidebar, .admin-sidebar, .portal-sidebar {
         position: fixed !important;
         top: 0 !important;
-        left: -280px !important; /* Off-screen */
+        left: -280px !important;
         width: 280px !important;
         height: 100dvh !important;
         z-index: 2000 !important;
@@ -557,7 +721,6 @@ html, body {
         overflow: hidden;
     }
     
-    /* Remove the old bottom nav as we are using the side drawer for ALL options */
     .mobile-nav {
         display: none !important;
     }
@@ -581,4 +744,3 @@ html, body {
 .m-nav-icon {
     font-size: 1.4rem;
 }
-

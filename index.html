@@ -62,24 +62,52 @@
             <a class="brand-lockup" href="index.html" aria-label="Muhyissunnah Dars Ukkuda home">
                 <img src="logo.png" alt="MSA Ukkuda Logo" class="brand-logo-img">
                 <span class="brand-text">
-                    <strong style="font-family: 'Amiri', serif; letter-spacing: 0.08em; font-size: 1.25rem; line-height: 1; text-transform: uppercase; font-weight: 700;"><span class="arabic-brand-text" dir="rtl">محيي السنة درس</span></strong>
+                    <strong style="font-family: 'Inter', sans-serif; letter-spacing: 0.08em; font-size: 1.25rem; line-height: 1; text-transform: uppercase; font-weight: 700;"><span class="brand-text-styled">Muhyissunnah Dars</span></strong>
                     <span style="letter-spacing: 0.15em;">Ukkuda Official Portal</span>
                 </span>
             </a>
 
             <div class="nav-actions" style="position: relative;">
-                <button class="btn btn-ghost icon-btn" onclick="toggleTheme()" title="Toggle Dark/Light Mode" style="font-size: 1.25rem;"><span id="themeToggleIcon">🌙</span></button>
+                <button class="btn btn-ghost icon-btn" onclick="toggleTheme()" title="Toggle Dark/Light Mode">
+                    <span id="themeToggleIcon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+                    </span>
+                </button>
                 <button id="installAppBtn" class="btn btn-ghost install-app-btn hidden" type="button">Download App</button>
                 
-                <button class="btn btn-ghost icon-btn" id="loginMenuToggleBtn" type="button" style="font-size: 1.5rem; padding: 0.5rem; line-height: 1;">⋮</button>
+                <button class="btn btn-ghost icon-btn" id="loginMenuToggleBtn" type="button" title="Menu" aria-label="Open menu">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                        <circle cx="12" cy="5" r="1.5"/>
+                        <circle cx="12" cy="12" r="1.5"/>
+                        <circle cx="12" cy="19" r="1.5"/>
+                    </svg>
+                </button>
                 
                 <div id="loginDropdownMenu" class="hidden" style="position: absolute; top: calc(100% + 0.5rem); right: 0; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); box-shadow: 0 10px 25px rgba(0,0,0,0.1); display: flex; flex-direction: column; min-width: 200px; z-index: 100; overflow: hidden;">
-                    <a href="academic.html" class="btn btn-ghost" style="border-radius: 0; border: none; border-bottom: 1px solid var(--border); justify-content: flex-start; padding: 1rem; text-decoration: none;">📚 Academic Programs</a>
-                    <a href="events.html" class="btn btn-ghost" style="border-radius: 0; border: none; border-bottom: 1px solid var(--border); justify-content: flex-start; padding: 1rem; text-decoration: none;">📅 News & Events</a>
-                    <a href="gallery.html" class="btn btn-ghost" style="border-radius: 0; border: none; border-bottom: 1px solid var(--border); justify-content: flex-start; padding: 1rem; text-decoration: none;">🖼️ Gallery</a>
-                    <a href="videos.html" class="btn btn-ghost" style="border-radius: 0; border: none; border-bottom: 1px solid var(--border); justify-content: flex-start; padding: 1rem; text-decoration: none;">▶️ Videos</a>
-                    <a href="login.html" class="btn btn-ghost" style="border-radius: 0; border: none; border-bottom: 1px solid var(--border); justify-content: flex-start; padding: 1rem; text-decoration: none;">🔑 Login</a>
-                    <a href="login.html?signup=true" class="btn btn-ghost" style="border-radius: 0; border: none; justify-content: flex-start; padding: 1rem; text-decoration: none;">📝 New Registration</a>
+                    <a href="academic.html" class="btn btn-ghost" style="border-radius: 0; border: none; border-bottom: 1px solid var(--border); justify-content: flex-start; padding: 1rem; text-decoration: none; gap: 0.75rem;">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+                        Academic Programs
+                    </a>
+                    <a href="events.html" class="btn btn-ghost" style="border-radius: 0; border: none; border-bottom: 1px solid var(--border); justify-content: flex-start; padding: 1rem; text-decoration: none; gap: 0.75rem;">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                        News &amp; Events
+                    </a>
+                    <a href="gallery.html" class="btn btn-ghost" style="border-radius: 0; border: none; border-bottom: 1px solid var(--border); justify-content: flex-start; padding: 1rem; text-decoration: none; gap: 0.75rem;">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                        Gallery
+                    </a>
+                    <a href="videos.html" class="btn btn-ghost" style="border-radius: 0; border: none; border-bottom: 1px solid var(--border); justify-content: flex-start; padding: 1rem; text-decoration: none; gap: 0.75rem;">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                        Videos
+                    </a>
+                    <a href="login.html" class="btn btn-ghost" style="border-radius: 0; border: none; border-bottom: 1px solid var(--border); justify-content: flex-start; padding: 1rem; text-decoration: none; gap: 0.75rem;">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+                        Login
+                    </a>
+                    <a href="login.html?signup=true" class="btn btn-ghost" style="border-radius: 0; border: none; justify-content: flex-start; padding: 1rem; text-decoration: none; gap: 0.75rem;">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                        New Registration
+                    </a>
                 </div>
                 
                 <button id="navLogoutBtn" class="btn btn-ghost btn-sm hidden" type="button">Log Out</button>
@@ -95,11 +123,11 @@
                 
                 <div class="hero-content" style="display: flex; flex-direction: column; align-items: center; width: 100%;">
                     <!-- Left sliding title -->
-                    <h1 id="heroTitle" class="animate-on-scroll slide-from-left delay-100" style="margin-bottom: 0;">
+                    <h1 id="heroTitle" class="animate-on-scroll slide-from-left delay-100">
                         Precision in
                     </h1>
                     <!-- Right sliding title -->
-                    <h1 class="animate-on-scroll slide-from-right delay-200" style="margin-top: -10px;">
+                    <h1 class="animate-on-scroll slide-from-right delay-200">
                         <span>Academic Excellence.</span>
                     </h1>
                     
@@ -108,7 +136,7 @@
                     </p>
                     
                     <div class="hero-actions animate-on-scroll slide-up delay-400">
-                        <button id="heroLoginBtn" class="btn btn-main" style="padding: 1.25rem 3rem; font-size: 1.1rem; border-radius: 50px;" type="button">Enter Dashboard</button>
+                        <button id="heroLoginBtn" class="btn btn-main" type="button" style="padding: 0.85rem 2.5rem; font-size: 1rem;">Enter Dashboard</button>
                     </div>
                 </div>
             </div>
@@ -118,14 +146,14 @@
         <section id="aboutInstitution" style="padding: 8rem 2rem; background: var(--surface); overflow: hidden;">
             <div style="max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; gap: 4rem;">
                 <div class="animate-on-scroll slide-from-left" style="max-width: 700px;">
-                    <p style="color: var(--primary); font-weight: 700; text-transform: uppercase; letter-spacing: 0.15em; font-size: 0.85rem; margin-bottom: 1rem;">Legacy of Excellence</p>
+                    <p class="eyebrow-label" style="margin-bottom: 1rem;">Legacy of Excellence</p>
                     <h2 style="font-family: var(--font-display); font-size: clamp(2.5rem, 5vw, 4rem); font-weight: 700; color: var(--text-main); line-height: 1.1;">Forging the future of traditional scholarship.</h2>
                 </div>
                 
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 4rem;">
                     <div class="animate-on-scroll slide-up delay-100">
                         <p style="color: var(--text-dim); font-size: 1.15rem; line-height: 1.8; margin-bottom: 2rem;">
-                            For over a decade, <span class="arabic-brand-text" dir="rtl">محيي السنة درس عكودا</span> has stood at the intersection of rigorous Islamic scholarship and modern academic infrastructure. We have proudly graduated thousands of students who now serve as community leaders, esteemed educators, and global professionals.
+                            For over a decade, <span class="brand-text-styled">Muhyissunnah Dars Ukkuda</span> has stood at the intersection of rigorous Islamic scholarship and modern academic infrastructure. We have proudly graduated thousands of students who now serve as community leaders, esteemed educators, and global professionals.
                         </p>
                         <p style="color: var(--text-dim); font-size: 1.15rem; line-height: 1.8;">
                             Our uncompromising commitment to holistic education has earned us recognition as a premier center of learning. By maintaining a highly selective faculty verification standard, we ensure that every student is guided by the most qualified scholars in their respective fields.
@@ -139,29 +167,13 @@
 
         <!-- Premium Portal Access Section removed -->
 
-        <!-- Stats Section -->
-        <section class="stats-section">
-            <div class="stats-grid">
-                <div class="stat-item animate-on-scroll slide-from-left delay-100">
-                    <span class="stat-num skeleton" id="statEnrollment">0000</span>
-                    <span class="stat-text">Active Enrollments</span>
-                </div>
-                <div class="stat-item animate-on-scroll slide-up delay-200" style="border-left: 1px solid var(--border); border-right: 1px solid var(--border);">
-                    <span class="stat-num skeleton" id="statInstitutions">0000</span>
-                    <span class="stat-text">Partner Campuses</span>
-                </div>
-                <div class="stat-item animate-on-scroll slide-from-right delay-300">
-                    <span class="stat-num skeleton" id="statFaculty">0000</span>
-                    <span class="stat-text">Verified Faculty</span>
-                </div>
-            </div>
-        </section>
+
 
         <!-- Why Join / Benefits Section -->
         <section id="benefitsSection" style="padding: 8rem 2rem; background: var(--surface);">
             <div style="max-width: 1200px; margin: 0 auto;">
                 <div class="section-header">
-                    <p style="color: var(--primary); font-weight: 700; text-transform: uppercase; letter-spacing: 0.15em; font-size: 0.85rem; margin-bottom: 0.75rem;" class="animate-on-scroll slide-from-left">Why Choose Us</p>
+                    <p class="eyebrow-label animate-on-scroll slide-from-left" style="margin-bottom: 0.75rem;">Why Choose Us</p>
                     <h2 class="animate-on-scroll slide-from-right" style="font-family: var(--font-display); font-size: clamp(2.5rem, 5vw, 4rem); font-weight: 700; color: var(--text-main); margin-bottom: 3rem;">A public portal built for trust, clarity, and access.</h2>
                 </div>
                 <div class="cards-grid">
@@ -185,36 +197,25 @@
 
 
 
-        <!-- Testimonials Section -->
-        <section id="testimonialsSection" style="padding: 8rem 2rem; background: var(--surface); overflow: hidden;">
-            <div style="max-width: 1200px; margin: 0 auto; text-align: center;">
-                <p style="color: var(--primary); font-weight: 700; text-transform: uppercase; letter-spacing: 0.15em; font-size: 0.85rem; margin-bottom: 0.75rem;" class="animate-on-scroll slide-up">Voices of Excellence</p>
-                <h2 style="font-family: var(--font-display); font-size: clamp(2.5rem, 5vw, 4rem); font-weight: 700; color: var(--text-main); margin-bottom: 4rem;" class="animate-on-scroll slide-up delay-100">Alumni Success</h2>
+
+
+        <!-- Our Campuses Section -->
+        <section id="ourCampuses" style="padding: 6rem 2rem; background: var(--bg-desert); border-top: 1px solid var(--border);">
+            <div style="max-width: 1200px; margin: 0 auto;">
+                <div class="animate-on-scroll slide-from-left" style="text-align: center; margin-bottom: 4rem;">
+                    <p class="eyebrow-label" style="margin-bottom: 0.75rem;">Campus Network</p>
+                    <h2 style="font-family: var(--font-display); font-size: clamp(2.5rem, 5vw, 4rem); font-weight: 700; color: var(--text-main);">Our Partner Campuses</h2>
+                </div>
                 
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2.5rem;">
-                    <div class="animate-on-scroll slide-up delay-200" style="background: var(--bg-desert); padding: 3rem 2rem; border-radius: 24px; border: 1px solid var(--border); position: relative;">
-                        <span style="position: absolute; top: 1rem; left: 1.5rem; font-size: 4rem; color: var(--border-strong); font-family: var(--font-display); line-height: 1; opacity: 0.5;">"</span>
-                        <p style="color: var(--text-dim); font-style: italic; font-size: 1.1rem; line-height: 1.8; margin-bottom: 2rem; position: relative; z-index: 1;">The rigorous curriculum and devoted faculty at <span class="arabic-brand-text" dir="rtl">محيي السنة</span> completely transformed my approach to Islamic studies. The digital portal made my academic journey incredibly smooth.</p>
-                        <div style="display: flex; align-items: center; justify-content: center; gap: 1rem;">
-                            <div style="width: 48px; height: 48px; border-radius: 50%; background: var(--primary-glow); display: flex; align-items: center; justify-content: center; color: var(--primary); font-weight: 700;">SA</div>
-                            <div style="text-align: left;">
-                                <strong style="display: block; color: var(--text-main);">Salman Ahmed</strong>
-                                <span style="color: var(--text-dim); font-size: 0.85rem;">Class of 2024</span>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="animate-on-scroll slide-up delay-300" style="background: var(--bg-desert); padding: 3rem 2rem; border-radius: 24px; border: 1px solid var(--border); position: relative;">
-                        <span style="position: absolute; top: 1rem; left: 1.5rem; font-size: 4rem; color: var(--border-strong); font-family: var(--font-display); line-height: 1; opacity: 0.5;">"</span>
-                        <p style="color: var(--text-dim); font-style: italic; font-size: 1.1rem; line-height: 1.8; margin-bottom: 2rem; position: relative; z-index: 1;">As a faculty member, the tools provided by this platform allow me to track student progress with unprecedented clarity. It is truly a marvel of modern educational infrastructure.</p>
-                        <div style="display: flex; align-items: center; justify-content: center; gap: 1rem;">
-                            <div style="width: 48px; height: 48px; border-radius: 50%; background: var(--primary-glow); display: flex; align-items: center; justify-content: center; color: var(--primary); font-weight: 700;">HK</div>
-                            <div style="text-align: left;">
-                                <strong style="display: block; color: var(--text-main);">Ustadh Hakeem</strong>
-                                <span style="color: var(--text-dim); font-size: 0.85rem;">Senior Lecturer</span>
-                            </div>
-                        </div>
-                    </div>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem;">
+                    <div class="animate-on-scroll slide-up delay-100" style="padding: 1.5rem; border-radius: 16px; background: var(--surface); border: 1px solid var(--border); box-shadow: var(--shadow-sm); display: flex; align-items: center; gap: 1rem; transition: transform 0.2s;"><span style="color: #0066CC; font-size: 1.5rem;">•</span> <strong style="color: var(--text-main);">MSA UKKUDA</strong> <span style="color: var(--text-dim); font-size: 0.85rem; margin-left: auto;">(HQ)</span></div>
+                    <div class="animate-on-scroll slide-up delay-100" style="padding: 1.5rem; border-radius: 16px; background: var(--surface); border: 1px solid var(--border); box-shadow: var(--shadow-sm); display: flex; align-items: center; gap: 1rem; transition: transform 0.2s;"><span style="color: #0066CC; font-size: 1.5rem;">•</span> <strong style="color: var(--text-main);">MSA CHATEKKAL</strong></div>
+                    <div class="animate-on-scroll slide-up delay-200" style="padding: 1.5rem; border-radius: 16px; background: var(--surface); border: 1px solid var(--border); box-shadow: var(--shadow-sm); display: flex; align-items: center; gap: 1rem; transition: transform 0.2s;"><span style="color: #0066CC; font-size: 1.5rem;">•</span> <strong style="color: var(--text-main);">MSA MARIKKALA</strong></div>
+                    <div class="animate-on-scroll slide-up delay-200" style="padding: 1.5rem; border-radius: 16px; background: var(--surface); border: 1px solid var(--border); box-shadow: var(--shadow-sm); display: flex; align-items: center; gap: 1rem; transition: transform 0.2s;"><span style="color: #0066CC; font-size: 1.5rem;">•</span> <strong style="color: var(--text-main);">MSA NAVOOR</strong></div>
+                    <div class="animate-on-scroll slide-up delay-300" style="padding: 1.5rem; border-radius: 16px; background: var(--surface); border: 1px solid var(--border); box-shadow: var(--shadow-sm); display: flex; align-items: center; gap: 1rem; transition: transform 0.2s;"><span style="color: #0066CC; font-size: 1.5rem;">•</span> <strong style="color: var(--text-main);">MSA GOLIYANGADI</strong></div>
+                    <div class="animate-on-scroll slide-up delay-300" style="padding: 1.5rem; border-radius: 16px; background: var(--surface); border: 1px solid var(--border); box-shadow: var(--shadow-sm); display: flex; align-items: center; gap: 1rem; transition: transform 0.2s;"><span style="color: #0066CC; font-size: 1.5rem;">•</span> <strong style="color: var(--text-main);">MSA RENJA</strong></div>
+                    <div class="animate-on-scroll slide-up delay-400" style="padding: 1.5rem; border-radius: 16px; background: var(--surface); border: 1px solid var(--border); box-shadow: var(--shadow-sm); display: flex; align-items: center; gap: 1rem; transition: transform 0.2s;"><span style="color: #0066CC; font-size: 1.5rem;">•</span> <strong style="color: var(--text-main);">MSA KULIYOORPADAVU</strong></div>
+                    <div class="animate-on-scroll slide-up delay-400" style="padding: 1.5rem; border-radius: 16px; background: var(--surface); border: 1px solid var(--border); box-shadow: var(--shadow-sm); display: flex; align-items: center; gap: 1rem; transition: transform 0.2s;"><span style="color: #0066CC; font-size: 1.5rem;">•</span> <strong style="color: var(--text-main);">MSA BAJAL</strong></div>
                 </div>
             </div>
         </section>
@@ -281,34 +282,13 @@
             </div>
         </section>
 
-        <!-- Our Campuses Section -->
-        <section id="ourCampuses" style="padding: 6rem 2rem; background: var(--bg-desert); border-top: 1px solid var(--border);">
-            <div style="max-width: 1200px; margin: 0 auto;">
-                <div class="animate-on-scroll slide-from-left" style="text-align: center; margin-bottom: 4rem;">
-                    <p style="color: var(--primary); font-weight: 700; text-transform: uppercase; letter-spacing: 0.15em; font-size: 0.85rem; margin-bottom: 0.75rem;">Global Network</p>
-                    <h2 style="font-family: var(--font-display); font-size: clamp(2.5rem, 5vw, 4rem); font-weight: 700; color: var(--text-main);">Our Partner Campuses</h2>
-                </div>
-                
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem;">
-                    <div class="animate-on-scroll slide-up delay-100" style="padding: 1.5rem; border-radius: 16px; background: var(--surface); border: 1px solid var(--border); box-shadow: var(--shadow-sm); display: flex; align-items: center; gap: 1rem; transition: transform 0.2s;"><span style="color: #0066CC; font-size: 1.5rem;">•</span> <strong style="color: var(--text-main);">MSA UKKUDA</strong> <span style="color: var(--text-dim); font-size: 0.85rem; margin-left: auto;">(HQ)</span></div>
-                    <div class="animate-on-scroll slide-up delay-100" style="padding: 1.5rem; border-radius: 16px; background: var(--surface); border: 1px solid var(--border); box-shadow: var(--shadow-sm); display: flex; align-items: center; gap: 1rem; transition: transform 0.2s;"><span style="color: #0066CC; font-size: 1.5rem;">•</span> <strong style="color: var(--text-main);">MSA CHATEKKAL</strong></div>
-                    <div class="animate-on-scroll slide-up delay-200" style="padding: 1.5rem; border-radius: 16px; background: var(--surface); border: 1px solid var(--border); box-shadow: var(--shadow-sm); display: flex; align-items: center; gap: 1rem; transition: transform 0.2s;"><span style="color: #0066CC; font-size: 1.5rem;">•</span> <strong style="color: var(--text-main);">MSA MARIKKALA</strong></div>
-                    <div class="animate-on-scroll slide-up delay-200" style="padding: 1.5rem; border-radius: 16px; background: var(--surface); border: 1px solid var(--border); box-shadow: var(--shadow-sm); display: flex; align-items: center; gap: 1rem; transition: transform 0.2s;"><span style="color: #0066CC; font-size: 1.5rem;">•</span> <strong style="color: var(--text-main);">MSA NAVOOR</strong></div>
-                    <div class="animate-on-scroll slide-up delay-300" style="padding: 1.5rem; border-radius: 16px; background: var(--surface); border: 1px solid var(--border); box-shadow: var(--shadow-sm); display: flex; align-items: center; gap: 1rem; transition: transform 0.2s;"><span style="color: #0066CC; font-size: 1.5rem;">•</span> <strong style="color: var(--text-main);">MSA GOLIYANGADI</strong></div>
-                    <div class="animate-on-scroll slide-up delay-300" style="padding: 1.5rem; border-radius: 16px; background: var(--surface); border: 1px solid var(--border); box-shadow: var(--shadow-sm); display: flex; align-items: center; gap: 1rem; transition: transform 0.2s;"><span style="color: #0066CC; font-size: 1.5rem;">•</span> <strong style="color: var(--text-main);">MSA RENJA</strong></div>
-                    <div class="animate-on-scroll slide-up delay-400" style="padding: 1.5rem; border-radius: 16px; background: var(--surface); border: 1px solid var(--border); box-shadow: var(--shadow-sm); display: flex; align-items: center; gap: 1rem; transition: transform 0.2s;"><span style="color: #0066CC; font-size: 1.5rem;">•</span> <strong style="color: var(--text-main);">MSA KULIYOORPADAVU</strong></div>
-                    <div class="animate-on-scroll slide-up delay-400" style="padding: 1.5rem; border-radius: 16px; background: var(--surface); border: 1px solid var(--border); box-shadow: var(--shadow-sm); display: flex; align-items: center; gap: 1rem; transition: transform 0.2s;"><span style="color: #0066CC; font-size: 1.5rem;">•</span> <strong style="color: var(--text-main);">MSA BAJAL</strong></div>
-                </div>
-            </div>
-        </section>
-
     </main>
 
     <!-- Ultra-Premium Footer -->
     <footer class="ultra-footer">
         <div class="footer-grid">
             <div class="footer-brand animate-on-scroll slide-from-left">
-                <h4><span class="arabic-brand-text" dir="rtl">محيي السنة درس</span></h4>
+                <h4><span class="brand-text-styled">Muhyissunnah Dars</span></h4>
                 <p>Delivering a robust, pristine digital infrastructure for academic excellence. Optimized for seamless institutional management and absolute clarity.</p>
             </div>
             <div class="footer-col animate-on-scroll slide-up delay-100">
@@ -340,7 +320,7 @@
             </div>
         </div>
         <div class="footer-bottom animate-on-scroll slide-up delay-400">
-            <span>&copy; 2026 <span class="arabic-brand-text" dir="rtl">محيي السنة درس عكودا</span>. All rights reserved.</span>
+            <span>&copy; 2026 <span class="brand-text-styled">Muhyissunnah Dars Ukkuda</span>. All rights reserved.</span>
             <div style="display: flex; gap: 1rem;">
                 <span style="display: flex; align-items: center; gap: 0.5rem;"><span style="display: inline-block; width: 8px; height: 8px; background: var(--success); border-radius: 50%;"></span> Systems Operational</span>
             </div>

@@ -1,4 +1,4 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+﻿import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, onSnapshot, query, where, addDoc, runTransaction, getDocs, deleteDoc, arrayUnion, arrayRemove, enableMultiTabIndexedDbPersistence } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 import { firebaseConfig } from "./firebase-config.js";
@@ -1582,7 +1582,7 @@ function renderTextAsImage(text, fontSizePx = 22) {
         const canvas = document.createElement('canvas');
         const ctx = canvas.getContext('2d');
         // Use the page's loaded Arabic-capable font
-        const fontStr = `${fontSizePx}px Amiri, "Noto Kufi Arabic", "Outfit", sans-serif`;
+        const fontStr = `${fontSizePx}px Cairo, "Noto Kufi Arabic", "Outfit", sans-serif`;
         ctx.font = fontStr;
         const measured = ctx.measureText(text);
         const w = Math.ceil(measured.width) + 20;

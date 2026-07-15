@@ -344,8 +344,151 @@
             .login-error { background: rgba(239, 68, 68, 0.1); border-color: rgba(239, 68, 68, 0.3); }
         }
 
-        /* Responsive Layout */
-        /* Responsive Layout removed to keep the same side-by-side design on mobile */
+        /* Responsive Layout - keeps side-by-side design but scales down elements to fit mobile screens */
+        @media (max-width: 768px) {
+            .login-split-container {
+                width: 96%;
+                margin: 1rem auto;
+                min-height: calc(100vh - 2rem);
+                border-radius: 16px;
+            }
+            .login-left-panel {
+                padding: 2rem 1.5rem;
+            }
+            .login-right-panel {
+                padding: 2rem 1.5rem;
+            }
+            .brand-lockup {
+                margin-bottom: 2rem !important;
+                gap: 0.5rem !important;
+            }
+            .brand-logo-img {
+                width: 40px !important;
+                height: 40px !important;
+            }
+            .brand-text strong {
+                font-size: 1rem !important;
+            }
+            .brand-text span {
+                font-size: 0.65rem !important;
+                letter-spacing: 0.08em !important;
+            }
+            .login-branding h1 {
+                font-size: 1.85rem;
+                line-height: 1.2;
+                margin-bottom: 1rem;
+            }
+            .login-branding p {
+                font-size: 0.9rem;
+                line-height: 1.4;
+            }
+            .login-form-container h2 {
+                font-size: 1.6rem;
+                margin-bottom: 0.25rem;
+            }
+            .login-form-container > p {
+                font-size: 0.85rem;
+                margin-bottom: 1.5rem;
+            }
+            .input-group {
+                margin-bottom: 1rem;
+            }
+            .input-group label {
+                font-size: 0.8rem;
+                margin-bottom: 0.25rem;
+            }
+            .input-icon-wrapper span {
+                left: 0.8rem;
+                font-size: 1.1rem;
+            }
+            .input-icon-wrapper input {
+                padding: 0.8rem 0.8rem 0.8rem 2.5rem;
+                font-size: 0.875rem;
+                border-radius: 8px;
+            }
+            .role-selector-section {
+                margin-bottom: 1.5rem;
+            }
+            .role-selector-section label {
+                font-size: 0.8rem;
+                margin-bottom: 0.5rem;
+            }
+            .role-cards {
+                gap: 0.5rem;
+            }
+            .role-card {
+                padding: 0.6rem 0.3rem;
+                min-width: 65px;
+                border-radius: 8px;
+                gap: 0.25rem;
+            }
+            .role-card .role-icon {
+                font-size: 1.25rem;
+            }
+            .role-card .role-name {
+                font-size: 0.75rem;
+            }
+            .login-btn {
+                padding: 0.8rem;
+                font-size: 0.95rem;
+                border-radius: 8px;
+            }
+            .toggle-mode-wrapper {
+                margin-top: 1rem;
+                font-size: 0.85rem;
+            }
+            .login-footer-left {
+                font-size: 0.75rem;
+            }
+            .login-footer-right {
+                font-size: 0.75rem;
+                padding-top: 1rem;
+            }
+        }
+
+        /* Support for very small devices */
+        @media (max-width: 520px) {
+            .login-split-container {
+                width: 100%;
+                margin: 0;
+                min-height: 100vh;
+                border-radius: 0;
+            }
+            .login-left-panel {
+                padding: 1.5rem 1rem;
+                flex: 0.8; /* Slightly less ratio for left side to give form maximum room */
+            }
+            .login-right-panel {
+                padding: 1.5rem 1rem;
+                flex: 1.2;
+            }
+            .login-branding h1 {
+                font-size: 1.4rem;
+            }
+            .login-branding p {
+                font-size: 0.8rem;
+            }
+            .brand-text strong {
+                font-size: 0.85rem !important;
+            }
+            .brand-text span {
+                font-size: 0.55rem !important;
+            }
+            .brand-logo-img {
+                width: 32px !important;
+                height: 32px !important;
+            }
+            .role-card {
+                min-width: 55px;
+                padding: 0.4rem 0.2rem;
+            }
+            .role-card .role-icon {
+                font-size: 1.1rem;
+            }
+            .role-card .role-name {
+                font-size: 0.65rem;
+            }
+        }
     </style>
 </head>
 <body class="unified-login-page">
@@ -356,7 +499,7 @@
                 <div class="brand-lockup" style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 3rem; color: white;">
                     <img src="logo.png" alt="MSA Ukkuda Logo" class="brand-logo-img">
                     <span class="brand-text" style="display: flex; flex-direction: column; justify-content: center;">
-                        <strong style="font-family: 'Amiri', serif; letter-spacing: 0.08em; font-size: 1.25rem; line-height: 1; text-transform: uppercase; font-weight: 700; color: white;"><span class="arabic-brand-text" dir="rtl">محيي السنة درس</span></strong>
+                        <strong style="font-family: 'Inter', sans-serif; letter-spacing: 0.08em; font-size: 1.25rem; line-height: 1; text-transform: uppercase; font-weight: 700; color: white;"><span class="brand-text-styled">Muhyissunnah Dars</span></strong>
                         <span style="letter-spacing: 0.15em; font-size: 0.75rem; text-transform: uppercase; color: rgba(255,255,255,0.8);">Ukkuda Official Portal</span>
                     </span>
                 </div>
@@ -364,7 +507,7 @@
                 <p>Join thousands of students and manage your academic journey with precision and style.</p>
             </div>
             <div class="login-footer-left">
-                &copy; 2026 <span class="arabic-brand-text" dir="rtl">محيي السنة درس عكودا</span>. All rights reserved.
+                &copy; 2026 <span class="brand-text-styled">Muhyissunnah Dars Ukkuda</span>. All rights reserved.
             </div>
         </div>
 

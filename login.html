@@ -344,51 +344,54 @@
             .login-error { background: rgba(239, 68, 68, 0.1); border-color: rgba(239, 68, 68, 0.3); }
         }
 
-        /* Responsive Layout - keeps side-by-side design but scales down elements to fit mobile screens */
+        /* Responsive Layout - stack elements vertically for mobile screens */
         @media (max-width: 768px) {
             .login-split-container {
-                width: 96%;
-                margin: 1rem auto;
-                min-height: calc(100vh - 2rem);
+                width: 95%;
+                margin: 1.5rem auto;
+                min-height: calc(100vh - 3rem);
                 border-radius: 16px;
+                flex-direction: column;
             }
             .login-left-panel {
-                padding: 2rem 1.5rem;
+                padding: 1.5rem;
+                flex: none;
             }
             .login-right-panel {
-                padding: 2rem 1.5rem;
+                padding: 1.5rem;
+                flex: 1;
             }
             .brand-lockup {
-                margin-bottom: 2rem !important;
+                margin-bottom: 1.5rem !important;
                 gap: 0.5rem !important;
             }
             .brand-logo-img {
-                width: 40px !important;
-                height: 40px !important;
+                width: 32px !important;
+                height: 32px !important;
             }
             .brand-text strong {
-                font-size: 1rem !important;
+                font-size: 0.9rem !important;
             }
             .brand-text span {
-                font-size: 0.65rem !important;
+                font-size: 0.6rem !important;
                 letter-spacing: 0.08em !important;
             }
             .login-branding h1 {
-                font-size: 1.85rem;
+                font-size: 1.5rem;
                 line-height: 1.2;
-                margin-bottom: 1rem;
+                margin-bottom: 0.75rem;
             }
             .login-branding p {
-                font-size: 0.9rem;
+                font-size: 0.85rem;
                 line-height: 1.4;
             }
             .login-form-container h2 {
-                font-size: 1.6rem;
+                font-size: 1.4rem;
                 margin-bottom: 0.25rem;
             }
             .login-form-container > p {
-                font-size: 0.85rem;
-                margin-bottom: 1.5rem;
+                font-size: 0.8rem;
+                margin-bottom: 1.25rem;
             }
             .input-group {
                 margin-bottom: 1rem;

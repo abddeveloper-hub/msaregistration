@@ -758,4 +758,15 @@ html, body {
         padding: 2.5rem 1.5rem !important;
         margin-top: 1.5rem !important;
     }
+
+    /* ---- Hero Sections Font Fix for Mobile ---- */
+    .gallery-hero h1, .Programs-hero h1 {
+        font-size: clamp(2rem, 8vw, 2.5rem) !important;
+        margin-bottom: 0.75rem !important;
+    }
+    
+    .gallery-hero p, .Programs-hero p {
+        font-size: 1rem !important;
+        line-height: 1.5 !important;
+    }
 }

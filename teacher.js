@@ -1,6 +1,7 @@
-﻿import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, onSnapshot, query, where, addDoc, runTransaction, getDocs, deleteDoc, arrayUnion, arrayRemove, enableMultiTabIndexedDbPersistence } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+import { getAuth, onAuthStateChanged, signOut, updatePassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+import { getFirestore, doc, getDoc, updateDoc, collection, onSnapshot, addDoc, query as fsQuery, orderBy, limit, deleteDoc, enableMultiTabIndexedDbPersistence, setDoc, arrayUnion, arrayRemove, getDocs, runTransaction } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
 import { firebaseConfig } from "./firebase-config.js";
 
 
@@ -8,6 +9,7 @@ import { firebaseConfig } from "./firebase-config.js";
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
+const storage = getStorage(app);
 enableMultiTabIndexedDbPersistence(db).catch((err) => console.warn("Offline persistence error:", err.code));
 
 // DOM
@@ -272,7 +274,7 @@ function startFallbackCampusQueries(scope) {
         if (!cleanValue) return;
 
         const key = `${field}:${cleanValue}`;
-        const q = query(collection(db, "users"), where(field, "==", cleanValue));
+        const q = fsQuery(collection(db, "users"), where(field, "==", cleanValue));
         const unsub = onSnapshot(q, (snapshot) => {
             queryResults.set(key, snapshot.docs.map(d => ({ id: d.id, ...d.data() })));
             const merged = new Map();
@@ -1302,7 +1304,7 @@ if (loadMarksBtn) {
             let marksFound = 0;
 
             for (const s of students) {
-                const q = query(
+                const q = fsQuery(
                     collection(db, `users/${s.id}/marks`),
                     where("subject", "==", sub)
                 );
@@ -1457,7 +1459,7 @@ if (editAttBtn) {
             const existingData = {};
             // Fetch attendance for all students in this batch for the selected date and session
             for (const s of currentAttStudents) {
-                const q = query(
+                const q = fsQuery(
                     collection(db, `users/${s.id}/attendance`),
                     where("date", "==", date),
                     where("sessionName", "==", session)
@@ -1839,7 +1841,7 @@ if (downloadMonthlyAttPdfBtn) {
             
             for (const s of students) {
                 attendanceData[s.id] = { student: s, records: {} };
-                const q = query(
+                const q = fsQuery(
                     collection(db, `users/${s.id}/attendance`),
                     where("sessionName", "==", session)
                 );
@@ -2033,7 +2035,7 @@ if (downloadAllSubjectsMonthlyAttPdfBtn) {
                 const isMalayalamA = a.toUpperCase().includes('MALAYALAM') || a.includes('മലയാളം');
                 const isMalayalamB = b.toUpperCase().includes('MALAYALAM') || b.includes('മലയാളം');
                 const isArabicA = a.toUpperCase().includes('ARABIC') || a.toUpperCase().includes('LUGAT') || a.toUpperCase().includes('LUGHAT') || a.includes('لغة') || a.includes('العربية');
-                const isArabicB = b.toUpperCase().includes('ARABIC') || b.toUpperCase().includes('LUGAT') || b.toUpperCase().includes('LUGHAT') || b.includes('لغة') || b.includes('العربية');
+                const isArabicB = b.toUpperCase().includes('ARABIC') || b.toUpperCase().includes('LUGAT') || b.toUpperCase().includes('LUGHAT') || a.includes('لغة') || a.includes('العربية');
                 const isHizbA = a.includes('حزب');
                 const isHizbB = b.includes('حزب');
                 const isTafseerA = a.includes('تفسير');
@@ -2405,12 +2407,57 @@ if (galleryUploadForm) {
 const videoUploadForm = document.getElementById('videoUploadForm');
 const videoTitle = document.getElementById('videoTitle');
 const videoUrlInput = document.getElementById('videoUrlInput');
+const videoFileInput = document.getElementById('videoFileInput');
 const videoPreviewContainer = document.getElementById('videoPreviewContainer');
 const videoThumbnailPreview = document.getElementById('videoThumbnailPreview');
+const videoFilePreview = document.getElementById('videoFilePreview');
 const videoUploadBtn = document.getElementById('videoUploadBtn');
 const videoUploadMsg = document.getElementById('videoUploadMsg');
 
+const videoSourceRadios = document.querySelectorAll('input[name="videoSource"]');
+const youtubeInputGroup = document.getElementById('youtubeInputGroup');
+const fileInputGroup = document.getElementById('fileInputGroup');
+const driveInputGroup = document.getElementById('driveInputGroup');
+const driveUrlInput = document.getElementById('driveUrlInput');
+
 let currentVideoId = null;
+let currentVideoSource = 'youtube';
+
+if (videoSourceRadios.length > 0) {
+    videoSourceRadios.forEach(radio => {
+        radio.addEventListener('change', (e) => {
+            currentVideoSource = e.target.value;
+            if (currentVideoSource === 'youtube') {
+                youtubeInputGroup.style.display = 'block';
+                fileInputGroup.style.display = 'none';
+                driveInputGroup.style.display = 'none';
+                if (currentVideoId) {
+                    videoThumbnailPreview.style.display = 'block';
+                    videoFilePreview.style.display = 'none';
+                    videoPreviewContainer.style.display = 'block';
+                } else {
+                    videoPreviewContainer.style.display = 'none';
+                }
+            } else if (currentVideoSource === 'drive') {
+                youtubeInputGroup.style.display = 'none';
+                fileInputGroup.style.display = 'none';
+                driveInputGroup.style.display = 'block';
+                videoPreviewContainer.style.display = 'none';
+            } else {
+                youtubeInputGroup.style.display = 'none';
+                fileInputGroup.style.display = 'block';
+                driveInputGroup.style.display = 'none';
+                if (videoFileInput.files.length > 0) {
+                    videoFilePreview.style.display = 'block';
+                    videoThumbnailPreview.style.display = 'none';
+                    videoPreviewContainer.style.display = 'block';
+                } else {
+                    videoPreviewContainer.style.display = 'none';
+                }
+            }
+        });
+    });
+}
 
 function extractYouTubeID(url) {
     const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
@@ -2420,6 +2467,7 @@ function extractYouTubeID(url) {
 
 if (videoUrlInput) {
     videoUrlInput.addEventListener('input', () => {
+        if (currentVideoSource !== 'youtube') return;
         const url = videoUrlInput.value.trim();
         const videoId = extractYouTubeID(url);
         
@@ -2427,9 +2475,27 @@ if (videoUrlInput) {
             currentVideoId = videoId;
             const thumbnailUrl = `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
             videoThumbnailPreview.src = thumbnailUrl;
+            videoThumbnailPreview.style.display = 'block';
+            videoFilePreview.style.display = 'none';
             videoPreviewContainer.style.display = 'block';
         } else {
             currentVideoId = null;
+            videoPreviewContainer.style.display = 'none';
+        }
+    });
+}
+
+if (videoFileInput) {
+    videoFileInput.addEventListener('change', () => {
+        if (currentVideoSource !== 'file') return;
+        const file = videoFileInput.files[0];
+        if (file) {
+            const url = URL.createObjectURL(file);
+            videoFilePreview.src = url;
+            videoFilePreview.style.display = 'block';
+            videoThumbnailPreview.style.display = 'none';
+            videoPreviewContainer.style.display = 'block';
+        } else {
             videoPreviewContainer.style.display = 'none';
         }
     });
@@ -2439,45 +2505,180 @@ if (videoUploadForm) {
     videoUploadForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         
-        if (!currentVideoId) {
-            videoUploadMsg.textContent = "Please enter a valid YouTube link.";
-            videoUploadMsg.style.color = "var(--error)";
-            return;
-        }
-        
         const title = videoTitle.value.trim();
+        const date = document.getElementById('videoDate').value;
+        const category = document.getElementById('videoCategory').value;
+        const speaker = document.getElementById('videoSpeaker').value.trim();
+        const desc = document.getElementById('videoDesc').value.trim();
+        
         if (!title) return;
+
+        let videoData = {
+            title: title,
+            date: date,
+            category: category,
+            speaker: speaker,
+            description: desc,
+            uploadedBy: auth.currentUser ? auth.currentUser.uid : "teacher",
+            createdAt: new Date().toISOString()
+        };
         
         videoUploadBtn.disabled = true;
-        videoUploadBtn.textContent = "Adding...";
+        videoUploadBtn.textContent = "Uploading...";
         videoUploadMsg.textContent = "";
         
         try {
-            const thumbnailUrl = `https://img.youtube.com/vi/${currentVideoId}/hqdefault.jpg`;
-            await addDoc(collection(db, "videos"), {
-                title: title,
-                videoId: currentVideoId,
-                thumbnail: thumbnailUrl,
-                uploadedBy: auth.currentUser ? auth.currentUser.uid : "faculty",
-                createdAt: new Date().toISOString()
-            });
+            if (currentVideoSource === 'youtube') {
+                if (!currentVideoId) {
+                    videoUploadMsg.textContent = "Please enter a valid YouTube link.";
+                    videoUploadMsg.style.color = "var(--error)";
+                    videoUploadBtn.disabled = false;
+                    videoUploadBtn.textContent = "Add Video Program";
+                    return;
+                }
+                const thumbnailUrl = `https://img.youtube.com/vi/${currentVideoId}/hqdefault.jpg`;
+                videoData.videoType = "youtube";
+                videoData.videoId = currentVideoId;
+                videoData.thumbnail = thumbnailUrl;
+                
+                await addDoc(collection(db, "videos"), videoData);
+                finishUpload();
+            } else if (currentVideoSource === 'drive') {
+                const driveUrl = driveUrlInput ? driveUrlInput.value.trim() : "";
+                if (!driveUrl) {
+                    videoUploadMsg.textContent = "Please enter a valid Google Drive link.";
+                    videoUploadMsg.style.color = "var(--error)";
+                    videoUploadBtn.disabled = false;
+                    videoUploadBtn.textContent = "Add Video Program";
+                    return;
+                }
+                // Extract file ID from google drive link: e.g. https://drive.google.com/file/d/1a2b3c4d5e/view
+                const driveRegex = /\/d\/([a-zA-Z0-9_-]+)/;
+                const match = driveUrl.match(driveRegex);
+                const driveId = match ? match[1] : null;
+                
+                if (!driveId) {
+                    videoUploadMsg.textContent = "Could not extract Google Drive File ID. Make sure it's a valid link.";
+                    videoUploadMsg.style.color = "var(--error)";
+                    videoUploadBtn.disabled = false;
+                    videoUploadBtn.textContent = "Add Video Program";
+                    return;
+                }
+
+                videoData.videoType = "drive";
+                videoData.driveId = driveId;
+                // No thumbnail for drive by default unless we use a placeholder icon
+                videoData.thumbnail = "logo.png"; 
+
+                await addDoc(collection(db, "videos"), videoData);
+                finishUpload();
+            } else if (currentVideoSource === 'file') {
+                const file = videoFileInput.files[0];
+                if (!file) {
+                    videoUploadMsg.textContent = "Please select a video file.";
+                    videoUploadMsg.style.color = "var(--error)";
+                    videoUploadBtn.disabled = false;
+                    videoUploadBtn.textContent = "Add Video Program";
+                    return;
+                }
+                
+                const timestamp = Date.now();
+                const storageRef = ref(storage, `videos/${timestamp}_${file.name}`);
+                
+                const uploadTask = uploadBytesResumable(storageRef, file);
+                
+                uploadTask.on('state_changed', 
+                    (snapshot) => {
+                        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                        videoUploadBtn.textContent = `Uploading... ${Math.round(progress)}%`;
+                    }, 
+                    (error) => {
+                        console.error("Firebase Storage Upload Error:", error);
+                        videoUploadMsg.textContent = "Upload failed: " + error.message;
+                        videoUploadMsg.style.color = "var(--error)";
+                        videoUploadBtn.disabled = false;
+                        videoUploadBtn.textContent = "Add Video Program";
+                    }, 
+                    async () => {
+                        const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+                        videoData.videoType = "file";
+                        videoData.fileUrl = downloadURL;
+                        await addDoc(collection(db, "videos"), videoData);
+                        finishUpload();
+                    }
+                );
+            }
             
-            videoUploadMsg.textContent = "Program added successfully!";
-            videoUploadMsg.style.color = "var(--success)";
-            videoUploadForm.reset();
-            videoPreviewContainer.style.display = 'none';
-            currentVideoId = null;
-            
-            setTimeout(() => {
-                videoUploadMsg.textContent = "";
-            }, 3000);
+            function finishUpload() {
+                videoUploadMsg.textContent = "Program added successfully!";
+                videoUploadMsg.style.color = "var(--success)";
+                videoUploadForm.reset();
+                videoPreviewContainer.style.display = 'none';
+                currentVideoId = null;
+                if (videoFilePreview) videoFilePreview.src = "";
+                videoUploadBtn.disabled = false;
+                videoUploadBtn.textContent = "Add Video Program";
+                
+                setTimeout(() => {
+                    videoUploadMsg.textContent = "";
+                }, 3000);
+            }
         } catch (error) {
             console.error("Video Upload Error:", error);
-            videoUploadMsg.textContent = "Failed to add program. Please try again.";
+            videoUploadMsg.textContent = "Failed to add program: " + error.message;
             videoUploadMsg.style.color = "var(--error)";
-        } finally {
             videoUploadBtn.disabled = false;
             videoUploadBtn.textContent = "Add Video Program";
         }
     });
 }
+
+// 8. EXISTING YOUTUBE VIDEOS GRID (SYNCED FROM FIREBASE)
+const videoAdminGrid = document.getElementById('videoAdminGrid');
+if (videoAdminGrid) {
+    onSnapshot(collection(db, "videos"), (snap) => {
+        videoAdminGrid.innerHTML = '';
+        snap.forEach(docSnap => {
+            const data = docSnap.data();
+            const id = docSnap.id;
+            const item = document.createElement('div');
+            item.className = 'portal-card';
+            item.style.padding = '0.5rem';
+
+            let mediaPreview = '';
+            if (data.videoType === 'file' && data.fileUrl) {
+                mediaPreview = `<video src="${data.fileUrl}" style="width:100%; height:120px; object-fit:cover; border-radius:var(--radius-sm);" controls preload="metadata"></video>`;
+            } else {
+                mediaPreview = `<img src="${data.thumbnail}" alt="${data.title}" style="width:100%; height:120px; object-fit:cover; border-radius:var(--radius-sm);">`;
+            }
+
+            item.innerHTML = `
+                ${mediaPreview}
+                <div style="padding: 0.5rem 0;">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <h4 style="font-size:0.9rem; margin:0;">${data.title}</h4>
+                        <span class="badge" style="font-size:0.6rem; padding:0.1rem 0.3rem; background:var(--glass-border);">${data.category || 'N/A'}</span>
+                    </div>
+                    <p style="font-size:0.75rem; color:var(--text-dim); margin:0.3rem 0;">${data.speaker ? '🎤 ' + data.speaker : ''}</p>
+                    <p style="font-size:0.75rem; color:var(--text-dim); margin:0 0 0.5rem 0;">${data.date ? '📅 ' + data.date : ''}</p>
+                    <div style="display:flex; justify-content:space-between; margin-top:0.5rem;">
+                        <button class="btn btn-ghost" style="color:var(--error); padding:0.5rem;" onclick="window.deleteRecord('videos', '${id}')">Delete</button>
+                    </div>
+                </div>
+            `;
+            videoAdminGrid.appendChild(item);
+        });
+    });
+}
+
+// Global Deletion Handler
+window.deleteRecord = async (col, id) => {
+    if(!confirm(`Are you sure you want to permanently delete this ${col === 'videos' ? 'video program' : col} record? This cannot be undone.`)) return;
+    try {
+        await deleteDoc(doc(db, col, id));
+        alert("Record deleted successfully.");
+    } catch(e) { 
+        alert("Error deleting: " + e.message); 
+        console.error("Delete Error:", e);
+    }
+};

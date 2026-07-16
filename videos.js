@@ -51,17 +51,30 @@ document.addEventListener('DOMContentLoaded', () => {
                     description: photo.description
                 }));
                 
+                const videoType = photo.videoType || 'youtube';
+                const fileUrl = photo.fileUrl || '';
+                const driveId = photo.driveId || '';
+
+                let mediaPreview = '';
+                if (videoType === 'file' && fileUrl) {
+                    mediaPreview = `<video src="${fileUrl}" style="width:100%; height:100%; object-fit:cover;" preload="metadata"></video>`;
+                } else {
+                    mediaPreview = `<img src="${photoSrc}" alt="${videoTitle}" loading="lazy">`;
+                }
+
                 galleryGrid.innerHTML += `
-                    <div class="gallery-item has-image" data-category="${(photo.category||'').toLowerCase()}" data-meta="${metaJson}" data-video-id="${photo.videoId}" style="animation-delay:${delay}s;">
-                        <img src="${photoSrc}" alt="${videoTitle}" loading="lazy">
-                        <div class="gallery-item-overlay">
-                            <div>
-                                <div class="gallery-item-category-tag">${videoCategory}</div>
-                                <div class="gallery-item-label">${videoTitle}</div>
-                                <div style="font-size: 0.75rem; color: #ccc; margin-top: 4px;">
-                                    ${videoSpeaker} ${videoSpeaker && videoDate ? '&bull;' : ''} ${videoDate}
-                                </div>
+                    <div class="gallery-item has-image" data-category="${(photo.category||'').toLowerCase()}" data-meta="${metaJson}" data-video-id="${photo.videoId || ''}" data-video-type="${videoType}" data-file-url="${fileUrl}" data-drive-id="${driveId}" style="animation-delay:${delay}s;">
+                        <div class="gallery-item-image-wrapper">
+                            ${mediaPreview}
+                        </div>
+                        <div class="gallery-item-details">
+                            <div class="gallery-item-label">${videoTitle}</div>
+                            <div class="gallery-item-meta">
+                                <span>${videoSpeaker ? '🎤 ' + videoSpeaker : ''}</span>
+                                <span>${videoSpeaker && videoDate ? '&bull;' : ''}</span>
+                                <span>${videoDate ? videoDate : ''}</span>
                             </div>
+                            ${videoCategory ? `<div style="margin-top:2px;"><span class="gallery-item-category-tag">${videoCategory}</span></div>` : ''}
                         </div>
                     </div>
                 `;
@@ -108,13 +121,45 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!lightbox) return;
 
         let currentIndex = -1;
-        const itemsWithImages = Array.from(items).filter(item => item.getAttribute("data-video-id"));
+        const itemsWithImages = Array.from(items).filter(item => item.getAttribute("data-video-id") || item.getAttribute("data-file-url") || item.getAttribute("data-drive-id"));
 
         function updateLightbox(item) {
+            const videoType = item.getAttribute("data-video-type") || 'youtube';
             const videoId = item.getAttribute("data-video-id");
-            if (!videoId) return;
+            const fileUrl = item.getAttribute("data-file-url");
+            const driveId = item.getAttribute("data-drive-id");
             
-            document.getElementById("lightboxIframe").src = "https://www.youtube.com/embed/" + videoId + "?autoplay=1";
+            const iframe = document.getElementById("lightboxIframe");
+            let videoEl = document.getElementById("lightboxVideoEl");
+            if (!videoEl) {
+                videoEl = document.createElement("video");
+                videoEl.id = "lightboxVideoEl";
+                videoEl.controls = true;
+                videoEl.style.width = "100%";
+                videoEl.style.height = "100%";
+                videoEl.style.display = "none";
+                iframe.parentNode.appendChild(videoEl);
+            }
+            
+            if (videoType === 'file' && fileUrl) {
+                iframe.style.display = "none";
+                iframe.src = "";
+                videoEl.style.display = "block";
+                videoEl.src = fileUrl;
+                videoEl.play().catch(e => console.warn(e));
+            } else if (videoType === 'drive' && driveId) {
+                videoEl.style.display = "none";
+                videoEl.src = "";
+                iframe.style.display = "block";
+                iframe.src = `https://drive.google.com/file/d/${driveId}/preview`;
+            } else if (videoId) {
+                videoEl.style.display = "none";
+                videoEl.src = "";
+                iframe.style.display = "block";
+                iframe.src = "https://www.youtube.com/embed/" + videoId + "?autoplay=1";
+            } else {
+                return;
+            }
             
             try {
                 const meta = JSON.parse(decodeURIComponent(item.getAttribute('data-meta')));
@@ -136,8 +181,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         itemsWithImages.forEach((item, index) => {
             item.addEventListener('click', () => {
-                const videoId = item.getAttribute("data-video-id");
-                if (videoId) {
+                if (item.getAttribute("data-video-id") || item.getAttribute("data-file-url") || item.getAttribute("data-drive-id")) {
                     updateLightbox(item);
                     currentIndex = index;
                     lightbox.classList.add('open');
@@ -145,7 +189,15 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
 
-        const closeLightbox = () => { lightbox.classList.remove("open"); document.getElementById("lightboxIframe").src = ""; };
+        const closeLightbox = () => { 
+            lightbox.classList.remove("open"); 
+            document.getElementById("lightboxIframe").src = ""; 
+            const videoEl = document.getElementById("lightboxVideoEl");
+            if (videoEl) {
+                videoEl.pause();
+                videoEl.src = "";
+            }
+        };
         const showPrev = (e) => {
             e.stopPropagation();
             if (currentIndex > 0) {

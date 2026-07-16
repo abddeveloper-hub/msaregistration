@@ -1,11 +1,13 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 import { getAuth, onAuthStateChanged, signOut, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 import { getFirestore, doc, getDoc, updateDoc, collection, onSnapshot, addDoc, setDoc, getDocs, deleteDoc, enableMultiTabIndexedDbPersistence, query as fsQuery, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
 import { firebaseConfig } from "./firebase-config.js";
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
+const storage = getStorage(app);
 enableMultiTabIndexedDbPersistence(db).catch((err) => console.warn("Offline persistence error:", err.code));
 
 const banner = document.getElementById('globalAnnouncementBanner');
@@ -1100,8 +1102,16 @@ if (galleryAdminGrid) {
                 const item = document.createElement('div');
                 item.className = 'portal-card';
                 item.style.padding = '0.5rem';
+                
+                let mediaPreview = '';
+                if (data.videoType === 'file' && data.fileUrl) {
+                    mediaPreview = `<video src="${data.fileUrl}" style="width:100%; height:120px; object-fit:cover; border-radius:var(--radius-sm);" controls preload="metadata"></video>`;
+                } else {
+                    mediaPreview = `<img src="${data.thumbnail}" alt="${data.title}" style="width:100%; height:120px; object-fit:cover; border-radius:var(--radius-sm);">`;
+                }
+
                 item.innerHTML = `
-                    <img src="${data.thumbnail}" alt="${data.title}" style="width:100%; height:120px; object-fit:cover; border-radius:var(--radius-sm);">
+                    ${mediaPreview}
                     <div style="padding: 0.5rem 0;">
                         <div style="display:flex; justify-content:space-between; align-items:center;">
                             <h4 style="font-size:0.9rem; margin:0;">${data.title}</h4>
@@ -1225,12 +1235,57 @@ if (galleryUploadForm) {
 const videoUploadForm = document.getElementById('videoUploadForm');
 const videoTitle = document.getElementById('videoTitle');
 const videoUrlInput = document.getElementById('videoUrlInput');
+const videoFileInput = document.getElementById('videoFileInput');
 const videoPreviewContainer = document.getElementById('videoPreviewContainer');
 const videoThumbnailPreview = document.getElementById('videoThumbnailPreview');
+const videoFilePreview = document.getElementById('videoFilePreview');
 const videoUploadBtn = document.getElementById('videoUploadBtn');
 const videoUploadMsg = document.getElementById('videoUploadMsg');
 
+const videoSourceRadios = document.querySelectorAll('input[name="videoSource"]');
+const youtubeInputGroup = document.getElementById('youtubeInputGroup');
+const fileInputGroup = document.getElementById('fileInputGroup');
+const driveInputGroup = document.getElementById('driveInputGroup');
+const driveUrlInput = document.getElementById('driveUrlInput');
+
 let currentVideoId = null;
+let currentVideoSource = 'youtube';
+
+if (videoSourceRadios.length > 0) {
+    videoSourceRadios.forEach(radio => {
+        radio.addEventListener('change', (e) => {
+            currentVideoSource = e.target.value;
+            if (currentVideoSource === 'youtube') {
+                youtubeInputGroup.style.display = 'block';
+                fileInputGroup.style.display = 'none';
+                driveInputGroup.style.display = 'none';
+                if (currentVideoId) {
+                    videoThumbnailPreview.style.display = 'block';
+                    videoFilePreview.style.display = 'none';
+                    videoPreviewContainer.style.display = 'block';
+                } else {
+                    videoPreviewContainer.style.display = 'none';
+                }
+            } else if (currentVideoSource === 'drive') {
+                youtubeInputGroup.style.display = 'none';
+                fileInputGroup.style.display = 'none';
+                driveInputGroup.style.display = 'block';
+                videoPreviewContainer.style.display = 'none';
+            } else {
+                youtubeInputGroup.style.display = 'none';
+                fileInputGroup.style.display = 'block';
+                driveInputGroup.style.display = 'none';
+                if (videoFileInput.files.length > 0) {
+                    videoFilePreview.style.display = 'block';
+                    videoThumbnailPreview.style.display = 'none';
+                    videoPreviewContainer.style.display = 'block';
+                } else {
+                    videoPreviewContainer.style.display = 'none';
+                }
+            }
+        });
+    });
+}
 
 function extractYouTubeID(url) {
     const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
@@ -1240,6 +1295,7 @@ function extractYouTubeID(url) {
 
 if (videoUrlInput) {
     videoUrlInput.addEventListener('input', () => {
+        if (currentVideoSource !== 'youtube') return;
         const url = videoUrlInput.value.trim();
         const videoId = extractYouTubeID(url);
         
@@ -1247,9 +1303,27 @@ if (videoUrlInput) {
             currentVideoId = videoId;
             const thumbnailUrl = `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
             videoThumbnailPreview.src = thumbnailUrl;
+            videoThumbnailPreview.style.display = 'block';
+            videoFilePreview.style.display = 'none';
             videoPreviewContainer.style.display = 'block';
         } else {
             currentVideoId = null;
+            videoPreviewContainer.style.display = 'none';
+        }
+    });
+}
+
+if (videoFileInput) {
+    videoFileInput.addEventListener('change', () => {
+        if (currentVideoSource !== 'file') return;
+        const file = videoFileInput.files[0];
+        if (file) {
+            const url = URL.createObjectURL(file);
+            videoFilePreview.src = url;
+            videoFilePreview.style.display = 'block';
+            videoThumbnailPreview.style.display = 'none';
+            videoPreviewContainer.style.display = 'block';
+        } else {
             videoPreviewContainer.style.display = 'none';
         }
     });
@@ -1259,12 +1333,6 @@ if (videoUploadForm) {
     videoUploadForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         
-        if (!currentVideoId) {
-            videoUploadMsg.textContent = "Please enter a valid YouTube link.";
-            videoUploadMsg.style.color = "var(--error)";
-            return;
-        }
-        
         const title = videoTitle.value.trim();
         const date = document.getElementById('videoDate').value;
         const category = document.getElementById('videoCategory').value;
@@ -1272,39 +1340,119 @@ if (videoUploadForm) {
         const desc = document.getElementById('videoDesc').value.trim();
         
         if (!title) return;
+
+        let videoData = {
+            title: title,
+            date: date,
+            category: category,
+            speaker: speaker,
+            description: desc,
+            uploadedBy: auth.currentUser ? auth.currentUser.uid : "admin",
+            createdAt: new Date().toISOString()
+        };
         
         videoUploadBtn.disabled = true;
-        videoUploadBtn.textContent = "Adding...";
+        videoUploadBtn.textContent = "Uploading...";
         videoUploadMsg.textContent = "";
         
         try {
-            const thumbnailUrl = `https://img.youtube.com/vi/${currentVideoId}/hqdefault.jpg`;
-            await addDoc(collection(db, "videos"), {
-                title: title,
-                date: date,
-                category: category,
-                speaker: speaker,
-                description: desc,
-                videoId: currentVideoId,
-                thumbnail: thumbnailUrl,
-                uploadedBy: auth.currentUser ? auth.currentUser.uid : "admin",
-                createdAt: new Date().toISOString()
-            });
+            if (currentVideoSource === 'youtube') {
+                if (!currentVideoId) {
+                    videoUploadMsg.textContent = "Please enter a valid YouTube link.";
+                    videoUploadMsg.style.color = "var(--error)";
+                    videoUploadBtn.disabled = false;
+                    videoUploadBtn.textContent = "Add Video Program";
+                    return;
+                }
+                const thumbnailUrl = `https://img.youtube.com/vi/${currentVideoId}/hqdefault.jpg`;
+                videoData.videoType = "youtube";
+                videoData.videoId = currentVideoId;
+                videoData.thumbnail = thumbnailUrl;
+                
+                await addDoc(collection(db, "videos"), videoData);
+                finishUpload();
+            } else if (currentVideoSource === 'drive') {
+                const driveUrl = driveUrlInput ? driveUrlInput.value.trim() : "";
+                if (!driveUrl) {
+                    videoUploadMsg.textContent = "Please enter a valid Google Drive link.";
+                    videoUploadMsg.style.color = "var(--error)";
+                    videoUploadBtn.disabled = false;
+                    videoUploadBtn.textContent = "Add Video Program";
+                    return;
+                }
+                // Extract file ID from google drive link: e.g. https://drive.google.com/file/d/1a2b3c4d5e/view
+                const driveRegex = /\/d\/([a-zA-Z0-9_-]+)/;
+                const match = driveUrl.match(driveRegex);
+                const driveId = match ? match[1] : null;
+                
+                if (!driveId) {
+                    videoUploadMsg.textContent = "Could not extract Google Drive File ID. Make sure it's a valid link.";
+                    videoUploadMsg.style.color = "var(--error)";
+                    videoUploadBtn.disabled = false;
+                    videoUploadBtn.textContent = "Add Video Program";
+                    return;
+                }
+
+                videoData.videoType = "drive";
+                videoData.driveId = driveId;
+                // No thumbnail for drive by default unless we use a placeholder icon
+                videoData.thumbnail = "logo.png"; 
+
+                await addDoc(collection(db, "videos"), videoData);
+                finishUpload();
+            } else if (currentVideoSource === 'file') {
+                const file = videoFileInput.files[0];
+                if (!file) {
+                    videoUploadMsg.textContent = "Please select a video file.";
+                    videoUploadMsg.style.color = "var(--error)";
+                    videoUploadBtn.disabled = false;
+                    videoUploadBtn.textContent = "Add Video Program";
+                    return;
+                }
+                
+                const timestamp = Date.now();
+                const storageRef = ref(storage, `videos/${timestamp}_${file.name}`);
+                
+                const uploadTask = uploadBytesResumable(storageRef, file);
+                uploadTask.on('state_changed', 
+                    (snapshot) => {
+                        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                        videoUploadBtn.textContent = `Uploading... ${Math.round(progress)}%`;
+                    }, 
+                    (error) => {
+                        console.error("Firebase Storage Upload Error:", error);
+                        videoUploadMsg.textContent = "Upload failed: " + error.message;
+                        videoUploadMsg.style.color = "var(--error)";
+                        videoUploadBtn.disabled = false;
+                        videoUploadBtn.textContent = "Add Video Program";
+                    },
+                    async () => {
+                        videoData.videoType = "file";
+                        videoData.fileUrl = downloadURL;
+                        await addDoc(collection(db, "videos"), videoData);
+                        finishUpload();
+                    }
+                );
+            }
             
-            videoUploadMsg.textContent = "Program added successfully!";
-            videoUploadMsg.style.color = "var(--success)";
-            videoUploadForm.reset();
-            videoPreviewContainer.style.display = 'none';
-            currentVideoId = null;
-            
-            setTimeout(() => {
-                videoUploadMsg.textContent = "";
-            }, 3000);
+            function finishUpload() {
+                videoUploadMsg.textContent = "Program added successfully!";
+                videoUploadMsg.style.color = "var(--success)";
+                videoUploadForm.reset();
+                videoPreviewContainer.style.display = 'none';
+                currentVideoId = null;
+                if (videoFilePreview) videoFilePreview.src = "";
+                videoUploadBtn.disabled = false;
+                videoUploadBtn.textContent = "Add Video Program";
+                
+                setTimeout(() => {
+                    videoUploadMsg.textContent = "";
+                }, 3000);
+            }
         } catch (error) {
             console.error("Video Upload Error:", error);
             videoUploadMsg.textContent = "Failed to add program: " + error.message;
             videoUploadMsg.style.color = "var(--error)";
-        } finally {
             videoUploadBtn.disabled = false;
             videoUploadBtn.textContent = "Add Video Program";
         }

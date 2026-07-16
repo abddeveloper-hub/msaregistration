@@ -744,3 +744,18 @@ html, body {
 .m-nav-icon {
     font-size: 1.4rem;
 }
+
+/* ---- Fix Grids and Empty States for Mobile ---- */
+@media (max-width: 768px) {
+    .videos-grid,
+    .gallery-grid {
+        grid-template-columns: 1fr !important;
+        columns: 1 !important;
+        gap: 1.5rem !important;
+    }
+
+    .empty-state {
+        padding: 2.5rem 1.5rem !important;
+        margin-top: 1.5rem !important;
+    }
+}

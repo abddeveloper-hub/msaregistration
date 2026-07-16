@@ -18,6 +18,87 @@
         rel="stylesheet">
 
     <link rel="stylesheet" href="style.css">
+    <style>
+        /* Masonry Gallery Grid */
+        .videos-main {
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 3rem 2rem 6rem;
+        }
+
+        .videos-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 2rem 1.5rem;
+        }
+
+        .gallery-item {
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            animation: fadeUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+            transition: transform 0.2s ease;
+        }
+        
+        .gallery-item:hover {
+            transform: scale(1.02);
+        }
+
+        .gallery-item-image-wrapper {
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            border-radius: 12px;
+            overflow: hidden;
+            background: #000;
+            position: relative;
+        }
+
+        .gallery-item img, .gallery-item video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .gallery-item-details {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+            padding: 0 0.25rem;
+        }
+
+        .gallery-item-label {
+            color: var(--text);
+            font-weight: 600;
+            font-size: 1rem;
+            line-height: 1.4;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .gallery-item-meta {
+            color: var(--text-dim);
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        
+        .gallery-item-category-tag {
+            display: inline-block;
+            background: var(--surface-raised);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--primary);
+            text-transform: uppercase;
+        }
+    </style>
     <link rel="stylesheet" href="landing.css">
     <link rel="stylesheet" href="mobile.css">
 
@@ -44,7 +125,7 @@
             localStorage.setItem('msaukkuda:theme', newTheme);
             const icon = document.getElementById('themeToggleIcon');
             if (icon) {
-                icon.textContent = newTheme === 'light' ? '??' : '??';
+                icon.textContent = newTheme === 'light' ? '☀️' : '🌙';
             }
         };
     </script>
@@ -415,18 +496,18 @@
             </div>
 
             <div class="nav-actions" style="position: relative;">
-                <button class="btn btn-ghost icon-btn" onclick="toggleTheme()" title="Toggle Dark/Light Mode" style="font-size: 1.25rem;"><span id="themeToggleIcon">??</span></button>
+                <button class="btn btn-ghost icon-btn" onclick="toggleTheme()" title="Toggle Dark/Light Mode" style="font-size: 1.25rem;"><span id="themeToggleIcon">☀️</span></button>
                 <button id="installAppBtn" class="btn btn-ghost install-app-btn hidden" type="button">Download App</button>
                 
-                <button class="btn btn-ghost icon-btn" id="loginMenuToggleBtn" type="button" style="font-size: 1.5rem; padding: 0.5rem; line-height: 1;">?</button>
+                <button class="btn btn-ghost icon-btn" id="loginMenuToggleBtn" type="button" style="font-size: 1.5rem; padding: 0.5rem; line-height: 1;">⋮</button>
                 
                 <div id="loginDropdownMenu" class="hidden" style="position: absolute; top: calc(100% + 0.5rem); right: 0; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); box-shadow: 0 10px 25px rgba(0,0,0,0.1); display: flex; flex-direction: column; min-width: 200px; z-index: 100; overflow: hidden;">
-                    <a href="academic.html" class="btn btn-ghost" style="border-radius: 0; border: none; border-bottom: 1px solid var(--border); justify-content: flex-start; padding: 1rem; text-decoration: none;">?? Academic Programs</a>
-                    <a href="events.html" class="btn btn-ghost" style="border-radius: 0; border: none; border-bottom: 1px solid var(--border); justify-content: flex-start; padding: 1rem; text-decoration: none;">?? News & Events</a>
-                    <a href="gallery.html" class="btn btn-ghost" style="border-radius: 0; border: none; border-bottom: 1px solid var(--border); justify-content: flex-start; padding: 1rem; text-decoration: none;">??? Gallery</a>
-                    <a href="videos.html" class="btn btn-ghost" style="border-radius: 0; border: none; border-bottom: 1px solid var(--border); justify-content: flex-start; padding: 1rem; text-decoration: none;">?? Videos</a>
-                    <a href="login.html" class="btn btn-ghost" style="border-radius: 0; border: none; border-bottom: 1px solid var(--border); justify-content: flex-start; padding: 1rem; text-decoration: none;">?? Login</a>
-                    <a href="login.html?signup=true" class="btn btn-ghost" style="border-radius: 0; border: none; justify-content: flex-start; padding: 1rem; text-decoration: none;">?? New Registration</a>
+                    <a href="academic.html" class="btn btn-ghost" style="border-radius: 0; border: none; border-bottom: 1px solid var(--border); justify-content: flex-start; padding: 1rem; text-decoration: none;">📚 Academic Programs</a>
+                    <a href="events.html" class="btn btn-ghost" style="border-radius: 0; border: none; border-bottom: 1px solid var(--border); justify-content: flex-start; padding: 1rem; text-decoration: none;">📅 News & Events</a>
+                    <a href="gallery.html" class="btn btn-ghost" style="border-radius: 0; border: none; border-bottom: 1px solid var(--border); justify-content: flex-start; padding: 1rem; text-decoration: none;">📸 Gallery</a>
+                    <a href="videos.html" class="btn btn-ghost" style="border-radius: 0; border: none; border-bottom: 1px solid var(--border); justify-content: flex-start; padding: 1rem; text-decoration: none;">🎬 Videos</a>
+                    <a href="login.html" class="btn btn-ghost" style="border-radius: 0; border: none; border-bottom: 1px solid var(--border); justify-content: flex-start; padding: 1rem; text-decoration: none;">🔒 Login</a>
+                    <a href="login.html?signup=true" class="btn btn-ghost" style="border-radius: 0; border: none; justify-content: flex-start; padding: 1rem; text-decoration: none;">📝 New Registration</a>
                 </div>
             </div>
         </nav>
@@ -435,7 +516,7 @@
     <!-- Page Hero -->
     <section class="Programs-hero">
         <div class="pill-badge">Campus Life</div>
-        <h1>YouTube Videos</h1>
+        <h1>Videos</h1>
         <p>A window into the vibrant academic and cultural life at <span class="brand-text-styled">Muhyissunnah Dars Ukkuda</span> — from convocations to
             classrooms.</p>
     </section>
@@ -461,7 +542,7 @@
         </div>
 
         <div class="videos-empty" id="videosEmpty">
-            <span class="empty-icon">???</span>
+            <span class="empty-icon">🔍</span>
             <h3>No Images Found</h3>
             <p>Try selecting a different filter category.</p>
         </div>
@@ -472,7 +553,7 @@
         <div class="lightbox-inner" id="lightboxInner">
             <button class="lightbox-close" id="lightboxClose" aria-label="Close lightbox">&#10005;</button>
             <button class="lightbox-nav prev" id="lightboxPrev" aria-label="Previous video">&#8249;</button>
-            <div style="width: 80%; max-width: 900px; aspect-ratio: 16/9; margin: 0 auto; background: black; border-radius: 12px; overflow: hidden; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);">
+            <div style="width: min(95vw, 1600px, calc(85vh * 16 / 9)); aspect-ratio: 16/9; margin: 0 auto; background: black; border-radius: 12px; overflow: hidden; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);">
                 <iframe id="lightboxIframe" src="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="width: 100%; height: 100%;"></iframe>
             </div>
             <p class="lightbox-caption" id="lightboxCaption"></p>
@@ -483,19 +564,19 @@
     <!-- Mobile Nav Bar -->
     <nav class="mobile-entry-bar" aria-label="Mobile portal shortcuts">
         <a class="mobile-entry-item" href="index.html">
-            <span style="background: var(--surface-raised); font-size: 1rem;">??</span>
+            <span style="background: var(--surface-raised); font-size: 1rem;">🏠</span>
             <strong>Home</strong>
         </a>
         <a class="mobile-entry-item" href="academic.html">
-            <span style="background: rgba(10, 132, 255, 0.1); color: #0a84ff; font-size: 1rem;">??</span>
+            <span style="background: rgba(10, 132, 255, 0.1); color: #0a84ff; font-size: 1rem;">📚</span>
             <strong>Programs</strong>
         </a>
         <a class="mobile-entry-item" href="events.html">
-            <span style="background: rgba(255, 159, 10, 0.1); color: #ff9f0a; font-size: 1rem;">??</span>
+            <span style="background: rgba(255, 159, 10, 0.1); color: #ff9f0a; font-size: 1rem;">📅</span>
             <strong>Events</strong>
         </a>
         <a class="mobile-entry-item highlight" href="login.html" style="background: var(--primary); color: white;">
-            <span style="background: rgba(255,255,255,0.2); font-size: 1rem;">??</span>
+            <span style="background: rgba(255,255,255,0.2); font-size: 1rem;">🔒</span>
             <strong>Login</strong>
         </a>
     </nav>

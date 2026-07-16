@@ -44,7 +44,7 @@
             localStorage.setItem('msaukkuda:theme', newTheme);
             const icon = document.getElementById('themeToggleIcon');
             if (icon) {
-                icon.textContent = newTheme === 'light' ? '??' : '??';
+                icon.textContent = newTheme === 'light' ? '☀️' : '🌙';
             }
         };
     </script>
@@ -415,18 +415,18 @@
             </div>
 
             <div class="nav-actions" style="position: relative;">
-                <button class="btn btn-ghost icon-btn" onclick="toggleTheme()" title="Toggle Dark/Light Mode" style="font-size: 1.25rem;"><span id="themeToggleIcon">??</span></button>
+                <button class="btn btn-ghost icon-btn" onclick="toggleTheme()" title="Toggle Dark/Light Mode" style="font-size: 1.25rem;"><span id="themeToggleIcon">☀️</span></button>
                 <button id="installAppBtn" class="btn btn-ghost install-app-btn hidden" type="button">Download App</button>
                 
-                <button class="btn btn-ghost icon-btn" id="loginMenuToggleBtn" type="button" style="font-size: 1.5rem; padding: 0.5rem; line-height: 1;">?</button>
+                <button class="btn btn-ghost icon-btn" id="loginMenuToggleBtn" type="button" style="font-size: 1.5rem; padding: 0.5rem; line-height: 1;">⋮</button>
                 
                 <div id="loginDropdownMenu" class="hidden" style="position: absolute; top: calc(100% + 0.5rem); right: 0; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); box-shadow: 0 10px 25px rgba(0,0,0,0.1); display: flex; flex-direction: column; min-width: 200px; z-index: 100; overflow: hidden;">
-                    <a href="academic.html" class="btn btn-ghost" style="border-radius: 0; border: none; border-bottom: 1px solid var(--border); justify-content: flex-start; padding: 1rem; text-decoration: none;">?? Academic Programs</a>
-                    <a href="events.html" class="btn btn-ghost" style="border-radius: 0; border: none; border-bottom: 1px solid var(--border); justify-content: flex-start; padding: 1rem; text-decoration: none;">?? News & Events</a>
-                    <a href="gallery.html" class="btn btn-ghost" style="border-radius: 0; border: none; border-bottom: 1px solid var(--border); justify-content: flex-start; padding: 1rem; text-decoration: none;">??? Gallery</a>
-                    <a href="videos.html" class="btn btn-ghost" style="border-radius: 0; border: none; border-bottom: 1px solid var(--border); justify-content: flex-start; padding: 1rem; text-decoration: none;">?? Videos</a>
-                    <a href="login.html" class="btn btn-ghost" style="border-radius: 0; border: none; border-bottom: 1px solid var(--border); justify-content: flex-start; padding: 1rem; text-decoration: none;">?? Login</a>
-                    <a href="login.html?signup=true" class="btn btn-ghost" style="border-radius: 0; border: none; justify-content: flex-start; padding: 1rem; text-decoration: none;">?? New Registration</a>
+                    <a href="academic.html" class="btn btn-ghost" style="border-radius: 0; border: none; border-bottom: 1px solid var(--border); justify-content: flex-start; padding: 1rem; text-decoration: none;">📚 Academic Programs</a>
+                    <a href="events.html" class="btn btn-ghost" style="border-radius: 0; border: none; border-bottom: 1px solid var(--border); justify-content: flex-start; padding: 1rem; text-decoration: none;">📅 News & Events</a>
+                    <a href="gallery.html" class="btn btn-ghost" style="border-radius: 0; border: none; border-bottom: 1px solid var(--border); justify-content: flex-start; padding: 1rem; text-decoration: none;">📸 Gallery</a>
+                    <a href="videos.html" class="btn btn-ghost" style="border-radius: 0; border: none; border-bottom: 1px solid var(--border); justify-content: flex-start; padding: 1rem; text-decoration: none;">🎬 Videos</a>
+                    <a href="login.html" class="btn btn-ghost" style="border-radius: 0; border: none; border-bottom: 1px solid var(--border); justify-content: flex-start; padding: 1rem; text-decoration: none;">🔒 Login</a>
+                    <a href="login.html?signup=true" class="btn btn-ghost" style="border-radius: 0; border: none; justify-content: flex-start; padding: 1rem; text-decoration: none;">📝 New Registration</a>
                 </div>
             </div>
         </nav>
@@ -461,7 +461,7 @@
         </div>
 
         <div class="gallery-empty" id="galleryEmpty">
-            <span class="empty-icon">???</span>
+            <span class="empty-icon">🔍</span>
             <h3>No Images Found</h3>
             <p>Try selecting a different filter category.</p>
         </div>
@@ -481,19 +481,19 @@
     <!-- Mobile Nav Bar -->
     <nav class="mobile-entry-bar" aria-label="Mobile portal shortcuts">
         <a class="mobile-entry-item" href="index.html">
-            <span style="background: var(--surface-raised); font-size: 1rem;">??</span>
+            <span style="background: var(--surface-raised); font-size: 1rem;">🏠</span>
             <strong>Home</strong>
         </a>
         <a class="mobile-entry-item" href="academic.html">
-            <span style="background: rgba(10, 132, 255, 0.1); color: #0a84ff; font-size: 1rem;">??</span>
+            <span style="background: rgba(10, 132, 255, 0.1); color: #0a84ff; font-size: 1rem;">📚</span>
             <strong>Programs</strong>
         </a>
         <a class="mobile-entry-item" href="events.html">
-            <span style="background: rgba(255, 159, 10, 0.1); color: #ff9f0a; font-size: 1rem;">??</span>
+            <span style="background: rgba(255, 159, 10, 0.1); color: #ff9f0a; font-size: 1rem;">📅</span>
             <strong>Events</strong>
         </a>
         <a class="mobile-entry-item highlight" href="login.html" style="background: var(--primary); color: white;">
-            <span style="background: rgba(255,255,255,0.2); font-size: 1rem;">??</span>
+            <span style="background: rgba(255,255,255,0.2); font-size: 1rem;">🔒</span>
             <strong>Login</strong>
         </a>
     </nav>

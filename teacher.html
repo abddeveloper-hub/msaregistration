@@ -462,7 +462,7 @@
                     <p id="galleryUploadMsg" style="margin-top: 1rem; text-align: center; font-size: 0.9rem;"></p>
                 </form>
 
-                <h3 style="margin-top: 3rem; margin-bottom: 1rem; color: var(--text-main);">Add YouTube Program</h3>
+                <h3 style="margin-top: 3rem; margin-bottom: 1rem; color: var(--text-main);">Add Video Program</h3>
                 <form id="videoUploadForm" class="portal-card" style="max-width: 600px;">
                     <div class="input-field">
                         <label class="label">Program Title</label>
@@ -470,17 +470,75 @@
                     </div>
                     
                     <div class="input-field" style="margin-top: 1rem;">
+                        <label class="label">Video Source</label>
+                        <div style="display: flex; gap: 1rem; align-items: center; margin-top: 0.5rem; flex-wrap: wrap;">
+                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; color: var(--text);">
+                                <input type="radio" name="videoSource" value="youtube" checked style="accent-color: var(--primary);"> YouTube Link
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; color: var(--text);">
+                                <input type="radio" name="videoSource" value="drive" style="accent-color: var(--primary);"> Google Drive Link
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; color: var(--text);">
+                                <input type="radio" name="videoSource" value="file" style="accent-color: var(--primary);"> Upload File (Firebase)
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="input-field" id="youtubeInputGroup" style="margin-top: 1rem;">
                         <label class="label">YouTube Link</label>
-                        <input type="url" id="videoUrlInput" class="input" placeholder="https://www.youtube.com/watch?v=..." required>
+                        <input type="url" id="videoUrlInput" class="input" placeholder="https://www.youtube.com/watch?v=...">
+                    </div>
+
+                    <div class="input-field" id="driveInputGroup" style="margin-top: 1rem; display: none;">
+                        <label class="label">Google Drive Link (Must be publicly shared)</label>
+                        <input type="url" id="driveUrlInput" class="input" placeholder="https://drive.google.com/file/d/...">
+                    </div>
+
+                    <div class="input-field" id="fileInputGroup" style="margin-top: 1rem; display: none;">
+                        <label class="label">Video File (MP4, WebM)</label>
+                        <input type="file" id="videoFileInput" class="input" accept="video/mp4,video/webm" style="padding-top: 0.5rem;">
+                    </div>
+
+                    <div class="grid-2" style="margin-top: 1rem;">
+                        <div class="input-field">
+                            <label class="label">Event Date</label>
+                            <input type="date" id="videoDate" class="input">
+                        </div>
+                        <div class="input-field">
+                            <label class="label">Category</label>
+                            <select id="videoCategory" class="input">
+                                <option value="Speech">Speech</option>
+                                <option value="Workshop">Workshop</option>
+                                <option value="Interview">Interview</option>
+                                <option value="Event">Event</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="input-field" style="margin-top: 1rem;">
+                        <label class="label">Speaker / Host Name</label>
+                        <input type="text" id="videoSpeaker" class="input" placeholder="E.g., Dr. Ali">
+                    </div>
+
+                    <div class="input-field" style="margin-top: 1rem;">
+                        <label class="label">Detailed Description (Optional)</label>
+                        <textarea id="videoDesc" class="input" placeholder="Add a few details about this program..." rows="3" style="resize: vertical;"></textarea>
                     </div>
                     
-                    <div id="videoPreviewContainer" style="display: none; margin-top: 1rem; border-radius: 8px; overflow: hidden; border: 1px solid var(--border);">
-                        <img id="videoThumbnailPreview" src="" alt="Thumbnail Preview" style="width: 100%; height: auto; display: block;">
+                    <div id="videoPreviewContainer" style="display: none; margin-top: 1rem; border-radius: 8px; overflow: hidden; border: 1px solid var(--border); background: #000;">
+                        <img id="videoThumbnailPreview" src="" alt="Thumbnail Preview" style="width: 100%; height: auto; display: none;">
+                        <video id="videoFilePreview" src="" controls style="width: 100%; height: auto; display: none;"></video>
                     </div>
                     
                     <button type="submit" id="videoUploadBtn" class="btn btn-main" style="margin-top: 1.5rem; width: 100%; background: #ef4444;">Add Video Program</button>
                     <p id="videoUploadMsg" style="margin-top: 1rem; text-align: center; font-size: 0.9rem;"></p>
                 </form>
+
+                <h3 style="margin-top: 3rem; margin-bottom: 1rem; color: var(--text-main);">Existing YouTube Programs</h3>
+                <div id="videoAdminGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem;">
+                    <!-- Videos injected by JS -->
+                </div>
             </div>
         </main>
     </div>

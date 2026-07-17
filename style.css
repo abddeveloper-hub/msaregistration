@@ -486,22 +486,15 @@ img {
 .app-logo-img {
     width: 44px;
     height: 44px;
-    object-fit: cover;
-    /* zoom in by 20% to hide the black edges */
-    transform: scale(1.25);
-    clip-path: circle(40%);
+    object-fit: contain;
     flex-shrink: 0;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .brand-logo-img {
     width: 56px;
     height: 56px;
-    object-fit: cover;
-    transform: scale(1.25);
-    clip-path: circle(40%);
+    object-fit: contain;
     flex-shrink: 0;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .brand-mark {

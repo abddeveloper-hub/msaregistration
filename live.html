@@ -8,13 +8,13 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="landing.css">
     <link rel="stylesheet" href="mobile.css">
-    <link rel="icon" type="image/jpeg" href="logo.png">
+    <link rel="icon" type="image/png" href="logo.png?v=2">
 </head>
 <body class="landing-page" style="background: var(--bg);">
     <header class="nav-wrapper">
         <nav class="navbar" aria-label="Primary navigation">
             <a class="brand-lockup" href="index.html">
-                <img src="logo.png" alt="MSA Ukkuda Logo" class="brand-logo-img">
+                <img src="logo.png?v=2" alt="MSA Ukkuda Logo" class="brand-logo-img">
                 <span class="brand-text">
                     <strong style="font-family: 'Inter', sans-serif; letter-spacing: 0.08em; font-size: 1.25rem; line-height: 1; text-transform: uppercase; font-weight: 700;"><span class="brand-text-styled">Muhyissunnah Dars</span></strong>
                     <span style="letter-spacing: 0.15em;">Ukkuda Official Portal</span>
@@ -32,7 +32,7 @@
     <main id="mainContent" style="padding: 8rem 2rem 6rem; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 80vh;">
         <div style="max-width: 1000px; width: 100%; text-align: center;">
             <div id="liveStreamStatus" style="display: inline-block; padding: 0.5rem 1.5rem; background: rgba(220, 38, 38, 0.1); color: #ef4444; border: 1px solid #ef4444; border-radius: 50px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; font-size: 0.85rem; margin-bottom: 1.5rem;">
-                <span style="display:inline-block; width:8px; height:8px; background:#ef4444; border-radius:50%; margin-right:8px; animation: pulseLogo 2s infinite;"></span> Checking Status...
+                <img src="logo.png?v=2" alt="Logo" class="app-logo-img" style="width:16px; height:16px; animation: pulseLogo 2s infinite; margin-right:8px;"> Checking Status...
             </div>
             
             <h2 id="liveStreamTitle" style="font-family: var(--font-display); font-size: clamp(2rem, 4vw, 3rem); font-weight: 700; color: var(--text-main); margin-bottom: 3rem;">Live Stream</h2>
@@ -66,7 +66,7 @@
             if (docSnap.exists()) {
                 const data = docSnap.data();
                 if (data.isLive && data.url) {
-                    statusBadge.innerHTML = '<span style="display:inline-block; width:8px; height:8px; background:#ef4444; border-radius:50%; margin-right:8px; animation: pulseLogo 2s infinite;"></span> LIVE NOW';
+                    statusBadge.innerHTML = '<img src="logo.png?v=2" alt="Logo" class="app-logo-img" style="width:16px; height:16px; animation: pulseLogo 2s infinite; margin-right:8px;"> LIVE NOW';
                     statusBadge.style.color = '#ef4444';
                     statusBadge.style.borderColor = '#ef4444';
                     

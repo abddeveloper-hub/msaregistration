@@ -1,4 +1,4 @@
-﻿const fs = require('fs');
+const fs = require('fs');
 const path = require('path');
 
 const dir = 'c:\\Users\\ABDUL WAHID\\OneDrive\\Desktop\\registration';

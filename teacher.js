@@ -2369,6 +2369,7 @@ if (galleryUploadForm) {
         if (!title) return;
         
         const description = galleryPhotoDesc ? galleryPhotoDesc.value.trim() : "";
+        const category = document.getElementById('galleryPhotoCategory') ? document.getElementById('galleryPhotoCategory').value : "Events";
         
         galleryUploadBtn.disabled = true;
         galleryUploadBtn.textContent = "Uploading...";
@@ -2378,6 +2379,7 @@ if (galleryUploadForm) {
             await addDoc(collection(db, "gallery"), {
                 title: title,
                 description: description,
+                category: category,
                 url: currentBase64Image,
                 uploadedBy: auth.currentUser ? auth.currentUser.uid : "faculty",
                 createdAt: new Date().toISOString()
@@ -2568,7 +2570,7 @@ if (videoUploadForm) {
                 videoData.videoType = "drive";
                 videoData.driveId = driveId;
                 // No thumbnail for drive by default unless we use a placeholder icon
-                videoData.thumbnail = "logo.png"; 
+                videoData.thumbnail = "logo.png?v=2"; 
 
                 await addDoc(collection(db, "videos"), videoData);
                 finishUpload();
@@ -2633,6 +2635,32 @@ if (videoUploadForm) {
     });
 }
 
+// 7.5 EXISTING GALLERY PHOTOS GRID (SYNCED FROM FIREBASE)
+const galleryAdminGrid = document.getElementById('galleryAdminGrid');
+if (galleryAdminGrid) {
+    onSnapshot(collection(db, "gallery"), (snap) => {
+        galleryAdminGrid.innerHTML = '';
+        snap.forEach(docSnap => {
+            const data = docSnap.data();
+            const id = docSnap.id;
+            const item = document.createElement('div');
+            item.className = 'portal-card';
+            item.style.padding = '0.5rem';
+            item.innerHTML = `
+                <img src="${data.image || data.imgUrl || 'placeholder.jpg'}" alt="${data.title || 'Photo'}" style="width:100%; height:120px; object-fit:cover; border-radius:var(--radius-sm);">
+                <div style="padding: 0.5rem 0;">
+                    <h4 style="font-size:0.9rem;">${data.title || 'Untitled'}</h4>
+                    <p style="font-size:0.75rem; color:var(--text-dim); margin-bottom:0.5rem;">${data.desc || ''}</p>
+                    <div style="display:flex; justify-content:space-between;">
+                        <button class="btn btn-ghost" style="color:var(--error); padding:0.5rem;" onclick="window.deleteRecord('gallery', '${id}')">Delete</button>
+                    </div>
+                </div>
+            `;
+            galleryAdminGrid.appendChild(item);
+        });
+    });
+}
+
 // 8. EXISTING YOUTUBE VIDEOS GRID (SYNCED FROM FIREBASE)
 const videoAdminGrid = document.getElementById('videoAdminGrid');
 if (videoAdminGrid) {
@@ -2673,7 +2701,10 @@ if (videoAdminGrid) {
 
 // Global Deletion Handler
 window.deleteRecord = async (col, id) => {
-    if(!confirm(`Are you sure you want to permanently delete this ${col === 'videos' ? 'video program' : col} record? This cannot be undone.`)) return;
+    let typeName = col;
+    if(col === 'gallery') typeName = 'photo';
+    else if(col === 'videos') typeName = 'video program';
+    if(!confirm(`Are you sure you want to permanently delete this ${typeName} record? This cannot be undone.`)) return;
     try {
         await deleteDoc(doc(db, col, id));
         alert("Record deleted successfully.");

@@ -322,7 +322,7 @@ function renderIdCard(user) {
     wrap.innerHTML = `
         <div class="id-card-wrap">
             <div class="id-card-header">
-                <div class="app-logo" style="margin:0; font-size:0.8rem;"><div class="dot"></div> The Ledger</div>
+                <div class="app-logo" style="margin:0; font-size:0.8rem;"><img src="logo.png?v=2" alt="Logo" class="app-logo-img" style="width: 14px; height: 14px;"> The Ledger</div>
                 <div class="glass-badge" style="font-size:0.5rem;">Student ID</div>
             </div>
             <div class="id-card-body">

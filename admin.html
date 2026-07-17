@@ -19,8 +19,8 @@
     <meta name="theme-color" content="#0a0a0f">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <link rel="icon" type="image/jpeg" href="logo.png">
-    <link rel="apple-touch-icon" href="logo.png">
+    <link rel="icon" type="image/png" href="logo.png?v=2">
+    <link rel="apple-touch-icon" href="logo.png?v=2">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js" defer></script>
     <script>
         (function() {
@@ -36,7 +36,7 @@
 <body>
     <div id="appSplashScreen" class="app-splash-screen">
         <div class="brand-lockup" style="display: flex; align-items: center; gap: 1rem; text-decoration: none; color: var(--text-main);">
-            <img src="logo.png" alt="MSA Ukkuda Logo" class="brand-logo-img">
+            <img src="logo.png?v=2" alt="MSA Ukkuda Logo" class="brand-logo-img">
             <span style="display: flex; flex-direction: column; justify-content: center; text-align: left;">
                 <strong style="font-family: 'Inter', sans-serif; letter-spacing: 0.08em; font-size: 1.5rem; line-height: 1; text-transform: uppercase; font-weight: 700;"><span class="brand-text-styled">Muhyissunnah Dars</span></strong>
                 <span style="letter-spacing: 0.15em; font-size: 0.85rem; text-transform: uppercase; color: var(--text-dim); margin-top: 0.25rem;">Ukkuda Official Portal</span>
@@ -49,7 +49,7 @@
     <div id="adminLoginView" class="auth-view-container" style="display: flex; justify-content: center; align-items: center; min-height: 100vh; background: var(--bg);">
         <div class="form-section" style="width:100%; max-width:400px;">
             <div class="app-logo" style="margin-bottom: 2rem; color:var(--primary); justify-content:center;">
-                <img src="logo.png" alt="Logo" class="app-logo-img">
+                <img src="logo.png?v=2" alt="Logo" class="app-logo-img">
                 Admin Root Access
             </div>
             <p style="text-align:center; color:var(--text-dim); margin-bottom:2rem;">Enter authorized credentials to continue.</p>
@@ -77,7 +77,7 @@
                 <span></span><span></span><span></span>
             </button>
             <div class="app-logo" style="margin:0;">
-                <img src="logo.png" alt="Logo" class="app-logo-img">
+                <img src="logo.png?v=2" alt="Logo" class="app-logo-img">
                 <span style="font-family: 'Cinzel', serif; font-size: 1.2rem;">MSA UKKUDA Admin</span>
             </div>
             <div style="width:40px;"></div>
@@ -86,7 +86,7 @@
 
         <aside class="sidebar" id="sidebarMenu">
             <div class="app-logo" style="justify-content: center; margin-bottom: 3rem;">
-                <img src="logo.png" alt="Logo" class="app-logo-img">
+                <img src="logo.png?v=2" alt="Logo" class="app-logo-img">
                 <span style="font-family: 'Cinzel', serif;">MSA UKKUDA Admin</span>
             </div>
             
@@ -146,6 +146,16 @@
                     </div>
                     
                     <div class="input-field" style="margin-top: 1rem;">
+                        <label class="label">Category</label>
+                        <select id="galleryPhotoCategory" class="input" required>
+                            <option value="Events">Events</option>
+                            <option value="Campus">Campus</option>
+                            <option value="Academic">Academic</option>
+                            <option value="Posters">Posters</option>
+                        </select>
+                    </div>
+                    
+                    <div class="input-field" style="margin-top: 1rem;">
                         <label class="label">Description (Optional)</label>
                         <textarea id="galleryPhotoDesc" class="input" placeholder="Add a few details about this photo..." rows="3" style="resize: vertical;"></textarea>
                     </div>
@@ -168,6 +178,16 @@
                     <div class="input-field">
                         <label class="label">Program Title</label>
                         <input type="text" id="videoTitle" class="input" placeholder="E.g., Annual Speech Competition" required>
+                    </div>
+
+                    <div class="input-field" style="margin-top: 1rem;">
+                        <label class="label">Category</label>
+                        <select id="videoCategory" class="input" required>
+                            <option value="Events">Events</option>
+                            <option value="Campus">Campus</option>
+                            <option value="Academic">Academic</option>
+                            <option value="Posters">Posters</option>
+                        </select>
                     </div>
                     
                     <div class="input-field" style="margin-top: 1rem;">

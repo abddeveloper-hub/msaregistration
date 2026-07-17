@@ -1021,7 +1021,12 @@ document.getElementById('addAdminBtn')?.addEventListener('click', async () => {
 
 // 6. GLOBAL DELETE HANDLER
 window.deleteRecord = async (col, id) => {
-    if(!confirm(`Are you sure you want to permanently delete this ${col === 'users' ? 'user' : 'institution'} record? This cannot be undone.`)) return;
+    let typeName = col;
+    if(col === 'users') typeName = 'user';
+    else if(col === 'institutions') typeName = 'institution';
+    else if(col === 'gallery') typeName = 'photo';
+    else if(col === 'videos') typeName = 'video program';
+    if(!confirm(`Are you sure you want to permanently delete this ${typeName} record? This cannot be undone.`)) return;
     try {
         if (col === 'users') {
             // Delete associated subcollections to prevent orphaned data
@@ -1201,6 +1206,7 @@ if (galleryUploadForm) {
         if (!title) return;
         
         const description = galleryPhotoDesc ? galleryPhotoDesc.value.trim() : "";
+        const category = document.getElementById('galleryPhotoCategory') ? document.getElementById('galleryPhotoCategory').value : "Events";
         
         galleryUploadBtn.disabled = true;
         galleryUploadBtn.textContent = "Uploading...";
@@ -1210,6 +1216,7 @@ if (galleryUploadForm) {
             await addDoc(collection(db, "gallery"), {
                 title: title,
                 description: description,
+                category: category,
                 url: currentBase64Image,
                 uploadedBy: auth.currentUser ? auth.currentUser.uid : "admin",
                 createdAt: new Date().toISOString()
@@ -1400,7 +1407,7 @@ if (videoUploadForm) {
                 videoData.videoType = "drive";
                 videoData.driveId = driveId;
                 // No thumbnail for drive by default unless we use a placeholder icon
-                videoData.thumbnail = "logo.png"; 
+                videoData.thumbnail = "logo.png?v=2"; 
 
                 await addDoc(collection(db, "videos"), videoData);
                 finishUpload();

@@ -368,7 +368,7 @@ async function loadStudentSummary(sid) {
 // Sync Nav UI
 function syncNav(target) {
     document.querySelectorAll('.nav-item, .m-nav-item').forEach(n => {
-        const isMatch = n.id === target || n.innerText.includes(target) || (target === 'Home' && n.id === 'navHome');
+        const isMatch = n.getAttribute('data-target') === target || n.innerText.includes(target);
         n.classList.toggle('active', isMatch);
     });
 }
@@ -376,7 +376,7 @@ function syncNav(target) {
 window.showAccountDashboard = () => {
     document.querySelectorAll('.main-content > div').forEach(v => v.classList.add('hidden'));
     document.getElementById('viewAccountDashboard').classList.remove('hidden');
-    syncNav('navHome');
+    syncNav('viewDashboard');
     activeStudentId = null;
     if(profileSnapUnsub) { profileSnapUnsub(); profileSnapUnsub = null; }
 };
@@ -384,15 +384,62 @@ window.showAccountDashboard = () => {
 window.showNewStudentForm = () => {
     document.querySelectorAll('.main-content > div').forEach(v => v.classList.add('hidden'));
     document.getElementById('viewRegistration').classList.remove('hidden');
-    syncNav('navNewStudent');
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
     document.getElementById('registrationForm').reset();
     base64Photo = null;
     if (window.nextWizardStep) window.nextWizardStep(1);
 };
 
+// Sidebar / Nav Switcher Logic
+document.querySelectorAll('.nav-item').forEach(item => {
+    item.addEventListener('click', () => {
+        const target = item.getAttribute('data-target');
+        if (!target) return;
+
+        // Sync navigation visual state
+        syncNav(target);
+
+        // Close mobile menu if open
+        const sidebarMenu = document.getElementById('sidebarMenu');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+        sidebarMenu?.classList.remove('active');
+        sidebarOverlay?.classList.remove('active');
+
+        // Hide all views under main-content
+        document.querySelectorAll('.main-content > div').forEach(v => v.classList.add('hidden'));
+
+        // Toggle selected view
+        if (target === 'viewDashboard') {
+            if (activeStudentId) {
+                document.getElementById('viewStudentDetail')?.classList.remove('hidden');
+            } else {
+                document.getElementById('viewAccountDashboard')?.classList.remove('hidden');
+            }
+        } else {
+            const targetEl = document.getElementById(target);
+            if (targetEl) {
+                targetEl.classList.remove('hidden');
+            }
+        }
+    });
+});
+
+// Mobile Sidebar Toggle
+const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+const sidebarMenu = document.getElementById('sidebarMenu');
+const sidebarOverlay = document.getElementById('sidebarOverlay');
+if (mobileMenuBtn && sidebarMenu) {
+    mobileMenuBtn.addEventListener('click', () => {
+        sidebarMenu.classList.toggle('active');
+        sidebarOverlay?.classList.toggle('active');
+    });
+    sidebarOverlay?.addEventListener('click', () => {
+        sidebarMenu.classList.remove('active');
+        sidebarOverlay.classList.remove('active');
+    });
+}
+
 // Nav Click Handlers
-document.getElementById('navHome')?.addEventListener('click', showAccountDashboard);
-document.getElementById('navNewStudent')?.addEventListener('click', showNewStudentForm);
 const mobileLogoutBtn = document.getElementById('mobileLogoutBtn');
 if(mobileLogoutBtn) mobileLogoutBtn.addEventListener('click', () => signOut(auth));
 
@@ -1032,6 +1079,98 @@ document.querySelector('[data-target="viewMessages"]')?.addEventListener('click'
     loadTeacherRoster();
 });
 
+// ==========================================
+// FEATURE: PORTAL DIGITAL LIBRARY
+// ==========================================
+let libResources = [];
+const studentLibraryGrid = document.getElementById('studentLibraryGrid');
+const libFilterBtns = document.querySelectorAll('.lib-filter-btn');
+let libUnsub = null;
+
+function loadPortalLibrary() {
+    if (libUnsub) return; // avoid duplicate listeners
+    
+    libUnsub = onSnapshot(collection(db, "library_resources"), (snapshot) => {
+        libResources = [];
+        snapshot.forEach(doc => {
+            libResources.push({ id: doc.id, ...doc.data() });
+        });
+        // Sort by newest first
+        libResources.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        renderPortalLibrary('all');
+    }, (error) => {
+        console.error("Failed to load library resources:", error);
+        if (studentLibraryGrid) {
+            studentLibraryGrid.innerHTML = `<p style="text-align:center; grid-column: 1/-1; color: var(--error);">Error loading resources: ${error.message}</p>`;
+        }
+    });
+}
+
+function renderPortalLibrary(filterType) {
+    if (!studentLibraryGrid) return;
+    studentLibraryGrid.innerHTML = '';
+
+    const filtered = filterType === 'all'
+        ? libResources
+        : libResources.filter(r => r.type === filterType);
+
+    if (filtered.length === 0) {
+        studentLibraryGrid.innerHTML = '<p style="text-align:center; grid-column: 1/-1; color: var(--text-dim); padding: 2rem 0;">No resources found.</p>';
+        return;
+    }
+
+    filtered.forEach(res => {
+        const div = document.createElement('div');
+        div.className = 'form-section'; // consistent card style in portal
+        div.style.display = 'flex';
+        div.style.flexDirection = 'column';
+        div.style.justifyContent = 'space-between';
+        div.style.gap = '1.25rem';
+        div.style.padding = '1.5rem';
+        div.style.margin = '0';
+        div.style.borderRadius = '12px';
+        div.style.boxShadow = 'var(--shadow-sm)';
+
+        let icon = '📄';
+        let typeLabel = 'Document';
+        if (res.type === 'audio') {
+            icon = '🎧';
+            typeLabel = 'Audio / Qira\'at';
+        } else if (res.type === 'link') {
+            icon = '🔗';
+            typeLabel = 'External Link';
+        }
+
+        div.innerHTML = `
+            <div>
+                <div style="font-size: 2.2rem; margin-bottom: 0.75rem;">${icon}</div>
+                <h3 style="font-size: 1.2rem; color: var(--text-main); margin-bottom: 0.5rem; font-family: var(--font-display); font-weight: bold; line-height: 1.3;">${escapeHtml(res.title)}</h3>
+                <span class="badge" style="background: var(--primary-glow); color: var(--primary); font-size: 0.7rem; font-weight: bold; text-transform: uppercase; padding: 0.25rem 0.6rem; border-radius: 50px;">${typeLabel}</span>
+            </div>
+            <a href="${res.url}" target="_blank" class="btn btn-outline btn-sm" style="width: 100%; text-align: center; justify-content: center; text-decoration: none;">View Resource</a>
+        `;
+        studentLibraryGrid.appendChild(div);
+    });
+}
+
+// Bind navigation clicks to load library
+document.querySelector('[data-target="viewLibrary"]')?.addEventListener('click', () => {
+    loadPortalLibrary();
+});
+
+// Bind category filter buttons
+libFilterBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+        libFilterBtns.forEach(b => {
+            b.classList.remove('btn-main');
+            b.classList.add('btn-ghost');
+        });
+        btn.classList.remove('btn-ghost');
+        btn.classList.add('btn-main');
+        renderPortalLibrary(btn.getAttribute('data-libfilter'));
+    });
+});
+
 // PWA Install Logic
 let deferredInstallPrompt = null;
 const installAppBtn = document.getElementById('installAppBtn');
@@ -1137,4 +1276,337 @@ window.generateIDCard = async () => {
         btn.innerHTML = originalText;
         btn.disabled = false;
     }
+};
+
+// ==========================================
+// FEATURE: PORTAL CALENDAR EVENTS
+// ==========================================
+let calendarEventsList = [];
+const studentCalendarTableBody = document.getElementById('studentCalendarTableBody');
+let calendarUnsub = null;
+
+function loadPortalCalendar() {
+    if (calendarUnsub) return; // avoid duplicate listeners
+
+    calendarUnsub = onSnapshot(collection(db, "calendarEvents"), (snapshot) => {
+        calendarEventsList = [];
+        snapshot.forEach(docSnap => {
+            calendarEventsList.push({ id: docSnap.id, ...docSnap.data() });
+        });
+        calendarEventsList.sort((a, b) => new Date(a.date) - new Date(b.date));
+        renderPortalCalendar();
+    }, (error) => {
+        console.error("Failed to load calendar events:", error);
+        if (studentCalendarTableBody) {
+            studentCalendarTableBody.innerHTML = `<tr><td colspan="3" style="text-align:center; color: var(--error);">Error loading: ${error.message}</td></tr>`;
+        }
+    });
+}
+
+function renderPortalCalendar() {
+    if (!studentCalendarTableBody) return;
+    studentCalendarTableBody.innerHTML = '';
+
+    if (calendarEventsList.length === 0) {
+        studentCalendarTableBody.innerHTML = '<tr><td colspan="3" style="text-align:center; color: var(--text-dim); padding: 1.5rem 0;">No scheduled events found.</td></tr>';
+        return;
+    }
+
+    calendarEventsList.forEach(ev => {
+        const tr = document.createElement('tr');
+
+        const dateStr = new Date(ev.date).toLocaleDateString(undefined, {
+            weekday: 'short',
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric'
+        });
+
+        let badgeColor = 'var(--primary)';
+        let badgeText = 'General Programme';
+        if (ev.type === 'exam') {
+            badgeColor = 'var(--gold-base)';
+            badgeText = 'Exam / Assessment';
+        } else if (ev.type === 'holiday') {
+            badgeColor = 'var(--error)';
+            badgeText = 'Holiday';
+        }
+
+        tr.innerHTML = `
+            <td><strong>${dateStr}</strong></td>
+            <td><span style="font-weight: 600; color: var(--text-main);">${escapeHtml(ev.title)}</span></td>
+            <td>
+                <span class="badge" style="background: ${badgeColor}15; color: ${badgeColor}; border: 1px solid ${badgeColor}30; font-size: 0.7rem; font-weight: bold; text-transform: uppercase; padding: 0.25rem 0.6rem; border-radius: 50px;">
+                    ${badgeText}
+                </span>
+            </td>
+        `;
+        studentCalendarTableBody.appendChild(tr);
+    });
+}
+
+// Bind calendar navigation click
+document.querySelector('[data-target="viewCalendar"]')?.addEventListener('click', () => {
+    loadPortalCalendar();
+});
+
+// ==========================================
+// FEATURE: PRINTABLE ADMISSION FORM GENERATOR
+// ==========================================
+window.downloadAdmissionForm = () => {
+    if (!activeStudentId || !myStudents) return;
+
+    const student = myStudents.find(s => s.id === activeStudentId);
+    if (!student) {
+        alert("Student not found.");
+        return;
+    }
+
+    const printWindow = window.open('', '_blank');
+    if (!printWindow) {
+        alert("Pop-up blocker is enabled. Please allow pop-ups to print the form.");
+        return;
+    }
+
+    const photoSrc = student.photoUrl || 'logo.png?v=2';
+
+    let schoolLevelText = 'N/A';
+    let extraSchoolDetails = '';
+    if (student.schoolInfo) {
+        const level = student.schoolInfo.level;
+        if (level === 'below10') {
+            schoolLevelText = 'Below 10th Standard';
+            extraSchoolDetails = `<tr><td>Class / Standard:</td><td>${escapeHtml(student.schoolInfo.class || 'N/A')}</td></tr>`;
+        } else if (level === 'sslc') {
+            schoolLevelText = 'SSLC (10th Standard)';
+            extraSchoolDetails = `<tr><td>SSLC Percentage:</td><td>${escapeHtml(student.schoolInfo.sslcPercent || 'N/A')}%</td></tr>
+                                  <tr><td>School Name:</td><td>${escapeHtml(student.schoolInfo.sslcWhere || 'N/A')}</td></tr>`;
+        } else if (level === 'puc') {
+            schoolLevelText = 'PUC (12th Standard / Pre-University)';
+            extraSchoolDetails = `<tr><td>SSLC Percentage:</td><td>${escapeHtml(student.schoolInfo.sslcPercent || 'N/A')}%</td></tr>
+                                  <tr><td>PUC Percentage:</td><td>${escapeHtml(student.schoolInfo.pucPercent || 'N/A')}%</td></tr>
+                                  <tr><td>College Name:</td><td>${escapeHtml(student.schoolInfo.pucWhere || 'N/A')}</td></tr>`;
+        } else if (level === 'degree') {
+            schoolLevelText = 'Degree / Higher Education';
+            extraSchoolDetails = `<tr><td>Course Name:</td><td>${escapeHtml(student.schoolInfo.degreeWhich || 'N/A')}</td></tr>
+                                  <tr><td>College / University:</td><td>${escapeHtml(student.schoolInfo.degreeWhere || 'N/A')}</td></tr>`;
+        }
+    }
+
+    printWindow.document.write(`
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <title>Admission Form - ${escapeHtml(student.fullName)}</title>
+            <style>
+                body {
+                    font-family: 'Inter', Arial, sans-serif;
+                    color: #111;
+                    line-height: 1.5;
+                    padding: 40px;
+                    max-width: 800px;
+                    margin: 0 auto;
+                }
+                .no-print {
+                    display: flex;
+                    justify-content: flex-end;
+                    margin-bottom: 20px;
+                }
+                .btn-print {
+                    background: #000;
+                    color: #fff;
+                    border: none;
+                    padding: 10px 24px;
+                    border-radius: 6px;
+                    font-weight: 700;
+                    font-size: 0.95rem;
+                    cursor: pointer;
+                    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+                    transition: 0.2s;
+                }
+                .btn-print:hover {
+                    background: #333;
+                }
+                .form-header {
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                    border-bottom: 4px double #111;
+                    padding-bottom: 20px;
+                    margin-bottom: 25px;
+                }
+                .logo-section {
+                    display: flex;
+                    align-items: center;
+                    gap: 20px;
+                }
+                .logo-img {
+                    width: 75px;
+                    height: 75px;
+                    border-radius: 50%;
+                    object-fit: cover;
+                    border: 1px solid #ddd;
+                }
+                .title-section h1 {
+                    margin: 0;
+                    font-size: 1.6rem;
+                    font-weight: 800;
+                    text-transform: uppercase;
+                    letter-spacing: 1px;
+                }
+                .title-section p {
+                    margin: 4px 0 0;
+                    font-size: 0.85rem;
+                    color: #555;
+                    font-weight: 600;
+                    text-transform: uppercase;
+                    letter-spacing: 2px;
+                }
+                .photo-box {
+                    width: 110px;
+                    height: 130px;
+                    border: 2px dashed #999;
+                    border-radius: 6px;
+                    overflow: hidden;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    background: #fafafa;
+                }
+                .photo-img {
+                    width: 100%;
+                    height: 100%;
+                    object-fit: cover;
+                }
+                .section-title {
+                    font-size: 0.95rem;
+                    font-weight: 700;
+                    text-transform: uppercase;
+                    background: #f1f3f5;
+                    padding: 8px 14px;
+                    margin-top: 25px;
+                    margin-bottom: 12px;
+                    border-left: 5px solid #000;
+                }
+                table {
+                    width: 100%;
+                    border-collapse: collapse;
+                    margin-bottom: 15px;
+                }
+                td {
+                    padding: 8px 14px;
+                    vertical-align: middle;
+                    border-bottom: 1px solid #e9ecef;
+                    font-size: 0.95rem;
+                }
+                td:first-child {
+                    font-weight: 700;
+                    width: 38%;
+                    color: #495057;
+                }
+                .declaration-p {
+                    font-size: 0.82rem;
+                    line-height: 1.6;
+                    text-align: justify;
+                    color: #495057;
+                    margin-top: 15px;
+                }
+                .footer-signatures {
+                    display: grid;
+                    grid-template-columns: 1fr 1fr;
+                    gap: 40px;
+                    margin-top: 50px;
+                }
+                .sig-box {
+                    text-align: center;
+                    border-top: 1px solid #111;
+                    padding-top: 10px;
+                    font-weight: 700;
+                    font-size: 0.9rem;
+                    color: #333;
+                }
+                @media print {
+                    .no-print {
+                        display: none;
+                    }
+                    body {
+                        padding: 10px;
+                    }
+                }
+            </style>
+        </head>
+        <body>
+            <div class="no-print">
+                <button class="btn-print" onclick="window.print()">Print Form</button>
+            </div>
+            
+            <div class="form-header">
+                <div class="logo-section">
+                    <img src="logo.png?v=2" class="logo-img" alt="Institution Logo">
+                    <div class="title-section">
+                        <h1>Muhyissunnah Dars Ukkuda</h1>
+                        <p>Student Admission Form (Office Copy)</p>
+                    </div>
+                </div>
+                <div class="photo-box">
+                    <img src="${photoSrc}" class="photo-img" alt="Student Photo" onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(student.fullName)}&background=f1f3f5&color=495057'">
+                </div>
+            </div>
+
+            <div style="display: flex; justify-content: space-between; font-size: 0.85rem; color: #495057; margin-bottom: 15px; border-bottom: 1px solid #ddd; padding-bottom: 10px;">
+                <div><strong>Submission Date:</strong> ${new Date(student.updatedAt || Date.now()).toLocaleDateString(undefined, {year: 'numeric', month: 'long', day: 'numeric'})}</div>
+                <div><strong>Admission Status:</strong> <span style="text-transform: uppercase; font-weight: bold; color: ${student.status === 'admitted' ? '#2f9e44' : '#1c7ed6'}">${escapeHtml(student.status || 'pending')}</span></div>
+            </div>
+
+            <div class="section-title">1. Student Details</div>
+            <table>
+                <tr><td>Full Name of Student:</td><td>${escapeHtml(student.fullName)}</td></tr>
+                <tr><td>Date of Birth:</td><td>${escapeHtml(student.dob)}</td></tr>
+                <tr><td>Blood Group:</td><td>${escapeHtml(student.bloodGroup)}</td></tr>
+                <tr><td>Contact Phone Number:</td><td>${escapeHtml(student.phone)}</td></tr>
+                <tr><td>Aadhar Card Number:</td><td>${escapeHtml(student.aadhar)}</td></tr>
+                <tr><td>Sayyid Status:</td><td>${student.isSayyid === 'yes' ? 'Yes (Sayyid descendant)' : 'No'}</td></tr>
+                <tr><td>Hafiz Status:</td><td>${student.isHafiz === 'yes' ? 'Yes (Hafiz-ul-Quran)' : 'No'}</td></tr>
+                <tr><td>Orphan Status:</td><td>${student.isOrphan === 'yes' ? 'Yes' : 'No'}</td></tr>
+            </table>
+
+            <div class="section-title">2. Family & Residence</div>
+            <table>
+                <tr><td>Father's / Guardian's Name:</td><td>${escapeHtml(student.fatherName)}</td></tr>
+                <tr><td>Father's Phone Number:</td><td>${escapeHtml(student.fatherPhone)}</td></tr>
+                <tr><td>Residential Address:</td><td>${escapeHtml(student.address)}</td></tr>
+            </table>
+
+            <div class="section-title">3. Institutional Enrollment</div>
+            <table>
+                <tr><td>Enrolled Institution / Campus:</td><td>${escapeHtml(student.campus)}</td></tr>
+                <tr><td>Academic Batch:</td><td>${escapeHtml(student.batch || '2026')}</td></tr>
+                <tr><td>Official Roll Number:</td><td>${escapeHtml(student.rollNumber || 'PENDING APPROVAL')}</td></tr>
+                <tr><td>Dars Admission Type:</td><td>${student.darsType === 'new' ? 'New Admission' : 'Re-admission'}</td></tr>
+                <tr><td>Previous Dars Details:</td><td>${escapeHtml(student.darsDetails || 'None')}</td></tr>
+                <tr><td>Schooling / Education Level:</td><td>${schoolLevelText}</td></tr>
+                ${extraSchoolDetails}
+            </table>
+
+            <div class="section-title">4. Parent / Guardian Declaration</div>
+            <p class="declaration-p">
+                I hereby declare that all the information provided in this admission form is true, correct, and complete to the best of my knowledge and belief. I promise that my child will strictly abide by the rules, traditions, discipline, and code of conduct of Muhyissunnah Dars Ukkuda. In the event of any misconduct or failure to adhere to the discipline of the institution, the administration reserves the absolute right to take disciplinary action up to expulsion.
+            </p>
+
+            <div class="footer-signatures">
+                <div class="sig-box">Signature of Parent / Guardian</div>
+                <div class="sig-box">Signature of Student</div>
+            </div>
+            
+            <div class="footer-signatures" style="margin-top: 55px;">
+                <div style="border-top: 1px solid #111; padding-top: 10px; text-align: center; font-size: 0.9rem; font-weight: 700; grid-column: 1/-1; max-width: 280px; margin: 0 auto; color: #333;">
+                    Authorized Signature / Principal
+                </div>
+            </div>
+        </body>
+        </html>
+    `);
+
+    printWindow.document.close();
 };

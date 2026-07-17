@@ -2843,3 +2843,96 @@ window.deleteTeacherCalendarEvent = async (id) => {
         }
     }
 };
+
+// ==========================================
+// FEATURE: PORTAL DIGITAL LIBRARY FOR TEACHERS
+// ==========================================
+
+let teacherLibResources = [];
+const teacherLibraryGrid = document.getElementById('teacherLibraryGrid');
+const teacherLibFilterBtns = document.querySelectorAll('#viewLibrary .lib-filter-btn');
+let teacherLibUnsub = null;
+
+function loadTeacherPortalLibrary() {
+    if (teacherLibUnsub) return;
+    
+    teacherLibUnsub = onSnapshot(collection(db, "library_resources"), (snapshot) => {
+        teacherLibResources = [];
+        snapshot.forEach(docSnap => {
+            teacherLibResources.push({ id: docSnap.id, ...docSnap.data() });
+        });
+        teacherLibResources.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        renderTeacherPortalLibrary('all');
+    }, (error) => {
+        console.error("Failed to load library resources:", error);
+        if (teacherLibraryGrid) {
+            teacherLibraryGrid.innerHTML = `<p style="text-align:center; grid-column: 1/-1; color: var(--error);">Error loading resources: ${error.message}</p>`;
+        }
+    });
+}
+
+function renderTeacherPortalLibrary(filterType) {
+    if (!teacherLibraryGrid) return;
+    teacherLibraryGrid.innerHTML = '';
+
+    const filtered = filterType === 'all'
+        ? teacherLibResources
+        : teacherLibResources.filter(r => r.type === filterType);
+
+    if (filtered.length === 0) {
+        teacherLibraryGrid.innerHTML = '<p style="text-align:center; grid-column: 1/-1; color: var(--text-dim); padding: 2rem 0;">No resources found.</p>';
+        return;
+    }
+
+    filtered.forEach(res => {
+        const div = document.createElement('div');
+        div.className = 'form-section'; // consistent card style
+        div.style.display = 'flex';
+        div.style.flexDirection = 'column';
+        div.style.justifyContent = 'space-between';
+        div.style.gap = '1.25rem';
+        div.style.padding = '1.5rem';
+        div.style.margin = '0';
+        div.style.borderRadius = '12px';
+        div.style.boxShadow = 'var(--shadow-sm)';
+
+        let icon = '📄';
+        let typeLabel = 'Document';
+        if (res.type === 'audio') {
+            icon = '🎧';
+            typeLabel = 'Audio / Qira\'at';
+        } else if (res.type === 'link') {
+            icon = '🔗';
+            typeLabel = 'External Link';
+        }
+
+        // Check if data is sanitized
+        const titleSafe = typeof res.title === 'string' ? res.title.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])) : 'Resource';
+
+        div.innerHTML = `
+            <div>
+                <div style="font-size: 2.2rem; margin-bottom: 0.75rem;">${icon}</div>
+                <h3 style="font-size: 1.2rem; color: var(--text-main); margin-bottom: 0.5rem; font-family: var(--font-display); font-weight: bold; line-height: 1.3;">${titleSafe}</h3>
+                <span class="badge" style="background: var(--primary-glow); color: var(--primary); font-size: 0.7rem; font-weight: bold; text-transform: uppercase; padding: 0.25rem 0.6rem; border-radius: 50px;">${typeLabel}</span>
+            </div>
+            <a href="${res.url}" target="_blank" class="btn btn-outline btn-sm" style="width: 100%; text-align: center; justify-content: center; text-decoration: none;">View Resource</a>
+        `;
+        teacherLibraryGrid.appendChild(div);
+    });
+}
+
+document.querySelector('[data-target="viewLibrary"]')?.addEventListener('click', () => {
+    loadTeacherPortalLibrary();
+});
+
+teacherLibFilterBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+        teacherLibFilterBtns.forEach(b => {
+            b.classList.remove('btn-main');
+            b.classList.add('btn-ghost');
+        });
+        btn.classList.remove('btn-ghost');
+        btn.classList.add('btn-main');
+        renderTeacherPortalLibrary(btn.getAttribute('data-libfilter'));
+    });
+});

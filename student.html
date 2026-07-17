@@ -69,6 +69,7 @@
             
             <nav style="flex: 1; display: flex; flex-direction: column; gap: 0.5rem;">
                 <div class="nav-item" data-target="viewDashboard">Dashboard</div>
+                <div class="nav-item" data-target="viewLibrary">Digital Library</div>
                 <div class="nav-item" data-target="viewAssignments">Assignments</div>
                 <div class="nav-item" data-target="viewCalendar">Calendar</div>
                 <div class="nav-item" data-target="viewMessages">Messages</div>
@@ -276,6 +277,7 @@
                     </div>
                     <div style="display:flex; gap:0.5rem; align-items:center;">
                         <button id="generateIdCardBtn" class="btn btn-outline" style="padding: 0.5rem 1rem; display:none;" onclick="generateIDCard()">🪪 ID Card</button>
+                        <button id="downloadAdmissionFormBtn" class="btn btn-outline" style="padding: 0.5rem 1rem;" onclick="downloadAdmissionForm()">📄 Print Form</button>
                         <button id="editProfileBtn" class="btn btn-primary" style="padding: 0.5rem 1rem;">Edit Application</button>
                         <button class="btn btn-ghost" onclick="showAccountDashboard()">← Back to List</button>
                     </div>
@@ -514,6 +516,25 @@
                                 </tr>
                             </tbody>
                         </table>
+                    </div>
+                </div>
+
+                <!-- VIEW: Digital Library -->
+                <div id="viewLibrary" class="dashboard-section hidden">
+                    <div class="view-header" style="margin-bottom: 2rem;">
+                        <h2 class="view-title">Digital Library</h2>
+                        <p class="view-desc">Access class notes, PDFs, and audio materials uploaded by teachers and admins.</p>
+                    </div>
+                    
+                    <div style="display: flex; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 2rem;">
+                        <button class="btn btn-main lib-filter-btn" data-libfilter="all">All</button>
+                        <button class="btn btn-ghost lib-filter-btn" data-libfilter="pdf">PDF Documents</button>
+                        <button class="btn btn-ghost lib-filter-btn" data-libfilter="audio">Audio / Qira'at</button>
+                        <button class="btn btn-ghost lib-filter-btn" data-libfilter="link">External Links</button>
+                    </div>
+
+                    <div id="studentLibraryGrid" class="cards-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem;">
+                        <p style="color: var(--text-dim); text-align: center; grid-column: 1/-1;">Loading library materials...</p>
                     </div>
                 </div>
 

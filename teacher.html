@@ -81,6 +81,7 @@
                 <div class="nav-item" data-target="viewCalendar">Academic Programmes</div>
                 <div class="nav-item" data-target="viewLeave">Leave Management</div>
                 <div class="nav-item" data-target="viewMessages">Messages</div>
+                <div class="nav-item" data-target="viewLibrary">Digital Library</div>
                 <div class="nav-item" data-target="viewGalleryUpload">Media Management</div>
             </nav>
 
@@ -560,6 +561,25 @@
                 <h3 style="margin-top: 3rem; margin-bottom: 1rem; color: var(--text-main);">Existing YouTube Programs</h3>
                 <div id="videoAdminGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem;">
                     <!-- Videos injected by JS -->
+                </div>
+            </div>
+
+            <!-- 14. DIGITAL LIBRARY -->
+            <div id="viewLibrary" class="dashboard-section hidden">
+                <div class="view-header" style="margin-bottom: 2rem;">
+                    <h2 class="view-title">Digital Library</h2>
+                    <p class="view-desc">Access class notes, PDFs, and audio materials uploaded by teachers and admins.</p>
+                </div>
+                
+                <div style="display: flex; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 2rem;">
+                    <button class="btn btn-main lib-filter-btn" data-libfilter="all">All</button>
+                    <button class="btn btn-ghost lib-filter-btn" data-libfilter="pdf">PDF Documents</button>
+                    <button class="btn btn-ghost lib-filter-btn" data-libfilter="audio">Audio / Qira'at</button>
+                    <button class="btn btn-ghost lib-filter-btn" data-libfilter="link">External Links</button>
+                </div>
+
+                <div id="teacherLibraryGrid" class="cards-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem;">
+                    <p style="color: var(--text-dim); text-align: center; grid-column: 1/-1;">Loading library materials...</p>
                 </div>
             </div>
         </main>

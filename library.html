@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Digital Library | MSA UKKUDA</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Aref+Ruqaa:wght@400;700&family=Amiri:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="landing.css">
+    <link rel="stylesheet" href="mobile.css">
+    <link rel="icon" type="image/jpeg" href="logo.png">
+</head>
+<body class="landing-page">
+    <header class="nav-wrapper">
+        <nav class="navbar" aria-label="Primary navigation">
+            <a class="brand-lockup" href="index.html">
+                <img src="logo.png" alt="MSA Ukkuda Logo" class="brand-logo-img">
+                <span class="brand-text">
+                    <strong style="font-family: 'Inter', sans-serif; letter-spacing: 0.08em; font-size: 1.25rem; line-height: 1; text-transform: uppercase; font-weight: 700;"><span class="brand-text-styled">Muhyissunnah Dars</span></strong>
+                    <span style="letter-spacing: 0.15em;">Ukkuda Official Portal</span>
+                </span>
+            </a>
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="library.html" style="color: var(--primary);">Digital Library</a>
+                <a href="events.html">News & Events</a>
+                <a href="login.html" class="nav-login-btn">Login</a>
+            </div>
+        </nav>
+    </header>
+
+    <main id="mainContent" style="padding: 10rem 2rem 6rem;">
+        <div style="max-width: 1200px; margin: 0 auto;">
+            <div class="section-header" style="text-align: center; margin-bottom: 3rem;">
+                <p style="color: var(--primary); font-weight: 700; text-transform: uppercase; letter-spacing: 0.15em; font-size: 0.85rem; margin-bottom: 0.75rem;">Resource Center</p>
+                <h2 style="font-family: var(--font-display); font-size: clamp(2.2rem, 4vw, 3.2rem); font-weight: 700; color: var(--text-main);">Digital Library & Audio</h2>
+            </div>
+            
+            <div style="display: flex; gap: 1rem; justify-content: center; margin-bottom: 3rem;">
+                <button class="btn btn-main filter-btn" data-filter="all">All Resources</button>
+                <button class="btn btn-ghost filter-btn" data-filter="pdf">PDFs / Notes</button>
+                <button class="btn btn-ghost filter-btn" data-filter="audio">Audio / Qira'at</button>
+                <button class="btn btn-ghost filter-btn" data-filter="link">External Links</button>
+            </div>
+
+            <div id="libraryGrid" class="cards-grid">
+                <!-- Loaded via JS -->
+                <p style="text-align:center; grid-column: 1/-1; color: var(--text-dim);">Loading resources...</p>
+            </div>
+        </div>
+    </main>
+
+    <script type="module" src="library.js"></script>
+</body>
+</html>

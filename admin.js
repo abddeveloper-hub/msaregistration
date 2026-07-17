@@ -1058,7 +1058,11 @@ if (saveAnnouncementBtn) {
         const text = document.getElementById('adminAnnouncementText').value;
         const active = document.getElementById('adminAnnouncementActive').checked;
         try {
-            await setDoc(doc(db, "settings", "announcements"), { text, active });
+            await setDoc(doc(db, "settings", "announcements"), { 
+                text, 
+                active,
+                updatedAt: new Date().toISOString()
+            }, { merge: true });
             alert("Announcement saved successfully!");
         } catch(e) {
             alert("Error saving announcement: " + e.message);
@@ -1458,3 +1462,296 @@ if (videoUploadForm) {
         }
     });
 }
+
+
+// ==========================================
+// FEATURE 8: LIBRARY MANAGEMENT
+// ==========================================
+const libraryUploadForm = document.getElementById('libraryUploadForm');
+const libraryTableBody = document.getElementById('libraryTableBody');
+if (libraryUploadForm) {
+    libraryUploadForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const btn = document.getElementById('libSubmitBtn');
+        const msg = document.getElementById('libMsg');
+        btn.disabled = true;
+        btn.textContent = 'Uploading...';
+        msg.textContent = '';
+        
+        try {
+            const title = document.getElementById('libTitle').value;
+            const type = document.getElementById('libType').value;
+            const link = document.getElementById('libLink').value;
+            const fileInput = document.getElementById('libFile');
+            let finalUrl = link;
+            
+            if (type !== 'link' && fileInput.files.length > 0) {
+                const file = fileInput.files[0];
+                const storageRef = ref(storage, `library/${Date.now()}_${file.name}`);
+                const uploadTask = await uploadBytesResumable(storageRef, file);
+                finalUrl = await getDownloadURL(uploadTask.ref);
+            }
+            
+            await addDoc(collection(db, 'library_resources'), {
+                title,
+                type,
+                url: finalUrl,
+                createdAt: new Date().toISOString()
+            });
+            
+            msg.textContent = 'Resource added successfully!';
+            msg.style.color = 'var(--success)';
+            libraryUploadForm.reset();
+        } catch (error) {
+            msg.textContent = 'Error: ' + error.message;
+            msg.style.color = 'var(--error)';
+        }
+        btn.disabled = false;
+        btn.textContent = 'Upload Resource';
+    });
+
+    onSnapshot(collection(db, "library_resources"), (snapshot) => {
+        if (!libraryTableBody) return;
+        libraryTableBody.innerHTML = '';
+        snapshot.forEach(docSnap => {
+            const data = docSnap.data();
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${data.title}</td>
+                <td style="text-transform: capitalize;">${data.type}</td>
+                <td>${new Date(data.createdAt).toLocaleDateString()}</td>
+                <td>
+                    <a href="${data.url}" target="_blank" class="btn btn-outline btn-sm">View</a>
+                    <button class="btn btn-outline btn-sm" onclick="deleteLibraryResource('${docSnap.id}')" style="color:var(--error); border-color:var(--error);">Delete</button>
+                </td>
+            `;
+            libraryTableBody.appendChild(tr);
+        });
+    });
+}
+window.deleteLibraryResource = async (id) => {
+    if(confirm('Delete this resource?')) {
+        await deleteDoc(doc(db, 'library_resources', id));
+    }
+};
+
+// ==========================================
+// FEATURE 13: LIVE STREAMING
+// ==========================================
+const liveStreamForm = document.getElementById('liveStreamForm');
+if (liveStreamForm) {
+    const liveToggle = document.getElementById('liveToggle');
+    const liveTitle = document.getElementById('liveTitle');
+    const liveUrl = document.getElementById('liveUrl');
+    
+    onSnapshot(doc(db, 'settings', 'liveStream'), (docSnap) => {
+        if (docSnap.exists()) {
+            const data = docSnap.data();
+            liveToggle.checked = data.isLive || false;
+            liveTitle.value = data.title || '';
+            liveUrl.value = data.url || '';
+        }
+    });
+
+    liveStreamForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const btn = document.getElementById('liveSaveBtn');
+        const msg = document.getElementById('liveMsg');
+        btn.disabled = true;
+        btn.textContent = 'Saving...';
+        
+        try {
+            await setDoc(doc(db, 'settings', 'liveStream'), {
+                isLive: liveToggle.checked,
+                title: liveTitle.value,
+                url: liveUrl.value,
+                updatedAt: new Date().toISOString()
+            });
+            msg.textContent = 'Settings saved!';
+            msg.style.color = 'var(--success)';
+        } catch(error) {
+            msg.textContent = 'Error: ' + error.message;
+            msg.style.color = 'var(--error)';
+        }
+        btn.disabled = false;
+        btn.textContent = 'Save Settings';
+        setTimeout(() => msg.textContent = '', 3000);
+    });
+}
+
+// ==========================================
+// FEATURE 14: CUSTOM FORM BUILDER
+// ==========================================
+const addFieldBtn = document.getElementById('addFieldBtn');
+const formFieldsContainer = document.getElementById('formFieldsContainer');
+const saveFormBtn = document.getElementById('saveFormBtn');
+const publishedFormsList = document.getElementById('publishedFormsList');
+
+if (addFieldBtn && formFieldsContainer && saveFormBtn) {
+    let fieldCount = 0;
+    
+    addFieldBtn.addEventListener('click', () => {
+        fieldCount++;
+        const div = document.createElement('div');
+        div.style = 'display:flex; gap:1rem; align-items:center; background:var(--bg); padding:1rem; border-radius:8px; border:1px solid var(--border);';
+        div.className = 'form-field-item';
+        div.innerHTML = `
+            <input type="text" class="input field-label" placeholder="Field Label (e.g. Phone Number)" style="flex:2;" required>
+            <select class="input field-type" style="flex:1;" required>
+                <option value="text">Text</option>
+                <option value="email">Email</option>
+                <option value="number">Number</option>
+                <option value="textarea">Long Text</option>
+            </select>
+            <label style="display:flex; align-items:center; gap:0.5rem; font-size:0.85rem;"><input type="checkbox" class="field-required"> Req</label>
+            <button type="button" class="btn btn-ghost" onclick="this.parentElement.remove()" style="color:var(--error); padding:0.5rem;">X</button>
+        `;
+        formFieldsContainer.appendChild(div);
+    });
+
+    saveFormBtn.addEventListener('click', async () => {
+        const name = document.getElementById('formName').value;
+        if (!name) return alert('Form Name is required');
+        
+        const items = formFieldsContainer.querySelectorAll('.form-field-item');
+        if (items.length === 0) return alert('Add at least one field');
+        
+        const fields = Array.from(items).map(item => ({
+            label: item.querySelector('.field-label').value,
+            type: item.querySelector('.field-type').value,
+            required: item.querySelector('.field-required').checked
+        }));
+
+        saveFormBtn.disabled = true;
+        saveFormBtn.textContent = 'Publishing...';
+        
+        try {
+            await addDoc(collection(db, 'custom_forms'), {
+                name,
+                fields,
+                createdAt: new Date().toISOString()
+            });
+            document.getElementById('formName').value = '';
+            formFieldsContainer.innerHTML = '';
+            document.getElementById('formBuilderMsg').textContent = 'Form published!';
+            document.getElementById('formBuilderMsg').style.color = 'var(--success)';
+        } catch(error) {
+            alert('Error: ' + error.message);
+        }
+        saveFormBtn.disabled = false;
+        saveFormBtn.textContent = 'Publish Form';
+    });
+
+    onSnapshot(collection(db, 'custom_forms'), (snapshot) => {
+        if(!publishedFormsList) return;
+        publishedFormsList.innerHTML = '';
+        snapshot.forEach(docSnap => {
+            const data = docSnap.data();
+            const div = document.createElement('div');
+            div.style = 'padding:1rem; border:1px solid var(--border); border-radius:8px; display:flex; justify-content:space-between; align-items:center;';
+            div.innerHTML = `
+                <div>
+                    <strong style="display:block; margin-bottom:0.25rem;">${data.name}</strong>
+                    <span style="font-size:0.85rem; color:var(--text-dim);">${data.fields.length} Fields</span>
+                </div>
+                <div style="display:flex; gap:0.5rem;">
+                    <a href="form-view.html?id=${docSnap.id}" target="_blank" class="btn btn-outline btn-sm">View Form</a>
+                    <button class="btn btn-outline btn-sm" onclick="deleteCustomForm('${docSnap.id}')" style="color:var(--error); border-color:var(--error);">Delete</button>
+                </div>
+            `;
+            publishedFormsList.appendChild(div);
+        });
+    });
+}
+window.deleteCustomForm = async (id) => {
+    if(confirm('Delete this form?')) {
+        await deleteDoc(doc(db, 'custom_forms', id));
+    }
+};
+
+
+// ==========================================
+// ACADEMIC CALENDAR LOGIC
+// ==========================================
+const saveEventBtn = document.getElementById('saveEventBtn');
+const calendarGrid = document.getElementById('calendarGrid');
+const adminCalendarEventModal = document.getElementById('adminCalendarEventModal');
+
+if (saveEventBtn) {
+    saveEventBtn.addEventListener('click', async () => {
+        const title = document.getElementById('newEventTitle').value;
+        const date = document.getElementById('newEventDate').value;
+        const type = document.getElementById('newEventType').value;
+        
+        if (!title || !date || !type) {
+            alert('Please fill in all fields');
+            return;
+        }
+        
+        saveEventBtn.disabled = true;
+        saveEventBtn.textContent = 'Saving...';
+        
+        try {
+            await addDoc(collection(db, 'calendarEvents'), {
+                title,
+                date,
+                type,
+                createdAt: new Date().toISOString()
+            });
+            alert('Event added successfully!');
+            document.getElementById('newEventTitle').value = '';
+            document.getElementById('newEventDate').value = '';
+            if(adminCalendarEventModal) adminCalendarEventModal.classList.remove('active');
+        } catch (error) {
+            alert('Error adding event: ' + error.message);
+        }
+        
+        saveEventBtn.disabled = false;
+        saveEventBtn.textContent = 'Save Event';
+    });
+}
+
+if (calendarGrid) {
+    onSnapshot(collection(db, 'calendarEvents'), (snapshot) => {
+        // Clear grid
+        calendarGrid.innerHTML = '';
+        
+        // Group by month/date or just show upcoming events in a list since calendar grids require complex date logic
+        // But the HTML uses a grid. Let's just create simple blocks for each event for now, sorted by date.
+        const events = [];
+        snapshot.forEach(docSnap => events.push({ id: docSnap.id, ...docSnap.data() }));
+        events.sort((a, b) => new Date(a.date) - new Date(b.date));
+        
+        if (events.length === 0) {
+            calendarGrid.innerHTML = '<div style="padding: 1rem; color: var(--text-dim); grid-column: 1/-1; text-align: center;">No events scheduled.</div>';
+            return;
+        }
+        
+        events.forEach(ev => {
+            const div = document.createElement('div');
+            div.className = 'portal-card';
+            div.style.padding = '1rem';
+            
+            let color = 'var(--primary)';
+            if(ev.type === 'exam') color = 'var(--gold-base)';
+            if(ev.type === 'holiday') color = 'var(--error)';
+            
+            div.innerHTML = `
+                <div style="font-weight: bold; margin-bottom: 0.5rem; color: ${color};">${ev.title}</div>
+                <div style="font-size: 0.9rem; color: var(--text-dim); margin-bottom: 1rem;">${new Date(ev.date).toLocaleDateString(undefined, {weekday:'long', year:'numeric', month:'long', day:'numeric'})}</div>
+                <button class="btn btn-outline btn-sm" onclick="deleteCalendarEvent('${ev.id}')" style="color:var(--error); border-color:var(--error);">Delete</button>
+            `;
+            calendarGrid.appendChild(div);
+        });
+    });
+}
+
+window.deleteCalendarEvent = async (id) => {
+    if(confirm('Delete this event?')) {
+        try {
+            await deleteDoc(doc(db, 'calendarEvents', id));
+        } catch(error) {
+            alert('Error deleting event: ' + error.message);
+        }
+    }
+};

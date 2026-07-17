@@ -2682,3 +2682,133 @@ window.deleteRecord = async (col, id) => {
         console.error("Delete Error:", e);
     }
 };
+
+
+// ==========================================
+// EVENTS & NEWS (Global Announcement)
+// ==========================================
+const saveTeacherAnnouncementBtn = document.getElementById('saveTeacherAnnouncementBtn');
+if (saveTeacherAnnouncementBtn) {
+    onSnapshot(doc(db, "settings", "announcements"), (docSnap) => {
+        if (docSnap.exists()) {
+            const data = docSnap.data();
+            const textEl = document.getElementById('teacherAnnouncementText');
+            const activeEl = document.getElementById('teacherAnnouncementActive');
+            if(textEl) textEl.value = data.text || '';
+            if(activeEl) activeEl.checked = data.active || false;
+        }
+    });
+
+    saveTeacherAnnouncementBtn.addEventListener('click', async () => {
+        const textEl = document.getElementById('teacherAnnouncementText');
+        const activeEl = document.getElementById('teacherAnnouncementActive');
+        if(!textEl || !activeEl) return;
+        
+        const text = textEl.value;
+        const active = activeEl.checked;
+        
+        saveTeacherAnnouncementBtn.disabled = true;
+        saveTeacherAnnouncementBtn.textContent = 'Saving...';
+        
+        try {
+            await setDoc(doc(db, "settings", "announcements"), { 
+                text, 
+                active,
+                updatedAt: new Date().toISOString()
+            }, { merge: true });
+            alert("News saved successfully!");
+        } catch(e) {
+            alert("Error saving news: " + e.message);
+        }
+        
+        saveTeacherAnnouncementBtn.disabled = false;
+        saveTeacherAnnouncementBtn.textContent = 'Save Settings';
+    });
+}
+
+// ==========================================
+// ACADEMIC PROGRAMMES (Calendar)
+// ==========================================
+const saveTeacherEventBtn = document.getElementById('saveTeacherEventBtn');
+const teacherCalendarGrid = document.getElementById('calendarGrid');
+const teacherCalendarEventModal = document.getElementById('teacherCalendarEventModal');
+
+if (saveTeacherEventBtn) {
+    saveTeacherEventBtn.addEventListener('click', async () => {
+        const title = document.getElementById('newTeacherEventTitle').value;
+        const date = document.getElementById('newTeacherEventDate').value;
+        const type = document.getElementById('newTeacherEventType').value;
+        
+        if (!title || !date || !type) {
+            alert('Please fill in all fields');
+            return;
+        }
+        
+        saveTeacherEventBtn.disabled = true;
+        saveTeacherEventBtn.textContent = 'Saving...';
+        
+        try {
+            await addDoc(collection(db, 'calendarEvents'), {
+                title,
+                date,
+                type,
+                createdAt: new Date().toISOString()
+            });
+            alert('Programme added successfully!');
+            document.getElementById('newTeacherEventTitle').value = '';
+            document.getElementById('newTeacherEventDate').value = '';
+            if(teacherCalendarEventModal) teacherCalendarEventModal.classList.remove('active');
+        } catch (error) {
+            alert('Error adding programme: ' + error.message);
+        }
+        
+        saveTeacherEventBtn.disabled = false;
+        saveTeacherEventBtn.textContent = 'Save Programme';
+    });
+}
+
+if (teacherCalendarGrid) {
+    onSnapshot(collection(db, 'calendarEvents'), (snapshot) => {
+        // We only clear if this script is actually running in a context where calendarGrid exists in teacher.html
+        // And wait, teacher.js already has some calendar building logic? Let's check!
+        // The teacher.js might have a buildCalendar() function?
+        // Actually earlier grep showed no logic for Academic Calendar.
+        teacherCalendarGrid.innerHTML = '';
+        
+        const events = [];
+        snapshot.forEach(docSnap => events.push({ id: docSnap.id, ...docSnap.data() }));
+        events.sort((a, b) => new Date(a.date) - new Date(b.date));
+        
+        if (events.length === 0) {
+            teacherCalendarGrid.innerHTML = '<div style="padding: 1rem; color: var(--text-dim); grid-column: 1/-1; text-align: center;">No programmes scheduled.</div>';
+            return;
+        }
+        
+        events.forEach(ev => {
+            const div = document.createElement('div');
+            div.className = 'portal-card';
+            div.style.padding = '1rem';
+            
+            let color = 'var(--primary)';
+            if(ev.type === 'exam') color = 'var(--gold-base)';
+            if(ev.type === 'holiday') color = 'var(--error)';
+            
+            div.innerHTML = `
+                <div style="font-weight: bold; margin-bottom: 0.5rem; color: ${color};">${ev.title}</div>
+                <div style="font-size: 0.9rem; color: var(--text-dim); margin-bottom: 1rem;">${new Date(ev.date).toLocaleDateString(undefined, {weekday:'long', year:'numeric', month:'long', day:'numeric'})}</div>
+                <button class="btn btn-outline btn-sm" onclick="deleteTeacherCalendarEvent('${ev.id}')" style="color:var(--error); border-color:var(--error);">Delete</button>
+            `;
+            teacherCalendarGrid.appendChild(div);
+        });
+    });
+}
+
+window.deleteTeacherCalendarEvent = async (id) => {
+    if(confirm('Delete this programme?')) {
+        try {
+            await deleteDoc(doc(db, 'calendarEvents', id));
+        } catch(error) {
+            alert('Error deleting programme: ' + error.message);
+        }
+    }
+};

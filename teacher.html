@@ -65,7 +65,6 @@
         <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
         <aside class="sidebar" id="sidebarMenu">
-            <div style="font-family: 'Inter', sans-serif; font-size: 2rem; color: var(--gold-base); text-align: center; margin-bottom: 1rem;">Muhyissunnah Dars</div>
             <div class="app-logo" style="justify-content: center; margin-bottom: 3rem;">
                 <img src="logo.png" alt="Logo" class="app-logo-img">
                 <span style="font-family: 'Cinzel', serif;">MSA UKKUDA Faculty</span>
@@ -77,9 +76,9 @@
                 <div class="nav-item" data-target="viewSubjects">Manage Subjects</div>
                 <div class="nav-item" data-target="viewMarks">Manage Marks</div>
                 <div class="nav-item" data-target="viewAttendance">Attendance</div>
-                <div class="nav-item" data-target="viewAnnouncements">Class Announcements</div>
+                <div class="nav-item" data-target="viewAnnouncements">Events & News</div>
                 <div class="nav-item" data-target="viewRemarks">Remarks</div>
-                <div class="nav-item" data-target="viewCalendar">Academic Calendar</div>
+                <div class="nav-item" data-target="viewCalendar">Academic Programmes</div>
                 <div class="nav-item" data-target="viewLeave">Leave Management</div>
                 <div class="nav-item" data-target="viewMessages">Messages</div>
                 <div class="nav-item" data-target="viewGalleryUpload">Media Management</div>
@@ -306,29 +305,24 @@
                 <!-- Announcements -->
                 <div id="viewAnnouncements" class="dashboard-section hidden">
                     <div class="view-header" style="margin-bottom: 2rem;">
-                        <h2 class="view-title">Class Announcements</h2>
+                        <h2 class="view-title">Events & News</h2>
                         <p class="view-desc">Broadcast messages to all students in your assigned batches.</p>
                     </div>
                     <div class="form-section">
+                        <h3>Set Global Banner</h3>
                         <div class="input-field">
-                            <label class="label">Select Batch</label>
-                            <select id="announcementBatch" class="input">
-                                <option value="all">All My Batches</option>
-                            </select>
+                            <label class="label">Banner Text</label>
+                            <textarea id="teacherAnnouncementText" class="input" rows="3" placeholder="Enter important news or event details..."></textarea>
                         </div>
-                        <div class="input-field">
-                            <label class="label">Announcement Title</label>
-                            <input type="text" id="announcementTitle" class="input" placeholder="e.g. Change in exam schedule">
+                        <div class="input-field" style="display:flex; align-items:center; gap:0.5rem;">
+                            <input type="checkbox" id="teacherAnnouncementActive">
+                            <label for="teacherAnnouncementActive" style="color:var(--text-main); font-weight:500;">Banner Active (Show on public portal)</label>
                         </div>
-                        <div class="input-field">
-                            <label class="label">Message Content</label>
-                            <textarea id="announcementText" class="input" rows="4" placeholder="Type your announcement here..."></textarea>
-                        </div>
-                        <button class="btn btn-main" id="postAnnouncementBtn">Post Announcement</button>
+                        <button class="btn btn-main" id="saveTeacherAnnouncementBtn">Save Settings</button>
                     </div>
                     
                     <div style="margin-top: 2rem;">
-                        <h3>Recent Announcements</h3>
+                        <h3>Recent News & Events</h3>
                         <div style="background: var(--surface); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--border); border-left: 4px solid var(--primary); margin-top: 1rem;">
                             <h4 style="margin-bottom: 0.5rem; color: var(--text-main);">Reminder: Upcoming Fiqh Assessment</h4>
                             <p style="color: var(--text-dim); font-size: 0.95rem; margin-bottom: 0.5rem;">Please ensure all assignments are submitted before the assessment on Friday.</p>
@@ -382,9 +376,12 @@
 
                 <!-- F. ACADEMIC CALENDAR (Read-Only) -->
                 <div id="viewCalendar" class="dashboard-section hidden">
-                    <div class="view-header" style="margin-bottom: 2rem;">
-                        <h2 class="view-title">Academic Calendar</h2>
-                        <p class="view-desc">View upcoming holidays, exams, and campus events.</p>
+                    <div class="view-header" style="margin-bottom: 2rem; display:flex; justify-content:space-between; align-items:center;">
+                        <div>
+                            <h2 class="view-title" style="margin:0;">Academic Programmes</h2>
+                            <p class="view-desc">View and manage upcoming programmes and campus events.</p>
+                        </div>
+                        <button class="btn btn-main" onclick="document.getElementById('teacherCalendarEventModal').classList.add('active')">Add Programme</button>
                     </div>
                     
                     <div class="calendar-controls">
@@ -645,22 +642,36 @@
         <div id="studentDetailBody" style="max-width:900px; margin:0 auto; padding-bottom:4rem; line-height:1.6;"></div>
     </div>
 
+    <!-- Calendar Event Modal for Teacher -->
+    <div id="teacherCalendarEventModal" class="modal-overlay">
+        <div class="modal-content" style="max-width:400px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+                <h2 class="view-title" style="font-size:1.5rem; margin:0;">Add Programme</h2>
+                <button class="btn btn-ghost" style="padding:0.5rem 1rem;" onclick="document.getElementById('teacherCalendarEventModal').classList.remove('active')">Close</button>
+            </div>
+            <div class="input-field"><label class="label">Programme Title</label><input type="text" id="newTeacherEventTitle" class="input" placeholder="e.g. Midterm Exams"></div>
+            <div class="input-field"><label class="label">Date</label><input type="date" id="newTeacherEventDate" class="input"></div>
+            <div class="input-field"><label class="label">Programme Type</label>
+                <select id="newTeacherEventType" class="input">
+                    <option value="general">General (Blue)</option>
+                    <option value="exam">Assessment (Gold)</option>
+                    <option value="holiday">Holiday (Red)</option>
+                </select>
+            </div>
+            <button class="btn btn-main" style="width:100%; margin-top:1rem;" id="saveTeacherEventBtn">Save Programme</button>
+        </div>
+    </div>
+
     <!-- PWA Installation Instructions Modal -->
     <div id="pwaModal" class="auth-overlay" aria-hidden="true">
         <div class="auth-modal" role="dialog" aria-modal="true" aria-labelledby="pwaTitle">
             <div class="auth-modal-header">
-                <div>
-                    <h2 id="pwaTitle">Download Portal App</h2>
-                    <p>Access the MSA UKKUDA portal directly from your home screen.</p>
+                <div style="display:flex; align-items:center; gap:0.75rem;">
+                    <div style="width:40px; height:40px; background:var(--primary); color:white; border-radius:10px; display:flex; align-items:center; justify-content:center; font-weight:bold; font-size:1.25rem;">📱</div>
+                    <h2 id="pwaTitle" style="font-family:'Cinzel',serif; font-size:1.25rem; color:var(--text-main); margin:0;">Install App</h2>
                 </div>
                 <button id="closePwaBtn" class="close-modal" type="button">X</button>
             </div>
-            
-            <div id="pwaAndroidInst" class="hidden">
-                <p style="margin-bottom:1.5rem;">Tap the button below to install the app on your Android device.</p>
-                <button id="pwaInstallActionBtn" class="btn btn-main btn-block">Install App Now</button>
-            </div>
-
             <div id="pwaIosInst" class="hidden">
                 <p>To install on your iPhone/iPad:</p>
                 <ol style="margin: 1.5rem 0; padding-left: 1.5rem; display: grid; gap: 0.75rem;">

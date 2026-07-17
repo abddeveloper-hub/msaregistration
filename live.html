@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Live Stream | MSA UKKUDA</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Aref+Ruqaa:wght@400;700&family=Amiri:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="landing.css">
+    <link rel="stylesheet" href="mobile.css">
+    <link rel="icon" type="image/jpeg" href="logo.png">
+</head>
+<body class="landing-page" style="background: var(--bg);">
+    <header class="nav-wrapper">
+        <nav class="navbar" aria-label="Primary navigation">
+            <a class="brand-lockup" href="index.html">
+                <img src="logo.png" alt="MSA Ukkuda Logo" class="brand-logo-img">
+                <span class="brand-text">
+                    <strong style="font-family: 'Inter', sans-serif; letter-spacing: 0.08em; font-size: 1.25rem; line-height: 1; text-transform: uppercase; font-weight: 700;"><span class="brand-text-styled">Muhyissunnah Dars</span></strong>
+                    <span style="letter-spacing: 0.15em;">Ukkuda Official Portal</span>
+                </span>
+            </a>
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="library.html">Digital Library</a>
+                <a href="events.html">News & Events</a>
+                <a href="login.html" class="nav-login-btn">Login</a>
+            </div>
+        </nav>
+    </header>
+
+    <main id="mainContent" style="padding: 8rem 2rem 6rem; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 80vh;">
+        <div style="max-width: 1000px; width: 100%; text-align: center;">
+            <div id="liveStreamStatus" style="display: inline-block; padding: 0.5rem 1.5rem; background: rgba(220, 38, 38, 0.1); color: #ef4444; border: 1px solid #ef4444; border-radius: 50px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; font-size: 0.85rem; margin-bottom: 1.5rem;">
+                <span style="display:inline-block; width:8px; height:8px; background:#ef4444; border-radius:50%; margin-right:8px; animation: pulseLogo 2s infinite;"></span> Checking Status...
+            </div>
+            
+            <h2 id="liveStreamTitle" style="font-family: var(--font-display); font-size: clamp(2rem, 4vw, 3rem); font-weight: 700; color: var(--text-main); margin-bottom: 3rem;">Live Stream</h2>
+            
+            <div id="liveStreamVideoContainer" class="portal-card" style="padding: 0; overflow: hidden; border-radius: 16px; display: none;">
+                <iframe id="liveStreamIframe" width="100%" height="500" src="" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="display: block;"></iframe>
+            </div>
+
+            <div id="offlineMessage" style="display: none; padding: 4rem 2rem; background: var(--surface); border: 1px solid var(--border); border-radius: 16px;">
+                <p style="color: var(--text-dim); font-size: 1.2rem;">There is no active live stream at the moment.</p>
+                <p style="color: var(--text-dim); font-size: 0.9rem; margin-top: 0.5rem;">Please check our events page for upcoming schedules.</p>
+            </div>
+        </div>
+    </main>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { firebaseConfig } from "./firebase-config.js";
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        const statusBadge = document.getElementById('liveStreamStatus');
+        const titleEl = document.getElementById('liveStreamTitle');
+        const videoContainer = document.getElementById('liveStreamVideoContainer');
+        const iframe = document.getElementById('liveStreamIframe');
+        const offlineMsg = document.getElementById('offlineMessage');
+
+        onSnapshot(doc(db, 'settings', 'liveStream'), (docSnap) => {
+            if (docSnap.exists()) {
+                const data = docSnap.data();
+                if (data.isLive && data.url) {
+                    statusBadge.innerHTML = '<span style="display:inline-block; width:8px; height:8px; background:#ef4444; border-radius:50%; margin-right:8px; animation: pulseLogo 2s infinite;"></span> LIVE NOW';
+                    statusBadge.style.color = '#ef4444';
+                    statusBadge.style.borderColor = '#ef4444';
+                    
+                    titleEl.textContent = data.title || 'Live Stream';
+                    iframe.src = data.url;
+                    
+                    videoContainer.style.display = 'block';
+                    offlineMsg.style.display = 'none';
+                } else {
+                    showOffline();
+                }
+            } else {
+                showOffline();
+            }
+        });
+
+        function showOffline() {
+            statusBadge.innerHTML = 'OFFLINE';
+            statusBadge.style.color = 'var(--text-dim)';
+            statusBadge.style.borderColor = 'var(--border)';
+            statusBadge.style.background = 'transparent';
+            
+            titleEl.textContent = 'Live Stream Offline';
+            iframe.src = '';
+            
+            videoContainer.style.display = 'none';
+            offlineMsg.style.display = 'block';
+        }
+    </script>
+</body>
+</html>

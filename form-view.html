@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamic Form | MSA UKKUDA</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="mobile.css">
+    <link rel="icon" type="image/jpeg" href="logo.png">
+</head>
+<body style="background: var(--bg); display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 2rem 1rem;">
+    <div class="portal-card" style="width: 100%; max-width: 600px; padding: 2rem;">
+        <div class="app-logo" style="justify-content: center; margin-bottom: 2rem;">
+            <img src="logo.png" alt="Logo" class="app-logo-img">
+            <span style="font-family: 'Cinzel', serif; font-size:1.2rem;">MSA UKKUDA Forms</span>
+        </div>
+        
+        <h2 id="formTitle" style="text-align: center; margin-bottom: 2rem; color: var(--text-main);">Loading Form...</h2>
+        
+        <form id="dynamicFormContainer" style="display: none; flex-direction: column; gap: 1.5rem;">
+            <!-- Fields generated here -->
+        </form>
+        
+        <button id="submitFormBtn" type="button" class="btn btn-main" style="width: 100%; margin-top: 2rem; display: none;">Submit Response</button>
+        <p id="formMsg" style="margin-top: 1rem; text-align: center; font-size: 0.9rem;"></p>
+        
+        <div style="text-align: center; margin-top: 3rem;">
+            <a href="index.html" style="color: var(--text-dim); text-decoration: none; font-size: 0.9rem;">← Return to Home</a>
+        </div>
+    </div>
+    
+    <script type="module" src="form-view.js"></script>
+</body>
+</html>

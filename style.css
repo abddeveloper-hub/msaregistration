@@ -4184,3 +4184,103 @@ input {
 #loginDropdownMenu a:hover svg {
     transform: scale(1.1) !important;
 }
+
+/* Toggle Switch */
+.toggle-switch { position: relative; display: inline-block; width: 44px; height: 24px; }
+.toggle-switch input { opacity: 0; width: 0; height: 0; }
+.toggle-slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: var(--border); transition: .3s; border-radius: 24px; }
+.toggle-slider:before { position: absolute; content: ''; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: .3s; border-radius: 50%; }
+input:checked + .toggle-slider { background-color: var(--primary); }
+input:checked + .toggle-slider:before { transform: translateX(20px); }
+
+/* Lightbox Styles */
+.lightbox {
+    display: none;
+    position: fixed;
+    z-index: 9999;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.9);
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.lightbox.open {
+    display: flex;
+    opacity: 1;
+}
+
+.lightbox-inner {
+    position: relative;
+    max-width: 90%;
+    max-height: 90%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+#lightboxImg {
+    max-width: 100%;
+    max-height: 80vh;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+    object-fit: contain;
+}
+
+.lightbox-caption {
+    color: #fff;
+    margin-top: 15px;
+    font-size: 1.1rem;
+    text-align: center;
+}
+
+.lightbox-close {
+    position: absolute;
+    top: -40px;
+    right: 0;
+    color: white;
+    font-size: 35px;
+    font-weight: bold;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    transition: color 0.3s;
+}
+.lightbox-close:hover {
+    color: var(--primary);
+}
+
+.lightbox-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    color: white;
+    font-size: 50px;
+    font-weight: bold;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    transition: color 0.3s;
+    user-select: none;
+    padding: 20px;
+}
+.lightbox-nav:hover {
+    color: var(--primary);
+}
+.lightbox-nav.prev {
+    left: -60px;
+}
+.lightbox-nav.next {
+    right: -60px;
+}
+
+@media (max-width: 768px) {
+    .lightbox-nav.prev { left: -30px; }
+    .lightbox-nav.next { right: -30px; }
+    .lightbox-close { right: 10px; }
+}

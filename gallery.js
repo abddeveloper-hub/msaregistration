@@ -83,7 +83,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function bindLightbox() {
         const items = document.querySelectorAll('.gallery-item');
-        const lightbox = document.getElementById('galleryLightbox');
+        const lightbox = document.getElementById('lightbox');
         const lightboxImg = document.getElementById('lightboxImg');
         const lightboxCaption = document.getElementById('lightboxCaption');
         const lightboxClose = document.getElementById('lightboxClose');

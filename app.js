@@ -143,6 +143,17 @@ function loadPublicStats() {
                 banner.classList.add('hidden');
             }
         });
+        
+        onSnapshot(doc(db, 'settings', 'liveStream'), (docSnap) => {
+            if (docSnap.exists() && docSnap.data().isLive) {
+                if (!banner.classList.contains('hidden')) {
+                    textEl.innerHTML += ` <span style="margin: 0 10px;">|</span> <a href="live.html" style="color:var(--bg); background:var(--primary); padding:2px 8px; border-radius:4px; text-decoration:none; font-weight:bold; font-size:0.85rem;"><span style="display:inline-block; width:6px; height:6px; background:#ef4444; border-radius:50%; margin-right:4px; animation: pulseLogo 2s infinite;"></span> LIVE NOW</a>`;
+                } else {
+                    textEl.innerHTML = `<a href="live.html" style="color:var(--bg); background:var(--primary); padding:2px 8px; border-radius:4px; text-decoration:none; font-weight:bold; font-size:0.85rem;"><span style="display:inline-block; width:6px; height:6px; background:#ef4444; border-radius:50%; margin-right:4px; animation: pulseLogo 2s infinite;"></span> LIVE NOW: ${docSnap.data().title || 'Special Event'}</a>`;
+                    banner.classList.remove('hidden');
+                }
+            }
+        });
     }
 }
 

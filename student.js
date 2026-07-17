@@ -1,6 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-import { getFirestore, doc, setDoc, getDoc, getDocs, updateDoc, collection, onSnapshot, query, where, addDoc, enableMultiTabIndexedDbPersistence, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+import { getFirestore, doc, setDoc, getDoc, getDocs, updateDoc, collection, onSnapshot, query, where, addDoc, enableMultiTabIndexedDbPersistence, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 import { firebaseConfig } from "./firebase-config.js";
 
 
@@ -138,6 +138,7 @@ window.prevWizardStep = function(step) {
 // Auth State
 let parentDocUnsub = null;
 let studentsSnapUnsub = null;
+let notifUnsub = null;
 
 onAuthStateChanged(auth, async (user) => {
     const splash = document.getElementById("appSplashScreen");
@@ -146,6 +147,7 @@ onAuthStateChanged(auth, async (user) => {
     // Cleanup previous listeners
     if (parentDocUnsub) { parentDocUnsub(); parentDocUnsub = null; }
     if (studentsSnapUnsub) { studentsSnapUnsub(); studentsSnapUnsub = null; }
+    if (notifUnsub) { notifUnsub(); notifUnsub = null; }
 
     if (user) {
         // Fetch parent user profile
@@ -172,10 +174,135 @@ onAuthStateChanged(auth, async (user) => {
             }
             noStudents?.classList.add('hidden');
         });
+
+        // Listen for notifications
+        const notifQuery = query(collection(db, "notifications"), orderBy("timestamp", "desc"), limit(20));
+        notifUnsub = onSnapshot(notifQuery, (snapshot) => {
+            const container = document.getElementById('notificationsContainer');
+            const noMsg = document.getElementById('noNotificationsMsg');
+            const badge = document.getElementById('navNotifBadge');
+            
+            if (!container) return;
+            
+            if (snapshot.empty) {
+                container.innerHTML = '';
+                if (noMsg) noMsg.classList.remove('hidden');
+                if (badge) badge.style.display = 'none';
+                return;
+            }
+            
+            if (noMsg) noMsg.classList.add('hidden');
+            let unreadCount = 0;
+            
+            // Handle new notifications (toast)
+            snapshot.docChanges().forEach((change) => {
+                if (change.type === 'added') {
+                    // Check if it's a truly new notification (within last 5 mins) to avoid spamming toasts on initial load
+                    const data = change.doc.data();
+                    const notifTime = new Date(data.timestamp).getTime();
+                    const now = new Date().getTime();
+                    if (now - notifTime < 5 * 60 * 1000) {
+                        showToast(data.title, data.body);
+                    }
+                }
+            });
+
+            container.innerHTML = snapshot.docs.map((doc, index) => {
+                const data = doc.data();
+                if (index < 3) unreadCount++; // Simple mock: treat top 3 as unread, or real logic if we store read states
+                const d = new Date(data.timestamp);
+                return `
+                    <div class="portal-card" style="border-left: 4px solid var(--primary); padding: 1rem;">
+                        <h4 style="color: var(--text-main); margin-bottom: 0.5rem; display: flex; justify-content: space-between;">
+                            ${data.title}
+                            <span style="font-size: 0.75rem; color: var(--text-dim); font-weight: normal;">${d.toLocaleDateString()} ${d.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
+                        </h4>
+                        <p style="color: var(--text); font-size: 0.9rem;">${data.body}</p>
+                    </div>
+                `;
+            }).join('');
+            
+            if (badge) {
+                if (unreadCount > 0) {
+                    badge.style.display = 'inline-block';
+                    badge.innerText = unreadCount;
+                } else {
+                    badge.style.display = 'none';
+                }
+            }
+        });
+
     } else {
         window.location.href = "index.html";
     }
 });
+
+function showToast(title, body) {
+    const container = document.getElementById('toastContainer');
+    if (!container) return;
+    
+    const toast = document.createElement('div');
+    toast.style.cssText = `
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-left: 4px solid var(--primary);
+        padding: 15px;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+        min-width: 250px;
+        max-width: 350px;
+        animation: slideInRight 0.3s ease forwards;
+        position: relative;
+        overflow: hidden;
+    `;
+    
+    toast.innerHTML = `
+        <h4 style="margin-bottom: 5px; color: var(--text-main); font-size: 0.95rem;">${title}</h4>
+        <p style="color: var(--text); font-size: 0.85rem; margin: 0;">${body}</p>
+        <button style="position: absolute; top: 10px; right: 10px; background: none; border: none; color: var(--text-dim); cursor: pointer; font-size: 1.2rem; line-height: 1;">&times;</button>
+    `;
+    
+    toast.querySelector('button').onclick = () => {
+        toast.style.animation = 'slideOutRight 0.3s ease forwards';
+        setTimeout(() => toast.remove(), 300);
+    };
+    
+    container.appendChild(toast);
+    
+    // Request Native Notification Permission
+    if ("Notification" in window) {
+        if (Notification.permission === "granted") {
+            new Notification(title, { body: body, icon: "logo.png" });
+        } else if (Notification.permission !== "denied") {
+            Notification.requestPermission().then(permission => {
+                if (permission === "granted") {
+                    new Notification(title, { body: body, icon: "logo.png" });
+                }
+            });
+        }
+    }
+    
+    setTimeout(() => {
+        if (toast.parentElement) {
+            toast.style.animation = 'slideOutRight 0.3s ease forwards';
+            setTimeout(() => toast.remove(), 300);
+        }
+    }, 5000);
+}
+
+// Add some keyframes for the toast animation
+const style = document.createElement('style');
+style.innerHTML = \`
+@keyframes slideInRight {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+@keyframes slideOutRight {
+    from { transform: translateX(0); opacity: 1; }
+    to { transform: translateX(100%); opacity: 0; }
+}
+\`;
+document.head.appendChild(style);
 
 function renderAccountDashboard() {
     const container = document.getElementById('studentListContainer');
@@ -517,10 +644,14 @@ function showStudentDetail(studentId) {
         if(data.status === 'admitted') {
             document.getElementById('pendingStatusSection').classList.add('hidden');
             document.getElementById('admittedDetailSection').classList.remove('hidden');
+            const idBtn = document.getElementById('generateIdCardBtn');
+            if (idBtn) idBtn.style.display = 'block';
             renderAdmittedDashboard(data, studentId);
         } else {
             document.getElementById('admittedDetailSection').classList.add('hidden');
             document.getElementById('pendingStatusSection').classList.remove('hidden');
+            const idBtn = document.getElementById('generateIdCardBtn');
+            if (idBtn) idBtn.style.display = 'none';
         }
     });
 }
@@ -959,3 +1090,51 @@ document.getElementById('pwaInstallActionBtn')?.addEventListener("click", () => 
 pwaModal?.addEventListener("click", (e) => {
     if (e.target === pwaModal) closePwaModal();
 });
+
+// ==========================================
+// FEATURE: DIGITAL ID CARD GENERATOR
+// ==========================================
+window.generateIDCard = async () => {
+    if (!activeStudentId || !myStudents) return;
+    
+    const student = myStudents.find(s => s.id === activeStudentId);
+    if (!student) return;
+    
+    const btn = document.getElementById('generateIdCardBtn');
+    const originalText = btn.innerHTML;
+    btn.innerHTML = 'Generating...';
+    btn.disabled = true;
+
+    // Populate the template
+    document.getElementById('idCardPhoto').src = student.photoUrl || 'logo.png?v=2';
+    document.getElementById('idCardName').innerText = student.fullName || 'Student';
+    document.getElementById('idCardRoll').innerText = student.rollNumber || 'N/A';
+    document.getElementById('idCardBatch').innerText = student.batch || 'N/A';
+    document.getElementById('idCardBlood').innerText = student.bloodGroup || 'N/A';
+    document.getElementById('idCardBarcodeText').innerText = student.id || 'UUID-XYZ';
+
+    try {
+        const template = document.getElementById('idCardTemplate');
+        
+        // Use html2canvas
+        const canvas = await html2canvas(template, {
+            scale: 2, // higher resolution
+            backgroundColor: null,
+            useCORS: true
+        });
+        
+        // Create download link
+        const image = canvas.toDataURL("image/png");
+        const a = document.createElement("a");
+        a.href = image;
+        a.download = `MSA_ID_Card_${student.fullName.replace(/\s+/g, '_')}.png`;
+        a.click();
+        
+    } catch (e) {
+        console.error("ID Card Generation failed:", e);
+        alert("Failed to generate ID card. Please try again.");
+    } finally {
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+    }
+};

@@ -484,18 +484,34 @@
 
             <!-- 9. ANNOUNCEMENTS -->
             <div id="viewAnnouncements" class="admin-section hidden">
-                <h2 class="view-title">Events & News</h2>
+                <h2 class="view-title">Events, News & Notifications</h2>
+                
                 <div class="form-section">
+                    <h3>Push Notification to Students</h3>
+                    <p style="font-size:0.85rem; color:var(--text-dim); margin-bottom:1rem;">Send an instant in-app notification to all students.</p>
+                    <div class="input-field">
+                        <label class="label">Notification Title</label>
+                        <input type="text" id="pushNotifTitle" class="input" placeholder="e.g. Holiday Tomorrow" required>
+                    </div>
+                    <div class="input-field" style="margin-top: 1rem;">
+                        <label class="label">Notification Body</label>
+                        <textarea id="pushNotifBody" class="input" placeholder="Enter message details..." rows="3" required></textarea>
+                    </div>
+                    <button class="btn btn-main" id="sendPushNotifBtn" style="margin-top: 1rem;">Send Notification</button>
+                    <p id="pushNotifMsg" style="margin-top: 0.5rem; font-size: 0.9rem;"></p>
+                </div>
+
+                <div class="form-section" style="margin-top: 2rem;">
                     <h3>Set Global Banner</h3>
                     <div class="input-field">
-                        <label class="label">Announcement Text</label>
+                        <label class="label">Banner Text</label>
                         <input type="text" id="adminAnnouncementText" class="input" placeholder="Enter announcement text...">
                     </div>
                     <div class="input-field" style="display: flex; align-items: center; gap: 1rem; margin-top: 1rem;">
                         <label class="label" style="margin: 0;">Status (Active/Hidden)</label>
                         <input type="checkbox" id="adminAnnouncementActive" style="width: 20px; height: 20px;">
                     </div>
-                    <button class="btn btn-main" id="saveAnnouncementBtn" style="margin-top: 1rem;">Save Announcement</button>
+                    <button class="btn btn-outline" id="saveAnnouncementBtn" style="margin-top: 1rem;">Save Banner</button>
                 </div>
             </div>
 

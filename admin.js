@@ -1075,6 +1075,43 @@ if (saveAnnouncementBtn) {
     });
 }
 
+const sendPushNotifBtn = document.getElementById('sendPushNotifBtn');
+if (sendPushNotifBtn) {
+    sendPushNotifBtn.addEventListener('click', async () => {
+        const title = document.getElementById('pushNotifTitle').value.trim();
+        const body = document.getElementById('pushNotifBody').value.trim();
+        const msgEl = document.getElementById('pushNotifMsg');
+        
+        if (!title || !body) {
+            msgEl.textContent = "Please provide both a title and body.";
+            msgEl.style.color = "var(--error)";
+            return;
+        }
+
+        sendPushNotifBtn.disabled = true;
+        sendPushNotifBtn.textContent = "Sending...";
+
+        try {
+            await addDoc(collection(db, "notifications"), {
+                title: title,
+                body: body,
+                timestamp: new Date().toISOString(),
+                sentBy: auth.currentUser ? auth.currentUser.uid : 'admin'
+            });
+            msgEl.textContent = "Notification sent successfully!";
+            msgEl.style.color = "var(--success)";
+            document.getElementById('pushNotifTitle').value = '';
+            document.getElementById('pushNotifBody').value = '';
+        } catch(e) {
+            msgEl.textContent = "Failed to send: " + e.message;
+            msgEl.style.color = "var(--error)";
+        } finally {
+            sendPushNotifBtn.disabled = false;
+            sendPushNotifBtn.textContent = "Send Notification";
+        }
+    });
+}
+
 // 8. GALLERY MANAGER
 const galleryAdminGrid = document.getElementById('galleryAdminGrid');
 if (galleryAdminGrid) {

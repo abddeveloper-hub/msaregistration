@@ -72,6 +72,10 @@
                 <div class="nav-item" data-target="viewAssignments">Assignments</div>
                 <div class="nav-item" data-target="viewCalendar">Calendar</div>
                 <div class="nav-item" data-target="viewMessages">Messages</div>
+                <div class="nav-item" data-target="viewNotifications" style="display:flex; justify-content:space-between; align-items:center;">
+                    Notifications 
+                    <span id="navNotifBadge" style="background:var(--primary); color:#fff; font-size:0.75rem; padding:2px 6px; border-radius:10px; display:none;">0</span>
+                </div>
             </nav>
 
             <button id="installAppBtn" class="btn btn-ghost" style="margin-top: auto;">Download App</button>
@@ -83,6 +87,23 @@
         <!-- Main Content -->
         <main class="main-content">
             
+            <!-- Toast Container -->
+            <div id="toastContainer" style="position: fixed; top: 20px; right: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 10px;"></div>
+
+            <!-- VIEW: Notifications -->
+            <div id="viewNotifications" class="hidden">
+                <div class="view-header">
+                    <h2 class="view-title">Notifications</h2>
+                    <p class="view-desc">Recent announcements and alerts from the administration.</p>
+                </div>
+                <div id="notificationsContainer" style="margin-top: 2rem; display: flex; flex-direction: column; gap: 1rem;">
+                    <!-- Injected by JS -->
+                </div>
+                <div id="noNotificationsMsg" class="status-banner hidden" style="margin-top: 2rem;">
+                    <h3>No Notifications</h3>
+                    <p>You're all caught up!</p>
+                </div>
+            </div>
             <!-- VIEW: Dashboard (List of Students) -->
             <div id="viewAccountDashboard">
                 <div class="view-header">
@@ -254,6 +275,7 @@
                         <p class="view-desc" id="detailStudentStatus">Status: Pending Approval</p>
                     </div>
                     <div style="display:flex; gap:0.5rem; align-items:center;">
+                        <button id="generateIdCardBtn" class="btn btn-outline" style="padding: 0.5rem 1rem; display:none;" onclick="generateIDCard()">🪪 ID Card</button>
                         <button id="editProfileBtn" class="btn btn-primary" style="padding: 0.5rem 1rem;">Edit Application</button>
                         <button class="btn btn-ghost" onclick="showAccountDashboard()">← Back to List</button>
                     </div>
@@ -277,6 +299,51 @@
                             <h4 style="font-size: 0.8rem; text-transform: uppercase; color: var(--text-dim); margin-bottom: 0.5rem;">Avg. Marks</h4>
                             <div id="marksPercentage" style="font-size: 2.5rem; font-weight: 800; color: var(--primary);">0%</div>
                             <p style="font-size: 0.8rem; margin-top: 0.5rem;" id="marksCount">0 exams</p>
+                        </div>
+                    </div>
+
+                    <!-- Hidden ID Card Template (Rendered to Canvas) -->
+                    <div id="idCardTemplate" style="width: 350px; height: 550px; background: linear-gradient(135deg, #0a0a0f 0%, #1a1a24 100%); border-radius: 15px; position: absolute; left: -9999px; top: 0; padding: 20px; box-sizing: border-box; font-family: 'Inter', sans-serif; color: #fff; box-shadow: 0 0 20px rgba(0,0,0,0.5); overflow: hidden; border: 2px solid #ef4444;">
+                        <!-- Top Header -->
+                        <div style="display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 15px;">
+                            <img src="logo.png?v=2" style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover;">
+                            <div style="text-align: center;">
+                                <h3 style="margin: 0; font-family: 'Cinzel', serif; font-size: 1.1rem; color: #ef4444; letter-spacing: 1px;">MUHYISSUNNAH</h3>
+                                <p style="margin: 2px 0 0; font-size: 0.65rem; color: #aaa; letter-spacing: 2px; text-transform: uppercase;">Dars Ukkuda</p>
+                            </div>
+                        </div>
+                        <!-- Profile Photo -->
+                        <div style="text-align: center; margin-bottom: 20px;">
+                            <div style="width: 140px; height: 140px; margin: 0 auto; border-radius: 15px; border: 3px solid #ef4444; overflow: hidden; background: #222;">
+                                <img id="idCardPhoto" src="logo.png?v=2" style="width: 100%; height: 100%; object-fit: cover;">
+                            </div>
+                            <h2 id="idCardName" style="margin: 15px 0 5px; font-size: 1.5rem; font-weight: 700; text-transform: uppercase;">Student Name</h2>
+                            <span style="background: rgba(239,68,68,0.2); color: #ef4444; padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; display: inline-block;">STUDENT</span>
+                        </div>
+                        <!-- Details Grid -->
+                        <div style="background: rgba(255,255,255,0.03); border-radius: 10px; padding: 15px; margin-bottom: 20px;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                <span style="color: #888; font-size: 0.8rem; font-weight: 500;">Roll No:</span>
+                                <span id="idCardRoll" style="font-size: 0.8rem; font-weight: 600;">-</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                <span style="color: #888; font-size: 0.8rem; font-weight: 500;">Batch:</span>
+                                <span id="idCardBatch" style="font-size: 0.8rem; font-weight: 600;">-</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                <span style="color: #888; font-size: 0.8rem; font-weight: 500;">Blood Grp:</span>
+                                <span id="idCardBlood" style="font-size: 0.8rem; font-weight: 600;">-</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between;">
+                                <span style="color: #888; font-size: 0.8rem; font-weight: 500;">Valid Till:</span>
+                                <span style="font-size: 0.8rem; font-weight: 600;">March 2027</span>
+                            </div>
+                        </div>
+                        <!-- Footer Barcode Placeholder -->
+                        <div style="text-align: center; margin-top: auto; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.1);">
+                            <!-- Using a simple barcode-like font or CSS pattern. Here we just use pipes -->
+                            <div style="font-family: monospace; font-size: 1.5rem; letter-spacing: -2px; color: #fff; transform: scaleY(1.5);">||||||| | |||| | |||||||| | |</div>
+                            <div id="idCardBarcodeText" style="font-size: 0.6rem; color: #888; margin-top: 5px; font-family: monospace;">UUID</div>
                         </div>
                     </div>
 
@@ -484,8 +551,10 @@
             </div>
         </div>
     </div>
-
-    <script type="module" src="student.js?v=3"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script type="module" src="student.js?v=4"></script>
+    
     <!-- PWA Registration -->
     <script>
         if ('serviceWorker' in navigator) {
@@ -494,8 +563,6 @@
             });
         }
     </script>
-
-    <!-- Mobile Toggle Script -->
     <script>
         const menuBtn = document.getElementById('mobileMenuBtn');
         const sidebar = document.querySelector('.sidebar');

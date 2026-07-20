@@ -1,9 +1,15 @@
-const CACHE_NAME = 'msaukkuda-portal-v25';
+const CACHE_NAME = 'msaukkuda-portal-v26';
 const ASSETS = [
   './',
   './index.html',
   './achievements.html',
   './alumni.html',
+  './events.html',
+  './gallery.html',
+  './videos.html',
+  './library.html',
+  './live.html',
+  './login.html',
   './student.html',
   './teacher.html',
   './admin.html',
@@ -13,6 +19,11 @@ const ASSETS = [
   './app.js',
   './achievements.js',
   './alumni.js',
+  './events.js',
+  './gallery.js',
+  './videos.js',
+  './library.js',
+  './login.js',
   './student.js',
   './teacher.js',
   './admin.js',

@@ -19,29 +19,7 @@
     <meta name="theme-color" content="#FFFFFF">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <link rel="icon" type="image/png" href="logo.png?v=2">
-    <script>
-        (function() {
-            const savedTheme = localStorage.getItem('msaukkuda:theme');
-            if (savedTheme) {
-                document.documentElement.dataset.theme = savedTheme;
-            } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-                document.documentElement.dataset.theme = 'dark';
-            } else {
-                document.documentElement.dataset.theme = 'light';
-            }
-        })();
-        
-        window.toggleTheme = function() {
-            const currentTheme = document.documentElement.dataset.theme || 'light';
-            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-            document.documentElement.dataset.theme = newTheme;
-            localStorage.setItem('msaukkuda:theme', newTheme);
-            const icon = document.getElementById('themeToggleIcon');
-            if (icon) {
-                icon.textContent = newTheme === 'light' ? '🌙' : '☀️';
-            }
-        };
-    </script>
+
 </head>
 <body class="landing-page">
     <header class="nav-wrapper">
@@ -64,7 +42,6 @@
             </div>
 
             <div class="nav-actions" style="position: relative;">
-                <button class="btn btn-ghost icon-btn" onclick="toggleTheme()" title="Toggle Dark/Light Mode" style="font-size: 1.25rem;"><span id="themeToggleIcon">🌙</span></button>
                 
                 <button class="btn btn-ghost icon-btn" id="loginMenuToggleBtn" type="button" style="font-size: 1.5rem; padding: 0.5rem; line-height: 1;">⋮</button>
                 

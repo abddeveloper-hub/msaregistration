@@ -5,12 +5,7 @@ import { firebaseConfig } from "./firebase-config.js";
 const app = initializeApp(firebaseConfig, "ai-app");
 const db = getFirestore(app);
 
-window.toggleTheme = () => {
-    const currentTheme = document.documentElement.dataset.theme || 'dark';
-    const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-    document.documentElement.dataset.theme = newTheme;
-    localStorage.setItem('msaukkuda:theme', newTheme);
-};
+
 
 document.addEventListener("DOMContentLoaded", () => {
     // Inject AI Widget UI

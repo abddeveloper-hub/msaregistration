@@ -28,7 +28,7 @@ function formatAddedDate(rawDate) {
         dateObj = new Date(rawDate);
     }
     if (isNaN(dateObj.getTime())) return String(rawDate);
-    
+
     return dateObj.toLocaleDateString(undefined, {
         month: 'short',
         day: 'numeric',
@@ -39,7 +39,7 @@ function formatAddedDate(rawDate) {
 document.addEventListener('DOMContentLoaded', () => {
     const achievementsGrid = document.getElementById('achievementsGrid');
     const filterContainer = document.getElementById('achievementFilters');
-    
+
     const lightboxModal = document.getElementById('achievementLightbox');
     const lightboxImg = document.getElementById('lightboxImg');
     const lightboxCategory = document.getElementById('lightboxCategory');
@@ -57,7 +57,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderFilterButtons() {
         if (!filterContainer) return;
 
-        const defaultCategories = ['all', 'Quran & Qira\'at', 'Inter-Madrasa', 'Academic', 'Arts & Sports'];
+        const defaultCategories = ['all', 'Quran & Qira\'at', 'Inter-Madrasa', 'Academic', 'Sahityotsav'];
         const dynamicCategories = new Set(defaultCategories);
         allAchievements.forEach(item => {
             if (item.category) dynamicCategories.add(item.category);
@@ -103,7 +103,7 @@ document.addEventListener('DOMContentLoaded', () => {
         filtered.forEach(item => {
             const card = document.createElement('div');
             card.className = 'achievement-card';
-            
+
             const addedDate = formatAddedDate(item.date || item.createdAt);
             const imageSrc = item.url || item.image || item.photoUrl || 'assets/mdu-hero.png';
             const rankText = item.rank || 'Honorable Mention';
@@ -144,7 +144,7 @@ document.addEventListener('DOMContentLoaded', () => {
         lightboxImg.src = item.url || item.image || item.photoUrl || 'assets/mdu-hero.png';
         lightboxCategory.textContent = item.category || 'Honors';
         lightboxTitle.textContent = item.title || 'Student Achievement';
-        
+
         const rankText = item.rank || 'Honorable Mention';
         let rankIcon = '🏆';
         if (rankText.includes('1') || rankText.toLowerCase().includes('first')) rankIcon = '🥇';

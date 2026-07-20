@@ -2294,7 +2294,7 @@ window.editAchievement = async (id) => {
         document.getElementById('editAchievementStudentName').value = data.studentName || '';
         document.getElementById('editAchievementRank').value = data.rank || '🥇 1st Prize';
         
-        const stdCats = ['Quran & Qira\'at', 'Inter-Madrasa', 'Academic', 'Arts & Sports'];
+        const stdCats = ['Quran & Qira\'at', 'Inter-Madrasa', 'Academic', 'Sahityotsav'];
         const cat = data.category || 'Quran & Qira\'at';
         if (stdCats.includes(cat)) {
             if (editAchievementCategorySelect) editAchievementCategorySelect.value = cat;

@@ -1027,6 +1027,7 @@ window.deleteRecord = async (col, id) => {
     else if(col === 'gallery') typeName = 'photo';
     else if(col === 'videos') typeName = 'video program';
     else if(col === 'achievements') typeName = 'student achievement';
+    else if(col === 'alumni') typeName = 'alumni profile';
     if(!confirm(`Are you sure you want to permanently delete this ${typeName} record? This cannot be undone.`)) return;
     try {
         if (col === 'users') {
@@ -2361,6 +2362,247 @@ if (editAchievementForm) {
             alert("Achievement updated successfully!");
         } catch (err) {
             alert("Error updating achievement: " + err.message);
+        } finally {
+            saveBtn.disabled = false;
+            saveBtn.textContent = 'Save Changes';
+        }
+    });
+}
+
+// 10. ALUMNI DIRECTORY MANAGER
+const alumniUploadForm = document.getElementById('alumniUploadForm');
+const alumniPhotoInput = document.getElementById('alumniPhotoInput');
+const alumniPhotoPreview = document.getElementById('alumniPhotoPreview');
+const alumniPreviewContainer = document.getElementById('alumniPreviewContainer');
+const alumniAdminGrid = document.getElementById('alumniAdminGrid');
+
+let currentAlumniBase64 = null;
+let currentEditAlumniBase64 = null;
+
+if (alumniPhotoInput) {
+    alumniPhotoInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                const img = new Image();
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    const MAX_WIDTH = 1200;
+                    const MAX_HEIGHT = 1200;
+                    let width = img.width;
+                    let height = img.height;
+                    if (width > height) {
+                        if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; }
+                    } else {
+                        if (height > MAX_HEIGHT) { width *= MAX_HEIGHT / height; height = MAX_HEIGHT; }
+                    }
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+                    const base64Str = canvas.toDataURL('image/jpeg', 0.8);
+                    currentAlumniBase64 = base64Str;
+                    alumniPhotoPreview.src = base64Str;
+                    alumniPreviewContainer.style.display = 'block';
+                };
+                img.src = event.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+}
+
+const editAlumniFileInput = document.getElementById('editAlumniFileInput');
+if (editAlumniFileInput) {
+    editAlumniFileInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                const img = new Image();
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    const MAX_WIDTH = 1200;
+                    const MAX_HEIGHT = 1200;
+                    let width = img.width;
+                    let height = img.height;
+                    if (width > height) {
+                        if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; }
+                    } else {
+                        if (height > MAX_HEIGHT) { width *= MAX_HEIGHT / height; height = MAX_HEIGHT; }
+                    }
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+                    const base64Str = canvas.toDataURL('image/jpeg', 0.8);
+                    currentEditAlumniBase64 = base64Str;
+                    document.getElementById('editAlumniPreview').src = base64Str;
+                };
+                img.src = event.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+}
+
+if (alumniUploadForm) {
+    alumniUploadForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const name = document.getElementById('alumniName').value.trim();
+        const title = document.getElementById('alumniTitle').value.trim();
+        const batch = document.getElementById('alumniBatch').value.trim();
+        const designation = document.getElementById('alumniDesignation').value.trim();
+        const institution = document.getElementById('alumniInstitution').value.trim();
+        const locationStr = document.getElementById('alumniLocation').value.trim();
+        const whatsapp = document.getElementById('alumniPhone').value.trim();
+        const email = document.getElementById('alumniEmail').value.trim();
+        const bio = document.getElementById('alumniBio').value.trim();
+        const uploadBtn = document.getElementById('alumniUploadBtn');
+        const uploadMsg = document.getElementById('alumniUploadMsg');
+
+        if (!currentAlumniBase64) {
+            alert("Please select a profile photo to upload.");
+            return;
+        }
+
+        uploadBtn.disabled = true;
+        uploadBtn.textContent = 'Publishing...';
+        uploadMsg.style.color = 'var(--text-dim)';
+        uploadMsg.textContent = 'Uploading alumni profile...';
+
+        try {
+            await addDoc(collection(db, "alumni"), {
+                name: name,
+                title: title,
+                batch: batch,
+                designation: designation,
+                institution: institution,
+                location: locationStr,
+                whatsapp: whatsapp,
+                email: email,
+                bio: bio,
+                url: currentAlumniBase64,
+                uploadedBy: auth.currentUser ? auth.currentUser.uid : "admin",
+                createdAt: new Date().toISOString()
+            });
+
+            uploadMsg.style.color = '#10b981';
+            uploadMsg.textContent = 'Alumni profile published successfully!';
+            alumniUploadForm.reset();
+            currentAlumniBase64 = null;
+            alumniPreviewContainer.style.display = 'none';
+        } catch (err) {
+            uploadMsg.style.color = '#ef4444';
+            uploadMsg.textContent = 'Upload failed: ' + err.message;
+        } finally {
+            uploadBtn.disabled = false;
+            uploadBtn.textContent = 'Publish Alumni Profile';
+        }
+    });
+}
+
+if (alumniAdminGrid) {
+    onSnapshot(collection(db, "alumni"), (snap) => {
+        alumniAdminGrid.innerHTML = '';
+        snap.forEach(docSnap => {
+            const data = docSnap.data();
+            const id = docSnap.id;
+            const item = document.createElement('div');
+            item.className = 'portal-card';
+            item.style.padding = '0.75rem';
+            const photoSrc = data.url || data.image || data.photoUrl || 'assets/mdu-hero.png';
+
+            item.innerHTML = `
+                <img src="${photoSrc}" alt="${data.name || 'Alumni'}" style="width:100%; height:140px; object-fit:cover; border-radius:var(--radius-sm);">
+                <div style="padding: 0.5rem 0 0 0;">
+                    <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:0.5rem;">
+                        <h4 style="font-size:0.9rem; margin:0; font-weight:600; word-break:break-word;">${data.name || 'Graduate'}</h4>
+                        <span class="badge" style="font-size:0.65rem; padding:0.15rem 0.45rem; background:rgba(15,76,58,0.15); color:var(--primary); font-weight:700; border-radius:4px; white-space:nowrap; flex-shrink:0;">${data.batch || 'Graduate'}</span>
+                    </div>
+                    ${data.title ? `<p style="font-size:0.75rem; font-weight:700; color:var(--primary); margin:0.2rem 0;">🎓 ${data.title}</p>` : ''}
+                    ${data.designation ? `<p style="font-size:0.78rem; font-weight:600; color:var(--text-main); margin:0.2rem 0 0.1rem 0;">💼 ${data.designation}</p>` : ''}
+                    ${data.location ? `<p style="font-size:0.75rem; color:var(--text-dim); margin:0.1rem 0;">📍 ${data.location}</p>` : ''}
+                    <div style="display:flex; justify-content:space-between; gap:0.5rem; margin-top:0.5rem;">
+                        <button class="btn btn-ghost" style="color:var(--primary); padding:0.4rem 0.75rem; font-size:0.8rem; font-weight:600; border:1px solid var(--border); border-radius:6px;" onclick="window.editAlumni('${id}')">✏️ Edit</button>
+                        <button class="btn btn-ghost" style="color:var(--error); padding:0.4rem 0.75rem; font-size:0.8rem; font-weight:600; border:1px solid var(--border); border-radius:6px;" onclick="window.deleteRecord('alumni', '${id}')">Delete</button>
+                    </div>
+                </div>
+            `;
+            alumniAdminGrid.appendChild(item);
+        });
+    });
+}
+
+window.editAlumni = async (id) => {
+    try {
+        const docSnap = await getDoc(doc(db, "alumni", id));
+        if (!docSnap.exists()) {
+            alert("Alumni record not found.");
+            return;
+        }
+        const data = docSnap.data();
+
+        document.getElementById('editAlumniId').value = id;
+        document.getElementById('editAlumniName').value = data.name || '';
+        document.getElementById('editAlumniTitle').value = data.title || '';
+        document.getElementById('editAlumniBatch').value = data.batch || '';
+        document.getElementById('editAlumniDesignation').value = data.designation || '';
+        document.getElementById('editAlumniInstitution').value = data.institution || '';
+        document.getElementById('editAlumniLocation').value = data.location || '';
+        document.getElementById('editAlumniPhone').value = data.whatsapp || data.phone || '';
+        document.getElementById('editAlumniEmail').value = data.email || '';
+        document.getElementById('editAlumniBio').value = data.bio || '';
+        document.getElementById('editAlumniPreview').src = data.url || data.image || data.photoUrl || '';
+        currentEditAlumniBase64 = null;
+
+        document.getElementById('editAlumniModal').classList.add('active');
+    } catch (e) {
+        alert("Error fetching alumni record: " + e.message);
+    }
+};
+
+const editAlumniForm = document.getElementById('editAlumniForm');
+if (editAlumniForm) {
+    editAlumniForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const id = document.getElementById('editAlumniId').value;
+        const name = document.getElementById('editAlumniName').value.trim();
+        const title = document.getElementById('editAlumniTitle').value.trim();
+        const batch = document.getElementById('editAlumniBatch').value.trim();
+        const designation = document.getElementById('editAlumniDesignation').value.trim();
+        const institution = document.getElementById('editAlumniInstitution').value.trim();
+        const locationStr = document.getElementById('editAlumniLocation').value.trim();
+        const whatsapp = document.getElementById('editAlumniPhone').value.trim();
+        const email = document.getElementById('editAlumniEmail').value.trim();
+        const bio = document.getElementById('editAlumniBio').value.trim();
+        const saveBtn = document.getElementById('editAlumniSaveBtn');
+
+        saveBtn.disabled = true;
+        saveBtn.textContent = 'Saving...';
+
+        try {
+            const updatePayload = {
+                name: name,
+                title: title,
+                batch: batch,
+                designation: designation,
+                institution: institution,
+                location: locationStr,
+                whatsapp: whatsapp,
+                email: email,
+                bio: bio,
+                updatedAt: new Date().toISOString()
+            };
+            if (currentEditAlumniBase64) {
+                updatePayload.url = currentEditAlumniBase64;
+            }
+            await updateDoc(doc(db, "alumni", id), updatePayload);
+            document.getElementById('editAlumniModal').classList.remove('active');
+            alert("Alumni profile updated successfully!");
+        } catch (err) {
+            alert("Error updating alumni profile: " + err.message);
         } finally {
             saveBtn.disabled = false;
             saveBtn.textContent = 'Save Changes';

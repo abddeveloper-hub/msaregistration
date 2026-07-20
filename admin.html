@@ -96,6 +96,7 @@
                 <div class="nav-item" data-target="viewReports">Reports</div>
                 <div class="nav-item" data-target="viewGalleryUpload">Media Management</div>
                 <div class="nav-item" data-target="viewAchievements">Student Achievements</div>
+                <div class="nav-item" data-target="viewAlumni">Alumni Directory</div>
                 <div class="nav-item" data-target="viewLibrary">Library Management</div>
                 <div class="nav-item" data-target="viewLiveStream">Live Streaming</div>
                 <div class="nav-item" data-target="viewFormBuilder">Form Builder</div>
@@ -646,6 +647,82 @@
                 </div>
             </div>
 
+            <!-- ALUMNI DIRECTORY VIEW -->
+            <div id="viewAlumni" class="admin-section hidden">
+                <div class="view-header">
+                    <h2 class="view-title">Alumni Directory & Network</h2>
+                    <p class="view-desc">Manage graduate profiles, academic titles, current positions, and contact details.</p>
+                </div>
+
+                <form id="alumniUploadForm" class="portal-card" style="max-width: 650px; margin-bottom: 2rem;">
+                    <div class="grid-2">
+                        <div class="input-field">
+                            <label class="label">Graduate Full Name</label>
+                            <input type="text" id="alumniName" class="input" placeholder="E.g., Al-Hafiz Mohammed Razi" required>
+                        </div>
+                        <div class="input-field">
+                            <label class="label">Academic Title / Degree</label>
+                            <input type="text" id="alumniTitle" class="input" placeholder="E.g., Fazil Muhyissunnah" required>
+                        </div>
+                    </div>
+
+                    <div class="grid-2" style="margin-top: 1rem;">
+                        <div class="input-field">
+                            <label class="label">Graduation Batch / Year</label>
+                            <input type="text" id="alumniBatch" class="input" placeholder="E.g., 2025-2026 or Batch 5" required>
+                        </div>
+                        <div class="input-field">
+                            <label class="label">Current Designation / Role</label>
+                            <input type="text" id="alumniDesignation" class="input" placeholder="E.g., Mudarris / Research Scholar">
+                        </div>
+                    </div>
+
+                    <div class="grid-2" style="margin-top: 1rem;">
+                        <div class="input-field">
+                            <label class="label">Institution / Organization</label>
+                            <input type="text" id="alumniInstitution" class="input" placeholder="E.g., Calicut Dars / Jamia Markaz">
+                        </div>
+                        <div class="input-field">
+                            <label class="label">City / Country Location</label>
+                            <input type="text" id="alumniLocation" class="input" placeholder="E.g., Calicut, Kerala or Dubai, UAE">
+                        </div>
+                    </div>
+
+                    <div class="grid-2" style="margin-top: 1rem;">
+                        <div class="input-field">
+                            <label class="label">WhatsApp Number (Optional)</label>
+                            <input type="tel" id="alumniPhone" class="input" placeholder="+91 9876543210">
+                        </div>
+                        <div class="input-field">
+                            <label class="label">Email Address (Optional)</label>
+                            <input type="email" id="alumniEmail" class="input" placeholder="alumni@example.com">
+                        </div>
+                    </div>
+
+                    <div class="input-field" style="margin-top: 1rem;">
+                        <label class="label">Profile Photo (JPG / PNG)</label>
+                        <input type="file" id="alumniPhotoInput" class="input" accept="image/*" style="padding-top: 0.5rem;" required>
+                    </div>
+
+                    <div class="input-field" style="margin-top: 1rem;">
+                        <label class="label">Bio & Research Summary (Optional)</label>
+                        <textarea id="alumniBio" class="input" placeholder="Write a brief overview of academic contributions, publications, or current service..." rows="3" style="resize: vertical;"></textarea>
+                    </div>
+
+                    <div id="alumniPreviewContainer" style="display: none; margin-top: 1rem; border-radius: 8px; overflow: hidden; border: 1px solid var(--border);">
+                        <img id="alumniPhotoPreview" src="" alt="Photo Preview" style="width: 100%; height: 160px; object-fit: cover;">
+                    </div>
+
+                    <button type="submit" id="alumniUploadBtn" class="btn btn-main" style="margin-top: 1.5rem; width: 100%;">Publish Alumni Profile</button>
+                    <p id="alumniUploadMsg" style="margin-top: 1rem; text-align: center; font-size: 0.9rem;"></p>
+                </form>
+
+                <h3 style="margin-top: 3rem; margin-bottom: 1rem; color: var(--text-main);">Registered Alumni Profiles</h3>
+                <div id="alumniAdminGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1rem;">
+                    <!-- Injected by JS -->
+                </div>
+            </div>
+
             <!-- LIVE STREAM VIEW -->
             <div id="viewLiveStream" class="admin-section hidden">
                 <div class="view-header">
@@ -962,6 +1039,74 @@
                 <div style="display:flex; justify-content:flex-end; gap:0.75rem;">
                     <button type="button" class="btn btn-ghost" onclick="document.getElementById('editAchievementModal').classList.remove('active')">Cancel</button>
                     <button type="submit" id="editAchievementSaveBtn" class="btn btn-main">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit Alumni Modal -->
+    <div id="editAlumniModal" class="modal-overlay">
+        <div class="modal-content" style="max-width:580px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; border-bottom:1px solid var(--border); padding-bottom:0.5rem;">
+                <h3 style="margin:0; font-size:1.25rem; color:var(--text-main);">Edit Alumni Profile</h3>
+                <button type="button" class="btn btn-ghost" style="padding:0.4rem 0.8rem;" onclick="document.getElementById('editAlumniModal').classList.remove('active')">&#10005; Close</button>
+            </div>
+            <form id="editAlumniForm">
+                <input type="hidden" id="editAlumniId">
+                <div class="grid-2" style="margin-bottom:1rem;">
+                    <div class="input-field">
+                        <label class="label">Graduate Full Name</label>
+                        <input type="text" id="editAlumniName" class="input" required>
+                    </div>
+                    <div class="input-field">
+                        <label class="label">Academic Title / Degree</label>
+                        <input type="text" id="editAlumniTitle" class="input" required>
+                    </div>
+                </div>
+                <div class="grid-2" style="margin-bottom:1rem;">
+                    <div class="input-field">
+                        <label class="label">Graduation Batch / Year</label>
+                        <input type="text" id="editAlumniBatch" class="input" required>
+                    </div>
+                    <div class="input-field">
+                        <label class="label">Current Designation / Role</label>
+                        <input type="text" id="editAlumniDesignation" class="input">
+                    </div>
+                </div>
+                <div class="grid-2" style="margin-bottom:1rem;">
+                    <div class="input-field">
+                        <label class="label">Institution / Organization</label>
+                        <input type="text" id="editAlumniInstitution" class="input">
+                    </div>
+                    <div class="input-field">
+                        <label class="label">City / Country Location</label>
+                        <input type="text" id="editAlumniLocation" class="input">
+                    </div>
+                </div>
+                <div class="grid-2" style="margin-bottom:1rem;">
+                    <div class="input-field">
+                        <label class="label">WhatsApp Number (Optional)</label>
+                        <input type="tel" id="editAlumniPhone" class="input">
+                    </div>
+                    <div class="input-field">
+                        <label class="label">Email Address (Optional)</label>
+                        <input type="email" id="editAlumniEmail" class="input">
+                    </div>
+                </div>
+                <div class="input-field" style="margin-bottom:1rem;">
+                    <label class="label">Replace Photo (Optional)</label>
+                    <input type="file" id="editAlumniFileInput" accept="image/*" class="input" style="padding:0.4rem;">
+                </div>
+                <div class="input-field" style="margin-bottom:1rem;">
+                    <label class="label">Bio & Research Summary (Optional)</label>
+                    <textarea id="editAlumniBio" class="input" rows="3" style="resize:vertical;"></textarea>
+                </div>
+                <div id="editAlumniPreviewContainer" style="margin-bottom:1rem; border-radius:6px; overflow:hidden; border:1px solid var(--border);">
+                    <img id="editAlumniPreview" src="" alt="Preview" style="width:100%; height:140px; object-fit:cover; display:block;">
+                </div>
+                <div style="display:flex; justify-content:flex-end; gap:0.75rem;">
+                    <button type="button" class="btn btn-ghost" onclick="document.getElementById('editAlumniModal').classList.remove('active')">Cancel</button>
+                    <button type="submit" id="editAlumniSaveBtn" class="btn btn-main">Save Changes</button>
                 </div>
             </form>
         </div>

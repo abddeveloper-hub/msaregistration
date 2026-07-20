@@ -83,6 +83,7 @@
                 <div class="nav-item" data-target="viewMessages">Messages</div>
                 <div class="nav-item" data-target="viewLibrary">Digital Library</div>
                 <div class="nav-item" data-target="viewGalleryUpload">Media Management</div>
+                <div class="nav-item" data-target="viewAchievements">Student Achievements</div>
             </nav>
 
             <button id="installAppBtn" class="btn btn-ghost" style="margin-top: auto;">Download App</button>
@@ -570,6 +571,85 @@
                 </div>
             </div>
 
+            <!-- STUDENT ACHIEVEMENTS & HONORS VIEW -->
+            <div id="viewAchievements" class="dashboard-section hidden">
+                <div class="view-header">
+                    <h2 class="view-title">Student Achievements & Honors</h2>
+                    <p class="view-desc">Publish student awards, competition prizes, and academic distinctions.</p>
+                </div>
+
+                <form id="achievementUploadForm" class="portal-card" style="max-width: 650px; margin-bottom: 2rem;">
+                    <div class="input-field">
+                        <label class="label">Achievement Title</label>
+                        <input type="text" id="achievementTitle" class="input" placeholder="E.g., 1st Prize in State Level Qira'at Competition" required>
+                    </div>
+
+                    <div class="grid-2" style="margin-top: 1rem;">
+                        <div class="input-field">
+                            <label class="label">Student Name</label>
+                            <input type="text" id="achievementStudentName" class="input" placeholder="E.g., Mohammed Fayiz" required>
+                        </div>
+                        <div class="input-field">
+                            <label class="label">Rank / Honor</label>
+                            <select id="achievementRank" class="input" required>
+                                <option value="🥇 1st Prize">🥇 1st Prize</option>
+                                <option value="🥈 2nd Prize">🥈 2nd Prize</option>
+                                <option value="🥉 3rd Prize">🥉 3rd Prize</option>
+                                <option value="🏆 Overall Champions">🏆 Overall Champions</option>
+                                <option value="⭐ Special Honor">⭐ Special Honor</option>
+                                <option value="🎗️ Certificate of Merit">🎗️ Certificate of Merit</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="grid-2" style="margin-top: 1rem;">
+                        <div class="input-field">
+                            <label class="label">Category</label>
+                            <select id="achievementCategory" class="input" required>
+                                <option value="Quran & Qira'at">Quran & Qira'at</option>
+                                <option value="Inter-Madrasa">Inter-Madrasa</option>
+                                <option value="Academic">Academic</option>
+                                <option value="Arts & Sports">Arts & Sports</option>
+                                <option value="Custom">+ Add New Category...</option>
+                            </select>
+                            <input type="text" id="achievementCategoryCustom" class="input" placeholder="Type new category name..." style="display: none; margin-top: 0.5rem;">
+                        </div>
+                        <div class="input-field">
+                            <label class="label">Event / Competition Name</label>
+                            <input type="text" id="achievementCompetition" class="input" placeholder="E.g., All Kerala Quran Festival 2026">
+                        </div>
+                    </div>
+
+                    <div class="grid-2" style="margin-top: 1rem;">
+                        <div class="input-field">
+                            <label class="label">Event Date</label>
+                            <input type="date" id="achievementDate" class="input">
+                        </div>
+                        <div class="input-field">
+                            <label class="label">Trophy / Achievement Photo</label>
+                            <input type="file" id="achievementPhotoInput" class="input" accept="image/*" style="padding-top: 0.5rem;" required>
+                        </div>
+                    </div>
+
+                    <div class="input-field" style="margin-top: 1rem;">
+                        <label class="label">Detailed Description (Optional)</label>
+                        <textarea id="achievementDesc" class="input" placeholder="Add a few details about this achievement..." rows="3" style="resize: vertical;"></textarea>
+                    </div>
+
+                    <div id="achievementPreviewContainer" style="display: none; margin-top: 1rem; border-radius: 8px; overflow: hidden; border: 1px solid var(--border);">
+                        <img id="achievementPhotoPreview" src="" alt="Photo Preview" style="width: 100%; height: 160px; object-fit: cover;">
+                    </div>
+
+                    <button type="submit" id="achievementUploadBtn" class="btn btn-main" style="margin-top: 1.5rem; width: 100%;">Publish Student Achievement</button>
+                    <p id="achievementUploadMsg" style="margin-top: 1rem; text-align: center; font-size: 0.9rem;"></p>
+                </form>
+
+                <h3 style="margin-top: 3rem; margin-bottom: 1rem; color: var(--text-main);">Published Student Achievements</h3>
+                <div id="achievementsAdminGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1rem;">
+                    <!-- Injected by JS -->
+                </div>
+            </div>
+
             <!-- 14. DIGITAL LIBRARY -->
             <div id="viewLibrary" class="dashboard-section hidden">
                 <div class="view-header" style="margin-bottom: 2rem;">
@@ -799,6 +879,76 @@
                 <div style="display:flex; justify-content:flex-end; gap:0.75rem; margin-top:1.5rem;">
                     <button type="button" class="btn btn-ghost" onclick="document.getElementById('editVideoModal').classList.remove('active')">Cancel</button>
                     <button type="submit" id="editVideoSaveBtn" class="btn btn-main">Save Changes</button>
+                </div>
+    </div>
+
+    <!-- Edit Achievement Modal -->
+    <div id="editAchievementModal" class="modal-overlay">
+        <div class="modal-content" style="max-width:550px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; border-bottom:1px solid var(--border); padding-bottom:0.5rem;">
+                <h3 style="margin:0; font-size:1.25rem; color:var(--text-main);">Edit Student Achievement</h3>
+                <button type="button" class="btn btn-ghost" style="padding:0.4rem 0.8rem;" onclick="document.getElementById('editAchievementModal').classList.remove('active')">&#10005; Close</button>
+            </div>
+            <form id="editAchievementForm">
+                <input type="hidden" id="editAchievementId">
+                <div class="input-field" style="margin-bottom:1rem;">
+                    <label class="label">Achievement Title</label>
+                    <input type="text" id="editAchievementTitle" class="input" required>
+                </div>
+                <div class="grid-2" style="margin-bottom:1rem;">
+                    <div class="input-field">
+                        <label class="label">Student Name</label>
+                        <input type="text" id="editAchievementStudentName" class="input" required>
+                    </div>
+                    <div class="input-field">
+                        <label class="label">Rank / Honor</label>
+                        <select id="editAchievementRank" class="input" required>
+                            <option value="🥇 1st Prize">🥇 1st Prize</option>
+                            <option value="🥈 2nd Prize">🥈 2nd Prize</option>
+                            <option value="🥉 3rd Prize">🥉 3rd Prize</option>
+                            <option value="🏆 Overall Champions">🏆 Overall Champions</option>
+                            <option value="⭐ Special Honor">⭐ Special Honor</option>
+                            <option value="🎗️ Certificate of Merit">🎗️ Certificate of Merit</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="grid-2" style="margin-bottom:1rem;">
+                    <div class="input-field">
+                        <label class="label">Category</label>
+                        <select id="editAchievementCategory" class="input" required>
+                            <option value="Quran & Qira'at">Quran & Qira'at</option>
+                            <option value="Inter-Madrasa">Inter-Madrasa</option>
+                            <option value="Academic">Academic</option>
+                            <option value="Arts & Sports">Arts & Sports</option>
+                            <option value="Custom">+ Add New Category...</option>
+                        </select>
+                        <input type="text" id="editAchievementCategoryCustom" class="input" placeholder="Type new category..." style="display:none; margin-top:0.5rem;">
+                    </div>
+                    <div class="input-field">
+                        <label class="label">Event / Competition Name</label>
+                        <input type="text" id="editAchievementCompetition" class="input">
+                    </div>
+                </div>
+                <div class="grid-2" style="margin-bottom:1rem;">
+                    <div class="input-field">
+                        <label class="label">Event Date</label>
+                        <input type="date" id="editAchievementDate" class="input">
+                    </div>
+                    <div class="input-field">
+                        <label class="label">Replace Image (Optional)</label>
+                        <input type="file" id="editAchievementFileInput" accept="image/*" class="input" style="padding:0.4rem;">
+                    </div>
+                </div>
+                <div class="input-field" style="margin-bottom:1rem;">
+                    <label class="label">Description (Optional)</label>
+                    <textarea id="editAchievementDesc" class="input" rows="3" style="resize:vertical;"></textarea>
+                </div>
+                <div id="editAchievementPreviewContainer" style="margin-bottom:1rem; border-radius:6px; overflow:hidden; border:1px solid var(--border);">
+                    <img id="editAchievementPreview" src="" alt="Preview" style="width:100%; height:140px; object-fit:cover; display:block;">
+                </div>
+                <div style="display:flex; justify-content:flex-end; gap:0.75rem;">
+                    <button type="button" class="btn btn-ghost" onclick="document.getElementById('editAchievementModal').classList.remove('active')">Cancel</button>
+                    <button type="submit" id="editAchievementSaveBtn" class="btn btn-main">Save Changes</button>
                 </div>
             </form>
         </div>

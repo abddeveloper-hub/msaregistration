@@ -1,7 +1,8 @@
-const CACHE_NAME = 'msaukkuda-portal-v18';
+const CACHE_NAME = 'msaukkuda-portal-v19';
 const ASSETS = [
   './',
   './index.html',
+  './achievements.html',
   './student.html',
   './teacher.html',
   './admin.html',
@@ -9,6 +10,7 @@ const ASSETS = [
   './style.css',
   './mobile.css',
   './app.js',
+  './achievements.js',
   './student.js',
   './teacher.js',
   './admin.js',

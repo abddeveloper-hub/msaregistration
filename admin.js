@@ -1026,6 +1026,7 @@ window.deleteRecord = async (col, id) => {
     else if(col === 'institutions') typeName = 'institution';
     else if(col === 'gallery') typeName = 'photo';
     else if(col === 'videos') typeName = 'video program';
+    else if(col === 'achievements') typeName = 'student achievement';
     if(!confirm(`Are you sure you want to permanently delete this ${typeName} record? This cannot be undone.`)) return;
     try {
         if (col === 'users') {
@@ -2081,3 +2082,288 @@ window.deleteCalendarEvent = async (id) => {
         }
     }
 };
+
+// 9. STUDENT ACHIEVEMENTS MANAGER
+const achievementUploadForm = document.getElementById('achievementUploadForm');
+const achievementPhotoInput = document.getElementById('achievementPhotoInput');
+const achievementPhotoPreview = document.getElementById('achievementPhotoPreview');
+const achievementPreviewContainer = document.getElementById('achievementPreviewContainer');
+const achievementsAdminGrid = document.getElementById('achievementsAdminGrid');
+const achievementCategorySelect = document.getElementById('achievementCategory');
+const achievementCategoryCustom = document.getElementById('achievementCategoryCustom');
+
+let currentAchievementBase64 = null;
+let currentEditAchievementBase64 = null;
+
+if (achievementCategorySelect && achievementCategoryCustom) {
+    achievementCategorySelect.addEventListener('change', (e) => {
+        if (e.target.value === 'Custom') {
+            achievementCategoryCustom.style.display = 'block';
+            achievementCategoryCustom.required = true;
+        } else {
+            achievementCategoryCustom.style.display = 'none';
+            achievementCategoryCustom.required = false;
+        }
+    });
+}
+
+const editAchievementCategorySelect = document.getElementById('editAchievementCategory');
+const editAchievementCategoryCustom = document.getElementById('editAchievementCategoryCustom');
+if (editAchievementCategorySelect && editAchievementCategoryCustom) {
+    editAchievementCategorySelect.addEventListener('change', (e) => {
+        if (e.target.value === 'Custom') {
+            editAchievementCategoryCustom.style.display = 'block';
+            editAchievementCategoryCustom.required = true;
+        } else {
+            editAchievementCategoryCustom.style.display = 'none';
+            editAchievementCategoryCustom.required = false;
+        }
+    });
+}
+
+if (achievementPhotoInput) {
+    achievementPhotoInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                const img = new Image();
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    const MAX_WIDTH = 1200;
+                    const MAX_HEIGHT = 1200;
+                    let width = img.width;
+                    let height = img.height;
+                    if (width > height) {
+                        if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; }
+                    } else {
+                        if (height > MAX_HEIGHT) { width *= MAX_HEIGHT / height; height = MAX_HEIGHT; }
+                    }
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+                    const base64Str = canvas.toDataURL('image/jpeg', 0.8);
+                    currentAchievementBase64 = base64Str;
+                    achievementPhotoPreview.src = base64Str;
+                    achievementPreviewContainer.style.display = 'block';
+                };
+                img.src = event.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+}
+
+const editAchievementFileInput = document.getElementById('editAchievementFileInput');
+if (editAchievementFileInput) {
+    editAchievementFileInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                const img = new Image();
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    const MAX_WIDTH = 1200;
+                    const MAX_HEIGHT = 1200;
+                    let width = img.width;
+                    let height = img.height;
+                    if (width > height) {
+                        if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; }
+                    } else {
+                        if (height > MAX_HEIGHT) { width *= MAX_HEIGHT / height; height = MAX_HEIGHT; }
+                    }
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+                    const base64Str = canvas.toDataURL('image/jpeg', 0.8);
+                    currentEditAchievementBase64 = base64Str;
+                    document.getElementById('editAchievementPreview').src = base64Str;
+                };
+                img.src = event.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+}
+
+if (achievementUploadForm) {
+    achievementUploadForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const title = document.getElementById('achievementTitle').value.trim();
+        const studentName = document.getElementById('achievementStudentName').value.trim();
+        const rank = document.getElementById('achievementRank').value;
+        let category = achievementCategorySelect.value;
+        if (category === 'Custom' && achievementCategoryCustom) {
+            category = achievementCategoryCustom.value.trim() || 'Quran & Qira\'at';
+        }
+        const competition = document.getElementById('achievementCompetition').value.trim();
+        const date = document.getElementById('achievementDate').value;
+        const description = document.getElementById('achievementDesc').value.trim();
+        const uploadBtn = document.getElementById('achievementUploadBtn');
+        const uploadMsg = document.getElementById('achievementUploadMsg');
+
+        if (!currentAchievementBase64) {
+            alert("Please select a trophy or achievement photo to upload.");
+            return;
+        }
+
+        uploadBtn.disabled = true;
+        uploadBtn.textContent = 'Publishing...';
+        uploadMsg.style.color = 'var(--text-dim)';
+        uploadMsg.textContent = 'Uploading student achievement...';
+
+        try {
+            await addDoc(collection(db, "achievements"), {
+                title: title,
+                studentName: studentName,
+                rank: rank,
+                category: category,
+                competition: competition,
+                date: date,
+                description: description,
+                url: currentAchievementBase64,
+                uploadedBy: auth.currentUser ? auth.currentUser.uid : "admin",
+                createdAt: new Date().toISOString()
+            });
+
+            uploadMsg.style.color = '#10b981';
+            uploadMsg.textContent = 'Achievement published successfully!';
+            achievementUploadForm.reset();
+            currentAchievementBase64 = null;
+            achievementPreviewContainer.style.display = 'none';
+        } catch (err) {
+            uploadMsg.style.color = '#ef4444';
+            uploadMsg.textContent = 'Upload failed: ' + err.message;
+        } finally {
+            uploadBtn.disabled = false;
+            uploadBtn.textContent = 'Publish Student Achievement';
+        }
+    });
+}
+
+if (achievementsAdminGrid) {
+    onSnapshot(collection(db, "achievements"), (snap) => {
+        achievementsAdminGrid.innerHTML = '';
+        snap.forEach(docSnap => {
+            const data = docSnap.data();
+            const id = docSnap.id;
+            const item = document.createElement('div');
+            item.className = 'portal-card';
+            item.style.padding = '0.75rem';
+            const addedDateStr = formatAdminAddedDate(data.createdAt || data.date);
+            const photoSrc = data.url || data.image || data.photoUrl || 'assets/mdu-hero.png';
+
+            item.innerHTML = `
+                <img src="${photoSrc}" alt="${data.title || 'Achievement'}" style="width:100%; height:140px; object-fit:cover; border-radius:var(--radius-sm);">
+                <div style="padding: 0.5rem 0 0 0;">
+                    <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:0.5rem;">
+                        <h4 style="font-size:0.9rem; margin:0; font-weight:600; word-break:break-word;">${data.title || 'Untitled'}</h4>
+                        <span class="badge" style="font-size:0.65rem; padding:0.15rem 0.45rem; background:var(--accent); color:#000; font-weight:700; border-radius:4px; white-space:nowrap; flex-shrink:0;">${data.rank || 'Honors'}</span>
+                    </div>
+                    ${data.studentName ? `<p style="font-size:0.78rem; font-weight:600; color:var(--text-main); margin:0.3rem 0 0.1rem 0;">👤 ${data.studentName}</p>` : ''}
+                    ${data.competition ? `<p style="font-size:0.75rem; color:var(--text-dim); margin:0.1rem 0;">📍 ${data.competition}</p>` : ''}
+                    <p style="font-size:0.75rem; color:var(--primary); font-weight:700; margin:0.4rem 0 0.2rem 0; display:flex; align-items:center; gap:0.25rem;">
+                        <span>🕒</span>
+                        <span>Added: ${addedDateStr ? addedDateStr : 'Recently'}</span>
+                    </p>
+                    <div style="display:flex; justify-content:space-between; gap:0.5rem; margin-top:0.5rem;">
+                        <button class="btn btn-ghost" style="color:var(--primary); padding:0.4rem 0.75rem; font-size:0.8rem; font-weight:600; border:1px solid var(--border); border-radius:6px;" onclick="window.editAchievement('${id}')">✏️ Edit</button>
+                        <button class="btn btn-ghost" style="color:var(--error); padding:0.4rem 0.75rem; font-size:0.8rem; font-weight:600; border:1px solid var(--border); border-radius:6px;" onclick="window.deleteRecord('achievements', '${id}')">Delete</button>
+                    </div>
+                </div>
+            `;
+            achievementsAdminGrid.appendChild(item);
+        });
+    });
+}
+
+window.editAchievement = async (id) => {
+    try {
+        const docSnap = await getDoc(doc(db, "achievements", id));
+        if (!docSnap.exists()) {
+            alert("Achievement record not found.");
+            return;
+        }
+        const data = docSnap.data();
+
+        document.getElementById('editAchievementId').value = id;
+        document.getElementById('editAchievementTitle').value = data.title || '';
+        document.getElementById('editAchievementStudentName').value = data.studentName || '';
+        document.getElementById('editAchievementRank').value = data.rank || '🥇 1st Prize';
+        
+        const stdCats = ['Quran & Qira\'at', 'Inter-Madrasa', 'Academic', 'Arts & Sports'];
+        const cat = data.category || 'Quran & Qira\'at';
+        if (stdCats.includes(cat)) {
+            if (editAchievementCategorySelect) editAchievementCategorySelect.value = cat;
+            if (editAchievementCategoryCustom) {
+                editAchievementCategoryCustom.style.display = 'none';
+                editAchievementCategoryCustom.value = '';
+            }
+        } else {
+            if (editAchievementCategorySelect) editAchievementCategorySelect.value = 'Custom';
+            if (editAchievementCategoryCustom) {
+                editAchievementCategoryCustom.style.display = 'block';
+                editAchievementCategoryCustom.value = cat;
+            }
+        }
+
+        document.getElementById('editAchievementCompetition').value = data.competition || '';
+        document.getElementById('editAchievementDate').value = data.date || '';
+        document.getElementById('editAchievementDesc').value = data.description || '';
+        document.getElementById('editAchievementPreview').src = data.url || data.image || data.photoUrl || '';
+        currentEditAchievementBase64 = null;
+
+        document.getElementById('editAchievementModal').classList.add('active');
+    } catch (e) {
+        alert("Error fetching achievement record: " + e.message);
+    }
+};
+
+const editAchievementForm = document.getElementById('editAchievementForm');
+if (editAchievementForm) {
+    editAchievementForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const id = document.getElementById('editAchievementId').value;
+        const title = document.getElementById('editAchievementTitle').value.trim();
+        const studentName = document.getElementById('editAchievementStudentName').value.trim();
+        const rank = document.getElementById('editAchievementRank').value;
+        let category = editAchievementCategorySelect ? editAchievementCategorySelect.value : 'Quran & Qira\'at';
+        if (category === 'Custom' && editAchievementCategoryCustom) {
+            category = editAchievementCategoryCustom.value.trim() || 'Quran & Qira\'at';
+        }
+        const competition = document.getElementById('editAchievementCompetition').value.trim();
+        const date = document.getElementById('editAchievementDate').value;
+        const description = document.getElementById('editAchievementDesc').value.trim();
+        const saveBtn = document.getElementById('editAchievementSaveBtn');
+
+        saveBtn.disabled = true;
+        saveBtn.textContent = 'Saving...';
+
+        try {
+            const updatePayload = {
+                title: title,
+                studentName: studentName,
+                rank: rank,
+                category: category,
+                competition: competition,
+                date: date,
+                description: description,
+                updatedAt: new Date().toISOString()
+            };
+            if (currentEditAchievementBase64) {
+                updatePayload.url = currentEditAchievementBase64;
+            }
+            await updateDoc(doc(db, "achievements", id), updatePayload);
+            document.getElementById('editAchievementModal').classList.remove('active');
+            alert("Achievement updated successfully!");
+        } catch (err) {
+            alert("Error updating achievement: " + err.message);
+        } finally {
+            saveBtn.disabled = false;
+            saveBtn.textContent = 'Save Changes';
+        }
+    });
+}

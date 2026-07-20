@@ -566,6 +566,30 @@
                     <p id="videoUploadMsg" style="margin-top: 1rem; text-align: center; font-size: 0.9rem;"></p>
                 </form>
 
+                <h3 style="margin-top: 3rem; margin-bottom: 1rem; color: var(--text-main);">Live Stream Settings</h3>
+                <form id="liveStreamForm" class="portal-card" style="max-width: 600px;">
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border);">
+                        <div>
+                            <strong style="display: block; font-size: 1.1rem; margin-bottom: 0.25rem;">Live Status</strong>
+                            <span style="color: var(--text-dim); font-size: 0.9rem;">Toggle this on to show the live banner across the site.</span>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="liveToggle">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    <div class="input-field">
+                        <label class="label">Event Title</label>
+                        <input type="text" id="liveTitle" class="input" placeholder="e.g. Annual Convocation Live">
+                    </div>
+                    <div class="input-field" style="margin-top: 1rem;">
+                        <label class="label">YouTube Embed URL</label>
+                        <input type="url" id="liveUrl" class="input" placeholder="https://www.youtube.com/embed/XXXXXX">
+                    </div>
+                    <button type="submit" id="liveSaveBtn" class="btn btn-main" style="margin-top: 1.5rem; width: 100%;">Save Live Settings</button>
+                    <p id="liveMsg" style="margin-top: 1rem; text-align: center; font-size: 0.9rem;"></p>
+                </form>
+
                 <h3 style="margin-top: 3rem; margin-bottom: 1rem; color: var(--text-main);">Existing YouTube Programs</h3>
                 <div id="videoAdminGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem;">
                     <!-- Videos injected by JS -->

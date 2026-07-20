@@ -98,7 +98,6 @@
                 <div class="nav-item" data-target="viewAchievements">Student Achievements</div>
                 <div class="nav-item" data-target="viewAlumni">Alumni Directory</div>
                 <div class="nav-item" data-target="viewLibrary">Library Management</div>
-                <div class="nav-item" data-target="viewLiveStream">Live Streaming</div>
                 <div class="nav-item" data-target="viewFacultyApps">Faculty Applications</div>
                 <div class="nav-item" data-target="viewStudents">Global Student Directory</div>
                 <div class="nav-item" data-target="viewAdmins">Manage Admins</div>
@@ -259,6 +258,30 @@
                     
                     <button type="submit" id="videoUploadBtn" class="btn btn-main" style="margin-top: 1.5rem; width: 100%; background: #ef4444;">Add Video Program</button>
                     <p id="videoUploadMsg" style="margin-top: 1rem; text-align: center; font-size: 0.9rem;"></p>
+                </form>
+
+                <h3 style="margin-top: 3rem; margin-bottom: 1rem; color: var(--text-main);">Live Stream Settings</h3>
+                <form id="liveStreamForm" class="portal-card" style="max-width: 600px;">
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border);">
+                        <div>
+                            <strong style="display: block; font-size: 1.1rem; margin-bottom: 0.25rem;">Live Status</strong>
+                            <span style="color: var(--text-dim); font-size: 0.9rem;">Toggle this on to show the live banner across the site.</span>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="liveToggle">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    <div class="input-field">
+                        <label class="label">Event Title</label>
+                        <input type="text" id="liveTitle" class="input" placeholder="e.g. Annual Convocation Live">
+                    </div>
+                    <div class="input-field" style="margin-top: 1rem;">
+                        <label class="label">YouTube Embed URL</label>
+                        <input type="url" id="liveUrl" class="input" placeholder="https://www.youtube.com/embed/XXXXXX">
+                    </div>
+                    <button type="submit" id="liveSaveBtn" class="btn btn-main" style="margin-top: 1.5rem; width: 100%;">Save Live Settings</button>
+                    <p id="liveMsg" style="margin-top: 1rem; text-align: center; font-size: 0.9rem;"></p>
                 </form>
 
                 <h3 style="margin-top: 3rem; margin-bottom: 1rem; color: var(--text-main);">Existing Photos</h3>
@@ -709,35 +732,7 @@
                 </div>
             </div>
 
-            <!-- LIVE STREAM VIEW -->
-            <div id="viewLiveStream" class="admin-section hidden">
-                <div class="view-header">
-                    <h2 class="view-title">Live Streaming</h2>
-                    <p class="view-desc">Broadcast live events or virtual classrooms to all students.</p>
-                </div>
-                <form id="liveStreamForm" class="portal-card" style="max-width: 600px;">
-                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border);">
-                        <div>
-                            <strong style="display: block; font-size: 1.1rem; margin-bottom: 0.25rem;">Live Status</strong>
-                            <span style="color: var(--text-dim); font-size: 0.9rem;">Toggle this on to show the live banner across the site.</span>
-                        </div>
-                        <label class="toggle-switch">
-                            <input type="checkbox" id="liveToggle">
-                            <span class="toggle-slider"></span>
-                        </label>
-                    </div>
-                    <div class="input-field">
-                        <label class="label">Event Title</label>
-                        <input type="text" id="liveTitle" class="input" placeholder="e.g. Annual Convocation Live">
-                    </div>
-                    <div class="input-field" style="margin-top: 1rem;">
-                        <label class="label">YouTube Embed URL</label>
-                        <input type="url" id="liveUrl" class="input" placeholder="https://www.youtube.com/embed/XXXXXX">
-                    </div>
-                    <button type="submit" id="liveSaveBtn" class="btn btn-main" style="margin-top: 1.5rem; width: 100%;">Save Settings</button>
-                    <p id="liveMsg" style="margin-top: 1rem; text-align: center; font-size: 0.9rem;"></p>
-                </form>
-            </div>
+
 
         </main>
     </div>

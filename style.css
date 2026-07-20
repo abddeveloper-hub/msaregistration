@@ -1,5 +1,30 @@
 /* Google Fonts are loaded via @import for unified design representation across all templates */
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Poppins:wght@300;400;500;600;700&family=Amiri:ital,wght@0,400;0,700;1,400;1,700&family=Noto+Naskh+Arabic:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Amiri+Quran&family=Amiri:ital,wght@0,400;0,700;1,400;1,700&family=Cairo:wght@400;600;700&family=Poppins:wght@300;400;500;600;700&family=Inter:wght@400;600;700&display=swap');
+
+/* Custom Uploaded Quranic Islamic Calligraphy Fonts */
+@font-face {
+    font-family: 'arab quran islamic 140';
+    src: url('./fonts/ArabQuranIslamic140-K7n4W.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'ArabQuranIslamic140';
+    src: url('./fonts/ArabQuranIslamic140-K7n4W.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'ArabQuranIslamic140-Bold';
+    src: url('./fonts/ArabQuranIslamic140-vnmnZ.ttf') format('truetype');
+    font-weight: bold;
+    font-style: normal;
+    font-display: swap;
+}
 
 .geometric-overlay,
 body.landing-page {
@@ -201,7 +226,7 @@ body.landing-page::before {
     color-scheme: light;
     --font-ui: 'Poppins', sans-serif;
     --font-display: 'Playfair Display', serif;
-    --font-arabic: 'Amiri', 'Noto Naskh Arabic', serif;
+    --font-arabic: 'Amiri Quran', 'Amiri', 'Traditional Arabic', serif;
 
     /* === PREMIUM EMERALD & GOLD DESIGN TOKENS === */
     --bg: #FAF9F6;
@@ -4013,7 +4038,8 @@ input {
 
 #loginMenuToggleBtn {
     position: fixed !important;
-    left: 1.5rem !important;
+    right: 1.5rem !important;
+    left: auto !important;
     top: 1rem !important;
     z-index: 100001 !important;
     display: flex !important;
@@ -4022,15 +4048,15 @@ input {
 #loginDropdownMenu {
     position: fixed !important;
     top: 0 !important;
-    left: 0 !important;
+    right: 0 !important;
+    left: auto !important;
     bottom: 0 !important;
-    right: auto !important;
     width: 300px !important;
     max-width: 85vw !important;
     height: 100vh !important;
     background: var(--surface) !important;
     border: none !important;
-    border-right: 1px solid var(--border) !important;
+    border-left: 1px solid var(--border) !important;
     border-radius: 0 !important;
     box-shadow: var(--shadow-lg) !important;
     z-index: 10000 !important;
@@ -4044,7 +4070,7 @@ input {
 
 #loginDropdownMenu.hidden {
     display: flex !important;
-    transform: translateX(-100%) !important;
+    transform: translateX(100%) !important;
     pointer-events: none !important;
     box-shadow: none !important;
 }
@@ -4071,7 +4097,8 @@ input {
     content: "Muhyissunnah Dars" !important;
     position: absolute !important;
     top: 1.25rem !important;
-    left: 5.2rem !important;
+    right: 1.5rem !important;
+    left: auto !important;
     font-family: var(--font-display) !important;
     font-size: 1.25rem !important;
     font-weight: 700 !important;

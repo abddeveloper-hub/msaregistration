@@ -1,4 +1,4 @@
-const CACHE_NAME = 'msaukkuda-portal-v27';
+const CACHE_NAME = 'msaukkuda-portal-v38';
 const ASSETS = [
   './',
   './index.html',
@@ -30,7 +30,9 @@ const ASSETS = [
   './portal.js',
   './firebase-config.js',
   './manifest.json',
-  './assets/mdu-hero.png'
+  './assets/mdu-hero.png',
+  './fonts/ArabQuranIslamic140-K7n4W.ttf',
+  './fonts/ArabQuranIslamic140-vnmnZ.ttf'
 ];
 
 self.addEventListener('install', (event) => {

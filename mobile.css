@@ -771,17 +771,27 @@ html, body {
     }
 }
 
-/* ---- Mobile Header Logo & Institution Name Right Shift ---- */
+/* ---- Mobile Header 3-Dots Button Top Right & Brand Lockup Left ---- */
 @media (max-width: 900px) {
     #loginMenuToggleBtn {
         position: fixed !important;
-        left: 0.85rem !important;
+        right: 0.85rem !important;
+        left: auto !important;
         top: 0.85rem !important;
         z-index: 100001 !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+    }
+
+    .navbar {
+        padding-left: 0.5rem !important;
+        justify-content: flex-start !important;
     }
 
     .brand-lockup {
-        margin-left: 3.5rem !important;
+        margin-left: 0 !important;
+        padding-left: 0 !important;
         display: flex !important;
         align-items: center !important;
         gap: 0.65rem !important;

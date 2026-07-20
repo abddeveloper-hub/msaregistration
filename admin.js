@@ -898,42 +898,7 @@ window.deleteEvent = async (id, title) => {
     }
 };
 
-// ==========================================
-// SECURITY LOGS LOGIC
-// ==========================================
-const securityLogsQuery = fsQuery(collection(db, 'securityLogs'), orderBy('timestamp', 'desc'), limit(50));
-onSnapshot(securityLogsQuery, (snapshot) => {
-    const tbody = document.getElementById('securityLogsBody');
-    if(!tbody) return;
-    tbody.innerHTML = '';
-    
-    if(snapshot.empty) {
-        tbody.innerHTML = '<tr><td colspan="5"><div class="empty-state-card"><div class="icon">🛡️</div><h3>No Logs Found</h3><p>Security audit logs will appear here when users log in.</p></div></td></tr>';
-        return;
-    }
-    
-    snapshot.forEach(docSnap => {
-        const d = docSnap.data();
-        const dateStr = new Date(d.timestamp).toLocaleString();
-        
-        let deviceStr = d.userAgent || '';
-        if(deviceStr.includes('iPhone')) deviceStr = '📱 iPhone';
-        else if(deviceStr.includes('Android')) deviceStr = '📱 Android';
-        else if(deviceStr.includes('Mac OS')) deviceStr = '💻 Mac';
-        else if(deviceStr.includes('Windows')) deviceStr = '💻 Windows PC';
-        else deviceStr = 'Unknown Device';
-        
-        tbody.innerHTML += `
-            <tr>
-                <td style="font-size:0.85rem; color:var(--text-dim);">${dateStr}</td>
-                <td><strong>${escapeHtml(d.email || '')}</strong></td>
-                <td><span style="text-transform:capitalize; color:var(--primary); font-weight:600;">${escapeHtml(d.role || '')}</span></td>
-                <td><span style="font-family:monospace; background:var(--glass-heavy); padding:0.2rem 0.5rem; border-radius:4px; font-size:0.8rem;">${escapeHtml(d.ip || 'N/A')}</span></td>
-                <td style="color:var(--text-dim); font-size:0.9rem;">${deviceStr}</td>
-            </tr>
-        `;
-    });
-});
+
 
 window.adminQuickAdmit = async (uid) => {
     if(!confirm("Are you sure you want to admit this student?")) return;
@@ -1907,95 +1872,7 @@ if (liveStreamForm) {
     });
 }
 
-// ==========================================
-// FEATURE 14: CUSTOM FORM BUILDER
-// ==========================================
-const addFieldBtn = document.getElementById('addFieldBtn');
-const formFieldsContainer = document.getElementById('formFieldsContainer');
-const saveFormBtn = document.getElementById('saveFormBtn');
-const publishedFormsList = document.getElementById('publishedFormsList');
 
-if (addFieldBtn && formFieldsContainer && saveFormBtn) {
-    let fieldCount = 0;
-    
-    addFieldBtn.addEventListener('click', () => {
-        fieldCount++;
-        const div = document.createElement('div');
-        div.style = 'display:flex; gap:1rem; align-items:center; background:var(--bg); padding:1rem; border-radius:8px; border:1px solid var(--border);';
-        div.className = 'form-field-item';
-        div.innerHTML = `
-            <input type="text" class="input field-label" placeholder="Field Label (e.g. Phone Number)" style="flex:2;" required>
-            <select class="input field-type" style="flex:1;" required>
-                <option value="text">Text</option>
-                <option value="email">Email</option>
-                <option value="number">Number</option>
-                <option value="textarea">Long Text</option>
-            </select>
-            <label style="display:flex; align-items:center; gap:0.5rem; font-size:0.85rem;"><input type="checkbox" class="field-required"> Req</label>
-            <button type="button" class="btn btn-ghost" onclick="this.parentElement.remove()" style="color:var(--error); padding:0.5rem;">X</button>
-        `;
-        formFieldsContainer.appendChild(div);
-    });
-
-    saveFormBtn.addEventListener('click', async () => {
-        const name = document.getElementById('formName').value;
-        if (!name) return alert('Form Name is required');
-        
-        const items = formFieldsContainer.querySelectorAll('.form-field-item');
-        if (items.length === 0) return alert('Add at least one field');
-        
-        const fields = Array.from(items).map(item => ({
-            label: item.querySelector('.field-label').value,
-            type: item.querySelector('.field-type').value,
-            required: item.querySelector('.field-required').checked
-        }));
-
-        saveFormBtn.disabled = true;
-        saveFormBtn.textContent = 'Publishing...';
-        
-        try {
-            await addDoc(collection(db, 'custom_forms'), {
-                name,
-                fields,
-                createdAt: new Date().toISOString()
-            });
-            document.getElementById('formName').value = '';
-            formFieldsContainer.innerHTML = '';
-            document.getElementById('formBuilderMsg').textContent = 'Form published!';
-            document.getElementById('formBuilderMsg').style.color = 'var(--success)';
-        } catch(error) {
-            alert('Error: ' + error.message);
-        }
-        saveFormBtn.disabled = false;
-        saveFormBtn.textContent = 'Publish Form';
-    });
-
-    onSnapshot(collection(db, 'custom_forms'), (snapshot) => {
-        if(!publishedFormsList) return;
-        publishedFormsList.innerHTML = '';
-        snapshot.forEach(docSnap => {
-            const data = docSnap.data();
-            const div = document.createElement('div');
-            div.style = 'padding:1rem; border:1px solid var(--border); border-radius:8px; display:flex; justify-content:space-between; align-items:center;';
-            div.innerHTML = `
-                <div>
-                    <strong style="display:block; margin-bottom:0.25rem;">${data.name}</strong>
-                    <span style="font-size:0.85rem; color:var(--text-dim);">${data.fields.length} Fields</span>
-                </div>
-                <div style="display:flex; gap:0.5rem;">
-                    <a href="form-view.html?id=${docSnap.id}" target="_blank" class="btn btn-outline btn-sm">View Form</a>
-                    <button class="btn btn-outline btn-sm" onclick="deleteCustomForm('${docSnap.id}')" style="color:var(--error); border-color:var(--error);">Delete</button>
-                </div>
-            `;
-            publishedFormsList.appendChild(div);
-        });
-    });
-}
-window.deleteCustomForm = async (id) => {
-    if(confirm('Delete this form?')) {
-        await deleteDoc(doc(db, 'custom_forms', id));
-    }
-};
 
 
 // ==========================================

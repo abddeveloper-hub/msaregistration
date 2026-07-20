@@ -99,12 +99,9 @@
                 <div class="nav-item" data-target="viewAlumni">Alumni Directory</div>
                 <div class="nav-item" data-target="viewLibrary">Library Management</div>
                 <div class="nav-item" data-target="viewLiveStream">Live Streaming</div>
-                <div class="nav-item" data-target="viewFormBuilder">Form Builder</div>
                 <div class="nav-item" data-target="viewFacultyApps">Faculty Applications</div>
                 <div class="nav-item" data-target="viewStudents">Global Student Directory</div>
                 <div class="nav-item" data-target="viewAdmins">Manage Admins</div>
-                <div class="nav-item" data-target="viewCalendar">Academic Programmes</div>
-                <div class="nav-item" data-target="viewSecurityLogs">Security Logs</div>
                 <div class="nav-item" data-target="viewAnnouncements">Events & News</div>
                 <div class="nav-item" onclick="window.location.href='teacher.html'">Teacher Portal</div>
             </nav>
@@ -479,17 +476,6 @@
                 </div>
             </div>
 
-            <!-- 8. SECURITY LOGS -->
-            <div id="viewSecurityLogs" class="admin-section hidden">
-                <h2 class="view-title">Security & Access Logs</h2>
-                <div class="card" style="padding: 0; overflow-x: auto;">
-                    <table class="data-table">
-                        <thead><tr><th>Time</th><th>User Email</th><th>Role</th><th>IP Address</th><th>Agent</th></tr></thead>
-                        <tbody id="securityLogsTableBody"></tbody>
-                    </table>
-                </div>
-            </div>
-
             <!-- 9. ANNOUNCEMENTS -->
             <div id="viewAnnouncements" class="admin-section hidden">
                 <h2 class="view-title">Events, News & Notifications</h2>
@@ -753,35 +739,6 @@
                 </form>
             </div>
 
-            <!-- FORM BUILDER VIEW -->
-            <div id="viewFormBuilder" class="admin-section hidden">
-                <div class="view-header">
-                    <h2 class="view-title">Custom Form Builder</h2>
-                    <p class="view-desc">Create dynamic forms for surveys, registrations, and feedback.</p>
-                </div>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
-                    <div class="portal-card">
-                        <h3 style="margin-bottom: 1rem;">Create New Form</h3>
-                        <div class="input-field">
-                            <label class="label">Form Name</label>
-                            <input type="text" id="formName" class="input" placeholder="e.g. Alumni Meet RSVP" required>
-                        </div>
-                        <div id="formFieldsContainer" style="margin-top: 1.5rem; display: flex; flex-direction: column; gap: 1rem;">
-                            <!-- Dynamic fields added here -->
-                        </div>
-                        <button type="button" id="addFieldBtn" class="btn btn-outline" style="margin-top: 1rem; width: 100%;">+ Add Field</button>
-                        <button type="button" id="saveFormBtn" class="btn btn-main" style="margin-top: 1rem; width: 100%;">Publish Form</button>
-                        <p id="formBuilderMsg" style="margin-top: 1rem; text-align: center; font-size: 0.9rem;"></p>
-                    </div>
-                    <div class="portal-card">
-                        <h3 style="margin-bottom: 1rem;">Published Forms</h3>
-                        <div id="publishedFormsList" style="display: flex; flex-direction: column; gap: 1rem;">
-                            <!-- Forms list -->
-                        </div>
-                    </div>
-                </div>
-            </div>
-
         </main>
     </div>
 
@@ -813,7 +770,6 @@
         <div class="fab-actions">
             <div class="fab-action" onclick="document.querySelector('[data-target=\'viewCalendar\']')?.click()">📅 Open Calendar</div>
             <div class="fab-action" onclick="document.querySelector('[data-target=\'viewAdmins\']')?.click()">👤 Manage Admins</div>
-            <div class="fab-action" onclick="document.querySelector('[data-target=\'viewSecurityLogs\']')?.click()">🛡️ Security Logs</div>
         </div>
     </div>
 

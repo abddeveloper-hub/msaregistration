@@ -1879,7 +1879,8 @@ table th {
     }
 
     .brand-text {
-        display: none;
+        display: flex;
+        flex-direction: column;
     }
 
     .nav-actions {

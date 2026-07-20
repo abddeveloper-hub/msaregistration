@@ -22,25 +22,84 @@ if (banner && textEl) {
 document.addEventListener('DOMContentLoaded', () => {
     const galleryGrid = document.getElementById('videosGrid');
     const emptyState = document.getElementById('videosEmpty');
-    const filterBtns = document.querySelectorAll('.filter-btn');
+    const filterContainer = document.getElementById('ProgramsFilters');
     
     let allPhotos = [];
     let currentFilter = 'all';
+
+    function formatAddedDate(rawDate) {
+        if (!rawDate) return '';
+        let dateObj;
+        if (rawDate && typeof rawDate.toDate === 'function') {
+            dateObj = rawDate.toDate();
+        } else {
+            dateObj = new Date(rawDate);
+        }
+        if (isNaN(dateObj.getTime())) return String(rawDate);
+        
+        const formattedDate = dateObj.toLocaleDateString(undefined, {
+            month: 'short',
+            day: 'numeric',
+            year: 'numeric'
+        });
+        const formattedTime = dateObj.toLocaleTimeString(undefined, {
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: true
+        });
+        return `${formattedDate}, ${formattedTime}`;
+    }
+
+    function renderFilterButtons() {
+        if (!filterContainer) return;
+
+        const defaultCats = ['all', 'events', 'campus', 'academic', 'posters'];
+        const customCats = [];
+
+        allPhotos.forEach(p => {
+            if (p.category && p.category.trim()) {
+                const catLower = p.category.trim().toLowerCase();
+                if (!defaultCats.includes(catLower) && !customCats.includes(catLower)) {
+                    customCats.push(catLower);
+                }
+            }
+        });
+
+        const allCats = [...defaultCats, ...customCats];
+
+        filterContainer.innerHTML = allCats.map(cat => {
+            const displayName = cat === 'all' ? 'All' : (cat.charAt(0).toUpperCase() + cat.slice(1));
+            const isActive = currentFilter.toLowerCase() === cat.toLowerCase() ? 'active' : '';
+            return `<button class="filter-btn ${isActive}" data-filter="${cat}">${displayName}</button>`;
+        }).join('');
+
+        filterContainer.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                filterContainer.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentFilter = btn.getAttribute('data-filter');
+                renderGallery();
+            });
+        });
+    }
 
     function renderGallery() {
         galleryGrid.innerHTML = '';
         let visibleCount = 0;
 
         allPhotos.forEach(photo => {
-            if (currentFilter === 'all') {
+            const videoCategory = photo.category || 'Video';
+            const matchFilter = currentFilter === 'all' || videoCategory.toLowerCase() === currentFilter.toLowerCase();
+
+            if (matchFilter) {
                 visibleCount++;
                 const delay = (visibleCount * 0.05).toFixed(2);
                 
                 const photoSrc = photo.thumbnail || 'placeholder.jpg';
                 const videoTitle = photo.title || 'Untitled Video';
-                const videoCategory = photo.category || 'Video';
                 const videoSpeaker = photo.speaker ? `🎤 ${photo.speaker}` : '';
                 const videoDate = photo.date ? `📅 ${photo.date}` : '';
+                const addedDateStr = formatAddedDate(photo.createdAt || photo.timestamp);
                 
                 // We'll store stringified metadata to pass to the lightbox
                 const metaJson = encodeURIComponent(JSON.stringify({
@@ -48,6 +107,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     category: photo.category,
                     speaker: photo.speaker,
                     date: photo.date,
+                    addedDate: addedDateStr,
                     description: photo.description
                 }));
                 
@@ -63,17 +123,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
 
                 galleryGrid.innerHTML += `
-                    <div class="gallery-item has-image" data-category="${(photo.category||'').toLowerCase()}" data-meta="${metaJson}" data-video-id="${photo.videoId || ''}" data-video-type="${videoType}" data-file-url="${fileUrl}" data-drive-id="${driveId}" style="animation-delay:${delay}s;">
+                    <div class="gallery-item has-image" data-category="${videoCategory.toLowerCase()}" data-meta="${metaJson}" data-video-id="${photo.videoId || ''}" data-video-type="${videoType}" data-file-url="${fileUrl}" data-drive-id="${driveId}" style="animation-delay:${delay}s;">
                         <div class="gallery-item-image-wrapper">
                             ${mediaPreview}
                         </div>
                         <div class="gallery-item-details">
                             <div class="gallery-item-label">${videoTitle}</div>
                             <div class="gallery-item-meta">
-                                <span>${videoSpeaker ? '🎤 ' + videoSpeaker : ''}</span>
+                                <span>${videoSpeaker ? videoSpeaker : ''}</span>
                                 <span>${videoSpeaker && videoDate ? '&bull;' : ''}</span>
                                 <span>${videoDate ? videoDate : ''}</span>
                             </div>
+                            ${addedDateStr ? `<div style="font-size:0.75rem; color:var(--text-dim); margin-top:2px;">🕒 ${addedDateStr}</div>` : ''}
                             ${videoCategory ? `<div style="margin-top:2px;"><span class="gallery-item-category-tag">${videoCategory}</span></div>` : ''}
                         </div>
                     </div>
@@ -97,16 +158,8 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         
         allPhotos.sort((a, b) => new Date(b.createdAt || b.timestamp) - new Date(a.createdAt || a.timestamp));
+        renderFilterButtons();
         renderGallery();
-    });
-
-    filterBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-            filterBtns.forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            currentFilter = btn.getAttribute('data-filter');
-            renderGallery();
-        });
     });
 
     function bindLightbox() {
@@ -170,6 +223,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             ${meta.category ? `<span>📌 ${meta.category}</span>` : ''}
                             ${meta.speaker ? `<span>🎤 ${meta.speaker}</span>` : ''}
                             ${meta.date ? `<span>📅 ${meta.date}</span>` : ''}
+                            ${meta.addedDate ? `<span>🕒 Added: ${meta.addedDate}</span>` : ''}
                         </div>
                         ${meta.description ? `<p style="font-size:0.95rem; color:#eee; margin-top:0.5rem;">${meta.description}</p>` : ''}
                     </div>

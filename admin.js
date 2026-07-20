@@ -1112,6 +1112,27 @@ if (sendPushNotifBtn) {
     });
 }
 
+function formatAdminAddedDate(rawDate) {
+    if (!rawDate) return '';
+    let dateObj;
+    if (rawDate && typeof rawDate.toDate === 'function') {
+        dateObj = rawDate.toDate();
+    } else {
+        dateObj = new Date(rawDate);
+    }
+    if (isNaN(dateObj.getTime())) return String(rawDate);
+    
+    return dateObj.toLocaleDateString(undefined, {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric'
+    }) + ', ' + dateObj.toLocaleTimeString(undefined, {
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: true
+    });
+}
+
 // 8. GALLERY MANAGER
 const galleryAdminGrid = document.getElementById('galleryAdminGrid');
 if (galleryAdminGrid) {
@@ -1123,14 +1144,25 @@ if (galleryAdminGrid) {
             const id = docSnap.id;
             const item = document.createElement('div');
             item.className = 'portal-card';
-            item.style.padding = '0.5rem';
+            item.style.padding = '0.75rem';
+            const addedDateStr = formatAdminAddedDate(data.createdAt || data.timestamp);
+            const photoSrc = data.url || data.image || data.imgUrl || 'placeholder.jpg';
+
             item.innerHTML = `
-                <img src="${data.image || data.imgUrl}" alt="${data.title}" style="width:100%; height:120px; object-fit:cover; border-radius:var(--radius-sm);">
-                <div style="padding: 0.5rem 0;">
-                    <h4 style="font-size:0.9rem;">${data.title}</h4>
-                    <p style="font-size:0.75rem; color:var(--text-dim); margin-bottom:0.5rem;">${data.desc || ''}</p>
-                    <div style="display:flex; justify-content:space-between;">
-                        <button class="btn btn-ghost" style="color:var(--error); padding:0.5rem;" onclick="deleteRecord('gallery', '${id}')">Delete</button>
+                <img src="${photoSrc}" alt="${data.title || 'Photo'}" style="width:100%; height:140px; object-fit:cover; border-radius:var(--radius-sm);">
+                <div style="padding: 0.5rem 0 0 0;">
+                    <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:0.5rem;">
+                        <h4 style="font-size:0.9rem; margin:0; font-weight:600; word-break:break-word;">${data.title || 'Untitled'}</h4>
+                        <span class="badge" style="font-size:0.65rem; padding:0.15rem 0.45rem; background:var(--primary); color:#fff; border-radius:4px; white-space:nowrap; flex-shrink:0;">${data.category || 'Events'}</span>
+                    </div>
+                    ${data.description || data.desc ? `<p style="font-size:0.75rem; color:var(--text-dim); margin:0.3rem 0; line-height:1.4;">${data.description || data.desc}</p>` : ''}
+                    <p style="font-size:0.75rem; color:var(--primary); font-weight:700; margin:0.4rem 0 0.2rem 0; display:flex; align-items:center; gap:0.25rem;">
+                        <span>🕒</span>
+                        <span>Added: ${addedDateStr ? addedDateStr : 'Recently'}</span>
+                    </p>
+                    <div style="display:flex; justify-content:space-between; gap:0.5rem; margin-top:0.5rem;">
+                        <button class="btn btn-ghost" style="color:var(--primary); padding:0.4rem 0.75rem; font-size:0.8rem; font-weight:600; border:1px solid var(--border); border-radius:6px;" onclick="window.editMedia('gallery', '${id}')">✏️ Edit</button>
+                        <button class="btn btn-ghost" style="color:var(--error); padding:0.4rem 0.75rem; font-size:0.8rem; font-weight:600; border:1px solid var(--border); border-radius:6px;" onclick="window.deleteRecord('gallery', '${id}')">Delete</button>
                     </div>
                 </div>
             `;
@@ -1147,26 +1179,32 @@ if (galleryAdminGrid) {
                 const id = docSnap.id;
                 const item = document.createElement('div');
                 item.className = 'portal-card';
-                item.style.padding = '0.5rem';
-                
+                item.style.padding = '0.75rem';
+                const addedDateStr = formatAdminAddedDate(data.createdAt || data.timestamp);
+
                 let mediaPreview = '';
                 if (data.videoType === 'file' && data.fileUrl) {
-                    mediaPreview = `<video src="${data.fileUrl}" style="width:100%; height:120px; object-fit:cover; border-radius:var(--radius-sm);" controls preload="metadata"></video>`;
+                    mediaPreview = `<video src="${data.fileUrl}" style="width:100%; height:140px; object-fit:cover; border-radius:var(--radius-sm);" controls preload="metadata"></video>`;
                 } else {
-                    mediaPreview = `<img src="${data.thumbnail}" alt="${data.title}" style="width:100%; height:120px; object-fit:cover; border-radius:var(--radius-sm);">`;
+                    mediaPreview = `<img src="${data.thumbnail || 'placeholder.jpg'}" alt="${data.title}" style="width:100%; height:140px; object-fit:cover; border-radius:var(--radius-sm);">`;
                 }
 
                 item.innerHTML = `
                     ${mediaPreview}
-                    <div style="padding: 0.5rem 0;">
-                        <div style="display:flex; justify-content:space-between; align-items:center;">
-                            <h4 style="font-size:0.9rem; margin:0;">${data.title}</h4>
-                            <span class="badge" style="font-size:0.6rem; padding:0.1rem 0.3rem; background:var(--glass-border);">${data.category || 'N/A'}</span>
+                    <div style="padding: 0.5rem 0 0 0;">
+                        <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:0.5rem;">
+                            <h4 style="font-size:0.9rem; margin:0; font-weight:600; word-break:break-word;">${data.title || 'Untitled Video'}</h4>
+                            <span class="badge" style="font-size:0.65rem; padding:0.15rem 0.45rem; background:var(--primary); color:#fff; border-radius:4px; white-space:nowrap; flex-shrink:0;">${data.category || 'Events'}</span>
                         </div>
-                        <p style="font-size:0.75rem; color:var(--text-dim); margin:0.3rem 0;">${data.speaker ? '🎤 ' + data.speaker : ''}</p>
-                        <p style="font-size:0.75rem; color:var(--text-dim); margin:0 0 0.5rem 0;">${data.date ? '📅 ' + data.date : ''}</p>
-                        <div style="display:flex; justify-content:space-between; margin-top:0.5rem;">
-                            <button class="btn btn-ghost" style="color:var(--error); padding:0.5rem;" onclick="deleteRecord('videos', '${id}')">Delete</button>
+                        ${data.speaker ? `<p style="font-size:0.75rem; color:var(--text-dim); margin:0.2rem 0;">🎤 ${data.speaker}</p>` : ''}
+                        ${data.date ? `<p style="font-size:0.75rem; color:var(--text-dim); margin:0.2rem 0;">📅 Event Date: ${data.date}</p>` : ''}
+                        <p style="font-size:0.75rem; color:var(--primary); font-weight:700; margin:0.4rem 0 0.2rem 0; display:flex; align-items:center; gap:0.25rem;">
+                            <span>🕒</span>
+                            <span>Added: ${addedDateStr ? addedDateStr : 'Recently'}</span>
+                        </p>
+                        <div style="display:flex; justify-content:space-between; gap:0.5rem; margin-top:0.5rem;">
+                            <button class="btn btn-ghost" style="color:var(--primary); padding:0.4rem 0.75rem; font-size:0.8rem; font-weight:600; border:1px solid var(--border); border-radius:6px;" onclick="window.editMedia('videos', '${id}')">✏️ Edit</button>
+                            <button class="btn btn-ghost" style="color:var(--error); padding:0.4rem 0.75rem; font-size:0.8rem; font-weight:600; border:1px solid var(--border); border-radius:6px;" onclick="window.deleteRecord('videos', '${id}')">Delete</button>
                         </div>
                     </div>
                 `;
@@ -1174,6 +1212,213 @@ if (galleryAdminGrid) {
             });
         });
     }
+}
+
+// Media Edit Logic
+let currentEditPhotoBase64 = null;
+
+const editPhotoFileInput = document.getElementById('editPhotoFileInput');
+if (editPhotoFileInput) {
+    editPhotoFileInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                const img = new Image();
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    const MAX_WIDTH = 1200;
+                    const MAX_HEIGHT = 1200;
+                    let width = img.width;
+                    let height = img.height;
+                    if (width > height) {
+                        if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; }
+                    } else {
+                        if (height > MAX_HEIGHT) { width *= MAX_HEIGHT / height; height = MAX_HEIGHT; }
+                    }
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+                    const base64Str = canvas.toDataURL('image/jpeg', 0.8);
+                    currentEditPhotoBase64 = base64Str;
+                    document.getElementById('editPhotoPreview').src = base64Str;
+                };
+                img.src = event.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+}
+
+const editPhotoCatSelect = document.getElementById('editPhotoCategory');
+const editPhotoCatCustom = document.getElementById('editPhotoCategoryCustom');
+if (editPhotoCatSelect && editPhotoCatCustom) {
+    editPhotoCatSelect.addEventListener('change', (e) => {
+        if (e.target.value === 'Custom') {
+            editPhotoCatCustom.style.display = 'block';
+            editPhotoCatCustom.required = true;
+        } else {
+            editPhotoCatCustom.style.display = 'none';
+            editPhotoCatCustom.required = false;
+        }
+    });
+}
+
+const editVideoCatSelect = document.getElementById('editVideoCategory');
+const editVideoCatCustom = document.getElementById('editVideoCategoryCustom');
+if (editVideoCatSelect && editVideoCatCustom) {
+    editVideoCatSelect.addEventListener('change', (e) => {
+        if (e.target.value === 'Custom') {
+            editVideoCatCustom.style.display = 'block';
+            editVideoCatCustom.required = true;
+        } else {
+            editVideoCatCustom.style.display = 'none';
+            editVideoCatCustom.required = false;
+        }
+    });
+}
+
+window.editMedia = async (col, id) => {
+    try {
+        const docSnap = await getDoc(doc(db, col, id));
+        if (!docSnap.exists()) {
+            alert("Record not found.");
+            return;
+        }
+        const data = docSnap.data();
+
+        if (col === 'gallery') {
+            document.getElementById('editPhotoId').value = id;
+            document.getElementById('editPhotoTitle').value = data.title || '';
+            
+            const stdCats = ['Events', 'Campus', 'Academic', 'Posters'];
+            const cat = data.category || 'Events';
+            if (stdCats.includes(cat)) {
+                if (editPhotoCatSelect) editPhotoCatSelect.value = cat;
+                if (editPhotoCatCustom) {
+                    editPhotoCatCustom.style.display = 'none';
+                    editPhotoCatCustom.value = '';
+                }
+            } else {
+                if (editPhotoCatSelect) editPhotoCatSelect.value = 'Custom';
+                if (editPhotoCatCustom) {
+                    editPhotoCatCustom.style.display = 'block';
+                    editPhotoCatCustom.value = cat;
+                }
+            }
+
+            document.getElementById('editPhotoDesc').value = data.description || data.desc || '';
+            document.getElementById('editPhotoPreview').src = data.url || data.image || data.imgUrl || '';
+            currentEditPhotoBase64 = null;
+
+            document.getElementById('editPhotoModal').classList.add('active');
+        } else if (col === 'videos') {
+            document.getElementById('editVideoId').value = id;
+            document.getElementById('editVideoTitle').value = data.title || '';
+
+            const stdCats = ['Events', 'Campus', 'Academic', 'Posters', 'Speech', 'Workshop'];
+            const cat = data.category || 'Events';
+            if (stdCats.includes(cat)) {
+                if (editVideoCatSelect) editVideoCatSelect.value = cat;
+                if (editVideoCatCustom) {
+                    editVideoCatCustom.style.display = 'none';
+                    editVideoCatCustom.value = '';
+                }
+            } else {
+                if (editVideoCatSelect) editVideoCatSelect.value = 'Custom';
+                if (editVideoCatCustom) {
+                    editVideoCatCustom.style.display = 'block';
+                    editVideoCatCustom.value = cat;
+                }
+            }
+
+            document.getElementById('editVideoSpeaker').value = data.speaker || '';
+            document.getElementById('editVideoDate').value = data.date || '';
+            document.getElementById('editVideoDesc').value = data.description || data.desc || '';
+
+            document.getElementById('editVideoModal').classList.add('active');
+        }
+    } catch (e) {
+        alert("Error fetching record: " + e.message);
+    }
+};
+
+const editPhotoForm = document.getElementById('editPhotoForm');
+if (editPhotoForm) {
+    editPhotoForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const id = document.getElementById('editPhotoId').value;
+        const title = document.getElementById('editPhotoTitle').value.trim();
+        let category = editPhotoCatSelect ? editPhotoCatSelect.value : 'Events';
+        if (category === 'Custom' && editPhotoCatCustom) {
+            category = editPhotoCatCustom.value.trim() || 'Events';
+        }
+        const description = document.getElementById('editPhotoDesc').value.trim();
+        const saveBtn = document.getElementById('editPhotoSaveBtn');
+
+        saveBtn.disabled = true;
+        saveBtn.textContent = 'Saving...';
+
+        try {
+            const updatePayload = {
+                title: title,
+                category: category,
+                description: description,
+                updatedAt: new Date().toISOString()
+            };
+            if (currentEditPhotoBase64) {
+                updatePayload.url = currentEditPhotoBase64;
+                updatePayload.image = currentEditPhotoBase64;
+            }
+            await updateDoc(doc(db, "gallery", id), updatePayload);
+            document.getElementById('editPhotoModal').classList.remove('active');
+            alert("Photo updated successfully!");
+        } catch (err) {
+            alert("Error updating photo: " + err.message);
+        } finally {
+            saveBtn.disabled = false;
+            saveBtn.textContent = 'Save Changes';
+        }
+    });
+}
+
+const editVideoForm = document.getElementById('editVideoForm');
+if (editVideoForm) {
+    editVideoForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const id = document.getElementById('editVideoId').value;
+        const title = document.getElementById('editVideoTitle').value.trim();
+        let category = editVideoCatSelect ? editVideoCatSelect.value : 'Events';
+        if (category === 'Custom' && editVideoCatCustom) {
+            category = editVideoCatCustom.value.trim() || 'Events';
+        }
+        const speaker = document.getElementById('editVideoSpeaker').value.trim();
+        const date = document.getElementById('editVideoDate').value;
+        const description = document.getElementById('editVideoDesc').value.trim();
+        const saveBtn = document.getElementById('editVideoSaveBtn');
+
+        saveBtn.disabled = true;
+        saveBtn.textContent = 'Saving...';
+
+        try {
+            await updateDoc(doc(db, "videos", id), {
+                title: title,
+                category: category,
+                speaker: speaker,
+                date: date,
+                description: description,
+                updatedAt: new Date().toISOString()
+            });
+            document.getElementById('editVideoModal').classList.remove('active');
+            alert("Video program updated successfully!");
+        } catch (err) {
+            alert("Error updating video: " + err.message);
+        } finally {
+            saveBtn.disabled = false;
+            saveBtn.textContent = 'Save Changes';
+        }
+    });
 }
 
 // Gallery Photo Upload Logic
@@ -1230,6 +1475,20 @@ if (galleryPhotoInput) {
     });
 }
 
+const galleryPhotoCatSelect = document.getElementById('galleryPhotoCategory');
+const galleryPhotoCatCustom = document.getElementById('galleryPhotoCategoryCustom');
+if (galleryPhotoCatSelect && galleryPhotoCatCustom) {
+    galleryPhotoCatSelect.addEventListener('change', (e) => {
+        if (e.target.value === 'Custom') {
+            galleryPhotoCatCustom.style.display = 'block';
+            galleryPhotoCatCustom.required = true;
+        } else {
+            galleryPhotoCatCustom.style.display = 'none';
+            galleryPhotoCatCustom.required = false;
+        }
+    });
+}
+
 if (galleryUploadForm) {
     galleryUploadForm.addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -1243,7 +1502,11 @@ if (galleryUploadForm) {
         if (!title) return;
         
         const description = galleryPhotoDesc ? galleryPhotoDesc.value.trim() : "";
-        const category = document.getElementById('galleryPhotoCategory') ? document.getElementById('galleryPhotoCategory').value : "Events";
+        let category = document.getElementById('galleryPhotoCategory') ? document.getElementById('galleryPhotoCategory').value : "Events";
+        if (category === 'Custom') {
+            const customInput = document.getElementById('galleryPhotoCategoryCustom');
+            category = (customInput && customInput.value.trim()) ? customInput.value.trim() : "Events";
+        }
         
         galleryUploadBtn.disabled = true;
         galleryUploadBtn.textContent = "Uploading...";
@@ -1262,6 +1525,7 @@ if (galleryUploadForm) {
             galleryUploadMsg.textContent = "Photo uploaded successfully!";
             galleryUploadMsg.style.color = "var(--success)";
             galleryUploadForm.reset();
+            if (galleryPhotoCatCustom) galleryPhotoCatCustom.style.display = 'none';
             galleryPhotoPreviewContainer.style.display = 'none';
             currentBase64Image = null;
             
@@ -1377,13 +1641,31 @@ if (videoFileInput) {
     });
 }
 
+const videoCatSelect = document.getElementById('videoCategory');
+const videoCatCustom = document.getElementById('videoCategoryCustom');
+if (videoCatSelect && videoCatCustom) {
+    videoCatSelect.addEventListener('change', (e) => {
+        if (e.target.value === 'Custom') {
+            videoCatCustom.style.display = 'block';
+            videoCatCustom.required = true;
+        } else {
+            videoCatCustom.style.display = 'none';
+            videoCatCustom.required = false;
+        }
+    });
+}
+
 if (videoUploadForm) {
     videoUploadForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         
         const title = videoTitle.value.trim();
         const date = document.getElementById('videoDate').value;
-        const category = document.getElementById('videoCategory').value;
+        let category = document.getElementById('videoCategory') ? document.getElementById('videoCategory').value : "Events";
+        if (category === 'Custom') {
+            const customInput = document.getElementById('videoCategoryCustom');
+            category = (customInput && customInput.value.trim()) ? customInput.value.trim() : "Events";
+        }
         const speaker = document.getElementById('videoSpeaker').value.trim();
         const desc = document.getElementById('videoDesc').value.trim();
         

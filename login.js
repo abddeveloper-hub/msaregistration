@@ -132,17 +132,28 @@ form.addEventListener("submit", async (e) => {
         let userData = null;
         if (isSignUpMode) {
             const userCred = await createUserWithEmailAndPassword(auth, email, password);
-            const finalRole = email.toLowerCase() === "admin@msaukkuda.com" ? "admin" : "student";
+            const finalRole = email.toLowerCase() === "admin@msaukkuda.com" ? "admin" : selectedRole;
 
             userData = {
                 uid: userCred.user.uid,
                 email,
                 fullName: name,
                 role: finalRole,
-                status: finalRole === "admin" ? "admitted" : "unsubmitted",
+                status: (finalRole === "admin" || finalRole === "alumni") ? "approved" : "unsubmitted",
                 createdAt: new Date().toISOString()
             };
             await setDoc(doc(db, "users", userCred.user.uid), userData);
+
+            if (finalRole === "alumni") {
+                await setDoc(doc(db, "alumni", userCred.user.uid), {
+                    name: name,
+                    title: "Fazil Muhyissunnah",
+                    batch: "Graduate Scholar",
+                    email: email,
+                    uploadedBy: userCred.user.uid,
+                    createdAt: new Date().toISOString()
+                });
+            }
         } else {
             const userCred = await signInWithEmailAndPassword(auth, email, password);
             const userSnap = await getDoc(doc(db, "users", userCred.user.uid));
@@ -150,20 +161,6 @@ form.addEventListener("submit", async (e) => {
             if (userSnap.exists()) {
                 userData = userSnap.data();
             }
-            
-            // Security Device Tracking
-            try {
-                const ipRes = await fetch('https://api.ipify.org?format=json');
-                const ipData = await ipRes.json();
-                await addDoc(collection(db, "securityLogs"), {
-                    uid: userCred.user.uid,
-                    email: email,
-                    role: userData ? userData.role : 'unknown',
-                    ip: ipData.ip,
-                    userAgent: navigator.userAgent,
-                    timestamp: new Date().toISOString()
-                });
-            } catch(err) { console.error("Failed to log security event", err); }
         }
 
         submitBtn.textContent = "Opening Portal...";
@@ -174,6 +171,7 @@ form.addEventListener("submit", async (e) => {
         let targetUrl = "student.html";
         if (targetRole === "admin") targetUrl = "admin.html";
         else if (targetRole === "faculty") targetUrl = "teacher.html";
+        else if (targetRole === "alumni") targetUrl = "alumni.html";
         
         // If they just signed up, append mode=register so student portal knows to open the form
         if (isSignUpMode && targetRole === "student") {
@@ -189,15 +187,15 @@ form.addEventListener("submit", async (e) => {
     }
 });
 
-// Auto-redirect if already logged in (optional, but good practice)
+// Auto-redirect if already logged in
 onAuthStateChanged(auth, async (user) => {
     if (user) {
-        // If already logged in, fetch their role and redirect
         const userSnap = await getDoc(doc(db, "users", user.uid));
         if (userSnap.exists()) {
             const role = userSnap.data().role;
             if (role === "admin") window.location.href = "admin.html";
             else if (role === "faculty") window.location.href = "teacher.html";
+            else if (role === "alumni") window.location.href = "alumni.html";
             else {
                  if (urlParams.get("signup") === "true") window.location.href = "student.html?mode=register";
                  else window.location.href = "student.html";

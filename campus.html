@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Campus Portal - Muhyissunnah Dars</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="style.css?v=23">
+    <link rel="stylesheet" href="mobile.css?v=23">
+    <link rel="manifest" href="manifest.json">
+
+    <style>
+        body.campus-page {
+            background: var(--bg);
+            color: var(--text-main);
+            font-family: var(--font-ui);
+            overflow-x: hidden;
+        }
+
+        .campus-hero {
+            padding: 6.5rem 2rem 3.5rem;
+            text-align: center;
+            background: radial-gradient(circle at center top, rgba(15, 76, 58, 0.1) 0%, transparent 70%);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .campus-hero .pill-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            background: rgba(15, 76, 58, 0.12);
+            color: var(--primary);
+            border: 1px solid rgba(15, 76, 58, 0.3);
+            padding: 0.35rem 1.25rem;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            letter-spacing: 0.05em;
+        }
+
+        .campus-hero h1 {
+            font-family: var(--font-display);
+            font-size: clamp(2.2rem, 5.5vw, 4.2rem);
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 0.75rem;
+        }
+
+        .campus-hero p {
+            color: var(--text-dim);
+            max-width: 700px;
+            margin: 0 auto 2rem;
+            font-size: 1.05rem;
+            line-height: 1.6;
+        }
+
+        .campus-stats-bar {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .campus-stat-chip {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 0.75rem 1.5rem;
+            border-radius: 12px;
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .campus-stat-chip .val {
+            font-family: 'Cinzel', serif;
+            font-weight: 700;
+            font-size: 1.25rem;
+            color: var(--primary);
+        }
+
+        .campus-stat-chip .lbl {
+            font-size: 0.85rem;
+            color: var(--text-dim);
+        }
+
+        /* Tabs Navigation */
+        .campus-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 0.75rem;
+            margin: 2.5rem 0;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            padding: 0.75rem 1.5rem;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .tab-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .tab-btn.active {
+            background: var(--primary);
+            color: #ffffff;
+            border-color: var(--primary);
+            box-shadow: 0 4px 15px rgba(15, 76, 58, 0.3);
+        }
+
+        .tab-pane {
+            display: none;
+        }
+
+        .tab-pane.active {
+            display: block;
+            animation: fadeIn 0.4s ease forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Faculty Cards */
+        .faculty-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            gap: 1.25rem;
+            align-items: center;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .faculty-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-md);
+            border-color: var(--primary);
+        }
+
+        .faculty-avatar {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: var(--primary-glow);
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.6rem;
+            flex-shrink: 0;
+            border: 2px solid var(--border);
+            object-fit: cover;
+        }
+
+        .faculty-info h4 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+            color: var(--text-main);
+        }
+
+        .faculty-info p {
+            font-size: 0.85rem;
+            color: var(--text-dim);
+            margin-bottom: 0.25rem;
+        }
+
+        .badge-role {
+            display: inline-block;
+            padding: 0.2rem 0.6rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            background: rgba(15, 76, 58, 0.1);
+            color: var(--primary);
+            margin-top: 0.4rem;
+        }
+
+        /* Achievement Cards */
+        .achievement-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+            transition: transform 0.2s;
+        }
+
+        .achievement-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--primary);
+        }
+
+        .achievement-card img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+        }
+
+        .achievement-card-body {
+            padding: 1.25rem;
+        }
+
+        .achievement-card-body h4 {
+            font-size: 1.05rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+    </style>
+</head>
+<body class="campus-page">
+
+    <!-- Header Navigation -->
+    <header class="nav-wrapper">
+        <nav class="navbar" aria-label="Primary navigation">
+            <a class="brand-lockup" href="index.html" aria-label="Muhyissunnah Dars Ukkuda home">
+                <img src="logo.png?v=2" alt="MSA Ukkuda Logo" class="brand-logo-img">
+                <span class="brand-text">
+                    <strong style="font-family: 'Inter', sans-serif; letter-spacing: 0.08em; font-size: 1.25rem; line-height: 1; text-transform: uppercase; font-weight: 700;"><span class="brand-text-styled">Muhyissunnah Dars</span></strong>
+                    <span style="letter-spacing: 0.15em;">Campus Portal</span>
+                </span>
+            </a>
+
+            <div class="nav-links">
+                <a href="library.html">Digital Library</a>
+                <a href="events.html">News &amp; Events</a>
+                <a href="gallery.html">Gallery</a>
+                <a href="videos.html">Videos</a>
+                <a href="achievements.html">Achievements</a>
+                <a href="alumni.html">Alumni</a>
+                <a href="login.html" class="nav-login-btn">Login</a>
+            </div>
+
+            <div class="nav-actions" style="position: relative;">
+                <button class="btn btn-ghost icon-btn" id="loginMenuToggleBtn" type="button" title="Menu" aria-label="Open menu">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                        <circle cx="12" cy="5" r="1.5"/>
+                        <circle cx="12" cy="12" r="1.5"/>
+                        <circle cx="12" cy="19" r="1.5"/>
+                    </svg>
+                </button>
+                
+                <div id="loginDropdownMenu" class="hidden">
+                    <a href="index.html" class="btn btn-ghost" style="border-radius: 0; border: none; border-bottom: 1px solid var(--border); justify-content: flex-start; padding: 1rem; text-decoration: none; gap: 0.75rem;">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                        Home
+                    </a>
+                    <a href="library.html" class="btn btn-ghost" style="border-radius: 0; border: none; border-bottom: 1px solid var(--border); justify-content: flex-start; padding: 1rem; text-decoration: none; gap: 0.75rem;">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+                        Digital Library
+                    </a>
+                    <a href="events.html" class="btn btn-ghost" style="border-radius: 0; border: none; border-bottom: 1px solid var(--border); justify-content: flex-start; padding: 1rem; text-decoration: none; gap: 0.75rem;">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                        News &amp; Events
+                    </a>
+                    <a href="gallery.html" class="btn btn-ghost" style="border-radius: 0; border: none; border-bottom: 1px solid var(--border); justify-content: flex-start; padding: 1rem; text-decoration: none; gap: 0.75rem;">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                        Gallery
+                    </a>
+                    <a href="videos.html" class="btn btn-ghost" style="border-radius: 0; border: none; border-bottom: 1px solid var(--border); justify-content: flex-start; padding: 1rem; text-decoration: none; gap: 0.75rem;">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                        Videos
+                    </a>
+                    <a href="achievements.html" class="btn btn-ghost" style="border-radius: 0; border: none; border-bottom: 1px solid var(--border); justify-content: flex-start; padding: 1rem; text-decoration: none; gap: 0.75rem;">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>
+                        Achievements
+                    </a>
+                    <a href="alumni.html" class="btn btn-ghost" style="border-radius: 0; border: none; border-bottom: 1px solid var(--border); justify-content: flex-start; padding: 1rem; text-decoration: none; gap: 0.75rem;">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+                        Alumni Directory
+                    </a>
+                    <a href="login.html" class="btn btn-ghost" style="border-radius: 0; border: none; border-bottom: 1px solid var(--border); justify-content: flex-start; padding: 1rem; text-decoration: none; gap: 0.75rem;">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+                        Login
+                    </a>
+                    <a href="login.html?signup=true" class="btn btn-ghost" style="border-radius: 0; border: none; justify-content: flex-start; padding: 1rem; text-decoration: none; gap: 0.75rem;">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                        New Registration
+                    </a>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Campus Hero Section -->
+    <section class="campus-hero">
+        <div class="pill-badge" id="campusBadge">
+            🏛️ OFFICIAL CAMPUS
+        </div>
+        <h1 id="campusTitle">Loading Campus...</h1>
+        <p id="campusDescription">Discover faculty scholars, enrolled students, honours, and activities at this Muhyissunnah Dars campus.</p>
+
+        <div class="campus-stats-bar">
+            <div class="campus-stat-chip">
+                <div class="val" id="statMudarriseen">0</div>
+                <div class="lbl">Assigned Mudarriseen</div>
+            </div>
+            <div class="campus-stat-chip">
+                <div class="val" id="statStudents">0</div>
+                <div class="lbl">Enrolled Students</div>
+            </div>
+            <div class="campus-stat-chip">
+                <div class="val" id="statAchievements">0</div>
+                <div class="lbl">Campus Honours</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content Container -->
+    <main style="max-width: 1200px; margin: 0 auto; padding: 0 1.5rem 6rem;">
+
+        <!-- Campus Filter Tabs -->
+        <div class="campus-tabs">
+            <button class="tab-btn active" data-tab="tabFaculty">
+                <span>👨‍🏫</span> Assigned Mudarriseen
+            </button>
+            <button class="tab-btn" data-tab="tabStudents">
+                <span>🎓</span> Enrolled Students
+            </button>
+            <button class="tab-btn" data-tab="tabAchievements">
+                <span>🏆</span> Campus Achievements
+            </button>
+            <button class="tab-btn" data-tab="tabGallery">
+                <span>🖼️</span> Photo &amp; Media Gallery
+            </button>
+        </div>
+
+        <!-- Tab 1: Faculty / Mudarriseen -->
+        <div id="tabFaculty" class="tab-pane active">
+            <div id="facultyGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.5rem;">
+                <p style="grid-column: 1/-1; text-align: center; color: var(--text-dim);">Loading Mudarriseen...</p>
+            </div>
+        </div>
+
+        <!-- Tab 2: Enrolled Students -->
+        <div id="tabStudents" class="tab-pane">
+            <div class="portal-card" style="padding: 1.5rem; overflow-x: auto;">
+                <table class="data-table" style="width: 100%;">
+                    <thead>
+                        <tr>
+                            <th>Roll / ID No.</th>
+                            <th>Student Full Name</th>
+                            <th>Academic Batch</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="studentsTableBody">
+                        <tr><td colspan="4" style="text-align: center; color: var(--text-dim);">Loading student directory...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Tab 3: Campus Achievements -->
+        <div id="tabAchievements" class="tab-pane">
+            <div id="achievementsGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem;">
+                <p style="grid-column: 1/-1; text-align: center; color: var(--text-dim);">Loading achievements...</p>
+            </div>
+        </div>
+
+        <!-- Tab 4: Photo & Media Gallery -->
+        <div id="tabGallery" class="tab-pane">
+            <div id="galleryGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem;">
+                <p style="grid-column: 1/-1; text-align: center; color: var(--text-dim);">Loading campus media gallery...</p>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- JS Module -->
+    <script type="module" src="campus.js"></script>
+
+    <!-- Mobile Drawer Listener Script -->
+    <script>
+        const loginMenuToggleBtn = document.getElementById('loginMenuToggleBtn');
+        const loginDropdownMenu = document.getElementById('loginDropdownMenu');
+        if (loginMenuToggleBtn && loginDropdownMenu) {
+            loginMenuToggleBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                loginDropdownMenu.classList.toggle('hidden');
+            });
+            document.addEventListener('click', (e) => {
+                if (!loginMenuToggleBtn.contains(e.target) && !loginDropdownMenu.contains(e.target)) {
+                    loginDropdownMenu.classList.add('hidden');
+                }
+            });
+        }
+    </script>
+</body>
+</html>

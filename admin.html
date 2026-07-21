@@ -142,16 +142,36 @@
                         <input type="text" id="galleryPhotoTitle" class="input" placeholder="E.g., Annual Sports Day 2026" required>
                     </div>
                     
-                    <div class="input-field" style="margin-top: 1rem;">
-                        <label class="label">Category</label>
-                        <select id="galleryPhotoCategory" class="input" required>
-                            <option value="Events">Events</option>
-                            <option value="Campus">Campus</option>
-                            <option value="Academic">Academic</option>
-                            <option value="Posters">Posters</option>
-                            <option value="Custom">+ Add New Category...</option>
-                        </select>
-                        <input type="text" id="galleryPhotoCategoryCustom" class="input" placeholder="Type new category name..." style="display: none; margin-top: 0.5rem;">
+                    <div class="grid-2" style="margin-top: 1rem;">
+                        <div class="input-field">
+                            <label class="label">Category</label>
+                            <select id="galleryPhotoCategory" class="input" required>
+                                <option value="Events">Events</option>
+                                <option value="Campus">Campus</option>
+                                <option value="Academic">Academic</option>
+                                <option value="Posters">Posters</option>
+                                <option value="Custom">+ Add New Category...</option>
+                            </select>
+                            <input type="text" id="galleryPhotoCategoryCustom" class="input" placeholder="Type new category name..." style="display: none; margin-top: 0.5rem;">
+                        </div>
+                        <div class="input-field">
+                            <label class="label">Campus</label>
+                            <select id="galleryPhotoCampus" class="input" required>
+                                <option value="MSA UKKUDA">MSA UKKUDA (HQ)</option>
+                                <option value="MSA CHATEKKAL">MSA CHATEKKAL</option>
+                                <option value="MSA MARIKKALA">MSA MARIKKALA</option>
+                                <option value="MSA NAVOOR">MSA NAVOOR</option>
+                                <option value="MSA GOLIYANGADI">MSA GOLIYANGADI</option>
+                                <option value="MSA RENJA">MSA RENJA</option>
+                                <option value="MSA KULIYOORPADAVU">MSA KULIYOORPADAVU</option>
+                                <option value="MSA BAJAL">MSA BAJAL</option>
+                                <option value="MSA SHEKMALE">MSA SHEKMALE</option>
+                                <option value="MSA KOPPA">MSA KOPPA</option>
+                                <option value="MSA DERADKA">MSA DERADKA</option>
+                                <option value="MSA UJIRE">MSA UJIRE</option>
+                                <option value="MSA KARVEL">MSA KARVEL</option>
+                            </select>
+                        </div>
                     </div>
                     
                     <div class="input-field" style="margin-top: 1rem;">
@@ -627,13 +647,32 @@
 
                     <div class="grid-2" style="margin-top: 1rem;">
                         <div class="input-field">
+                            <label class="label">Campus</label>
+                            <select id="achievementCampus" class="input" required>
+                                <option value="MSA UKKUDA">MSA UKKUDA (HQ)</option>
+                                <option value="MSA CHATEKKAL">MSA CHATEKKAL</option>
+                                <option value="MSA MARIKKALA">MSA MARIKKALA</option>
+                                <option value="MSA NAVOOR">MSA NAVOOR</option>
+                                <option value="MSA GOLIYANGADI">MSA GOLIYANGADI</option>
+                                <option value="MSA RENJA">MSA RENJA</option>
+                                <option value="MSA KULIYOORPADAVU">MSA KULIYOORPADAVU</option>
+                                <option value="MSA BAJAL">MSA BAJAL</option>
+                                <option value="MSA SHEKMALE">MSA SHEKMALE</option>
+                                <option value="MSA KOPPA">MSA KOPPA</option>
+                                <option value="MSA DERADKA">MSA DERADKA</option>
+                                <option value="MSA UJIRE">MSA UJIRE</option>
+                                <option value="MSA KARVEL">MSA KARVEL</option>
+                            </select>
+                        </div>
+                        <div class="input-field">
                             <label class="label">Event Date</label>
                             <input type="date" id="achievementDate" class="input">
                         </div>
-                        <div class="input-field">
-                            <label class="label">Trophy / Achievement Photo</label>
-                            <input type="file" id="achievementPhotoInput" class="input" accept="image/*" style="padding-top: 0.5rem;" required>
-                        </div>
+                    </div>
+
+                    <div class="input-field" style="margin-top: 1rem;">
+                        <label class="label">Trophy / Achievement Photo</label>
+                        <input type="file" id="achievementPhotoInput" class="input" accept="image/*" style="padding-top: 0.5rem;" required>
                     </div>
 
                     <div class="input-field" style="margin-top: 1rem;">

@@ -491,7 +491,7 @@
                     </div>
 
                     <div class="role-selector-section" id="roleSelectorSection">
-                        <label>Login As</label>
+                        <label>Role</label>
                         <div class="role-cards" id="roleCardsContainer">
                             <div class="role-card active" data-role="student">
                                 <span class="role-icon">🎓</span>
@@ -508,6 +508,75 @@
                             <div class="role-card" data-role="admin">
                                 <span class="role-icon">🛡️</span>
                                 <span class="role-name">Admin</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="alumniFieldsContainer" class="hidden">
+                        <div class="input-group">
+                            <label>Academic Title / Degree</label>
+                            <div class="input-icon-wrapper">
+                                <span>📜</span>
+                                <input type="text" id="loginTitle" placeholder="e.g. Fazil Muhyissunnah / Hafiz">
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label>Graduation Batch / Year</label>
+                            <div class="input-icon-wrapper">
+                                <span>🎓</span>
+                                <input type="text" id="loginBatch" placeholder="e.g. 2024-2025 or Fazil Graduates">
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label>Current Designation / Role</label>
+                            <div class="input-icon-wrapper">
+                                <span>💼</span>
+                                <input type="text" id="loginDesignation" placeholder="e.g. Mudarris / Research Scholar">
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label>Institution / Organization</label>
+                            <div class="input-icon-wrapper">
+                                <span>🏛️</span>
+                                <input type="text" id="loginInstitution" placeholder="e.g. Calicut Dars / Jamia Markaz">
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label>City & Country Location</label>
+                            <div class="input-icon-wrapper">
+                                <span>📍</span>
+                                <input type="text" id="loginLocation" placeholder="e.g. Calicut, Kerala or Dubai, UAE">
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label>WhatsApp / Phone Number</label>
+                            <div class="input-icon-wrapper">
+                                <span>📞</span>
+                                <input type="tel" id="loginPhone" placeholder="+91 9876543210">
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label>Profile Photo</label>
+                            <div class="input-icon-wrapper">
+                                <span style="top: 0.8rem;">🖼️</span>
+                                <input type="file" id="loginPhoto" accept="image/*" style="padding-top: 0.65rem;">
+                            </div>
+                            <div id="loginPhotoPreviewWrap" style="display:none; margin-top: 0.5rem; border-radius: 8px; overflow: hidden; height: 90px; width: 90px; border: 1px solid #cbd5e1;">
+                                <img id="loginPhotoPreview" src="" alt="Photo Preview" style="width: 100%; height: 100%; object-fit: cover;">
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label>Bio & Research Summary</label>
+                            <div class="input-icon-wrapper" style="align-items: flex-start;">
+                                <span style="top: 0.8rem;">📝</span>
+                                <textarea id="loginBio" placeholder="Write a detailed summary of your academic contributions, research work, publications, or current service..." rows="3" style="width: 100%; padding: 0.8rem 1rem 0.8rem 2.8rem; background: #f1f5f9; border: 1px solid transparent; border-radius: 12px; font-size: 0.95rem; font-family: 'Inter', sans-serif; color: #0f172a; resize: vertical; box-sizing: border-box;"></textarea>
                             </div>
                         </div>
                     </div>

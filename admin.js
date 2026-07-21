@@ -195,6 +195,37 @@ function initAdminData() {
     } catch(e) { console.error("Error attaching listeners:", e); }
 }
 
+const DEFAULT_13_CAMPUSES = [
+    'MSA UKKUDA',
+    'MSA CHATEKKAL',
+    'MSA MARIKKALA',
+    'MSA NAVOOR',
+    'MSA GOLIYANGADI',
+    'MSA RENJA',
+    'MSA KULIYOORPADAVU',
+    'MSA BAJAL',
+    'MSA SHEKMALE',
+    'MSA KOPPA',
+    'MSA DERADKA',
+    'MSA UJIRE',
+    'MSA KARVEL'
+];
+
+window.changeFacultyCampus = async (uid, newCampusName) => {
+    if (!uid) return;
+    try {
+        await setDoc(doc(db, "users", uid), {
+            campus: newCampusName,
+            campusId: newCampusName,
+            status: newCampusName ? 'admitted' : 'unsubmitted'
+        }, { merge: true });
+        alert(`Campus updated to "${newCampusName || 'Unassigned'}" for faculty.`);
+    } catch(err) {
+        console.error("Error updating faculty campus:", err);
+        alert("Failed to update campus: " + err.message);
+    }
+};
+
 // Render Active Faculties in the new Faculties section
 function renderActiveFaculties() {
     const tbody = document.getElementById('activeFacTableBody');
@@ -210,10 +241,25 @@ function renderActiveFaculties() {
         if (f.status === 'admitted') statusBadge = `<span class="badge" style="background:var(--success-glow); color:var(--success);">Active</span>`;
         if (f.status === 'pending') statusBadge = `<span class="badge" style="background:var(--primary-glow); color:var(--primary);">Pending Profile</span>`;
 
+        // Build campus options combining default 13 campuses and firestore institutions
+        const availableCampusNames = Array.from(new Set([
+            ...DEFAULT_13_CAMPUSES,
+            ...allInstitutions.map(i => i.name)
+        ])).filter(Boolean);
+
+        const currentCampus = getRecordCampusName(f);
+        let campusSelectHtml = `<select class="input" style="padding:0.35rem 0.5rem; font-size:0.8rem; min-width:160px;" onchange="changeFacultyCampus('${f.id}', this.value)">`;
+        campusSelectHtml += `<option value="">-- Unassigned --</option>`;
+        availableCampusNames.forEach(cName => {
+            const isSel = (cName === currentCampus || cName === f.campus || cName === f.campusId) ? 'selected' : '';
+            campusSelectHtml += `<option value="${cName}" ${isSel}>${cName}</option>`;
+        });
+        campusSelectHtml += `</select>`;
+
         tbody.innerHTML += `<tr>
-            <td>${f.fullName || 'N/A'}</td>
+            <td><strong>${f.fullName || 'N/A'}</strong></td>
             <td>${f.email || 'N/A'}</td>
-            <td>${getRecordCampusName(f)}</td>
+            <td>${campusSelectHtml}</td>
             <td>${statusBadge}</td>
             <td><button class="action-btn btn-reject" onclick="deleteRecord('users', '${f.id}')">Delete</button></td>
         </tr>`;
@@ -657,8 +703,13 @@ function renderPendingFaculty() {
     
 
 
+    const combinedCampuses = Array.from(new Set([
+        ...DEFAULT_13_CAMPUSES,
+        ...allInstitutions.map(i => i.name)
+    ])).filter(Boolean);
+
     let instOptions = '<option value="" disabled selected>Select Campus to Assign</option>';
-    allInstitutions.forEach(i => instOptions += `<option value="${i.id}">${i.name}</option>`);
+    combinedCampuses.forEach(cName => instOptions += `<option value="${cName}">${cName}</option>`);
 
     pending.forEach(f => {
         tbody.innerHTML += `<tr>
@@ -674,13 +725,12 @@ function renderPendingFaculty() {
 }
 
 window.approveFaculty = async (uid) => {
-    const campusId = document.getElementById(`facCampus_${uid}`).value;
-    const campusName = allInstitutions.find(i => i.id === campusId)?.name;
-    if(!campusId || !campusName) return alert("Please assign a campus first.");
+    const selectedVal = document.getElementById(`facCampus_${uid}`).value;
+    if(!selectedVal) return alert("Please assign a campus first.");
     await setDoc(doc(db, "users", uid), { 
         status: 'admitted', 
-        campus: campusName,
-        campusId: campusId 
+        campus: selectedVal,
+        campusId: selectedVal 
     }, { merge: true });
 };
 
@@ -1475,6 +1525,8 @@ if (galleryUploadForm) {
             category = (customInput && customInput.value.trim()) ? customInput.value.trim() : "Events";
         }
         
+        const selectedCampus = document.getElementById('galleryPhotoCampus') ? document.getElementById('galleryPhotoCampus').value : "MSA UKKUDA";
+        
         galleryUploadBtn.disabled = true;
         galleryUploadBtn.textContent = "Uploading...";
         galleryUploadMsg.textContent = "";
@@ -1484,6 +1536,7 @@ if (galleryUploadForm) {
                 title: title,
                 description: description,
                 category: category,
+                campus: selectedCampus,
                 url: currentBase64Image,
                 uploadedBy: auth.currentUser ? auth.currentUser.uid : "admin",
                 createdAt: new Date().toISOString()
@@ -2088,6 +2141,8 @@ if (achievementUploadForm) {
             return;
         }
 
+        const selectedCampus = document.getElementById('achievementCampus') ? document.getElementById('achievementCampus').value : "MSA UKKUDA";
+
         uploadBtn.disabled = true;
         uploadBtn.textContent = 'Publishing...';
         uploadMsg.style.color = 'var(--text-dim)';
@@ -2099,6 +2154,7 @@ if (achievementUploadForm) {
                 studentName: studentName,
                 rank: rank,
                 category: category,
+                campus: selectedCampus,
                 competition: competition,
                 date: date,
                 description: description,

@@ -2389,6 +2389,8 @@ if (galleryUploadForm) {
             category = (customInput && customInput.value.trim()) ? customInput.value.trim() : "Events";
         }
         
+        const selectedCampus = document.getElementById('galleryPhotoCampus') ? document.getElementById('galleryPhotoCampus').value : "MSA UKKUDA";
+
         galleryUploadBtn.disabled = true;
         galleryUploadBtn.textContent = "Uploading...";
         galleryUploadMsg.textContent = "";
@@ -2398,6 +2400,7 @@ if (galleryUploadForm) {
                 title: title,
                 description: description,
                 category: category,
+                campus: selectedCampus,
                 url: currentBase64Image,
                 uploadedBy: auth.currentUser ? auth.currentUser.uid : "faculty",
                 createdAt: new Date().toISOString()
@@ -3348,6 +3351,8 @@ if (achievementUploadForm) {
             return;
         }
 
+        const selectedCampus = document.getElementById('achievementCampus') ? document.getElementById('achievementCampus').value : "MSA UKKUDA";
+
         uploadBtn.disabled = true;
         uploadBtn.textContent = 'Publishing...';
         uploadMsg.style.color = 'var(--text-dim)';
@@ -3359,6 +3364,7 @@ if (achievementUploadForm) {
                 studentName: studentName,
                 rank: rank,
                 category: category,
+                campus: selectedCampus,
                 competition: competition,
                 date: date,
                 description: description,

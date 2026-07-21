@@ -52,7 +52,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const closeLightboxBtn = document.getElementById('closeLightboxBtn');
 
     let allAchievements = [];
-    let currentFilter = 'all';
+    let currentCampusFilter = 'all';
+
+    const campusFilterSelect = document.getElementById('achievementCampusFilter');
+    if (campusFilterSelect) {
+        campusFilterSelect.addEventListener('change', (e) => {
+            currentCampusFilter = e.target.value;
+            renderAchievements();
+        });
+    }
 
     function renderFilterButtons() {
         if (!filterContainer) return;
@@ -64,6 +72,9 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         const activeCat = currentFilter;
+        
+        // Preserve the campus select inside filterContainer if present
+        const existingSelect = document.getElementById('achievementCampusFilter');
         filterContainer.innerHTML = '';
 
         dynamicCategories.forEach(cat => {
@@ -78,6 +89,10 @@ document.addEventListener('DOMContentLoaded', () => {
             });
             filterContainer.appendChild(btn);
         });
+
+        if (existingSelect) {
+            filterContainer.appendChild(existingSelect);
+        }
     }
 
     function renderAchievements() {
@@ -85,8 +100,9 @@ document.addEventListener('DOMContentLoaded', () => {
         achievementsGrid.innerHTML = '';
 
         const filtered = allAchievements.filter(item => {
-            if (currentFilter === 'all') return true;
-            return (item.category || '').toLowerCase() === currentFilter.toLowerCase();
+            const matchesCat = currentFilter === 'all' || (item.category || '').toLowerCase() === currentFilter.toLowerCase();
+            const matchesCampus = currentCampusFilter === 'all' || (item.campus || '').toLowerCase().includes(currentCampusFilter.toLowerCase());
+            return matchesCat && matchesCampus;
         });
 
         if (filtered.length === 0) {

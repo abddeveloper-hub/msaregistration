@@ -1,8 +1,10 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-import { getFirestore, collection, onSnapshot, enableMultiTabIndexedDbPersistence, doc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+import { getFirestore, collection, onSnapshot, enableMultiTabIndexedDbPersistence, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 import { firebaseConfig } from "./firebase-config.js";
 
 const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
 const db = getFirestore(app);
 enableMultiTabIndexedDbPersistence(db).catch((err) => console.warn("Offline persistence error:", err.code));
 
@@ -33,6 +35,158 @@ document.addEventListener('DOMContentLoaded', () => {
     const lightboxBio = document.getElementById('lightboxBio');
     const lightboxContact = document.getElementById('lightboxContact');
     const closeLightboxBtn = document.getElementById('closeLightboxBtn');
+
+    const editMyBioBtn = document.getElementById('editMyBioBtn');
+    const editSelfModal = document.getElementById('editAlumniSelfModal');
+    const closeEditSelfModalBtn = document.getElementById('closeEditSelfModalBtn');
+    const editSelfForm = document.getElementById('editAlumniSelfForm');
+    const selfSaveMsg = document.getElementById('selfSaveMsg');
+    const selfPhotoInput = document.getElementById('selfPhoto');
+    const selfPhotoPreviewWrap = document.getElementById('selfPhotoPreviewWrap');
+    const selfPhotoPreview = document.getElementById('selfPhotoPreview');
+
+    let currentUser = null;
+    let selfPhotoBase64 = null;
+
+    if (selfPhotoInput) {
+        selfPhotoInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (evt) => {
+                    selfPhotoBase64 = evt.target.result;
+                    if (selfPhotoPreview) selfPhotoPreview.src = selfPhotoBase64;
+                    if (selfPhotoPreviewWrap) selfPhotoPreviewWrap.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    }
+
+    onAuthStateChanged(auth, async (user) => {
+        currentUser = user;
+        if (user) {
+            const userSnap = await getDoc(doc(db, "users", user.uid));
+            const alumniSnap = await getDoc(doc(db, "alumni", user.uid));
+            if ((userSnap.exists() && userSnap.data().role === 'alumni') || alumniSnap.exists()) {
+                if (editMyBioBtn) editMyBioBtn.classList.remove('hidden');
+            }
+        }
+    });
+
+    if (editMyBioBtn) {
+        editMyBioBtn.addEventListener('click', async () => {
+            if (!currentUser) return;
+            selfSaveMsg.textContent = '';
+            selfPhotoBase64 = null;
+            
+            const userSnap = await getDoc(doc(db, "users", currentUser.uid));
+            const alumniSnap = await getDoc(doc(db, "alumni", currentUser.uid));
+            
+            const uData = userSnap.exists() ? userSnap.data() : {};
+            const aData = alumniSnap.exists() ? alumniSnap.data() : {};
+
+            document.getElementById('selfName').value = aData.name || uData.fullName || '';
+            document.getElementById('selfTitle').value = aData.title || 'Fazil Muhyissunnah';
+            document.getElementById('selfBatch').value = aData.batch || uData.batch || '';
+            document.getElementById('selfDesignation').value = aData.designation || uData.designation || '';
+            document.getElementById('selfInstitution').value = aData.institution || '';
+            document.getElementById('selfLocation').value = aData.location || '';
+            document.getElementById('selfPhone').value = aData.whatsapp || aData.phone || '';
+            document.getElementById('selfBio').value = aData.bio || uData.bio || '';
+
+            const currentImg = aData.url || aData.photoUrl || uData.url || '';
+            if (currentImg && selfPhotoPreview) {
+                selfPhotoPreview.src = currentImg;
+                if (selfPhotoPreviewWrap) selfPhotoPreviewWrap.style.display = 'block';
+            } else if (selfPhotoPreviewWrap) {
+                selfPhotoPreviewWrap.style.display = 'none';
+            }
+
+            editSelfModal.classList.add('active');
+        });
+    }
+
+    if (closeEditSelfModalBtn && editSelfModal) {
+        closeEditSelfModalBtn.addEventListener('click', () => {
+            editSelfModal.classList.remove('active');
+        });
+        editSelfModal.addEventListener('click', (e) => {
+            if (e.target === editSelfModal) editSelfModal.classList.remove('active');
+        });
+    }
+
+    if (editSelfForm) {
+        editSelfForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if (!currentUser) return;
+            
+            const saveBtn = document.getElementById('saveSelfBtn');
+            saveBtn.disabled = true;
+            saveBtn.textContent = 'Saving...';
+            selfSaveMsg.style.color = 'var(--primary)';
+            selfSaveMsg.textContent = 'Updating profile and bio...';
+
+            try {
+                const name = document.getElementById('selfName').value.trim();
+                const title = document.getElementById('selfTitle').value.trim();
+                const batch = document.getElementById('selfBatch').value.trim();
+                const designation = document.getElementById('selfDesignation').value.trim();
+                const institution = document.getElementById('selfInstitution').value.trim();
+                const location = document.getElementById('selfLocation').value.trim();
+                const phone = document.getElementById('selfPhone').value.trim();
+                const bio = document.getElementById('selfBio').value.trim();
+
+                const alumniPayload = {
+                    name: name,
+                    title: title || 'Fazil Muhyissunnah',
+                    batch: batch || 'Graduate Scholar',
+                    designation: designation,
+                    institution: institution,
+                    location: location,
+                    whatsapp: phone,
+                    bio: bio,
+                    email: currentUser.email,
+                    uploadedBy: currentUser.uid,
+                    updatedAt: new Date().toISOString()
+                };
+
+                if (selfPhotoBase64) {
+                    alumniPayload.url = selfPhotoBase64;
+                    alumniPayload.photoUrl = selfPhotoBase64;
+                }
+
+                await setDoc(doc(db, "alumni", currentUser.uid), alumniPayload, { merge: true });
+                
+                const userUpdate = {
+                    fullName: name,
+                    bio: bio,
+                    batch: batch,
+                    designation: designation,
+                    title: title,
+                    institution: institution,
+                    location: location,
+                    phone: phone
+                };
+                if (selfPhotoBase64) userUpdate.url = selfPhotoBase64;
+
+                await setDoc(doc(db, "users", currentUser.uid), userUpdate, { merge: true });
+
+                selfSaveMsg.style.color = '#10b981';
+                selfSaveMsg.textContent = 'Profile & Bio updated successfully!';
+                setTimeout(() => {
+                    editSelfModal.classList.remove('active');
+                }, 1200);
+            } catch (err) {
+                console.error("Save error:", err);
+                selfSaveMsg.style.color = '#ef4444';
+                selfSaveMsg.textContent = 'Failed to save: ' + err.message;
+            } finally {
+                saveBtn.disabled = false;
+                saveBtn.textContent = 'Save Profile & Bio';
+            }
+        });
+    }
 
     let allAlumni = [];
     let currentFilter = 'all';

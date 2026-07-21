@@ -50,8 +50,20 @@ document.addEventListener('DOMContentLoaded', () => {
         return `${formattedDate}, ${formattedTime}`;
     }
 
+    let currentCampusFilter = 'all';
+
+    const galleryCampusFilterSelect = document.getElementById('galleryCampusFilter');
+    if (galleryCampusFilterSelect) {
+        galleryCampusFilterSelect.addEventListener('change', (e) => {
+            currentCampusFilter = e.target.value;
+            renderGallery();
+        });
+    }
+
     function renderFilterButtons() {
         if (!filterContainer) return;
+
+        const existingSelect = document.getElementById('galleryCampusFilter');
 
         // Default categories list (ordered nicely)
         const defaultCats = ['all', 'events', 'campus', 'academic', 'posters'];
@@ -74,6 +86,10 @@ document.addEventListener('DOMContentLoaded', () => {
             return `<button class="filter-btn ${isActive}" data-filter="${cat}">${displayName}</button>`;
         }).join('');
 
+        if (existingSelect) {
+            filterContainer.appendChild(existingSelect);
+        }
+
         filterContainer.querySelectorAll('.filter-btn').forEach(btn => {
             btn.addEventListener('click', () => {
                 filterContainer.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
@@ -91,8 +107,9 @@ document.addEventListener('DOMContentLoaded', () => {
         allPhotos.forEach(photo => {
             const photoCategory = (photo.category || 'Events').toLowerCase();
             const matchFilter = currentFilter === 'all' || photoCategory === currentFilter.toLowerCase();
+            const matchCampus = currentCampusFilter === 'all' || (photo.campus || '').toLowerCase().includes(currentCampusFilter.toLowerCase());
 
-            if (matchFilter) {
+            if (matchFilter && matchCampus) {
                 visibleCount++;
                 const delay = (visibleCount * 0.05).toFixed(2);
                 

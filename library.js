@@ -8,6 +8,17 @@ const db = getFirestore(app);
 const libraryGrid = document.getElementById('libraryGrid');
 const filterBtns = document.querySelectorAll('.filter-btn');
 
+if (libraryGrid) {
+    libraryGrid.innerHTML = Array(6).fill(0).map(() => `
+        <div class="skeleton-card" style="padding:1.5rem;">
+            <div class="skeleton-box" style="width:40px; height:40px; border-radius:8px; margin-bottom:1rem;"></div>
+            <div class="skeleton-box skeleton-text title" style="width:80%;"></div>
+            <div class="skeleton-box skeleton-text short" style="margin-bottom:1.5rem;"></div>
+            <div class="skeleton-box skeleton-text" style="height:36px; border-radius:8px; width:100%;"></div>
+        </div>
+    `).join('');
+}
+
 let allResources = [];
 
 onSnapshot(collection(db, "library_resources"), (snapshot) => {

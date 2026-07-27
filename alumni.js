@@ -25,6 +25,17 @@ document.addEventListener('DOMContentLoaded', () => {
     const alumniGrid = document.getElementById('alumniGrid');
     const filterContainer = document.getElementById('alumniFilters');
     
+    if (alumniGrid) {
+        alumniGrid.innerHTML = Array(6).fill(0).map(() => `
+            <div class="skeleton-card" style="padding:1.5rem; display:flex; flex-direction:column; align-items:center; text-align:center;">
+                <div class="skeleton-box skeleton-avatar large" style="margin-bottom:1rem;"></div>
+                <div class="skeleton-box skeleton-text title" style="width:70%;"></div>
+                <div class="skeleton-box skeleton-text short" style="margin-bottom:1rem;"></div>
+                <div class="skeleton-box skeleton-text medium"></div>
+            </div>
+        `).join('');
+    }
+    
     const lightboxModal = document.getElementById('alumniLightbox');
     const lightboxImg = document.getElementById('lightboxImg');
     const lightboxTitleTag = document.getElementById('lightboxTitleTag');

@@ -24,6 +24,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const emptyState = document.getElementById('videosEmpty');
     const filterContainer = document.getElementById('ProgramsFilters');
     
+    if (galleryGrid) {
+        galleryGrid.innerHTML = Array(6).fill(0).map(() => `
+            <div class="skeleton-card" style="height:240px; border-radius:16px; position:relative; overflow:hidden; padding:0;">
+                <div class="skeleton-box" style="width:100%; height:100%;"></div>
+            </div>
+        `).join('');
+    }
+
     let allPhotos = [];
     let currentFilter = 'all';
 

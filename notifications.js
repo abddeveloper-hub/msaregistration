@@ -112,14 +112,83 @@ export function showToast(title, message, type = "info") {
     }, 4500);
 }
 
+export async function runNotificationDiagnostic() {
+    const isHttps = window.location.protocol === 'https:' || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+    let diagReport = [];
+
+    if (!isHttps) {
+        diagReport.push("Insecure HTTP: Browsers block mobile push on http://. Use https://");
+    }
+
+    if (!("Notification" in window)) {
+        showToast("Diagnostic ❌", "Web Notifications API is not supported in this browser.");
+        return { success: false, reason: "API Unsupported" };
+    }
+
+    let perm = Notification.permission;
+    if (perm === "default") {
+        try {
+            perm = await Notification.requestPermission();
+        } catch(e) {}
+    }
+
+    if (perm === "denied") {
+        showToast("Permission Denied ❌", "Notifications blocked in browser site settings. Reset in Chrome site settings.");
+        return { success: false, reason: "Permission Denied" };
+    }
+
+    if (perm !== "granted") {
+        showToast("Permission Needed ⚠️", "Please grant notification permission when prompted.");
+        return { success: false, reason: "Permission Not Granted" };
+    }
+
+    let swDispatched = false;
+    if ("serviceWorker" in navigator) {
+        try {
+            const reg = await navigator.serviceWorker.ready;
+            await reg.showNotification("Live Test Notification 🔔", {
+                body: "System notifications are active and working on your device!",
+                icon: "./icon-192.png",
+                badge: "./icon-192.png",
+                vibrate: [300, 100, 300, 100, 300],
+                tag: "msa-diag-" + Date.now(),
+                renotify: true,
+                requireInteraction: true
+            });
+            swDispatched = true;
+        } catch(e) {
+            console.warn("SW reg.showNotification error:", e);
+            diagReport.push("SW Push Error: " + (e.message || e));
+        }
+    }
+
+    if (!swDispatched) {
+        try {
+            new Notification("Live Test Notification 🔔", {
+                body: "System notifications are active and working on your device!",
+                icon: "./icon-192.png"
+            });
+        } catch(e) {
+            console.warn("Direct Notification error:", e);
+            diagReport.push("Direct Push Error: " + (e.message || e));
+        }
+    }
+
+    const reportMsg = diagReport.length > 0 
+        ? "Notice: " + diagReport.join(" | ") 
+        : "System status bar & toast notification triggered successfully!";
+
+    showToast("Diagnostic Check 🔔", reportMsg);
+    return { success: true, details: reportMsg };
+}
+
 // Global window assignments for non-module usage
 if (typeof window !== "undefined") {
     window.sendAppNotification = sendAppNotification;
     window.showToast = showToast;
     window.triggerNativeNotification = triggerNativeNotification;
-    window.testNotification = () => {
-        showToast("Notifications Working! 🔔", "This is a live test notification. System is operational.");
-    };
+    window.runNotificationDiagnostic = runNotificationDiagnostic;
+    window.testNotification = runNotificationDiagnostic;
 }
 
 // DOM Setup & Listener

@@ -3,6 +3,7 @@ import { getAuth, onAuthStateChanged, signOut, updatePassword } from "https://ww
 import { getFirestore, doc, getDoc, updateDoc, collection, onSnapshot, addDoc, query as fsQuery, orderBy, limit, deleteDoc, enableMultiTabIndexedDbPersistence, setDoc, arrayUnion, arrayRemove, getDocs, runTransaction } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
 import { firebaseConfig } from "./firebase-config.js";
+import { sendAppNotification } from "./notifications.js";
 
 
 
@@ -2405,6 +2406,14 @@ if (galleryUploadForm) {
                 uploadedBy: auth.currentUser ? auth.currentUser.uid : "faculty",
                 createdAt: new Date().toISOString()
             });
+
+            sendAppNotification({
+                recipient: "all",
+                title: "📸 New Photo Added",
+                message: `"${title}" has been added to the Campus Gallery.`,
+                type: "photo",
+                link: "gallery.html"
+            });
             
             galleryUploadMsg.textContent = "Photo uploaded successfully!";
             galleryUploadMsg.style.color = "var(--success)";
@@ -2652,6 +2661,14 @@ if (videoUploadForm) {
             }
             
             function finishUpload() {
+                sendAppNotification({
+                    recipient: "all",
+                    title: "🎬 New Video Uploaded",
+                    message: `"${videoData.title || 'New Program'}" is now available in the Video Gallery.`,
+                    type: "video",
+                    link: "videos.html"
+                });
+
                 videoUploadMsg.textContent = "Program added successfully!";
                 videoUploadMsg.style.color = "var(--success)";
                 videoUploadForm.reset();

@@ -11,6 +11,10 @@ const db = getFirestore(app);
 export async function sendAppNotification({ recipient = "all", title, message, body, type = "announcement", link = "#" }) {
     const textMsg = message || body || title;
     const isoNow = new Date().toISOString();
+    
+    // Always trigger local notification popup on current device
+    showToast(title, textMsg, type);
+
     try {
         await addDoc(collection(db, "notifications"), {
             recipient: recipient || "all",
@@ -23,8 +27,10 @@ export async function sendAppNotification({ recipient = "all", title, message, b
             createdAt: isoNow,
             timestamp: isoNow
         });
+        return { success: true };
     } catch (err) {
-        console.warn("Failed to send notification:", err);
+        console.warn("Firestore notification save warning (check Security Rules):", err);
+        return { success: false, error: err };
     }
 }
 

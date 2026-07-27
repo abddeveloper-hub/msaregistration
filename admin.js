@@ -1110,7 +1110,7 @@ if (sendPushNotifBtn) {
         sendPushNotifBtn.textContent = "Sending...";
 
         try {
-            await sendAppNotification({
+            const res = await sendAppNotification({
                 recipient: "all",
                 title: title,
                 message: body,
@@ -1118,8 +1118,19 @@ if (sendPushNotifBtn) {
                 type: "announcement",
                 link: "#"
             });
-            msgEl.textContent = "Notification sent successfully!";
-            msgEl.style.color = "var(--success)";
+            
+            if (res && res.success === false) {
+                if (res.error && res.error.message && res.error.message.includes("permissions")) {
+                    msgEl.textContent = "Displayed on screen! To sync across all devices, enable read/write rules for 'notifications' in Firebase Console.";
+                    msgEl.style.color = "var(--warning, #f39c12)";
+                } else {
+                    msgEl.textContent = "Displayed locally! (Cloud save notice: " + (res.error?.message || "Check network/rules") + ")";
+                    msgEl.style.color = "var(--warning, #f39c12)";
+                }
+            } else {
+                msgEl.textContent = "Notification sent & published successfully!";
+                msgEl.style.color = "var(--success)";
+            }
             document.getElementById('pushNotifTitle').value = '';
             document.getElementById('pushNotifBody').value = '';
         } catch(e) {

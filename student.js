@@ -176,7 +176,7 @@ onAuthStateChanged(auth, async (user) => {
         });
 
         // Listen for notifications
-        const notifQuery = query(collection(db, "notifications"), orderBy("timestamp", "desc"), limit(20));
+        const notifQuery = query(collection(db, "notifications"), limit(30));
         notifUnsub = onSnapshot(notifQuery, (snapshot) => {
             const container = document.getElementById('notificationsContainer');
             const noMsg = document.getElementById('noNotificationsMsg');
@@ -194,30 +194,44 @@ onAuthStateChanged(auth, async (user) => {
             if (noMsg) noMsg.classList.add('hidden');
             let unreadCount = 0;
             
-            // Handle new notifications (toast)
-            snapshot.docChanges().forEach((change) => {
-                if (change.type === 'added') {
-                    // Check if it's a truly new notification (within last 5 mins) to avoid spamming toasts on initial load
-                    const data = change.doc.data();
-                    const notifTime = new Date(data.timestamp).getTime();
-                    const now = new Date().getTime();
-                    if (now - notifTime < 5 * 60 * 1000) {
-                        showToast(data.title, data.body);
-                    }
-                }
-            });
+            const docsData = snapshot.docs.map(d => {
+                const data = d.data();
+                const timeIso = data.createdAt || data.timestamp || new Date().toISOString();
+                const textBody = data.message || data.body || '';
+                return { id: d.id, ...data, timeIso, textBody };
+            }).sort((a, b) => new Date(b.timeIso) - new Date(a.timeIso));
 
-            container.innerHTML = snapshot.docs.map((doc, index) => {
-                const data = doc.data();
-                if (index < 3) unreadCount++; // Simple mock: treat top 3 as unread, or real logic if we store read states
-                const d = new Date(data.timestamp);
+            // Handle new notifications (toast)
+            if (initialLoadDone && snapshot.docChanges().length > 0) {
+                snapshot.docChanges().forEach((change) => {
+                    if (change.type === 'added') {
+                        const data = change.doc.data();
+                        const timeIso = data.createdAt || data.timestamp || new Date().toISOString();
+                        const notifTime = new Date(timeIso).getTime();
+                        const now = new Date().getTime();
+                        if (now - notifTime < 5 * 60 * 1000) {
+                            const msgText = data.message || data.body || data.title;
+                            if (window.showToast) {
+                                window.showToast(data.title, msgText);
+                            } else {
+                                showToast(data.title, msgText);
+                            }
+                        }
+                    }
+                });
+            }
+
+            container.innerHTML = docsData.map((data, index) => {
+                if (index < 3 && !data.read) unreadCount++;
+                const d = new Date(data.timeIso);
+                const dateStr = isNaN(d.getTime()) ? 'Just now' : `${d.toLocaleDateString()} ${d.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}`;
                 return `
                     <div class="portal-card" style="border-left: 4px solid var(--primary); padding: 1rem;">
                         <h4 style="color: var(--text-main); margin-bottom: 0.5rem; display: flex; justify-content: space-between;">
                             ${data.title}
-                            <span style="font-size: 0.75rem; color: var(--text-dim); font-weight: normal;">${d.toLocaleDateString()} ${d.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
+                            <span style="font-size: 0.75rem; color: var(--text-dim); font-weight: normal;">${dateStr}</span>
                         </h4>
-                        <p style="color: var(--text); font-size: 0.9rem;">${data.body}</p>
+                        <p style="color: var(--text); font-size: 0.9rem;">${data.textBody}</p>
                     </div>
                 `;
             }).join('');

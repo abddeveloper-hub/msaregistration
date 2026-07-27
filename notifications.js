@@ -8,16 +8,20 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 
 // Helper function to dispatch a new notification to Firestore
-export async function sendAppNotification({ recipient = "all", title, message, type = "announcement", link = "#" }) {
+export async function sendAppNotification({ recipient = "all", title, message, body, type = "announcement", link = "#" }) {
+    const textMsg = message || body || title;
+    const isoNow = new Date().toISOString();
     try {
         await addDoc(collection(db, "notifications"), {
-            recipient: recipient,
+            recipient: recipient || "all",
             title: title,
-            message: message,
+            message: textMsg,
+            body: textMsg,
             type: type, // 'announcement', 'media', 'exam', 'approval', 'system'
             link: link,
             read: false,
-            createdAt: new Date().toISOString()
+            createdAt: isoNow,
+            timestamp: isoNow
         });
     } catch (err) {
         console.warn("Failed to send notification:", err);
@@ -40,17 +44,29 @@ export function showToast(title, message, type = "info") {
     else if (type === "exam") icon = "📊";
     else if (type === "approval") icon = "✅";
 
+    const displayMsg = message || title;
+    const displayTitle = message ? title : "Notification";
+
     const toast = document.createElement("div");
     toast.className = `toast-banner toast-${type}`;
     toast.innerHTML = `
         <span style="font-size:1.3rem;">${icon}</span>
         <div style="flex:1;">
-            <div style="font-weight:700; font-size:0.9rem; margin-bottom:0.15rem;">${title}</div>
-            <div style="font-size:0.82rem; opacity:0.9; line-height:1.3;">${message}</div>
+            <div style="font-weight:700; font-size:0.9rem; margin-bottom:0.15rem;">${displayTitle}</div>
+            <div style="font-size:0.82rem; opacity:0.9; line-height:1.3;">${displayMsg}</div>
         </div>
     `;
 
     container.appendChild(toast);
+
+    // Native Web Notification Fallback
+    if ("Notification" in window) {
+        if (Notification.permission === "granted") {
+            try { new Notification(displayTitle, { body: displayMsg, icon: "logo.png" }); } catch (e) {}
+        } else if (Notification.permission !== "denied") {
+            Notification.requestPermission();
+        }
+    }
 
     setTimeout(() => {
         toast.style.opacity = "0";
@@ -59,11 +75,22 @@ export function showToast(title, message, type = "info") {
     }, 4500);
 }
 
+// Global window assignments for non-module usage
+if (typeof window !== "undefined") {
+    window.sendAppNotification = sendAppNotification;
+    window.showToast = showToast;
+}
+
 // DOM Setup & Listener
 let currentNotifications = [];
 let initialLoadDone = false;
 
 document.addEventListener("DOMContentLoaded", () => {
+    // Request notification permissions gracefully on user interaction or load
+    if ("Notification" in window && Notification.permission === "default") {
+        Notification.requestPermission().catch(() => {});
+    }
+
     // 1. Ensure Toast Container exists
     if (!document.getElementById("globalToastContainer")) {
         const toastBox = document.createElement("div");
@@ -137,7 +164,7 @@ function injectBellIcon() {
 // Auth State & Realtime Subscription
 onAuthStateChanged(auth, (user) => {
     const notifRef = collection(db, "notifications");
-    const q = query(notifRef, orderBy("createdAt", "desc"), limit(20));
+    const q = query(notifRef, limit(30));
 
     onSnapshot(q, (snapshot) => {
         const listContainer = document.getElementById("notifListContainer");
@@ -148,20 +175,34 @@ onAuthStateChanged(auth, (user) => {
 
         snapshot.forEach(docSnap => {
             const data = docSnap.data();
-            if (data.recipient === "all" || (user && data.recipient === user.uid)) {
-                const item = { id: docSnap.id, ...data };
+            const isForUser = !data.recipient || data.recipient === "all" || (user && data.recipient === user.uid);
+            if (isForUser) {
+                const textMsg = data.message || data.body || "";
+                const createdTime = data.createdAt || data.timestamp || new Date().toISOString();
+                const item = { 
+                    id: docSnap.id, 
+                    ...data, 
+                    message: textMsg, 
+                    body: textMsg, 
+                    createdAt: createdTime 
+                };
                 currentNotifications.push(item);
                 if (!item.read) unreadCount++;
             }
         });
+
+        // Sort descending by date
+        currentNotifications.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
         // Trigger toast on new items (after initial load)
         if (initialLoadDone && snapshot.docChanges().length > 0) {
             snapshot.docChanges().forEach(change => {
                 if (change.type === "added") {
                     const newItem = change.doc.data();
-                    if (newItem.recipient === "all" || (user && newItem.recipient === user.uid)) {
-                        showToast(newItem.title, newItem.message, newItem.type || "info");
+                    const isForUser = !newItem.recipient || newItem.recipient === "all" || (user && newItem.recipient === user.uid);
+                    if (isForUser) {
+                        const msgText = newItem.message || newItem.body || newItem.title;
+                        showToast(newItem.title, msgText, newItem.type || "info");
                     }
                 }
             });
@@ -248,3 +289,4 @@ function formatTimeAgo(isoString) {
     const days = Math.floor(hours / 24);
     return `${days}d ago`;
 }
+

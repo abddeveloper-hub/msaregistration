@@ -1110,11 +1110,13 @@ if (sendPushNotifBtn) {
         sendPushNotifBtn.textContent = "Sending...";
 
         try {
-            await addDoc(collection(db, "notifications"), {
+            await sendAppNotification({
+                recipient: "all",
                 title: title,
+                message: body,
                 body: body,
-                timestamp: new Date().toISOString(),
-                sentBy: auth.currentUser ? auth.currentUser.uid : 'admin'
+                type: "announcement",
+                link: "#"
             });
             msgEl.textContent = "Notification sent successfully!";
             msgEl.style.color = "var(--success)";

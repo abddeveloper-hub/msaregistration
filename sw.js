@@ -96,13 +96,55 @@ self.addEventListener('fetch', (event) => {
 
 self.addEventListener('notificationclick', (event) => {
   event.notification.close();
+  const targetUrl = (event.notification.data && event.notification.data.url) ? event.notification.data.url : './';
   event.waitUntil(
     clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
       for (const client of clientList) {
         if ('focus' in client) return client.focus();
       }
-      if (clients.openWindow) return clients.openWindow('./');
+      if (clients.openWindow) return clients.openWindow(targetUrl);
     })
   );
 });
+
+self.addEventListener('message', (event) => {
+  if (event.data && event.data.type === 'SHOW_SYSTEM_NOTIFICATION') {
+    const { title, body, icon, link } = event.data;
+    const notifTitle = title || 'MSA Portal';
+    const notifOptions = {
+      body: body || 'New announcement published.',
+      icon: icon || './icon-192.png',
+      badge: './icon-192.png',
+      vibrate: [300, 100, 300, 100, 300],
+      tag: 'msa-sys-notif-' + Date.now(),
+      renotify: true,
+      requireInteraction: true,
+      data: { url: link || './' }
+    };
+    self.registration.showNotification(notifTitle, notifOptions);
+  }
+});
+
+self.addEventListener('push', (event) => {
+  let data = { title: 'MSA Portal Announcement', body: 'You have a new notification.' };
+  if (event.data) {
+    try {
+      data = event.data.json();
+    } catch(e) {
+      data.body = event.data.text();
+    }
+  }
+  const options = {
+    body: data.body || data.message || '',
+    icon: data.icon || './icon-192.png',
+    badge: './icon-192.png',
+    vibrate: [300, 100, 300, 100, 300],
+    tag: 'msa-push-' + Date.now(),
+    renotify: true,
+    requireInteraction: true,
+    data: { url: data.link || './' }
+  };
+  event.waitUntil(self.registration.showNotification(data.title || 'MSA Portal', options));
+});
+
 

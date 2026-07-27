@@ -39,20 +39,35 @@ export function triggerNativeNotification(title, message) {
     const text = message || title;
     const header = message ? title : "MSA Portal";
 
+    // 1. Send system status bar payload to active Service Worker controller
+    if ("serviceWorker" in navigator && navigator.serviceWorker.controller) {
+        try {
+            navigator.serviceWorker.controller.postMessage({
+                type: 'SHOW_SYSTEM_NOTIFICATION',
+                title: header,
+                body: text,
+                icon: './icon-192.png'
+            });
+        } catch(e) {}
+    }
+
+    // 2. Dispatch via Service Worker registration ready state
     if ("serviceWorker" in navigator) {
         navigator.serviceWorker.ready.then(reg => {
             reg.showNotification(header, {
                 body: text,
-                icon: "logo.png",
-                badge: "icon-192.png",
-                vibrate: [200, 100, 200],
-                tag: "msa-notif-" + Date.now()
+                icon: "./icon-192.png",
+                badge: "./icon-192.png",
+                vibrate: [300, 100, 300, 100, 300],
+                tag: "msa-sys-notif-" + Date.now(),
+                renotify: true,
+                requireInteraction: true
             });
         }).catch(() => {
-            try { new Notification(header, { body: text, icon: "logo.png" }); } catch (e) {}
+            try { new Notification(header, { body: text, icon: "./icon-192.png" }); } catch (e) {}
         });
     } else {
-        try { new Notification(header, { body: text, icon: "logo.png" }); } catch (e) {}
+        try { new Notification(header, { body: text, icon: "./icon-192.png" }); } catch (e) {}
     }
 }
 

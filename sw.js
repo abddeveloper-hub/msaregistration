@@ -117,10 +117,11 @@ self.addEventListener('message', (event) => {
   if (event.data && event.data.type === 'SHOW_SYSTEM_NOTIFICATION') {
     const { title, body, icon, link } = event.data;
     const notifTitle = title || 'MSA Portal';
+    const absIcon = icon || new URL('icon-192.png', self.location.href).href;
     const notifOptions = {
       body: body || 'New announcement published.',
-      icon: icon || './icon-192.png',
-      badge: './icon-192.png',
+      icon: absIcon,
+      badge: absIcon,
       vibrate: [300, 100, 300, 100, 300],
       tag: 'msa-sys-notif-' + Date.now(),
       renotify: true,

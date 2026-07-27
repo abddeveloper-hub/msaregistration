@@ -52,6 +52,11 @@ export function triggerNativeNotification(title, message) {
     if (!("Notification" in window) || Notification.permission !== "granted") return;
     const text = message || title;
     const header = message ? title : "MSA Portal";
+    
+    let iconUrl = "logo.png";
+    try {
+        iconUrl = new URL("icon-192.png", window.location.href).href;
+    } catch(e) {}
 
     // 1. Send system status bar payload to active Service Worker controller
     if ("serviceWorker" in navigator && navigator.serviceWorker.controller) {
@@ -60,7 +65,7 @@ export function triggerNativeNotification(title, message) {
                 type: 'SHOW_SYSTEM_NOTIFICATION',
                 title: header,
                 body: text,
-                icon: './icon-192.png'
+                icon: iconUrl
             });
         } catch(e) {}
     }
@@ -70,18 +75,18 @@ export function triggerNativeNotification(title, message) {
         navigator.serviceWorker.ready.then(reg => {
             reg.showNotification(header, {
                 body: text,
-                icon: "./icon-192.png",
-                badge: "./icon-192.png",
+                icon: iconUrl,
+                badge: iconUrl,
                 vibrate: [300, 100, 300, 100, 300],
                 tag: "msa-sys-notif-" + Date.now(),
                 renotify: true,
                 requireInteraction: true
             });
         }).catch(() => {
-            try { new Notification(header, { body: text, icon: "./icon-192.png" }); } catch (e) {}
+            try { new Notification(header, { body: text, icon: iconUrl }); } catch (e) {}
         });
     } else {
-        try { new Notification(header, { body: text, icon: "./icon-192.png" }); } catch (e) {}
+        try { new Notification(header, { body: text, icon: iconUrl }); } catch (e) {}
     }
 }
 

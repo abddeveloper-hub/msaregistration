@@ -112,17 +112,6 @@ let currentNotifications = [];
 let initialLoadDone = false;
 
 document.addEventListener("DOMContentLoaded", () => {
-    // Request notification permissions gracefully on user interaction or load
-    if ("Notification" in window) {
-        if (Notification.permission === "default") {
-            Notification.requestPermission().then(permission => {
-                if (permission === "granted") {
-                    showToast("Notifications Enabled 🔔", "You will now receive live updates and announcements.");
-                }
-            }).catch(() => {});
-        }
-    }
-
     // 1. Ensure Toast Container exists
     if (!document.getElementById("globalToastContainer")) {
         const toastBox = document.createElement("div");
@@ -141,6 +130,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 <h3>🔔 Notifications</h3>
                 <button id="notifClearAllBtn" class="notif-clear-btn">Mark all read</button>
             </div>
+            <div id="notifPermissionBanner"></div>
             <div id="notifListContainer" class="notif-list">
                 <div style="padding:1.5rem; text-align:center; color:var(--text-dim); font-size:0.85rem;">No notifications yet.</div>
             </div>
@@ -153,9 +143,50 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // 3. Inject Bell Button into existing headers if present
+    // 3. Inject Bell Button & setup Mobile Permission Banners
     injectBellIcon();
+    renderPermissionBanner();
 });
+
+function renderPermissionBanner() {
+    const bannerBox = document.getElementById("notifPermissionBanner");
+    if (!bannerBox) return;
+
+    const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
+    const isStandalone = window.navigator.standalone || window.matchMedia('(display-mode: standalone)').matches;
+
+    if (isIOS && !isStandalone) {
+        bannerBox.innerHTML = `
+            <div style="background:rgba(59,130,246,0.12); border:1px solid rgba(59,130,246,0.3); border-radius:10px; margin:0.75rem; padding:0.8rem; font-size:0.82rem; color:var(--text-main);">
+                <strong>📱 iPhone Notification Notice:</strong><br>
+                To receive live push notifications on iOS, tap the <span style="font-weight:700;">Share</span> button in Safari, select <span style="font-weight:700;">'Add to Home Screen'</span>, then open the app from your Home Screen.
+            </div>
+        `;
+        return;
+    }
+
+    if ("Notification" in window && Notification.permission === "default") {
+        bannerBox.innerHTML = `
+            <div style="background:linear-gradient(135deg, #2563eb, #1d4ed8); color:#ffffff; border-radius:10px; margin:0.75rem; padding:0.85rem; display:flex; align-items:center; justify-content:space-between; gap:0.5rem; box-shadow:0 4px 14px rgba(37,99,235,0.35);">
+                <div style="font-size:0.83rem; font-weight:600;">🔔 Enable Mobile Notifications</div>
+                <button id="enableNotifBtn" style="background:#ffffff; color:#1d4ed8; border:none; padding:6px 12px; border-radius:6px; font-weight:700; font-size:0.8rem; cursor:pointer; white-space:nowrap;">Enable</button>
+            </div>
+        `;
+        const enableBtn = document.getElementById("enableNotifBtn");
+        enableBtn?.addEventListener("click", () => {
+            Notification.requestPermission().then(permission => {
+                if (permission === "granted") {
+                    bannerBox.innerHTML = "";
+                    showToast("Notifications Enabled 🔔", "You will now receive live mobile push notifications.");
+                } else if (permission === "denied") {
+                    bannerBox.innerHTML = `<div style="padding:0.5rem; font-size:0.8rem; color:var(--text-dim); text-align:center;">Notifications were blocked in browser settings.</div>`;
+                }
+            });
+        });
+    } else {
+        bannerBox.innerHTML = "";
+    }
+}
 
 function injectBellIcon() {
     const navMenus = document.querySelectorAll(".nav-menu, .portal-header, .login-dropdown-menu");
@@ -175,6 +206,17 @@ function injectBellIcon() {
             bellBtn?.addEventListener("click", (e) => {
                 e.preventDefault();
                 e.stopPropagation();
+
+                // Trigger touch gesture permission request if default
+                if ("Notification" in window && Notification.permission === "default") {
+                    Notification.requestPermission().then(permission => {
+                        if (permission === "granted") {
+                            showToast("Notifications Enabled 🔔", "Mobile push notifications are active.");
+                            renderPermissionBanner();
+                        }
+                    });
+                }
+
                 const drawer = document.getElementById("globalNotifDrawer");
                 if (drawer) {
                     drawer.classList.toggle("open");

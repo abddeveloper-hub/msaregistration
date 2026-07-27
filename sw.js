@@ -1,4 +1,10 @@
-const CACHE_NAME = 'msaukkuda-portal-v38';
+try {
+  importScripts('./firebase-messaging-sw.js');
+} catch (e) {
+  console.warn('FCM SW import notice:', e);
+}
+
+const CACHE_NAME = 'msaukkuda-portal-v39';
 const ASSETS = [
   './',
   './index.html',

@@ -28,6 +28,28 @@ export async function sendAppNotification({ recipient = "all", title, message, b
     }
 }
 
+export function triggerNativeNotification(title, message) {
+    if (!("Notification" in window) || Notification.permission !== "granted") return;
+    const text = message || title;
+    const header = message ? title : "MSA Portal";
+
+    if ("serviceWorker" in navigator) {
+        navigator.serviceWorker.ready.then(reg => {
+            reg.showNotification(header, {
+                body: text,
+                icon: "logo.png",
+                badge: "icon-192.png",
+                vibrate: [200, 100, 200],
+                tag: "msa-notif-" + Date.now()
+            });
+        }).catch(() => {
+            try { new Notification(header, { body: text, icon: "logo.png" }); } catch (e) {}
+        });
+    } else {
+        try { new Notification(header, { body: text, icon: "logo.png" }); } catch (e) {}
+    }
+}
+
 // Global Toast Popup Launcher
 export function showToast(title, message, type = "info") {
     let container = document.getElementById("globalToastContainer");
@@ -59,14 +81,8 @@ export function showToast(title, message, type = "info") {
 
     container.appendChild(toast);
 
-    // Native Web Notification Fallback
-    if ("Notification" in window) {
-        if (Notification.permission === "granted") {
-            try { new Notification(displayTitle, { body: displayMsg, icon: "logo.png" }); } catch (e) {}
-        } else if (Notification.permission !== "denied") {
-            Notification.requestPermission();
-        }
-    }
+    // Native Web Notification Dispatch
+    triggerNativeNotification(displayTitle, displayMsg);
 
     setTimeout(() => {
         toast.style.opacity = "0";
@@ -79,6 +95,10 @@ export function showToast(title, message, type = "info") {
 if (typeof window !== "undefined") {
     window.sendAppNotification = sendAppNotification;
     window.showToast = showToast;
+    window.triggerNativeNotification = triggerNativeNotification;
+    window.testNotification = () => {
+        showToast("Notifications Working! 🔔", "This is a live test notification. System is operational.");
+    };
 }
 
 // DOM Setup & Listener
@@ -87,8 +107,14 @@ let initialLoadDone = false;
 
 document.addEventListener("DOMContentLoaded", () => {
     // Request notification permissions gracefully on user interaction or load
-    if ("Notification" in window && Notification.permission === "default") {
-        Notification.requestPermission().catch(() => {});
+    if ("Notification" in window) {
+        if (Notification.permission === "default") {
+            Notification.requestPermission().then(permission => {
+                if (permission === "granted") {
+                    showToast("Notifications Enabled 🔔", "You will now receive live updates and announcements.");
+                }
+            }).catch(() => {});
+        }
     }
 
     // 1. Ensure Toast Container exists

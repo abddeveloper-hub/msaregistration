@@ -1127,9 +1127,20 @@ if (sendPushNotifBtn) {
             msgEl.style.color = "var(--error)";
         } finally {
             sendPushNotifBtn.disabled = false;
-            sendPushNotifBtn.textContent = "Send Notification";
+            sendPushNotifBtn.textContent = "Send Notification to All";
         }
     });
+
+    const testNotifBtn = document.getElementById('testPushNotifBtn');
+    if (testNotifBtn) {
+        testNotifBtn.addEventListener('click', () => {
+            if (window.testNotification) {
+                window.testNotification();
+            } else {
+                alert("Notification module loading... Please try again in a moment.");
+            }
+        });
+    }
 }
 
 function formatAdminAddedDate(rawDate) {

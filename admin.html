@@ -533,7 +533,10 @@
                         <label class="label">Notification Body</label>
                         <textarea id="pushNotifBody" class="input" placeholder="Enter message details..." rows="3" required></textarea>
                     </div>
-                    <button class="btn btn-main" id="sendPushNotifBtn" style="margin-top: 1rem;">Send Notification</button>
+                    <div style="display:flex; gap:1rem; margin-top:1rem; flex-wrap:wrap;">
+                        <button class="btn btn-main" id="sendPushNotifBtn">Send Notification to All</button>
+                        <button class="btn btn-outline" id="testPushNotifBtn" type="button">🔔 Test Notification (Instant)</button>
+                    </div>
                     <p id="pushNotifMsg" style="margin-top: 0.5rem; font-size: 0.9rem;"></p>
                 </div>
 

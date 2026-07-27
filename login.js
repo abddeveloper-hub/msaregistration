@@ -183,6 +183,15 @@ form.addEventListener("submit", async (e) => {
             const userCred = await createUserWithEmailAndPassword(auth, email, password);
             const finalRole = email.toLowerCase() === "admin@msaukkuda.com" ? "admin" : selectedRole;
 
+            const dobVal = document.getElementById("loginDob")?.value || "";
+            const bloodVal = document.getElementById("loginBlood")?.value.trim() || "";
+            const aadharVal = document.getElementById("loginAadhar")?.value.trim() || "";
+            const fatherNameVal = document.getElementById("loginFatherName")?.value.trim() || "";
+            const sayyidVal = document.getElementById("loginSayyid")?.value || "no";
+            const hafizVal = document.getElementById("loginHafiz")?.value || "no";
+            const orphanVal = document.getElementById("loginOrphan")?.value || "no";
+            const addressVal = document.getElementById("loginAddress")?.value.trim() || "";
+
             const titleVal = titleInput ? titleInput.value.trim() : "";
             const batchVal = batchInput ? batchInput.value.trim() : "";
             const desigVal = designationInput ? designationInput.value.trim() : "";
@@ -196,6 +205,14 @@ form.addEventListener("submit", async (e) => {
                 email,
                 fullName: name,
                 role: finalRole,
+                dob: dobVal,
+                blood: bloodVal,
+                aadhar: aadharVal,
+                fatherName: fatherNameVal,
+                sayyid: sayyidVal,
+                hafiz: hafizVal,
+                orphan: orphanVal,
+                address: addressVal,
                 title: titleVal,
                 batch: batchVal,
                 designation: desigVal,
@@ -213,6 +230,14 @@ form.addEventListener("submit", async (e) => {
             if (finalRole === "alumni") {
                 const alumniPayload = {
                     name: name,
+                    dob: dobVal,
+                    blood: bloodVal,
+                    aadhar: aadharVal,
+                    fatherName: fatherNameVal,
+                    sayyid: sayyidVal,
+                    hafiz: hafizVal,
+                    orphan: orphanVal,
+                    address: addressVal,
                     title: titleVal || "Fazil Muhyissunnah",
                     batch: batchVal || "Graduate Scholar",
                     designation: desigVal,
@@ -262,19 +287,20 @@ form.addEventListener("submit", async (e) => {
     }
 });
 
-// Auto-redirect if already logged in
+// Keep login page open so user can always select role and log in
 onAuthStateChanged(auth, async (user) => {
     if (user) {
-        const userSnap = await getDoc(doc(db, "users", user.uid));
-        if (userSnap.exists()) {
-            const role = userSnap.data().role;
-            if (role === "admin") window.location.href = "admin.html";
-            else if (role === "faculty") window.location.href = "teacher.html";
-            else if (role === "alumni") window.location.href = "alumni.html";
-            else {
-                 if (urlParams.get("signup") === "true") window.location.href = "student.html?mode=register";
-                 else window.location.href = "student.html";
+        // Optionally pre-fill user info or notify, but stay on login page as requested
+        try {
+            const userSnap = await getDoc(doc(db, "users", user.uid));
+            if (userSnap.exists()) {
+                const data = userSnap.data();
+                if (data.email && emailInput && !emailInput.value) {
+                    emailInput.value = data.email;
+                }
             }
+        } catch (err) {
+            console.warn("Auth check info error:", err);
         }
     }
 });

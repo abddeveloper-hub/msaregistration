@@ -8,7 +8,7 @@
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=El+Messiri:wght@400;500;600;700&family=Cinzel:wght@500;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <!-- CSS -->
     <link rel="stylesheet" href="style.css?v=22">
@@ -303,7 +303,7 @@
             <a class="brand-lockup" href="index.html" aria-label="Muhyissunnah Dars Ukkuda home">
                 <img src="logo.png?v=2" alt="MSA Ukkuda Logo" class="brand-logo-img">
                 <span class="brand-text">
-                    <strong style="font-family: 'Inter', sans-serif; letter-spacing: 0.08em; font-size: 1.25rem; line-height: 1; text-transform: uppercase; font-weight: 700;"><span class="brand-text-styled">Muhyissunnah Dars</span></strong>
+                    <strong style="font-family: 'Aref Ruqaa', 'Amiri', serif; letter-spacing: 0.04em; font-size: 1.35rem; line-height: 1; text-transform: uppercase; font-weight: 700;"><span class="brand-text-styled">Muhyissunnah Dars</span></strong>
                     <span style="letter-spacing: 0.15em;">Ukkuda Official Portal</span>
                 </span>
             </a>
@@ -436,12 +436,74 @@
             <button class="lightbox-close-btn" id="closeEditSelfModalBtn">✕</button>
             <h2 style="font-family:'Cinzel',serif; font-size:1.4rem; color:var(--text-main); margin-bottom:1.5rem;">Update Your Alumni Profile & Bio</h2>
             
-            <form id="editAlumniSelfForm" style="display:flex; flex-direction:column; gap:1.2rem;">
-                <div class="input-group">
-                    <label class="label" style="font-weight:600; font-size:0.85rem; margin-bottom:0.4rem; color:var(--text-main); display:block;">Full Name</label>
-                    <input type="text" id="selfName" class="input" style="width:100%; padding:0.75rem 1rem; border-radius:12px; border:1px solid var(--border); background:var(--surface-raised); color:var(--text-main); box-sizing:border-box;" required>
+            <form id="editAlumniSelfForm" style="display:flex; flex-direction:column; gap:1.2rem; max-height:80vh; overflow-y:auto; padding-right:0.5rem;">
+                <!-- SECTION 1: Personal Information -->
+                <div style="font-size:0.85rem; font-weight:700; color:var(--primary); text-transform:uppercase; letter-spacing:0.08em; border-bottom:1px solid var(--border); padding-bottom:0.3rem;">
+                    1. Personal Information
+                </div>
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:1rem;">
+                    <div>
+                        <label class="label" style="font-weight:600; font-size:0.85rem; margin-bottom:0.4rem; color:var(--text-main); display:block;">Full Name *</label>
+                        <input type="text" id="selfName" class="input" style="width:100%; padding:0.75rem 1rem; border-radius:12px; border:1px solid var(--border); background:var(--surface-raised); color:var(--text-main); box-sizing:border-box;" required>
+                    </div>
+                    <div>
+                        <label class="label" style="font-weight:600; font-size:0.85rem; margin-bottom:0.4rem; color:var(--text-main); display:block;">Date of Birth</label>
+                        <input type="date" id="selfDob" class="input" style="width:100%; padding:0.75rem 1rem; border-radius:12px; border:1px solid var(--border); background:var(--surface-raised); color:var(--text-main); box-sizing:border-box;">
+                    </div>
                 </div>
                 
+                <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:1rem;">
+                    <div>
+                        <label class="label" style="font-weight:600; font-size:0.85rem; margin-bottom:0.4rem; color:var(--text-main); display:block;">Blood Group</label>
+                        <input type="text" id="selfBlood" class="input" placeholder="e.g. O+" style="width:100%; padding:0.75rem 1rem; border-radius:12px; border:1px solid var(--border); background:var(--surface-raised); color:var(--text-main); box-sizing:border-box;">
+                    </div>
+                    <div>
+                        <label class="label" style="font-weight:600; font-size:0.85rem; margin-bottom:0.4rem; color:var(--text-main); display:block;">Phone / WhatsApp *</label>
+                        <input type="text" id="selfPhone" class="input" placeholder="+91 9876543210" style="width:100%; padding:0.75rem 1rem; border-radius:12px; border:1px solid var(--border); background:var(--surface-raised); color:var(--text-main); box-sizing:border-box;" required>
+                    </div>
+                    <div>
+                        <label class="label" style="font-weight:600; font-size:0.85rem; margin-bottom:0.4rem; color:var(--text-main); display:block;">Aadhar Number</label>
+                        <input type="text" id="selfAadhar" class="input" placeholder="12-digit Aadhar" style="width:100%; padding:0.75rem 1rem; border-radius:12px; border:1px solid var(--border); background:var(--surface-raised); color:var(--text-main); box-sizing:border-box;">
+                    </div>
+                </div>
+
+                <!-- SECTION 2: Family & Residence -->
+                <div style="font-size:0.85rem; font-weight:700; color:var(--primary); text-transform:uppercase; letter-spacing:0.08em; border-bottom:1px solid var(--border); padding-bottom:0.3rem; margin-top:0.5rem;">
+                    2. Family & Residence
+                </div>
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:1rem;">
+                    <div>
+                        <label class="label" style="font-weight:600; font-size:0.85rem; margin-bottom:0.4rem; color:var(--text-main); display:block;">Father's Name</label>
+                        <input type="text" id="selfFatherName" class="input" placeholder="Father's Full Name" style="width:100%; padding:0.75rem 1rem; border-radius:12px; border:1px solid var(--border); background:var(--surface-raised); color:var(--text-main); box-sizing:border-box;">
+                    </div>
+                    <div>
+                        <label class="label" style="font-weight:600; font-size:0.85rem; margin-bottom:0.4rem; color:var(--text-main); display:block;">Location / City & State</label>
+                        <input type="text" id="selfLocation" class="input" placeholder="e.g. Calicut, Kerala" style="width:100%; padding:0.75rem 1rem; border-radius:12px; border:1px solid var(--border); background:var(--surface-raised); color:var(--text-main); box-sizing:border-box;">
+                    </div>
+                </div>
+                <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:1rem;">
+                    <div>
+                        <label class="label" style="font-weight:600; font-size:0.85rem; margin-bottom:0.4rem; color:var(--text-main); display:block;">Sayyid Status</label>
+                        <select id="selfSayyid" class="input" style="width:100%; padding:0.75rem 1rem; border-radius:12px; border:1px solid var(--border); background:var(--surface-raised); color:var(--text-main); box-sizing:border-box;"><option value="no">No</option><option value="yes">Yes</option></select>
+                    </div>
+                    <div>
+                        <label class="label" style="font-weight:600; font-size:0.85rem; margin-bottom:0.4rem; color:var(--text-main); display:block;">Hafiz Status</label>
+                        <select id="selfHafiz" class="input" style="width:100%; padding:0.75rem 1rem; border-radius:12px; border:1px solid var(--border); background:var(--surface-raised); color:var(--text-main); box-sizing:border-box;"><option value="no">No</option><option value="yes">Yes</option></select>
+                    </div>
+                    <div>
+                        <label class="label" style="font-weight:600; font-size:0.85rem; margin-bottom:0.4rem; color:var(--text-main); display:block;">Special Status</label>
+                        <select id="selfOrphan" class="input" style="width:100%; padding:0.75rem 1rem; border-radius:12px; border:1px solid var(--border); background:var(--surface-raised); color:var(--text-main); box-sizing:border-box;"><option value="no">None</option><option value="yes">Orphan</option></select>
+                    </div>
+                </div>
+                <div>
+                    <label class="label" style="font-weight:600; font-size:0.85rem; margin-bottom:0.4rem; color:var(--text-main); display:block;">Full Residential Address</label>
+                    <textarea id="selfAddress" class="input" rows="2" placeholder="House name, street, post office..." style="width:100%; padding:0.75rem 1rem; border-radius:12px; border:1px solid var(--border); background:var(--surface-raised); color:var(--text-main); resize:vertical; box-sizing:border-box;"></textarea>
+                </div>
+
+                <!-- SECTION 3: Academic & Professional Details -->
+                <div style="font-size:0.85rem; font-weight:700; color:var(--primary); text-transform:uppercase; letter-spacing:0.08em; border-bottom:1px solid var(--border); padding-bottom:0.3rem; margin-top:0.5rem;">
+                    3. Academic & Career Details
+                </div>
                 <div style="display:grid; grid-template-columns: 1fr 1fr; gap:1rem;">
                     <div>
                         <label class="label" style="font-weight:600; font-size:0.85rem; margin-bottom:0.4rem; color:var(--text-main); display:block;">Title / Degree</label>
@@ -455,23 +517,29 @@
 
                 <div style="display:grid; grid-template-columns: 1fr 1fr; gap:1rem;">
                     <div>
-                        <label class="label" style="font-weight:600; font-size:0.85rem; margin-bottom:0.4rem; color:var(--text-main); display:block;">Designation</label>
+                        <label class="label" style="font-weight:600; font-size:0.85rem; margin-bottom:0.4rem; color:var(--text-main); display:block;">Designation / Role</label>
                         <input type="text" id="selfDesignation" class="input" placeholder="e.g. Mudarris" style="width:100%; padding:0.75rem 1rem; border-radius:12px; border:1px solid var(--border); background:var(--surface-raised); color:var(--text-main); box-sizing:border-box;">
                     </div>
                     <div>
-                        <label class="label" style="font-weight:600; font-size:0.85rem; margin-bottom:0.4rem; color:var(--text-main); display:block;">Institution / Company</label>
+                        <label class="label" style="font-weight:600; font-size:0.85rem; margin-bottom:0.4rem; color:var(--text-main); display:block;">Institution / Organization</label>
                         <input type="text" id="selfInstitution" class="input" placeholder="e.g. Jamia Markaz" style="width:100%; padding:0.75rem 1rem; border-radius:12px; border:1px solid var(--border); background:var(--surface-raised); color:var(--text-main); box-sizing:border-box;">
                     </div>
                 </div>
 
                 <div style="display:grid; grid-template-columns: 1fr 1fr; gap:1rem;">
                     <div>
-                        <label class="label" style="font-weight:600; font-size:0.85rem; margin-bottom:0.4rem; color:var(--text-main); display:block;">Location</label>
-                        <input type="text" id="selfLocation" class="input" placeholder="e.g. Calicut, Kerala" style="width:100%; padding:0.75rem 1rem; border-radius:12px; border:1px solid var(--border); background:var(--surface-raised); color:var(--text-main); box-sizing:border-box;">
+                        <label class="label" style="font-weight:600; font-size:0.85rem; margin-bottom:0.4rem; color:var(--text-main); display:block;">Dars Education Level</label>
+                        <input type="text" id="selfDarsDetails" class="input" placeholder="Previous Dars / Kitabs studied" style="width:100%; padding:0.75rem 1rem; border-radius:12px; border:1px solid var(--border); background:var(--surface-raised); color:var(--text-main); box-sizing:border-box;">
                     </div>
                     <div>
-                        <label class="label" style="font-weight:600; font-size:0.85rem; margin-bottom:0.4rem; color:var(--text-main); display:block;">WhatsApp / Phone</label>
-                        <input type="text" id="selfPhone" class="input" placeholder="+91 9876543210" style="width:100%; padding:0.75rem 1rem; border-radius:12px; border:1px solid var(--border); background:var(--surface-raised); color:var(--text-main); box-sizing:border-box;">
+                        <label class="label" style="font-weight:600; font-size:0.85rem; margin-bottom:0.4rem; color:var(--text-main); display:block;">Schooling Level</label>
+                        <select id="selfSchoolLevel" class="input" style="width:100%; padding:0.75rem 1rem; border-radius:12px; border:1px solid var(--border); background:var(--surface-raised); color:var(--text-main); box-sizing:border-box;">
+                            <option value="">Select Level</option>
+                            <option value="sslc">Passed SSLC (10th)</option>
+                            <option value="puc">Passed PUC (12th)</option>
+                            <option value="degree">Graduated / Degree</option>
+                            <option value="postgraduate">Post Graduate / Master</option>
+                        </select>
                     </div>
                 </div>
 
@@ -485,7 +553,7 @@
 
                 <div>
                     <label class="label" style="font-weight:600; font-size:0.85rem; margin-bottom:0.4rem; color:var(--text-main); display:block;">Bio & Research Summary</label>
-                    <textarea id="selfBio" class="input" rows="4" placeholder="Write a brief overview of academic contributions, publications, or current service..." style="width:100%; padding:0.75rem 1rem; border-radius:12px; border:1px solid var(--border); background:var(--surface-raised); color:var(--text-main); resize:vertical; box-sizing:border-box;"></textarea>
+                    <textarea id="selfBio" class="input" rows="3" placeholder="Write a brief overview of academic contributions, publications, or current service..." style="width:100%; padding:0.75rem 1rem; border-radius:12px; border:1px solid var(--border); background:var(--surface-raised); color:var(--text-main); resize:vertical; box-sizing:border-box;"></textarea>
                 </div>
 
                 <div id="selfSaveMsg" style="font-size:0.85rem; text-align:center;"></div>
@@ -498,27 +566,8 @@
     </div>
 
     <script type="module" src="alumni.js?v=22"></script>
+    <script type="module" src="nav-menu.js"></script>
 
-    <!-- Drawer Script -->
-    <script>
-        const toggleBtn = document.getElementById('loginMenuToggleBtn');
-        const drawer = document.getElementById('loginDropdownMenu');
-        const closeBtn = document.getElementById('closeLoginDrawerBtn');
 
-        toggleBtn?.addEventListener('click', (e) => {
-            e.stopPropagation();
-            drawer.classList.toggle('hidden');
-        });
-
-        closeBtn?.addEventListener('click', () => {
-            drawer.classList.add('hidden');
-        });
-
-        document.addEventListener('click', (e) => {
-            if (drawer && !drawer.contains(e.target) && !toggleBtn.contains(e.target)) {
-                drawer.classList.add('hidden');
-            }
-        });
-    </script>
 </body>
 </html>

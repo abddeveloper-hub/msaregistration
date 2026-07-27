@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login | Muhyissunnah Dars</title>
     <!-- Apple-esque Typography -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Aref+Ruqaa:wght@400;700&family=Amiri:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=El+Messiri:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=Aref+Ruqaa:wght@400;700&family=Amiri:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <style>
         /* Specific styles for Unified Login Layout */
@@ -447,7 +447,7 @@
                 <div class="brand-lockup" style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 3rem; color: white;">
                     <img src="logo.png?v=2" alt="MSA Ukkuda Logo" class="brand-logo-img">
                     <span class="brand-text" style="display: flex; flex-direction: column; justify-content: center;">
-                        <strong style="font-family: 'Inter', sans-serif; letter-spacing: 0.08em; font-size: 1.25rem; line-height: 1; text-transform: uppercase; font-weight: 700; color: white;"><span class="brand-text-styled">Muhyissunnah Dars</span></strong>
+                        <strong style="font-family: 'Aref Ruqaa', 'Amiri', serif; letter-spacing: 0.04em; font-size: 1.35rem; line-height: 1; text-transform: uppercase; font-weight: 700; color: white;"><span class="brand-text-styled">Muhyissunnah Dars</span></strong>
                         <span style="letter-spacing: 0.15em; font-size: 0.75rem; text-transform: uppercase; color: rgba(255,255,255,0.8);">Ukkuda Official Portal</span>
                     </span>
                 </div>
@@ -513,6 +513,59 @@
                     </div>
 
                     <div id="alumniFieldsContainer" class="hidden">
+                        <!-- 1. Personal Information -->
+                        <div class="input-group">
+                            <label>Date of Birth</label>
+                            <div class="input-icon-wrapper">
+                                <span>📅</span>
+                                <input type="date" id="loginDob">
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label>Blood Group & Aadhar</label>
+                            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:0.5rem;">
+                                <input type="text" id="loginBlood" placeholder="Blood Group (e.g. O+)" style="padding: 0.8rem 1rem; background: #f1f5f9; border: 1px solid transparent; border-radius: 12px; font-size: 0.95rem;">
+                                <input type="text" id="loginAadhar" placeholder="Aadhar No." style="padding: 0.8rem 1rem; background: #f1f5f9; border: 1px solid transparent; border-radius: 12px; font-size: 0.95rem;">
+                            </div>
+                        </div>
+
+                        <!-- 2. Family & Residence -->
+                        <div class="input-group">
+                            <label>Father's / Guardian Name</label>
+                            <div class="input-icon-wrapper">
+                                <span>👨</span>
+                                <input type="text" id="loginFatherName" placeholder="Father's Full Name">
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label>Status Badges</label>
+                            <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:0.5rem; font-size:0.85rem;">
+                                <div>
+                                    <span style="font-size:0.75rem; color:#64748b;">Sayyid?</span>
+                                    <select id="loginSayyid" style="width:100%; padding:0.6rem; background:#f1f5f9; border:none; border-radius:8px;"><option value="no">No</option><option value="yes">Yes</option></select>
+                                </div>
+                                <div>
+                                    <span style="font-size:0.75rem; color:#64748b;">Hafiz?</span>
+                                    <select id="loginHafiz" style="width:100%; padding:0.6rem; background:#f1f5f9; border:none; border-radius:8px;"><option value="no">No</option><option value="yes">Yes</option></select>
+                                </div>
+                                <div>
+                                    <span style="font-size:0.75rem; color:#64748b;">Special?</span>
+                                    <select id="loginOrphan" style="width:100%; padding:0.6rem; background:#f1f5f9; border:none; border-radius:8px;"><option value="no">None</option><option value="yes">Orphan</option></select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label>Full Residential Address</label>
+                            <div class="input-icon-wrapper">
+                                <span>🏠</span>
+                                <input type="text" id="loginAddress" placeholder="Full house address & pincode">
+                            </div>
+                        </div>
+
+                        <!-- 3. Academic & Professional Details -->
                         <div class="input-group">
                             <label>Academic Title / Degree</label>
                             <div class="input-icon-wrapper">

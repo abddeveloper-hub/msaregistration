@@ -87,12 +87,23 @@ document.addEventListener('DOMContentLoaded', () => {
             const aData = alumniSnap.exists() ? alumniSnap.data() : {};
 
             document.getElementById('selfName').value = aData.name || uData.fullName || '';
+            if (document.getElementById('selfDob')) document.getElementById('selfDob').value = aData.dob || uData.dob || '';
+            if (document.getElementById('selfBlood')) document.getElementById('selfBlood').value = aData.blood || uData.blood || '';
+            if (document.getElementById('selfAadhar')) document.getElementById('selfAadhar').value = aData.aadhar || uData.aadhar || '';
+            if (document.getElementById('selfFatherName')) document.getElementById('selfFatherName').value = aData.fatherName || uData.fatherName || '';
+            if (document.getElementById('selfSayyid')) document.getElementById('selfSayyid').value = aData.sayyid || uData.sayyid || 'no';
+            if (document.getElementById('selfHafiz')) document.getElementById('selfHafiz').value = aData.hafiz || uData.hafiz || 'no';
+            if (document.getElementById('selfOrphan')) document.getElementById('selfOrphan').value = aData.orphan || uData.orphan || 'no';
+            if (document.getElementById('selfAddress')) document.getElementById('selfAddress').value = aData.address || uData.address || '';
+            
             document.getElementById('selfTitle').value = aData.title || 'Fazil Muhyissunnah';
             document.getElementById('selfBatch').value = aData.batch || uData.batch || '';
             document.getElementById('selfDesignation').value = aData.designation || uData.designation || '';
             document.getElementById('selfInstitution').value = aData.institution || '';
             document.getElementById('selfLocation').value = aData.location || '';
-            document.getElementById('selfPhone').value = aData.whatsapp || aData.phone || '';
+            document.getElementById('selfPhone').value = aData.whatsapp || aData.phone || uData.phone || '';
+            if (document.getElementById('selfDarsDetails')) document.getElementById('selfDarsDetails').value = aData.darsDetails || uData.darsDetails || '';
+            if (document.getElementById('selfSchoolLevel')) document.getElementById('selfSchoolLevel').value = aData.schoolLevel || uData.schoolLevel || '';
             document.getElementById('selfBio').value = aData.bio || uData.bio || '';
 
             const currentImg = aData.url || aData.photoUrl || uData.url || '';
@@ -129,22 +140,44 @@ document.addEventListener('DOMContentLoaded', () => {
 
             try {
                 const name = document.getElementById('selfName').value.trim();
+                const dob = document.getElementById('selfDob')?.value || '';
+                const blood = document.getElementById('selfBlood')?.value.trim() || '';
+                const aadhar = document.getElementById('selfAadhar')?.value.trim() || '';
+                const fatherName = document.getElementById('selfFatherName')?.value.trim() || '';
+                const sayyid = document.getElementById('selfSayyid')?.value || 'no';
+                const hafiz = document.getElementById('selfHafiz')?.value || 'no';
+                const orphan = document.getElementById('selfOrphan')?.value || 'no';
+                const address = document.getElementById('selfAddress')?.value.trim() || '';
+
                 const title = document.getElementById('selfTitle').value.trim();
                 const batch = document.getElementById('selfBatch').value.trim();
                 const designation = document.getElementById('selfDesignation').value.trim();
                 const institution = document.getElementById('selfInstitution').value.trim();
                 const location = document.getElementById('selfLocation').value.trim();
                 const phone = document.getElementById('selfPhone').value.trim();
+                const darsDetails = document.getElementById('selfDarsDetails')?.value.trim() || '';
+                const schoolLevel = document.getElementById('selfSchoolLevel')?.value || '';
                 const bio = document.getElementById('selfBio').value.trim();
 
                 const alumniPayload = {
                     name: name,
+                    dob: dob,
+                    blood: blood,
+                    aadhar: aadhar,
+                    fatherName: fatherName,
+                    sayyid: sayyid,
+                    hafiz: hafiz,
+                    orphan: orphan,
+                    address: address,
                     title: title || 'Fazil Muhyissunnah',
                     batch: batch || 'Graduate Scholar',
                     designation: designation,
                     institution: institution,
                     location: location,
                     whatsapp: phone,
+                    phone: phone,
+                    darsDetails: darsDetails,
+                    schoolLevel: schoolLevel,
                     bio: bio,
                     email: currentUser.email,
                     uploadedBy: currentUser.uid,
@@ -160,13 +193,23 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 const userUpdate = {
                     fullName: name,
+                    dob: dob,
+                    blood: blood,
+                    aadhar: aadhar,
+                    fatherName: fatherName,
+                    sayyid: sayyid,
+                    hafiz: hafiz,
+                    orphan: orphan,
+                    address: address,
                     bio: bio,
                     batch: batch,
                     designation: designation,
                     title: title,
                     institution: institution,
                     location: location,
-                    phone: phone
+                    phone: phone,
+                    darsDetails: darsDetails,
+                    schoolLevel: schoolLevel
                 };
                 if (selfPhotoBase64) userUpdate.url = selfPhotoBase64;
 
@@ -275,10 +318,19 @@ document.addEventListener('DOMContentLoaded', () => {
         lightboxImg.src = item.url || item.image || item.photoUrl || 'assets/mdu-hero.png';
         lightboxTitleTag.textContent = item.title || 'Fazil Muhyissunnah';
         lightboxName.textContent = item.name || 'Graduate Scholar';
-        lightboxBatch.textContent = `🎓 ${item.batch ? (item.batch.includes('Batch') ? item.batch : `Batch ${item.batch}`) : 'Graduate'}`;
+        
+        let batchBadgeText = `🎓 ${item.batch ? (item.batch.includes('Batch') ? item.batch : `Batch ${item.batch}`) : 'Graduate'}`;
+        if (item.sayyid === 'yes') batchBadgeText += ' • 👑 Sayyid';
+        if (item.hafiz === 'yes') batchBadgeText += ' • 📖 Hafiz';
+        lightboxBatch.textContent = batchBadgeText;
 
         lightboxDesignation.textContent = item.designation ? `💼 ${item.designation} ${item.institution ? `@ ${item.institution}` : ''}` : '';
-        lightboxLocation.textContent = item.location ? `📍 ${item.location}` : '';
+        
+        let locText = item.location ? `📍 ${item.location}` : '';
+        if (item.fatherName) locText += locText ? ` • 👨 s/o ${item.fatherName}` : `👨 s/o ${item.fatherName}`;
+        if (item.blood) locText += locText ? ` • 🩸 ${item.blood}` : `🩸 ${item.blood}`;
+        lightboxLocation.textContent = locText;
+
         lightboxBio.textContent = item.bio || 'No biography or research summary provided.';
         
         let contactHtml = '';

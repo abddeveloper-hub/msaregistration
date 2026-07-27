@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Live Stream | MSA UKKUDA</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Aref+Ruqaa:wght@400;700&family=Amiri:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=El+Messiri:wght@400;500;600;700&family=Cairo:wght@400;700&family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Aref+Ruqaa:wght@400;700&family=Amiri:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="landing.css">
     <link rel="stylesheet" href="mobile.css">
@@ -16,7 +16,7 @@
             <a class="brand-lockup" href="index.html">
                 <img src="logo.png?v=2" alt="MSA Ukkuda Logo" class="brand-logo-img">
                 <span class="brand-text">
-                    <strong style="font-family: 'Inter', sans-serif; letter-spacing: 0.08em; font-size: 1.25rem; line-height: 1; text-transform: uppercase; font-weight: 700;"><span class="brand-text-styled">Muhyissunnah Dars</span></strong>
+                    <strong style="font-family: 'Aref Ruqaa', 'Amiri', serif; letter-spacing: 0.04em; font-size: 1.35rem; line-height: 1; text-transform: uppercase; font-weight: 700;"><span class="brand-text-styled">Muhyissunnah Dars</span></strong>
                     <span style="letter-spacing: 0.15em;">Ukkuda Official Portal</span>
                 </span>
             </a>
@@ -137,19 +137,8 @@
             offlineMsg.style.display = 'block';
         }
 
-        const loginMenuToggleBtn = document.getElementById('loginMenuToggleBtn');
-        const loginDropdownMenu = document.getElementById('loginDropdownMenu');
-        if (loginMenuToggleBtn && loginDropdownMenu) {
-            loginMenuToggleBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                loginDropdownMenu.classList.toggle('hidden');
-            });
-            document.addEventListener('click', (e) => {
-                if (!loginMenuToggleBtn.contains(e.target) && !loginDropdownMenu.contains(e.target)) {
-                    loginDropdownMenu.classList.add('hidden');
-                }
-            });
-        }
+
     </script>
+    <script type="module" src="nav-menu.js"></script>
 </body>
 </html>

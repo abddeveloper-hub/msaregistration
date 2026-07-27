@@ -431,16 +431,6 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // Three dots login menu logic
-    if (loginMenuToggleBtn) {
-        loginMenuToggleBtn.addEventListener("click", (e) => {
-            e.stopPropagation();
-            loginDropdownMenu?.classList.toggle("hidden");
-        });
-        document.addEventListener("click", () => {
-            loginDropdownMenu?.classList.add("hidden");
-        });
-    }
 });
 
 onAuthStateChanged(auth, async (user) => {
@@ -459,8 +449,8 @@ onAuthStateChanged(auth, async (user) => {
         return;
     }
 
-    loginMenuToggleBtn?.classList.add("hidden");
-    navLogoutBtn?.classList.remove("hidden");
+    loginMenuToggleBtn?.classList.remove("hidden");
+    navLogoutBtn?.classList.add("hidden");
 
     userDocUnsubscribe = onSnapshot(doc(db, "users", user.uid), (snap) => {
         if (!snap.exists()) return;

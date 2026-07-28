@@ -1,7 +1,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, limit, doc, updateDoc, writeBatch } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-import { getMessaging, onMessage, isSupported } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-messaging.js";
+import { getFirestore, collection, addDoc, setDoc, onSnapshot, query, orderBy, limit, doc, updateDoc, writeBatch } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+import { getMessaging, onMessage, isSupported, getToken } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-messaging.js";
 import { firebaseConfig } from "./firebase-config.js";
 
 const app = initializeApp(firebaseConfig);
@@ -25,6 +25,46 @@ if (typeof window !== "undefined") {
             }
         }
     }).catch(err => console.warn("FCM isSupported check notice:", err));
+}
+
+// Automatically register device push token in Firestore for all app installations
+export async function registerDeviceForPushNotifications() {
+    if (typeof window === "undefined" || !("Notification" in window)) return;
+    if (Notification.permission !== "granted") return;
+
+    try {
+        const supported = await isSupported();
+        if (!supported) return;
+
+        const messagingInstance = messaging || getMessaging(app);
+        if (!messagingInstance) return;
+
+        let swReg = null;
+        if ("serviceWorker" in navigator) {
+            swReg = await navigator.serviceWorker.ready;
+        }
+
+        const currentToken = await getToken(messagingInstance, {
+            serviceWorkerRegistration: swReg || undefined
+        });
+
+        if (currentToken) {
+            const isStandalone = window.navigator.standalone || window.matchMedia('(display-mode: standalone)').matches;
+            const tokenDocId = currentToken.replace(/[^a-zA-Z0-9]/g, "_").slice(-64);
+            const user = auth.currentUser;
+
+            await setDoc(doc(db, "push_tokens", tokenDocId), {
+                token: currentToken,
+                uid: user ? user.uid : "anonymous",
+                platform: navigator.platform || "Web",
+                userAgent: navigator.userAgent,
+                isInstalledApp: Boolean(isStandalone),
+                updatedAt: new Date().toISOString()
+            }, { merge: true });
+        }
+    } catch (err) {
+        console.warn("FCM device token registration notice:", err);
+    }
 }
 
 // Helper function to dispatch a new notification to Firestore
@@ -333,6 +373,7 @@ function renderPermissionBanner() {
                 if (permission === "granted") {
                     bannerBox.innerHTML = "";
                     showToast("Notifications Enabled 🔔", "You will now receive live mobile push notifications.");
+                    registerDeviceForPushNotifications();
                 } else if (permission === "denied") {
                     bannerBox.innerHTML = `<div style="padding:0.5rem; font-size:0.8rem; color:var(--text-dim); text-align:center;">Notifications were blocked in browser settings.</div>`;
                 }
@@ -528,8 +569,10 @@ function setupRealtimeListener(user) {
 
 // Start listener immediately for public notifications, then update on Auth change
 setupRealtimeListener(null);
+registerDeviceForPushNotifications();
 onAuthStateChanged(auth, (user) => {
     setupRealtimeListener(user);
+    registerDeviceForPushNotifications();
 });
 
 async function markAllAsRead() {

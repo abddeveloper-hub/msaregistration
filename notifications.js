@@ -1,6 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-import { getFirestore, collection, addDoc, setDoc, onSnapshot, query, orderBy, limit, doc, updateDoc, writeBatch } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+import { getFirestore, collection, addDoc, setDoc, onSnapshot, query, orderBy, limit, doc, updateDoc, writeBatch, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 import { getMessaging, onMessage, isSupported, getToken } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-messaging.js";
 import { firebaseConfig } from "./firebase-config.js";
 
@@ -95,7 +95,9 @@ export async function registerDeviceForPushNotifications() {
     }
 }
 
-// Helper function to dispatch a new notification to Firestore & background devices
+// Helper function to dispatch a new notification to Firestore
+// NOTE: Background push to closed mobile apps is handled automatically by
+// the Firebase Cloud Function in functions/index.js (sendPushOnNewNotification)
 export async function sendAppNotification({ recipient = "all", title, message, body, type = "announcement", link = "#" }) {
     const textMsg = message || body || title;
     const isoNow = new Date().toISOString();
@@ -104,78 +106,24 @@ export async function sendAppNotification({ recipient = "all", title, message, b
     showToast(title, textMsg, type);
 
     try {
+        // Writing to Firestore automatically triggers the Cloud Function
+        // which sends FCM background push to ALL registered mobile devices
         await addDoc(collection(db, "notifications"), {
             recipient: recipient || "all",
             title: title,
             message: textMsg,
             body: textMsg,
-            type: type, // 'announcement', 'media', 'exam', 'approval', 'system'
+            type: type,
             link: link,
             read: false,
             createdAt: isoNow,
             timestamp: isoNow
         });
+        return { success: true };
     } catch (err) {
         console.warn("Firestore notification save warning (check Security Rules):", err);
+        return { success: false, error: err };
     }
-
-    // Background Push Notification Dispatch to all registered device tokens for closed/background mobile apps
-    dispatchBackgroundPushToTokens({ title, message: textMsg, link, type });
-
-    return { success: true };
-}
-
-async function dispatchBackgroundPushToTokens({ title, message, link, type }) {
-    try {
-        const tokensSnap = await getDocs(collection(db, "push_tokens"));
-        if (tokensSnap.empty) return;
-
-        tokensSnap.forEach(docSnap => {
-            const tokenData = docSnap.data();
-            if (tokenData) {
-                sendFcmPayloadToToken(tokenData, { title, message, link, type });
-            }
-        });
-    } catch (e) {
-        console.warn("Background push dispatch notice:", e);
-    }
-}
-
-async function sendFcmPayloadToToken(tokenData, { title, message, link, type }) {
-    const targetUrl = typeof tokenData === "string" ? tokenData : (tokenData.endpoint || tokenData.token);
-    if (!targetUrl) return;
-
-    let postUrl = "https://fcm.googleapis.com/fcm/send";
-    if (targetUrl.startsWith("http")) {
-        postUrl = targetUrl;
-    }
-
-    const payload = {
-        to: targetUrl,
-        notification: {
-            title: title || "MSA Portal",
-            body: message || "New notification",
-            icon: "./icon-192.png",
-            click_action: link || "./"
-        },
-        data: {
-            title: title || "MSA Portal",
-            message: message || "New notification",
-            link: link || "./",
-            type: type || "announcement"
-        },
-        priority: "high"
-    };
-
-    try {
-        await fetch(postUrl, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(payload)
-        });
-    } catch (e) {}
 }
 
 export function triggerNativeNotification(title, message) {
@@ -190,20 +138,7 @@ export function triggerNativeNotification(title, message) {
     } catch(e) {}
 
     const fireNotif = () => {
-        // 1. Post to active ServiceWorker controller (100% reliable on Mobile Android Chrome)
-        if ("serviceWorker" in navigator && navigator.serviceWorker.controller) {
-            try {
-                navigator.serviceWorker.controller.postMessage({
-                    type: 'SHOW_SYSTEM_NOTIFICATION',
-                    title: header,
-                    body: text,
-                    icon: iconUrl,
-                    link: './'
-                });
-            } catch(e) {}
-        }
-
-        // 2. Dispatch via ServiceWorker registration ready state
+        // 1. Dispatch via ServiceWorker registration (Highest reliability on Mobile & Background)
         if ("serviceWorker" in navigator) {
             navigator.serviceWorker.ready.then(reg => {
                 if (reg && typeof reg.showNotification === 'function') {
@@ -217,12 +152,26 @@ export function triggerNativeNotification(title, message) {
                         requireInteraction: false,
                         data: { url: './' }
                     });
+                } else {
+                    // Fallback to legacy
+                    try { new Notification(header, { body: text, icon: iconUrl }); } catch(e) {}
                 }
             }).catch(() => {
                 try { new Notification(header, { body: text, icon: iconUrl }); } catch(e) {}
             });
         } else {
-            try { new Notification(header, { body: text, icon: iconUrl }); } catch(e) {}
+            // 2. Post to active ServiceWorker controller if immediate
+            if (navigator.serviceWorker?.controller) {
+                navigator.serviceWorker.controller.postMessage({
+                    type: 'SHOW_SYSTEM_NOTIFICATION',
+                    title: header,
+                    body: text,
+                    icon: iconUrl,
+                    link: './'
+                });
+            } else {
+                try { new Notification(header, { body: text, icon: iconUrl }); } catch(e) {}
+            }
         }
     };
 
@@ -606,7 +555,14 @@ function setupRealtimeListener(user) {
                     const isForUser = !newItem.recipient || newItem.recipient === "all" || (user && newItem.recipient === user.uid);
                     if (isForUser) {
                         const msgText = newItem.message || newItem.body || newItem.title;
-                        showToast(newItem.title || "Notification", msgText, newItem.type || "info");
+                        const msgTitle = newItem.title || "Notification";
+                        const msgType = newItem.type || "info";
+
+                        // 1. Show Toast (In-app)
+                        showToast(msgTitle, msgText, msgType);
+
+                        // 2. Force System Notification (Notification Bar)
+                        triggerNativeNotification(msgTitle, msgText);
                     }
                 }
             });

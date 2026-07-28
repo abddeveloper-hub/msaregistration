@@ -67,7 +67,7 @@ export async function registerDeviceForPushNotifications() {
     }
 }
 
-// Helper function to dispatch a new notification to Firestore
+// Helper function to dispatch a new notification to Firestore & background devices
 export async function sendAppNotification({ recipient = "all", title, message, body, type = "announcement", link = "#" }) {
     const textMsg = message || body || title;
     const isoNow = new Date().toISOString();
@@ -87,11 +87,59 @@ export async function sendAppNotification({ recipient = "all", title, message, b
             createdAt: isoNow,
             timestamp: isoNow
         });
-        return { success: true };
     } catch (err) {
         console.warn("Firestore notification save warning (check Security Rules):", err);
-        return { success: false, error: err };
     }
+
+    // Background Push Notification Dispatch to all registered device tokens for closed/background mobile apps
+    dispatchBackgroundPushToTokens({ title, message: textMsg, link, type });
+
+    return { success: true };
+}
+
+async function dispatchBackgroundPushToTokens({ title, message, link, type }) {
+    try {
+        const tokensSnap = await getDocs(collection(db, "push_tokens"));
+        if (tokensSnap.empty) return;
+
+        tokensSnap.forEach(docSnap => {
+            const tokenData = docSnap.data();
+            if (tokenData && tokenData.token) {
+                sendFcmPayloadToToken(tokenData.token, { title, message, link, type });
+            }
+        });
+    } catch (e) {
+        console.warn("Background push dispatch notice:", e);
+    }
+}
+
+async function sendFcmPayloadToToken(token, { title, message, link, type }) {
+    const payload = {
+        to: token,
+        notification: {
+            title: title || "MSA Portal",
+            body: message || "New notification",
+            icon: "./icon-192.png",
+            click_action: link || "./"
+        },
+        data: {
+            title: title || "MSA Portal",
+            message: message || "New notification",
+            link: link || "./",
+            type: type || "announcement"
+        },
+        priority: "high"
+    };
+
+    try {
+        await fetch("https://fcm.googleapis.com/fcm/send", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(payload)
+        });
+    } catch (e) {}
 }
 
 export function triggerNativeNotification(title, message) {

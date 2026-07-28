@@ -1,17 +1,11 @@
-// OneSignal Web Push SDK - must be first
-try {
-  importScripts('https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.sw.js');
-} catch(e) {
-  console.warn('OneSignal SW import notice:', e);
-}
-
+importScripts('https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.sw.js');
 try {
   importScripts('./firebase-messaging-sw.js');
 } catch (e) {
   console.warn('FCM SW import notice:', e);
 }
 
-const CACHE_NAME = 'msaukkuda-portal-v43';
+const CACHE_NAME = 'msaukkuda-portal-v44';
 const ASSETS = [
   './',
   './index.html',

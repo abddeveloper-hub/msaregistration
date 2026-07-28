@@ -9,7 +9,9 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 const storage = getStorage(app);
-enableMultiTabIndexedDbPersistence(db).catch((err) => console.warn("Offline persistence error:", err.code));
+setTimeout(() => {
+    enableMultiTabIndexedDbPersistence(db).catch((err) => console.warn("Offline persistence notice:", err.code));
+}, 0);
 
 const banner = document.getElementById('globalAnnouncementBanner');
 const textEl = document.getElementById('globalAnnouncementText');
@@ -177,6 +179,18 @@ if(adminNav) {
     });
 }
 
+let adminRenderAnimationFrame = null;
+function scheduleAdminRender() {
+    if (adminRenderAnimationFrame) cancelAnimationFrame(adminRenderAnimationFrame);
+    adminRenderAnimationFrame = requestAnimationFrame(() => {
+        updateStats();
+        renderPendingFaculty();
+        renderGlobalStudents();
+        renderProgressOverview();
+        renderActiveFaculties();
+    });
+}
+
 function initAdminData() {
     try {
         onSnapshot(collection(db, "users"), (snapshot) => {
@@ -186,11 +200,7 @@ function initAdminData() {
                 allUsers.forEach(u => {
                     if (!u.role) u.role = 'student';
                 });
-                updateStats();
-                renderPendingFaculty();
-                renderGlobalStudents();
-                renderProgressOverview();
-                renderActiveFaculties();
+                scheduleAdminRender();
             } catch(e) { console.error("Error rendering users:", e); }
         });
 
@@ -199,9 +209,7 @@ function initAdminData() {
                 allInstitutions = snapshot.docs.map(d => ({id: d.id, ...d.data()}));
                 if(document.getElementById('statTotInst')) document.getElementById('statTotInst').innerText = allInstitutions.length;
                 renderInstitutions();
-                renderProgressOverview();
-                renderPendingFaculty(); 
-                renderActiveFaculties();
+                scheduleAdminRender();
             } catch(e) { console.error("Error rendering institutions:", e); }
         });
     } catch(e) { console.error("Error attaching listeners:", e); }
@@ -322,7 +330,7 @@ function updateStats() {
                     legend: { position: 'bottom', labels: { color: '#a0a0b0', padding: 20, font: { size: 12, family: 'Inter' } } },
                     tooltip: { backgroundColor: 'rgba(10, 10, 15, 0.9)', titleColor: '#d8ad4a', bodyColor: '#fff', padding: 12, cornerRadius: 8, borderColor: 'rgba(216, 173, 74, 0.3)', borderWidth: 1 }
                 },
-                animation: { animateScale: true, animateRotate: true, duration: 1500, easing: 'easeOutQuart' }
+                animation: { animateScale: true, animateRotate: true, duration: 250, easing: 'easeOutQuart' }
             }
         });
     }
@@ -358,7 +366,7 @@ function updateStats() {
                     legend: { position: 'bottom', labels: { color: '#a0a0b0', padding: 20, font: { size: 12, family: 'Inter' } } },
                     tooltip: { backgroundColor: 'rgba(10, 10, 15, 0.9)', titleColor: '#36c190', bodyColor: '#fff', padding: 12, cornerRadius: 8, borderColor: 'rgba(54, 193, 144, 0.3)', borderWidth: 1 }
                 },
-                animation: { animateScale: true, animateRotate: true, duration: 1500, easing: 'easeOutQuart' }
+                animation: { animateScale: true, animateRotate: true, duration: 250, easing: 'easeOutQuart' }
             }
         });
     }
@@ -419,7 +427,7 @@ function updateStats() {
                     y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.05)', drawBorder: false }, ticks: { color: '#a0a0b0' } }, 
                     x: { grid: { display: false }, ticks: { color: '#a0a0b0', maxRotation: 45, minRotation: 45 } } 
                 },
-                animation: { duration: 1500, easing: 'easeOutQuart' }
+                animation: { duration: 250, easing: 'easeOutQuart' }
             }
         });
     }
@@ -453,7 +461,7 @@ function updateStats() {
                     y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.05)', drawBorder: false }, ticks: { color: '#a0a0b0' } }, 
                     x: { grid: { display: false }, ticks: { color: '#a0a0b0', maxRotation: 45, minRotation: 45 } } 
                 },
-                animation: { duration: 1500, easing: 'easeOutQuart' }
+                animation: { duration: 250, easing: 'easeOutQuart' }
             }
         });
     }

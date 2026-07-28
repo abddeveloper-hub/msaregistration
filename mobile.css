@@ -1007,3 +1007,36 @@ html, body {
     }
 }
 
+/* Digital Library Page Mobile Styling */
+@media (max-width: 768px) {
+    .library-hero-card {
+        padding: 1.5rem 1.15rem !important;
+        margin-bottom: 1.5rem !important;
+    }
+
+    .library-controls-card {
+        padding: 1rem !important;
+        margin-bottom: 1.5rem !important;
+    }
+
+    .library-filter-grid {
+        grid-template-columns: 1fr !important;
+        gap: 0.75rem !important;
+    }
+
+    #resourceCountBadge {
+        text-align: left;
+        font-size: 0.76rem !important;
+    }
+
+    .library-grid-container {
+        grid-template-columns: 1fr !important;
+        gap: 1.15rem !important;
+    }
+
+    .library-resource-card {
+        padding: 1.2rem !important;
+    }
+}
+
+

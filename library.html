@@ -3,14 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Digital Library | MSA UKKUDA</title>
+    <title>Digital Library | Muhyissunnah Dars Ukkuda</title>
     <link href="https://fonts.googleapis.com/css2?family=El+Messiri:wght@400;500;600;700&family=Cairo:wght@400;700&family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Aref+Ruqaa:wght@400;700&family=Amiri:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="landing.css">
     <link rel="stylesheet" href="mobile.css">
     <link rel="icon" type="image/png" href="logo.png?v=2">
 </head>
-<body class="landing-page">
+<body class="landing-page" style="background: var(--bg);">
+
+    <!-- Header Navigation -->
     <header class="nav-wrapper">
         <nav class="navbar" aria-label="Primary navigation">
             <a class="brand-lockup" href="index.html">
@@ -71,25 +73,57 @@
         </nav>
     </header>
 
-    <main id="mainContent" style="padding: 10rem 2rem 6rem;">
-        <div style="max-width: 1200px; margin: 0 auto;">
-            <div class="section-header" style="text-align: center; margin-bottom: 3rem;">
-                <p style="color: var(--primary); font-weight: 700; text-transform: uppercase; letter-spacing: 0.15em; font-size: 0.85rem; margin-bottom: 0.75rem;">Resource Center</p>
-                <h2 style="font-family: var(--font-display); font-size: clamp(2.2rem, 4vw, 3.2rem); font-weight: 700; color: var(--text-main);">Digital Library & Audio</h2>
-            </div>
-            
-            <div style="display: flex; gap: 1rem; justify-content: center; margin-bottom: 3rem;">
-                <button class="btn btn-main filter-btn" data-filter="all">All Resources</button>
-                <button class="btn btn-ghost filter-btn" data-filter="pdf">PDFs / Notes</button>
-                <button class="btn btn-ghost filter-btn" data-filter="audio">Audio / Qira'at</button>
-                <button class="btn btn-ghost filter-btn" data-filter="link">External Links</button>
-            </div>
-
-            <div id="libraryGrid" class="cards-grid">
-                <!-- Loaded via JS -->
-                <p style="text-align:center; grid-column: 1/-1; color: var(--text-dim);">Loading resources...</p>
+    <!-- Main Content -->
+    <main id="mainContent" style="padding: 7.5rem 1.5rem 6rem; max-width: 1240px; margin: 0 auto;">
+        
+        <!-- Hero Header -->
+        <div class="library-hero-card" style="background: linear-gradient(135deg, rgba(29,78,216,0.08) 0%, rgba(15,23,42,0.12) 100%); border: 1px solid var(--border); border-radius: 24px; padding: 2.5rem 2rem; margin-bottom: 2.5rem; text-align: center; position: relative; overflow: hidden;">
+            <div style="position: relative; z-index: 2;">
+                <p style="color: var(--primary); font-weight: 700; text-transform: uppercase; letter-spacing: 0.15em; font-size: 0.8rem; margin-bottom: 0.5rem;">Knowledge & Resource Center</p>
+                <h1 style="font-family: var(--font-display); font-size: clamp(2rem, 4.5vw, 3.2rem); font-weight: 700; color: var(--text-main); margin-bottom: 0.75rem;">Digital Library & Audio Archive</h1>
+                <p style="color: var(--text-dim); max-width: 680px; margin: 0 auto 1.5rem; font-size: clamp(0.9rem, 2.2vw, 1.05rem); line-height: 1.5;">Access Islamic manuscripts, Fiqh notes, Tafseer references, audio Qira'at recordings, and Dars course syllabi.</p>
+                
+                <!-- Quick Category Stat Badges -->
+                <div style="display: flex; gap: 0.6rem; justify-content: center; flex-wrap: wrap;" class="category-badges-row">
+                    <span class="glass-badge" style="padding: 0.4rem 0.85rem; font-size: 0.78rem; background: rgba(37,99,235,0.12); color: var(--primary); border: 1px solid rgba(37,99,235,0.25);">📚 Islamic Kitabs</span>
+                    <span class="glass-badge" style="padding: 0.4rem 0.85rem; font-size: 0.78rem; background: rgba(16,185,129,0.12); color: #10b981; border: 1px solid rgba(16,185,129,0.25);">📝 Study Notes</span>
+                    <span class="glass-badge" style="padding: 0.4rem 0.85rem; font-size: 0.78rem; background: rgba(245,158,11,0.12); color: #f59e0b; border: 1px solid rgba(245,158,11,0.25);">🎧 Qira'at & Audio</span>
+                    <span class="glass-badge" style="padding: 0.4rem 0.85rem; font-size: 0.78rem; background: rgba(139,92,246,0.12); color: #8b5cf6; border: 1px solid rgba(139,92,246,0.25);">🔗 External References</span>
+                </div>
             </div>
         </div>
+
+        <!-- Controls: Search Input & Category Filters -->
+        <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 1.25rem 1.5rem; margin-bottom: 2rem; box-shadow: var(--shadow-sm);" class="library-controls-card">
+            <div style="display: grid; grid-template-columns: 1fr auto; gap: 1rem; align-items: center;" class="library-filter-grid">
+                
+                <!-- Instant Search Input -->
+                <div class="search-input-wrapper" style="position: relative;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--text-dim); pointer-events: none;"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                    <input type="text" id="librarySearchInput" placeholder="Search by title, subject (Fiqh, Hadith, Tajweed), or author..." style="width: 100%; padding: 0.7rem 1rem 0.7rem 2.8rem; background: var(--bg); border: 1px solid var(--border); border-radius: 12px; font-size: 0.88rem; color: var(--text-main); box-sizing: border-box;">
+                </div>
+
+                <!-- Resource Count Display -->
+                <div style="font-size: 0.82rem; color: var(--text-dim); font-weight: 600; white-space: nowrap;" id="resourceCountBadge">
+                    Showing <span id="visibleResourceCount" style="color: var(--primary); font-weight: 700;">0</span> resources
+                </div>
+            </div>
+
+            <!-- Scrollable Filter Pills -->
+            <div style="display: flex; gap: 0.5rem; margin-top: 1rem; overflow-x: auto; padding-bottom: 4px;" class="filter-tabs scrollable-tabs" id="libraryFilterGroup">
+                <button class="btn btn-main filter-btn active" data-filter="all">All Items</button>
+                <button class="btn btn-ghost filter-btn" data-filter="pdf">📚 PDFs & Kitabs</button>
+                <button class="btn btn-ghost filter-btn" data-filter="audio">🎧 Audio & Recitations</button>
+                <button class="btn btn-ghost filter-btn" data-filter="link">🔗 Reference Links</button>
+                <button class="btn btn-ghost filter-btn" data-filter="notes">📝 Syllabi & Notes</button>
+            </div>
+        </div>
+
+        <!-- Structured Resource Grid Section -->
+        <div id="libraryGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem;" class="library-grid-container">
+            <!-- Dynamically populated by library.js -->
+        </div>
+
     </main>
 
     <script type="module" src="library.js"></script>

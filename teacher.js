@@ -11,7 +11,20 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 const storage = getStorage(app);
-enableMultiTabIndexedDbPersistence(db).catch((err) => console.warn("Offline persistence error:", err.code));
+setTimeout(() => {
+    enableMultiTabIndexedDbPersistence(db).catch((err) => console.warn("Offline persistence notice:", err.code));
+}, 0);
+
+function dismissSplashScreen() {
+    const splash = document.getElementById("appSplashScreen");
+    if (splash) splash.classList.add("hidden");
+}
+if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", dismissSplashScreen);
+} else {
+    dismissSplashScreen();
+}
+setTimeout(dismissSplashScreen, 1000);
 
 // DOM
 const viewRegistration = document.getElementById('viewRegistration');

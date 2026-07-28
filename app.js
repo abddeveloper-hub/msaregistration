@@ -6,7 +6,9 @@ import { firebaseConfig } from "./firebase-config.js";
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
-enableMultiTabIndexedDbPersistence(db).catch((err) => console.warn("Offline persistence error:", err.code));
+setTimeout(() => {
+    enableMultiTabIndexedDbPersistence(db).catch((err) => console.warn("Offline persistence notice:", err.code));
+}, 0);
 
 const $ = (selector) => document.querySelector(selector);
 const $$ = (selector) => Array.from(document.querySelectorAll(selector));

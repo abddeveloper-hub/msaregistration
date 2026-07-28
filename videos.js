@@ -4,7 +4,9 @@ import { firebaseConfig } from "./firebase-config.js";
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-enableMultiTabIndexedDbPersistence(db).catch((err) => console.warn("Offline persistence error:", err.code));
+setTimeout(() => {
+    enableMultiTabIndexedDbPersistence(db).catch((err) => console.warn("Offline persistence notice:", err.code));
+}, 0);
 
 const banner = document.getElementById('globalAnnouncementBanner');
 const textEl = document.getElementById('globalAnnouncementText');

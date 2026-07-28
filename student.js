@@ -301,17 +301,11 @@ function showToast(title, body) {
     
     container.appendChild(toast);
     
-    // Request Native Notification Permission
-    if ("Notification" in window) {
-        if (Notification.permission === "granted") {
+    // Request Native Notification Permission (Only if already granted by user)
+    if ("Notification" in window && Notification.permission === "granted") {
+        try {
             new Notification(title, { body: body, icon: "logo.png" });
-        } else if (Notification.permission !== "denied") {
-            Notification.requestPermission().then(permission => {
-                if (permission === "granted") {
-                    new Notification(title, { body: body, icon: "logo.png" });
-                }
-            });
-        }
+        } catch(e) {}
     }
     
     setTimeout(() => {

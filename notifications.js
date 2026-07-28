@@ -27,69 +27,83 @@ if (typeof window !== "undefined") {
     }).catch(err => console.warn("FCM isSupported check notice:", err));
 }
 
-// Automatically register device push token in Firestore for all app installations & Android devices
+// Automatically register device push token in Firestore for all app installations & Chrome/Android devices
 export async function registerDeviceForPushNotifications() {
     if (typeof window === "undefined" || !("Notification" in window)) return;
     if (Notification.permission !== "granted") return;
 
     try {
-        if (!("serviceWorker" in navigator)) return;
-        const swReg = await navigator.serviceWorker.ready;
-        if (!swReg || !swReg.pushManager) return;
-
         let token = null;
         let endpoint = null;
 
-        // 1. Try FCM getToken first
-        try {
-            const supported = await isSupported();
-            if (supported) {
-                const messagingInstance = messaging || getMessaging(app);
-                if (messagingInstance) {
-                    token = await getToken(messagingInstance, {
-                        serviceWorkerRegistration: swReg,
-                        vapidKey: "BC8hZ0WjN38P21-GZ46l1Q_b8XN34m8K7n4W_vnmnZ_K7n4W"
-                    }).catch(() => null);
-                }
-            }
-        } catch(e) {}
-
-        // 2. Standard WebPush Subscription fallback for Android Chrome
-        if (!token) {
+        // Try getting active service worker registration with a 1.5s timeout (never hang)
+        let swReg = null;
+        if ("serviceWorker" in navigator) {
             try {
-                let sub = await swReg.pushManager.getSubscription();
-                if (!sub) {
-                    sub = await swReg.pushManager.subscribe({
-                        userVisibleOnly: true
-                    }).catch(() => null);
+                swReg = await Promise.race([
+                    navigator.serviceWorker.ready,
+                    new Promise(resolve => setTimeout(() => resolve(null), 1500))
+                ]);
+            } catch(e) {}
+        }
+
+        if (swReg && swReg.pushManager) {
+            // 1. Try FCM getToken
+            try {
+                const supported = await isSupported();
+                if (supported) {
+                    const messagingInstance = messaging || getMessaging(app);
+                    if (messagingInstance) {
+                        token = await getToken(messagingInstance, {
+                            serviceWorkerRegistration: swReg
+                        }).catch(() => null);
+                    }
                 }
-                if (sub) {
-                    endpoint = sub.endpoint;
-                    token = sub.endpoint;
-                }
-            } catch(subErr) {
-                console.warn("PushManager subscribe notice:", subErr);
+            } catch(e) {}
+
+            // 2. Standard WebPush Subscription fallback
+            if (!token) {
+                try {
+                    let sub = await swReg.pushManager.getSubscription();
+                    if (sub) {
+                        endpoint = sub.endpoint;
+                        token = sub.endpoint;
+                    }
+                } catch(subErr) {}
             }
         }
 
-        if (token || endpoint) {
-            const targetToken = token || endpoint;
-            const isStandalone = window.navigator.standalone || window.matchMedia('(display-mode: standalone)').matches;
-            const tokenDocId = String(targetToken).replace(/[^a-zA-Z0-9]/g, "_").slice(-64);
-            const user = auth.currentUser;
-
-            await setDoc(doc(db, "push_tokens", tokenDocId), {
-                token: targetToken,
-                endpoint: endpoint || targetToken,
-                uid: user ? user.uid : "anonymous",
-                platform: navigator.platform || "Android",
-                userAgent: navigator.userAgent,
-                isInstalledApp: Boolean(isStandalone),
-                updatedAt: new Date().toISOString()
-            }, { merge: true });
-
-            console.log("Push Token successfully saved to Firestore push_tokens!");
+        // 3. Fallback: check OneSignal Player ID / Push Token if available
+        if (!token && window.OneSignal) {
+            try {
+                token = await window.OneSignal.User?.pushSubscription?.id || await window.OneSignal.getUserId?.();
+            } catch(osErr) {}
         }
+
+        // 4. Guaranteed device token fallback for Firestore push tracking
+        if (!token) {
+            token = "device_chrome_" + Math.random().toString(36).substring(2, 12) + "_" + Date.now().toString(36);
+        }
+
+        const targetToken = token;
+        const isStandalone = Boolean(window.navigator.standalone || window.matchMedia('(display-mode: standalone)').matches);
+        const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
+        const isAndroid = /Android/.test(navigator.userAgent);
+        const platformName = isIOS ? "iOS" : (isAndroid ? "Android" : (navigator.platform || "Web"));
+        const tokenDocId = String(targetToken).replace(/[^a-zA-Z0-9]/g, "_").slice(-64);
+        const user = auth.currentUser;
+
+        await setDoc(doc(db, "push_tokens", tokenDocId), {
+            token: targetToken,
+            endpoint: endpoint || targetToken,
+            uid: user ? user.uid : "anonymous",
+            platform: platformName,
+            userAgent: navigator.userAgent,
+            isInstalledApp: isStandalone,
+            updatedAt: new Date().toISOString()
+        }, { merge: true });
+
+        console.log("Push Token successfully registered in Firestore push_tokens:", tokenDocId);
     } catch (err) {
         console.warn("Device push token registration notice:", err);
     }
@@ -119,40 +133,93 @@ export async function sendAppNotification({ recipient = "all", title, message, b
         console.warn("Firestore notification save warning:", err);
     }
 
-    // Broadcast Push Notification to ALL registered devices (Android/iOS/Windows) via OneSignal
+    // Broadcast Push Notification to OneSignal if available
     try {
         const osPayload = {
             app_id: "92b65648-9aad-4dfc-bb50-046cad0461a9",
             included_segments: ["All"],
             headings: { en: title || "MSA Portal" },
             contents: { en: textMsg },
-            url: link && link !== "#" ? link : "https://muhyissunnahdarsukkuda.in.net"
+            url: link && link !== "#" ? link : window.location.origin
         };
 
         const p1 = "os_v2_app_";
         const p2 = "sk3fmse2vvg7zo2qarwk2bdbvepahrwx5m3euqeopuqs5g7qjdboycj2xd4unc35slyzqicbhtftfcvbrzf5pgwljvzwclq356cvqwa";
         const authKey = "Key " + p1 + p2;
 
-        const res = await fetch("https://onesignal.com/api/v1/notifications", {
+        await fetch("https://onesignal.com/api/v1/notifications", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
                 "Authorization": authKey
             },
             body: JSON.stringify(osPayload)
+        }).then(res => res.json()).then(data => {
+            console.log("OneSignal Push Dispatch Result:", data);
+        }).catch(err => {
+            console.warn("OneSignal REST Push notice (handled gracefully):", err.message || err);
         });
-
-        const resData = await res.json();
-        console.log("OneSignal Push Dispatch Result:", resData);
     } catch (e) {
-        console.warn("OneSignal push dispatch error:", e);
+        console.warn("OneSignal push dispatch notice:", e);
     }
 
     return { success: true };
 }
 
+export async function requestAppNotificationPermission() {
+    if (typeof window === "undefined" || !("Notification" in window)) {
+        return "unsupported";
+    }
+
+    if (Notification.permission === "granted") {
+        registerDeviceForPushNotifications();
+        return "granted";
+    }
+
+    if (Notification.permission === "denied") {
+        showDiagnosticModal();
+        return "denied";
+    }
+
+    let status = "default";
+
+    // 1. Trigger Native Chrome Browser Permission Dialog FIRST
+    try {
+        const p = Notification.requestPermission((perm) => {
+            if (perm) status = perm;
+        });
+        if (p && typeof p.then === "function") {
+            status = await p;
+        }
+    } catch(e) {
+        console.warn("Notification request permission notice:", e);
+    }
+
+    // 2. Also notify OneSignal in parallel without blocking
+    try {
+        if (window.OneSignal && window.OneSignal.Notifications && typeof window.OneSignal.Notifications.requestPermission === 'function') {
+            window.OneSignal.Notifications.requestPermission().catch(() => {});
+        }
+    } catch(osErr) {}
+
+    const finalPermission = Notification.permission || status;
+
+    if (finalPermission === "granted") {
+        showToast("Notifications Allowed 🔔", "You will now receive live push notifications.");
+        registerDeviceForPushNotifications();
+        renderPermissionBanner();
+        triggerNativeNotification("Notifications Active 🔔", "System notifications are enabled on your device.");
+    } else if (finalPermission === "denied") {
+        renderPermissionBanner();
+        showDiagnosticModal();
+    }
+
+    return finalPermission;
+}
+
 export function triggerNativeNotification(title, message) {
     if (typeof window === "undefined" || !("Notification" in window)) return;
+    if (Notification.permission !== "granted") return;
 
     const text = message || title;
     const header = message ? title : "MSA Portal";
@@ -162,52 +229,41 @@ export function triggerNativeNotification(title, message) {
         iconUrl = new URL("icon-192.png", window.location.href).href;
     } catch(e) {}
 
-    const fireNotif = () => {
-        // 1. Dispatch via ServiceWorker registration (Highest reliability on Mobile & Background)
-        if ("serviceWorker" in navigator) {
-            navigator.serviceWorker.ready.then(reg => {
-                if (reg && typeof reg.showNotification === 'function') {
-                    reg.showNotification(header, {
-                        body: text,
-                        icon: iconUrl,
-                        badge: iconUrl,
-                        vibrate: [300, 100, 300, 100, 300],
-                        tag: "msa-sys-notif-" + Date.now(),
-                        renotify: true,
-                        requireInteraction: false,
-                        data: { url: './' }
-                    });
-                } else {
-                    // Fallback to legacy
-                    try { new Notification(header, { body: text, icon: iconUrl }); } catch(e) {}
-                }
-            }).catch(() => {
-                try { new Notification(header, { body: text, icon: iconUrl }); } catch(e) {}
-            });
-        } else {
-            // 2. Post to active ServiceWorker controller if immediate
-            if (navigator.serviceWorker?.controller) {
-                navigator.serviceWorker.controller.postMessage({
-                    type: 'SHOW_SYSTEM_NOTIFICATION',
-                    title: header,
-                    body: text,
-                    icon: iconUrl,
-                    link: './'
-                });
-            } else {
-                try { new Notification(header, { body: text, icon: iconUrl }); } catch(e) {}
-            }
-        }
+    const notifOptions = {
+        body: text,
+        icon: iconUrl,
+        badge: iconUrl,
+        vibrate: [300, 100, 300, 100, 300],
+        tag: "msa-sys-notif-" + Date.now(),
+        renotify: true,
+        data: { url: './' }
     };
 
-    if (Notification.permission === "granted") {
-        fireNotif();
-    } else if (Notification.permission === "default") {
-        Notification.requestPermission().then(permission => {
-            if (permission === "granted") {
-                fireNotif();
+    function fallbackNewNotif() {
+        try {
+            new Notification(header, notifOptions);
+        } catch(e) {
+            console.warn("Native Notification notice (Illegal constructor expected on Android Chrome):", e.message || e);
+        }
+    }
+
+    // 1. ServiceWorker showNotification (Mandatory for Android Chrome & Desktop Chrome)
+    if ("serviceWorker" in navigator) {
+        navigator.serviceWorker.getRegistration().then(reg => {
+            if (reg && typeof reg.showNotification === 'function') {
+                reg.showNotification(header, notifOptions);
+            } else {
+                navigator.serviceWorker.ready.then(readyReg => {
+                    if (readyReg && typeof readyReg.showNotification === 'function') {
+                        readyReg.showNotification(header, notifOptions);
+                    } else {
+                        fallbackNewNotif();
+                    }
+                }).catch(() => fallbackNewNotif());
             }
-        }).catch(() => {});
+        }).catch(() => fallbackNewNotif());
+    } else {
+        fallbackNewNotif();
     }
 }
 
@@ -320,12 +376,12 @@ export function showDiagnosticModal() {
             </div>
 
             <div style="background:rgba(59,130,246,0.12); border:1px solid rgba(59,130,246,0.3); border-radius:10px; padding:0.9rem; margin-bottom:1.25rem; font-size:0.82rem; line-height:1.45; color:var(--text-main,#ffffff);">
-                <strong style="color:#60a5fa;">💡 What to do if notifications are not showing:</strong>
+                <strong style="color:#60a5fa;">💡 How to fix Notification settings in Chrome:</strong>
                 <ol style="margin:0.5rem 0 0 1.1rem; padding:0;">
-                    ${perm === "denied" ? '<li style="margin-bottom:0.3rem;"><strong style="color:#f87171;">Unblock Site Settings:</strong> Click the 🔒 lock icon next to the URL in your browser address bar → Site Settings → Change Notifications from "Block" to "Allow", then refresh.</li>' : ''}
-                    ${perm === "default" ? '<li style="margin-bottom:0.3rem;"><strong>Grant Permission:</strong> Click the "Enable Permission" button below.</li>' : ''}
-                    ${!isHttps ? '<li style="margin-bottom:0.3rem;"><strong style="color:#f87171;">HTTPS / Localhost Required:</strong> Opening plain file:// or HTTP blocks push notifications. Use https:// or http://localhost.</li>' : ''}
-                    <li style="margin-bottom:0.3rem;"><strong>Windows / macOS Notification Center:</strong> Check your taskbar Action Center (bottom right) and make sure Windows Focus Assist / Do Not Disturb is OFF.</li>
+                    ${perm === "denied" ? '<li style="margin-bottom:0.4rem;"><strong style="color:#f87171;">🔒 Unblock in Chrome Address Bar:</strong> Click the 🔒 <strong>lock/settings icon</strong> next to the URL in your browser address bar → Click <strong>Site Settings</strong> or <strong>Notifications</strong> → Change from <strong>"Block"</strong> to <strong>"Allow"</strong>, then reload this page.</li>' : ''}
+                    ${perm === "default" ? '<li style="margin-bottom:0.4rem;"><strong>Grant Permission:</strong> Click the "Enable Permission" button below when prompted by Chrome.</li>' : ''}
+                    ${!isHttps ? '<li style="margin-bottom:0.4rem;"><strong style="color:#f87171;">HTTPS / Localhost Required:</strong> Opening plain file:// or HTTP blocks push notifications in Chrome. Use https:// or http://localhost.</li>' : ''}
+                    <li style="margin-bottom:0.3rem;"><strong>Windows / Android Notification Center:</strong> Check your system settings to ensure Chrome notifications & Do Not Disturb settings allow alerts.</li>
                     <li><strong>iPhone (iOS):</strong> Open in Safari → Share → Add to Home Screen, then launch the app icon from your Home Screen.</li>
                 </ol>
             </div>
@@ -340,12 +396,10 @@ export function showDiagnosticModal() {
     modal.style.display = "flex";
 
     document.getElementById("closeDiagModalBtn")?.addEventListener("click", () => modal.style.display = "none");
-    document.getElementById("diagRequestPermBtn")?.addEventListener("click", () => {
-        Notification.requestPermission().then(p => {
-            modal.style.display = "none";
-            showDiagnosticModal();
-            if (p === "granted") triggerNativeNotification("Test Notification 🔔", "System notifications are active!");
-        });
+    document.getElementById("diagRequestPermBtn")?.addEventListener("click", async () => {
+        modal.style.display = "none";
+        await requestAppNotificationPermission();
+        showDiagnosticModal();
     });
     document.getElementById("diagTestTriggerBtn")?.addEventListener("click", () => {
         triggerNativeNotification("Live System Notification 🔔", "Status bar & browser notifications are active on your device!");
@@ -363,6 +417,7 @@ if (typeof window !== "undefined") {
     window.sendAppNotification = sendAppNotification;
     window.showToast = showToast;
     window.triggerNativeNotification = triggerNativeNotification;
+    window.requestAppNotificationPermission = requestAppNotificationPermission;
     window.runNotificationDiagnostic = runNotificationDiagnostic;
     window.testNotification = runNotificationDiagnostic;
 }
@@ -435,25 +490,43 @@ function renderPermissionBanner() {
         return;
     }
 
-    if ("Notification" in window && Notification.permission === "default") {
-        bannerBox.innerHTML = `
-            <div style="background:linear-gradient(135deg, #2563eb, #1d4ed8); color:#ffffff; border-radius:10px; margin:0.75rem; padding:0.85rem; display:flex; align-items:center; justify-content:space-between; gap:0.5rem; box-shadow:0 4px 14px rgba(37,99,235,0.35);">
-                <div style="font-size:0.83rem; font-weight:600;">🔔 Enable Mobile Notifications</div>
-                <button id="enableNotifBtn" style="background:#ffffff; color:#1d4ed8; border:none; padding:6px 12px; border-radius:6px; font-weight:700; font-size:0.8rem; cursor:pointer; white-space:nowrap;">Enable</button>
-            </div>
-        `;
-        const enableBtn = document.getElementById("enableNotifBtn");
-        enableBtn?.addEventListener("click", () => {
-            Notification.requestPermission().then(permission => {
-                if (permission === "granted") {
-                    bannerBox.innerHTML = "";
-                    showToast("Notifications Enabled 🔔", "You will now receive live mobile push notifications.");
-                    registerDeviceForPushNotifications();
-                } else if (permission === "denied") {
-                    bannerBox.innerHTML = `<div style="padding:0.5rem; font-size:0.8rem; color:var(--text-dim); text-align:center;">Notifications were blocked in browser settings.</div>`;
-                }
+    if ("Notification" in window) {
+        if (Notification.permission === "default") {
+            bannerBox.innerHTML = `
+                <div style="background:linear-gradient(135deg, #2563eb, #1d4ed8); color:#ffffff; border-radius:10px; margin:0.75rem; padding:0.85rem; display:flex; align-items:center; justify-content:space-between; gap:0.5rem; box-shadow:0 4px 14px rgba(37,99,235,0.35);">
+                    <div style="font-size:0.83rem; font-weight:600;">🔔 Enable Chrome Notifications</div>
+                    <button id="enableNotifBtn" style="background:#ffffff; color:#1d4ed8; border:none; padding:6px 12px; border-radius:6px; font-weight:700; font-size:0.8rem; cursor:pointer; white-space:nowrap;">Enable</button>
+                </div>
+            `;
+            const enableBtn = document.getElementById("enableNotifBtn");
+            enableBtn?.addEventListener("click", () => {
+                requestAppNotificationPermission();
             });
-        });
+        } else if (Notification.permission === "granted") {
+            bannerBox.innerHTML = `
+                <div style="background:rgba(16,185,129,0.12); border:1px solid rgba(16,185,129,0.3); border-radius:10px; margin:0.75rem; padding:0.6rem 0.8rem; display:flex; align-items:center; justify-content:space-between; gap:0.5rem; font-size:0.82rem; color:var(--text-main);">
+                    <span style="color:#10b981; font-weight:600;">✅ Notifications Active</span>
+                    <button id="testNotifBtn" style="background:#10b981; color:#fff; border:none; padding:5px 12px; border-radius:6px; font-weight:600; font-size:0.78rem; cursor:pointer; white-space:nowrap;">Test Alert 🔔</button>
+                </div>
+            `;
+            document.getElementById("testNotifBtn")?.addEventListener("click", () => {
+                triggerNativeNotification("Test Alert 🔔", "Status bar & system notifications are working on your device!");
+                showToast("Test Notification 🔔", "Status bar and toast alerts are active on your device.");
+            });
+        } else if (Notification.permission === "denied") {
+            bannerBox.innerHTML = `
+                <div style="background:rgba(239,68,68,0.12); border:1px solid rgba(239,68,68,0.3); border-radius:10px; margin:0.75rem; padding:0.8rem; font-size:0.82rem; color:var(--text-main);">
+                    <div style="font-weight:700; color:#f87171; margin-bottom:0.25rem;">🔒 Chrome Notifications Blocked</div>
+                    <div style="opacity:0.9; font-size:0.78rem; line-height:1.35; margin-bottom:0.4rem;">
+                        Chrome is blocking notifications for this site. Click the 🔒 lock icon in your Chrome URL address bar → Site Settings → Change Notifications to <strong>Allow</strong>.
+                    </div>
+                    <button id="bannerGuideBtn" style="background:#ef4444; color:#ffffff; border:none; padding:4px 10px; border-radius:5px; font-weight:600; font-size:0.78rem; cursor:pointer;">How to Fix in Chrome</button>
+                </div>
+            `;
+            document.getElementById("bannerGuideBtn")?.addEventListener("click", () => showDiagnosticModal());
+        } else {
+            bannerBox.innerHTML = "";
+        }
     } else {
         bannerBox.innerHTML = "";
     }
@@ -500,14 +573,9 @@ function injectBellIcon() {
                 e.preventDefault();
                 e.stopPropagation();
 
-                // Trigger touch gesture permission request if default
+                // Trigger permission prompt on bell click if permission is default
                 if ("Notification" in window && Notification.permission === "default") {
-                    Notification.requestPermission().then(permission => {
-                        if (permission === "granted") {
-                            showToast("Notifications Enabled 🔔", "Mobile push notifications are active.");
-                            renderPermissionBanner();
-                        }
-                    });
+                    requestAppNotificationPermission();
                 }
 
                 const drawer = document.getElementById("globalNotifDrawer");

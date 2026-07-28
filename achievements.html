@@ -308,6 +308,8 @@
       OneSignalDeferred.push(async function(OneSignal) {
         await OneSignal.init({
           appId: "92b65648-9aad-4dfc-bb50-046cad0461a9",
+          serviceWorkerPath: "sw.js",
+          serviceWorkerParam: { scope: "./" },
           notifyButton: { enable: false },
           promptOptions: {
             slidedown: {

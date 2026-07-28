@@ -20,6 +20,32 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <link rel="icon" type="image/png" href="logo.png?v=2">
 
+
+    <!-- OneSignal Web Push Notifications -->
+    <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+    <script>
+      window.OneSignalDeferred = window.OneSignalDeferred || [];
+      OneSignalDeferred.push(async function(OneSignal) {
+        await OneSignal.init({
+          appId: "92b65648-9aad-4dfc-bb50-046cad0461a9",
+          notifyButton: { enable: false },
+          promptOptions: {
+            slidedown: {
+              prompts: [{
+                type: "push",
+                autoPrompt: true,
+                text: {
+                  actionMessage: "Enable notifications to receive live updates from MSA Ukkuda Portal",
+                  acceptButton: "Enable",
+                  cancelButton: "Later"
+                },
+                delay: { timeDelay: 3, pageViews: 1 }
+              }]
+            }
+          }
+        });
+      });
+    </script>
 </head>
 <body class="landing-page">
     <header class="nav-wrapper">

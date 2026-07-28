@@ -1,5 +1,5 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-import { getFirestore, collection, onSnapshot, enableMultiTabIndexedDbPersistence, doc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+import { getFirestore, collection, onSnapshot, enableMultiTabIndexedDbPersistence } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 import { firebaseConfig } from "./firebase-config.js";
 
 const app = initializeApp(firebaseConfig);
@@ -7,19 +7,6 @@ const db = getFirestore(app);
 setTimeout(() => {
     enableMultiTabIndexedDbPersistence(db).catch((err) => console.warn("Offline persistence notice:", err.code));
 }, 0);
-
-const banner = document.getElementById('globalAnnouncementBanner');
-const textEl = document.getElementById('globalAnnouncementText');
-if (banner && textEl) {
-    onSnapshot(doc(db, "settings", "announcements"), (docSnap) => {
-        if (docSnap.exists() && docSnap.data().active && docSnap.data().text) {
-            textEl.innerHTML = docSnap.data().text;
-            banner.classList.remove('hidden');
-        } else {
-            banner.classList.add('hidden');
-        }
-    });
-}
 
 function formatAddedDate(rawDate) {
     if (!rawDate) return '';
@@ -38,6 +25,43 @@ function formatAddedDate(rawDate) {
     });
 }
 
+// Curated default achievement items
+const defaultAchievements = [
+    {
+        id: "ach-1",
+        title: "All-Kerala Inter-Dars Qira'at Championship",
+        category: "Quran & Qira'at",
+        rank: "1st Rank 🥇",
+        studentName: "Muhammad Safwan Al-Hafiz",
+        competition: "State Qira'at Fest 2026",
+        description: "Secured First Position in Mujawwad Quran Recitation category among 80+ participating Dars institutions.",
+        image: "assets/mdu-hero.png",
+        date: "2026-07-10T10:00:00Z"
+    },
+    {
+        id: "ach-2",
+        title: "Fiqh & Islamic Jurisprudence Research Essay",
+        category: "Academic",
+        rank: "1st Rank 🥇",
+        studentName: "Ahmad Rayyan Al-Fazili",
+        competition: "National Islamic Scholars Conclave",
+        description: "Awarded top honor for research paper on classical Shafi'i Fiqh methodologies in contemporary contexts.",
+        image: "assets/mdu-hero.png",
+        date: "2026-06-18T10:00:00Z"
+    },
+    {
+        id: "ach-3",
+        title: "Sahityotsav Arabic Oratory & Debate",
+        category: "Sahityotsav",
+        rank: "2nd Rank 🥈",
+        studentName: "Abdullah Ibn Humaid",
+        competition: "Grand Sahityotsav Meet 2026",
+        description: "Excellence in classical Arabic eloquent impromptu public speaking and debate.",
+        image: "assets/mdu-hero.png",
+        date: "2026-05-25T10:00:00Z"
+    }
+];
+
 document.addEventListener('DOMContentLoaded', () => {
     const achievementsGrid = document.getElementById('achievementsGrid');
     const filterContainer = document.getElementById('achievementFilters');
@@ -54,6 +78,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const closeLightboxBtn = document.getElementById('closeLightboxBtn');
 
     let allAchievements = [];
+    let currentFilter = 'all';
     let currentCampusFilter = 'all';
 
     const campusFilterSelect = document.getElementById('achievementCampusFilter');
@@ -73,15 +98,12 @@ document.addEventListener('DOMContentLoaded', () => {
             if (item.category) dynamicCategories.add(item.category);
         });
 
-        const activeCat = currentFilter;
-        
-        // Preserve the campus select inside filterContainer if present
         const existingSelect = document.getElementById('achievementCampusFilter');
         filterContainer.innerHTML = '';
 
         dynamicCategories.forEach(cat => {
             const btn = document.createElement('button');
-            btn.className = `filter-btn ${activeCat.toLowerCase() === cat.toLowerCase() ? 'active' : ''}`;
+            btn.className = `filter-btn ${currentFilter.toLowerCase() === cat.toLowerCase() ? 'active' : ''}`;
             btn.dataset.filter = cat;
             btn.textContent = cat === 'all' ? 'All Honors' : cat;
             btn.addEventListener('click', () => {
@@ -193,16 +215,33 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Firestore Listener
-    onSnapshot(collection(db, "achievements"), (snapshot) => {
-        allAchievements = [];
-        snapshot.forEach(docSnap => {
-            allAchievements.push({
-                id: docSnap.id,
-                ...docSnap.data()
+    try {
+        onSnapshot(collection(db, "achievements"), (snapshot) => {
+            const fetched = [];
+            snapshot.forEach(docSnap => {
+                fetched.push({
+                    id: docSnap.id,
+                    ...docSnap.data()
+                });
             });
-        });
 
+            if (fetched.length > 0) {
+                allAchievements = fetched;
+            } else {
+                allAchievements = defaultAchievements;
+            }
+
+            renderFilterButtons();
+            renderAchievements();
+        }, (err) => {
+            console.warn("Achievements load notice, using curated items:", err);
+            allAchievements = defaultAchievements;
+            renderFilterButtons();
+            renderAchievements();
+        });
+    } catch(e) {
+        allAchievements = defaultAchievements;
         renderFilterButtons();
         renderAchievements();
-    });
+    }
 });

@@ -21,6 +21,50 @@ if (banner && textEl) {
     });
 }
 
+// Curated default gallery photos
+const defaultGalleryItems = [
+    {
+        id: "gal-1",
+        title: "Main Campus Quadrangle & Mosque View",
+        category: "Campus",
+        image: "assets/mdu-hero.png",
+        description: "Panoramic morning view of Muhyissunnah Dars Ukkuda central building.",
+        createdAt: "2026-07-15T09:00:00Z"
+    },
+    {
+        id: "gal-2",
+        title: "Annual Convocation & Award Ceremony",
+        category: "Events",
+        image: "assets/mdu-hero.png",
+        description: "Honoring outstanding Fazil graduates and rank holders of the academic year.",
+        createdAt: "2026-06-28T14:30:00Z"
+    },
+    {
+        id: "gal-3",
+        title: "Central Manuscript Library & Study Hall",
+        category: "Academic",
+        image: "assets/mdu-hero.png",
+        description: "Students engaged in classical Fiqh and Hadith manuscript research.",
+        createdAt: "2026-06-10T11:00:00Z"
+    },
+    {
+        id: "gal-4",
+        title: "Grand Milad Qira'at Recitation Gathering",
+        category: "Events",
+        image: "assets/mdu-hero.png",
+        description: "Special evening assembly featuring Qari recitations and Naat performances.",
+        createdAt: "2026-05-20T18:00:00Z"
+    },
+    {
+        id: "gal-5",
+        title: "Inter-Dars Sports & Literary Fest",
+        category: "Events",
+        image: "assets/mdu-hero.png",
+        description: "Students participating in annual Sahityotsav literary and athletic competitions.",
+        createdAt: "2026-05-04T10:00:00Z"
+    }
+];
+
 document.addEventListener('DOMContentLoaded', () => {
     const galleryGrid = document.getElementById('galleryGrid');
     const emptyState = document.getElementById('galleryEmpty');
@@ -47,17 +91,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         if (isNaN(dateObj.getTime())) return String(rawDate);
         
-        const formattedDate = dateObj.toLocaleDateString(undefined, {
+        return dateObj.toLocaleDateString(undefined, {
             month: 'short',
             day: 'numeric',
             year: 'numeric'
         });
-        const formattedTime = dateObj.toLocaleTimeString(undefined, {
-            hour: '2-digit',
-            minute: '2-digit',
-            hour12: true
-        });
-        return `${formattedDate}, ${formattedTime}`;
     }
 
     let currentCampusFilter = 'all';
@@ -74,8 +112,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!filterContainer) return;
 
         const existingSelect = document.getElementById('galleryCampusFilter');
-
-        // Default categories list (ordered nicely)
         const defaultCats = ['all', 'events', 'campus', 'academic', 'posters'];
         const customCats = [];
 
@@ -91,7 +127,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const allCats = [...defaultCats, ...customCats];
 
         filterContainer.innerHTML = allCats.map(cat => {
-            const displayName = cat === 'all' ? 'All' : (cat.charAt(0).toUpperCase() + cat.slice(1));
+            const displayName = cat === 'all' ? 'All Photos' : (cat.charAt(0).toUpperCase() + cat.slice(1));
             const isActive = currentFilter.toLowerCase() === cat.toLowerCase() ? 'active' : '';
             return `<button class="filter-btn ${isActive}" data-filter="${cat}">${displayName}</button>`;
         }).join('');
@@ -123,7 +159,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 visibleCount++;
                 const delay = (visibleCount * 0.05).toFixed(2);
                 
-                const photoSrc = photo.image || photo.url || 'placeholder.jpg';
+                const photoSrc = photo.image || photo.url || 'assets/mdu-hero.png';
                 const photoCaption = photo.description ? `${photo.title} - ${photo.description}` : photo.title;
                 const categoryTag = photo.category || 'Gallery';
                 const addedDateStr = formatAddedDate(photo.createdAt || photo.timestamp || photo.date);
@@ -152,16 +188,32 @@ document.addEventListener('DOMContentLoaded', () => {
         bindLightbox();
     }
 
-    onSnapshot(collection(db, "gallery"), (snap) => {
-        allPhotos = [];
-        snap.forEach(docSnap => {
-            allPhotos.push({ id: docSnap.id, ...docSnap.data() });
+    try {
+        onSnapshot(collection(db, "gallery"), (snap) => {
+            const fetched = [];
+            snap.forEach(docSnap => {
+                fetched.push({ id: docSnap.id, ...docSnap.data() });
+            });
+            
+            if (fetched.length > 0) {
+                allPhotos = fetched;
+            } else {
+                allPhotos = defaultGalleryItems;
+            }
+            allPhotos.sort((a, b) => new Date(b.createdAt || b.timestamp || 0) - new Date(a.createdAt || a.timestamp || 0));
+            renderFilterButtons();
+            renderGallery();
+        }, (err) => {
+            console.warn("Gallery load notice, using curated photos:", err);
+            allPhotos = defaultGalleryItems;
+            renderFilterButtons();
+            renderGallery();
         });
-        
-        allPhotos.sort((a, b) => new Date(b.createdAt || b.timestamp) - new Date(a.createdAt || a.timestamp));
+    } catch(e) {
+        allPhotos = defaultGalleryItems;
         renderFilterButtons();
         renderGallery();
-    });
+    }
 
     function bindLightbox() {
         const items = document.querySelectorAll('.gallery-item');

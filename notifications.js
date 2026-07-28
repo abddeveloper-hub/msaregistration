@@ -215,72 +215,85 @@ export function showToast(arg1, arg2, arg3) {
     }, 4500);
 }
 
-export async function runNotificationDiagnostic() {
+export function showDiagnosticModal() {
+    let modal = document.getElementById("notifDiagnosticModal");
+    if (!modal) {
+        modal = document.createElement("div");
+        modal.id = "notifDiagnosticModal";
+        modal.className = "modal";
+        modal.style.cssText = "position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.75); z-index:100000; display:flex; align-items:center; justify-content:center; padding:1rem;";
+        document.body.appendChild(modal);
+    }
+
     const isHttps = window.location.protocol === 'https:' || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-    let diagReport = [];
+    const hasApi = typeof window !== "undefined" && "Notification" in window;
+    const perm = hasApi ? Notification.permission : "unsupported";
+    const hasSW = typeof navigator !== "undefined" && "serviceWorker" in navigator;
 
-    if (!isHttps) {
-        diagReport.push("Insecure HTTP: Browsers block mobile push on http://. Use https://");
-    }
+    let permBadge = '<span style="color:#10b981; font-weight:700;">✅ Allowed</span>';
+    if (perm === "default") permBadge = '<span style="color:#f59e0b; font-weight:700;">⚠️ Not Granted Yet</span>';
+    if (perm === "denied") permBadge = '<span style="color:#ef4444; font-weight:700;">❌ Blocked in Browser Settings</span>';
+    if (perm === "unsupported") permBadge = '<span style="color:#ef4444; font-weight:700;">❌ Unsupported Browser</span>';
 
-    if (!("Notification" in window)) {
-        showToast("Diagnostic ❌", "Web Notifications API is not supported in this browser.");
-        return { success: false, reason: "API Unsupported" };
-    }
+    const protoBadge = isHttps ? '<span style="color:#10b981; font-weight:700;">✅ Secure Context</span>' : '<span style="color:#ef4444; font-weight:700;">❌ Insecure Protocol (' + window.location.protocol + ')</span>';
+    const swBadge = hasSW ? '<span style="color:#10b981; font-weight:700;">✅ Active</span>' : '<span style="color:#ef4444; font-weight:700;">❌ Inactive</span>';
 
-    let perm = Notification.permission;
-    if (perm === "default") {
-        try {
-            perm = await Notification.requestPermission();
-        } catch(e) {}
-    }
+    modal.innerHTML = `
+        <div style="background:var(--surface, #1e1e2d); color:var(--text-main, #ffffff); border:1px solid var(--border, rgba(255,255,255,0.15)); border-radius:16px; padding:1.5rem; max-width:480px; width:100%; box-shadow:0 20px 50px rgba(0,0,0,0.6); max-height:90vh; overflow-y:auto;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; border-bottom:1px solid var(--border, rgba(255,255,255,0.1)); padding-bottom:0.75rem;">
+                <h3 style="margin:0; font-size:1.15rem; font-weight:700; color:#ffffff;">🔔 Notification Status Check</h3>
+                <button id="closeDiagModalBtn" style="background:none; border:none; color:var(--text-dim, #a0a0b0); font-size:1.5rem; cursor:pointer;">&times;</button>
+            </div>
+            
+            <div style="display:flex; flex-direction:column; gap:0.6rem; font-size:0.86rem; margin-bottom:1.25rem;">
+                <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.05); padding:0.6rem 0.8rem; border-radius:8px;">
+                    <span>Browser Permission:</span> ${permBadge}
+                </div>
+                <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.05); padding:0.6rem 0.8rem; border-radius:8px;">
+                    <span>Security Protocol:</span> ${protoBadge}
+                </div>
+                <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.05); padding:0.6rem 0.8rem; border-radius:8px;">
+                    <span>Service Worker:</span> ${swBadge}
+                </div>
+            </div>
 
-    if (perm === "denied") {
-        showToast("Permission Denied ❌", "Notifications blocked in browser site settings. Reset in Chrome site settings.");
-        return { success: false, reason: "Permission Denied" };
-    }
+            <div style="background:rgba(59,130,246,0.12); border:1px solid rgba(59,130,246,0.3); border-radius:10px; padding:0.9rem; margin-bottom:1.25rem; font-size:0.82rem; line-height:1.45; color:var(--text-main,#ffffff);">
+                <strong style="color:#60a5fa;">💡 What to do if notifications are not showing:</strong>
+                <ol style="margin:0.5rem 0 0 1.1rem; padding:0;">
+                    ${perm === "denied" ? '<li style="margin-bottom:0.3rem;"><strong style="color:#f87171;">Unblock Site Settings:</strong> Click the 🔒 lock icon next to the URL in your browser address bar → Site Settings → Change Notifications from "Block" to "Allow", then refresh.</li>' : ''}
+                    ${perm === "default" ? '<li style="margin-bottom:0.3rem;"><strong>Grant Permission:</strong> Click the "Enable Permission" button below.</li>' : ''}
+                    ${!isHttps ? '<li style="margin-bottom:0.3rem;"><strong style="color:#f87171;">HTTPS / Localhost Required:</strong> Opening plain file:// or HTTP blocks push notifications. Use https:// or http://localhost.</li>' : ''}
+                    <li style="margin-bottom:0.3rem;"><strong>Windows / macOS Notification Center:</strong> Check your taskbar Action Center (bottom right) and make sure Windows Focus Assist / Do Not Disturb is OFF.</li>
+                    <li><strong>iPhone (iOS):</strong> Open in Safari → Share → Add to Home Screen, then launch the app icon from your Home Screen.</li>
+                </ol>
+            </div>
 
-    if (perm !== "granted") {
-        showToast("Permission Needed ⚠️", "Please grant notification permission when prompted.");
-        return { success: false, reason: "Permission Not Granted" };
-    }
+            <div style="display:flex; gap:0.75rem; justify-content:flex-end;">
+                ${perm === "default" ? '<button id="diagRequestPermBtn" style="background:#2563eb; color:#fff; border:none; padding:0.6rem 1rem; border-radius:8px; font-weight:600; font-size:0.85rem; cursor:pointer;">Enable Permission</button>' : ''}
+                <button id="diagTestTriggerBtn" style="background:#10b981; color:#fff; border:none; padding:0.6rem 1rem; border-radius:8px; font-weight:600; font-size:0.85rem; cursor:pointer;">Trigger Test Notification</button>
+            </div>
+        </div>
+    `;
 
-    let notifDispatched = false;
-    try {
-        const notif = new Notification("Live Test Notification 🔔", {
-            body: "System notifications are active and working on your device!",
-            icon: "./icon-192.png"
+    modal.style.display = "flex";
+
+    document.getElementById("closeDiagModalBtn")?.addEventListener("click", () => modal.style.display = "none");
+    document.getElementById("diagRequestPermBtn")?.addEventListener("click", () => {
+        Notification.requestPermission().then(p => {
+            modal.style.display = "none";
+            showDiagnosticModal();
+            if (p === "granted") triggerNativeNotification("Test Notification 🔔", "System notifications are active!");
         });
-        notifDispatched = true;
-    } catch(e) {
-        console.warn("Direct Notification error:", e);
-    }
+    });
+    document.getElementById("diagTestTriggerBtn")?.addEventListener("click", () => {
+        triggerNativeNotification("Live System Notification 🔔", "Status bar & browser notifications are active on your device!");
+        showToast("Test Dispatched 🔔", "A system notification was sent to your status bar.");
+    });
+}
 
-    if (!notifDispatched && "serviceWorker" in navigator) {
-        try {
-            const reg = await navigator.serviceWorker.ready;
-            await reg.showNotification("Live Test Notification 🔔", {
-                body: "System notifications are active and working on your device!",
-                icon: "./icon-192.png",
-                badge: "./icon-192.png",
-                vibrate: [300, 100, 300, 100, 300],
-                tag: "msa-diag-" + Date.now(),
-                renotify: true,
-                requireInteraction: true
-            });
-            notifDispatched = true;
-        } catch(e) {
-            console.warn("SW reg.showNotification error:", e);
-            diagReport.push("SW Push Error: " + (e.message || e));
-        }
-    }
-
-    const reportMsg = diagReport.length > 0 
-        ? "Notice: " + diagReport.join(" | ") 
-        : "System status bar & toast notification triggered successfully!";
-
-    showToast("Diagnostic Check 🔔", reportMsg);
-    return { success: true, details: reportMsg };
+export async function runNotificationDiagnostic() {
+    showDiagnosticModal();
+    return { success: true };
 }
 
 // Global window assignments for non-module usage

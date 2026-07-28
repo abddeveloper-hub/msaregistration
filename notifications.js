@@ -95,7 +95,7 @@ export async function sendAppNotification({ recipient = "all", title, message, b
 }
 
 export function triggerNativeNotification(title, message) {
-    if (!("Notification" in window)) return;
+    if (typeof window === "undefined" || !("Notification" in window)) return;
 
     const text = message || title;
     const header = message ? title : "MSA Portal";
@@ -106,23 +106,23 @@ export function triggerNativeNotification(title, message) {
     } catch(e) {}
 
     const fireNotif = () => {
-        try {
-            const notif = new Notification(header, {
-                body: text,
-                icon: iconUrl,
-                badge: iconUrl,
-                vibrate: [300, 100, 300, 100, 300],
-                tag: "msa-sys-notif-" + Date.now(),
-                renotify: true,
-                requireInteraction: false
-            });
-            notif.onclick = function() {
-                try { window.focus(); } catch(e) {}
-                this.close();
-            };
-        } catch (err) {
-            if ("serviceWorker" in navigator) {
-                navigator.serviceWorker.ready.then(reg => {
+        // 1. Post to active ServiceWorker controller (100% reliable on Mobile Android Chrome)
+        if ("serviceWorker" in navigator && navigator.serviceWorker.controller) {
+            try {
+                navigator.serviceWorker.controller.postMessage({
+                    type: 'SHOW_SYSTEM_NOTIFICATION',
+                    title: header,
+                    body: text,
+                    icon: iconUrl,
+                    link: './'
+                });
+            } catch(e) {}
+        }
+
+        // 2. Dispatch via ServiceWorker registration ready state
+        if ("serviceWorker" in navigator) {
+            navigator.serviceWorker.ready.then(reg => {
+                if (reg && typeof reg.showNotification === 'function') {
                     reg.showNotification(header, {
                         body: text,
                         icon: iconUrl,
@@ -133,8 +133,12 @@ export function triggerNativeNotification(title, message) {
                         requireInteraction: false,
                         data: { url: './' }
                     });
-                }).catch(() => {});
-            }
+                }
+            }).catch(() => {
+                try { new Notification(header, { body: text, icon: iconUrl }); } catch(e) {}
+            });
+        } else {
+            try { new Notification(header, { body: text, icon: iconUrl }); } catch(e) {}
         }
     };
 

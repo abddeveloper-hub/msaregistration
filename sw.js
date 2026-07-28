@@ -4,7 +4,7 @@ try {
   console.warn('FCM SW import notice:', e);
 }
 
-const CACHE_NAME = 'msaukkuda-portal-v40';
+const CACHE_NAME = 'msaukkuda-portal-v41';
 const ASSETS = [
   './',
   './index.html',

@@ -176,19 +176,26 @@ function initTheme() {
 }
 
 // Global Toast Utility
-window.showToast = (message, type = 'success') => {
-    const toast = document.createElement('div');
-    toast.className = `toast-notification ${type}`;
-    toast.innerHTML = `<span class="toast-icon">${type === 'success' ? '✓' : '⚠'}</span><span class="toast-message">${message}</span>`;
-    document.body.appendChild(toast);
-    setTimeout(() => toast.classList.add('show'), 10);
-    setTimeout(() => {
-        toast.classList.remove('show');
-        setTimeout(() => toast.remove(), 300);
-    }, 3000);
+const originalShowToast = window.showToast;
+window.showToast = (arg1, arg2, arg3) => {
+    if (typeof originalShowToast === "function" && originalShowToast !== window.showToast) {
+        originalShowToast(arg1, arg2, arg3);
+    } else {
+        const message = arg2 !== undefined && typeof arg2 === "string" && !['success','error','info','warning'].includes(arg2.toLowerCase()) ? arg2 : arg1;
+        const type = (typeof arg2 === "string" && ['success','error','info','warning'].includes(arg2.toLowerCase())) ? arg2 : (arg3 || 'info');
+        const toast = document.createElement('div');
+        toast.className = `toast-notification ${type}`;
+        toast.innerHTML = `<span class="toast-icon">${type === 'success' ? '✓' : '⚠'}</span><span class="toast-message">${message}</span>`;
+        document.body.appendChild(toast);
+        setTimeout(() => toast.classList.add('show'), 10);
+        setTimeout(() => {
+            toast.classList.remove('show');
+            setTimeout(() => toast.remove(), 300);
+        }, 3000);
+    }
 
     // Trigger Confetti on Success
-    if(type === 'success' && window.confetti) {
+    if ((arg2 === 'success' || arg3 === 'success') && window.confetti) {
         confetti({
             particleCount: 80,
             spread: 60,
@@ -487,26 +494,25 @@ loadPublicStats();
 // ADVANCED UI/UX SUITE JAVASCRIPT
 // ==========================================
 
-// 1. Stacked Toast Notifications ("Sonner" Style)
-window.showToast = (message, type = "info") => {
-    let container = document.getElementById('toastContainer');
-    if(!container) {
-        container = document.createElement('div');
-        container.id = 'toastContainer';
-        document.body.appendChild(container);
-    }
-    
-    const toast = document.createElement('div');
-    toast.className = `toast-msg toast-${type}`;
-    toast.textContent = message;
-    
-    container.appendChild(toast);
-    
-    setTimeout(() => {
-        toast.classList.add('fade-out');
-        toast.addEventListener('animationend', () => toast.remove());
-    }, 4000);
-};
+// 1. Stacked Toast Notifications ("Sonner" Style) - Fallback check
+if (!window.showToast) {
+    window.showToast = (message, type = "info") => {
+        let container = document.getElementById('toastContainer');
+        if(!container) {
+            container = document.createElement('div');
+            container.id = 'toastContainer';
+            document.body.appendChild(container);
+        }
+        const toast = document.createElement('div');
+        toast.className = `toast-msg toast-${type}`;
+        toast.textContent = message;
+        container.appendChild(toast);
+        setTimeout(() => {
+            toast.classList.add('fade-out');
+            toast.addEventListener('animationend', () => toast.remove());
+        }, 4000);
+    };
+}
 
 // 2. Scroll Reveal Animations (Intersection Observer)
 const observerOptions = { root: null, rootMargin: '0px', threshold: 0.1 };

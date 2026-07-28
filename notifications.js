@@ -53,24 +53,11 @@ export function triggerNativeNotification(title, message) {
     const text = message || title;
     const header = message ? title : "MSA Portal";
     
-    let iconUrl = "logo.png";
+    let iconUrl = "icon-192.png";
     try {
         iconUrl = new URL("icon-192.png", window.location.href).href;
     } catch(e) {}
 
-    // 1. Send system status bar payload to active Service Worker controller
-    if ("serviceWorker" in navigator && navigator.serviceWorker.controller) {
-        try {
-            navigator.serviceWorker.controller.postMessage({
-                type: 'SHOW_SYSTEM_NOTIFICATION',
-                title: header,
-                body: text,
-                icon: iconUrl
-            });
-        } catch(e) {}
-    }
-
-    // 2. Dispatch via Service Worker registration ready state
     if ("serviceWorker" in navigator) {
         navigator.serviceWorker.ready.then(reg => {
             reg.showNotification(header, {
@@ -80,7 +67,8 @@ export function triggerNativeNotification(title, message) {
                 vibrate: [300, 100, 300, 100, 300],
                 tag: "msa-sys-notif-" + Date.now(),
                 renotify: true,
-                requireInteraction: true
+                requireInteraction: false,
+                data: { url: './' }
             });
         }).catch(() => {
             try { new Notification(header, { body: text, icon: iconUrl }); } catch (e) {}
@@ -90,8 +78,35 @@ export function triggerNativeNotification(title, message) {
     }
 }
 
-// Global Toast Popup Launcher
-export function showToast(title, message, type = "info") {
+const KNOWN_TYPES = ['info', 'success', 'error', 'warning', 'media', 'photo', 'video', 'exam', 'approval', 'announcement', 'system'];
+
+// Global Toast Popup Launcher supporting all calling styles
+export function showToast(arg1, arg2, arg3) {
+    let displayTitle = "Notification";
+    let displayMsg = "";
+    let type = "info";
+
+    if (arg3 !== undefined) {
+        displayTitle = String(arg1 || "Notification");
+        displayMsg = String(arg2 || "");
+        type = String(arg3 || "info").toLowerCase();
+    } else if (arg2 !== undefined) {
+        const isArg2Type = KNOWN_TYPES.includes(String(arg2).toLowerCase());
+        if (isArg2Type) {
+            type = String(arg2).toLowerCase();
+            displayTitle = type === "success" ? "Success" : (type === "error" ? "Error" : "Notification");
+            displayMsg = String(arg1 || "");
+        } else {
+            displayTitle = String(arg1 || "Notification");
+            displayMsg = String(arg2 || "");
+            type = "info";
+        }
+    } else {
+        displayTitle = "Notification";
+        displayMsg = String(arg1 || "");
+        type = "info";
+    }
+
     let container = document.getElementById("globalToastContainer");
     if (!container) {
         container = document.createElement("div");
@@ -104,10 +119,8 @@ export function showToast(title, message, type = "info") {
     if (type === "media" || type === "photo") icon = "📸";
     else if (type === "video") icon = "🎬";
     else if (type === "exam") icon = "📊";
-    else if (type === "approval") icon = "✅";
-
-    const displayMsg = message || title;
-    const displayTitle = message ? title : "Notification";
+    else if (type === "approval" || type === "success") icon = "✅";
+    else if (type === "error") icon = "⚠️";
 
     const toast = document.createElement("div");
     toast.className = `toast-banner toast-${type}`;
@@ -292,18 +305,40 @@ function renderPermissionBanner() {
 }
 
 function injectBellIcon() {
-    const navMenus = document.querySelectorAll(".nav-menu, .portal-header, .login-dropdown-menu");
+    const selectors = [
+        ".nav-actions", 
+        ".nav-links",
+        ".nav-menu", 
+        ".portal-header", 
+        ".navbar",
+        ".sidebar-header",
+        ".header-container", 
+        ".top-bar",
+        ".brand-logo",
+        "header"
+    ];
+    let navMenus = [];
+    for (const sel of selectors) {
+        const found = document.querySelectorAll(sel);
+        if (found && found.length > 0) {
+            navMenus = Array.from(found);
+            break;
+        }
+    }
+    if (navMenus.length === 0) navMenus = [document.body];
+
     navMenus.forEach(nav => {
-        if (!nav.querySelector(".notif-bell-wrapper")) {
+        if (!nav.querySelector(".notif-bell-wrapper") && !document.getElementById("globalNotifBell")) {
             const bellWrap = document.createElement("div");
             bellWrap.className = "notif-bell-wrapper";
+            bellWrap.style.cssText = "display:inline-flex; align-items:center; margin-left: auto;";
             bellWrap.innerHTML = `
                 <button class="notif-bell-btn" id="globalNotifBell" title="Notifications" aria-label="Notifications">
                     🔔
                     <span class="notif-badge" id="globalNotifBadge" style="display:none;">0</span>
                 </button>
             `;
-            nav.prepend(bellWrap);
+            nav.appendChild(bellWrap);
 
             const bellBtn = bellWrap.querySelector("#globalNotifBell");
             bellBtn?.addEventListener("click", (e) => {
@@ -339,11 +374,22 @@ function injectBellIcon() {
 }
 
 // Auth State & Realtime Subscription
-onAuthStateChanged(auth, (user) => {
-    const notifRef = collection(db, "notifications");
-    const q = query(notifRef, limit(30));
+let unsubscribeNotif = null;
 
-    onSnapshot(q, (snapshot) => {
+function setupRealtimeListener(user) {
+    if (unsubscribeNotif) {
+        try { unsubscribeNotif(); } catch(e) {}
+    }
+
+    const notifRef = collection(db, "notifications");
+    let q;
+    try {
+        q = query(notifRef, orderBy("createdAt", "desc"), limit(30));
+    } catch (e) {
+        q = query(notifRef, limit(30));
+    }
+
+    unsubscribeNotif = onSnapshot(q, (snapshot) => {
         const listContainer = document.getElementById("notifListContainer");
         const badge = document.getElementById("globalNotifBadge");
 
@@ -379,7 +425,7 @@ onAuthStateChanged(auth, (user) => {
                     const isForUser = !newItem.recipient || newItem.recipient === "all" || (user && newItem.recipient === user.uid);
                     if (isForUser) {
                         const msgText = newItem.message || newItem.body || newItem.title;
-                        showToast(newItem.title, msgText, newItem.type || "info");
+                        showToast(newItem.title || "Notification", msgText, newItem.type || "info");
                     }
                 }
             });
@@ -436,7 +482,15 @@ onAuthStateChanged(auth, (user) => {
                 });
             });
         }
+    }, (err) => {
+        console.warn("Firestore notification snapshot notice:", err);
     });
+}
+
+// Start listener immediately for public notifications, then update on Auth change
+setupRealtimeListener(null);
+onAuthStateChanged(auth, (user) => {
+    setupRealtimeListener(user);
 });
 
 async function markAllAsRead() {

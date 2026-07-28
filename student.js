@@ -176,7 +176,12 @@ onAuthStateChanged(auth, async (user) => {
         });
 
         // Listen for notifications
-        const notifQuery = query(collection(db, "notifications"), limit(30));
+        let notifQuery;
+        try {
+            notifQuery = query(collection(db, "notifications"), orderBy("createdAt", "desc"), limit(30));
+        } catch (e) {
+            notifQuery = query(collection(db, "notifications"), limit(30));
+        }
         notifUnsub = onSnapshot(notifQuery, (snapshot) => {
             const container = document.getElementById('notificationsContainer');
             const noMsg = document.getElementById('noNotificationsMsg');

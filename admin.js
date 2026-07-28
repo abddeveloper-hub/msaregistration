@@ -60,11 +60,22 @@ function isStudentApplication(record) {
     return Boolean(record.parentUid || record.campus || record.campusId || ['pending', 'admitted', 'rejected'].includes(status));
 }
 
+// Splash Screen Safety Dismissal
+function dismissSplashScreen() {
+    const splash = document.getElementById("appSplashScreen");
+    if (splash) splash.classList.add("hidden");
+}
+if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", dismissSplashScreen);
+} else {
+    dismissSplashScreen();
+}
+setTimeout(dismissSplashScreen, 1500);
+
 // Auth State
 let adminDocUnsub = null;
 onAuthStateChanged(auth, (user) => {
-    const splash = document.getElementById("appSplashScreen");
-    if (splash) splash.classList.add("hidden");
+    dismissSplashScreen();
 
     if (adminDocUnsub) {
         adminDocUnsub();

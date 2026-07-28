@@ -1,7 +1,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, limit, doc, updateDoc, writeBatch } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-import { getMessaging, onMessage } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-messaging.js";
+import { getMessaging, onMessage, isSupported } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-messaging.js";
 import { firebaseConfig } from "./firebase-config.js";
 
 const app = initializeApp(firebaseConfig);
@@ -9,16 +9,22 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 
 let messaging = null;
-try {
-    messaging = getMessaging(app);
-    onMessage(messaging, (payload) => {
-        console.log("FCM Foreground message received:", payload);
-        const title = payload.notification?.title || payload.data?.title || "MSA Portal";
-        const body = payload.notification?.body || payload.data?.body || payload.data?.message || "";
-        showToast(title, body, payload.data?.type || "announcement");
-    });
-} catch (err) {
-    console.warn("FCM messaging initialization notice:", err);
+if (typeof window !== "undefined") {
+    isSupported().then((supported) => {
+        if (supported) {
+            try {
+                messaging = getMessaging(app);
+                onMessage(messaging, (payload) => {
+                    console.log("FCM Foreground message received:", payload);
+                    const title = payload.notification?.title || payload.data?.title || "MSA Portal";
+                    const body = payload.notification?.body || payload.data?.body || payload.data?.message || "";
+                    showToast(title, body, payload.data?.type || "announcement");
+                });
+            } catch (err) {
+                console.warn("FCM messaging initialization notice:", err);
+            }
+        }
+    }).catch(err => console.warn("FCM isSupported check notice:", err));
 }
 
 // Helper function to dispatch a new notification to Firestore
@@ -227,7 +233,9 @@ if (typeof window !== "undefined") {
 let currentNotifications = [];
 let initialLoadDone = false;
 
-document.addEventListener("DOMContentLoaded", () => {
+function initNotificationDOM() {
+    if (typeof document === "undefined" || !document.body) return;
+
     // 1. Ensure Toast Container exists
     if (!document.getElementById("globalToastContainer")) {
         const toastBox = document.createElement("div");
@@ -262,7 +270,15 @@ document.addEventListener("DOMContentLoaded", () => {
     // 3. Inject Bell Button & setup Mobile Permission Banners
     injectBellIcon();
     renderPermissionBanner();
-});
+}
+
+if (typeof document !== "undefined") {
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", initNotificationDOM);
+    } else {
+        initNotificationDOM();
+    }
+}
 
 function renderPermissionBanner() {
     const bannerBox = document.getElementById("notifPermissionBanner");

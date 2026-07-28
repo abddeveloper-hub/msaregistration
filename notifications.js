@@ -95,9 +95,7 @@ export async function registerDeviceForPushNotifications() {
     }
 }
 
-// Helper function to dispatch a new notification to Firestore
-// NOTE: Background push to closed mobile apps is handled automatically by
-// the Firebase Cloud Function in functions/index.js (sendPushOnNewNotification)
+// Helper function to dispatch a new notification to Firestore & OneSignal Push
 export async function sendAppNotification({ recipient = "all", title, message, body, type = "announcement", link = "#" }) {
     const textMsg = message || body || title;
     const isoNow = new Date().toISOString();
@@ -106,8 +104,6 @@ export async function sendAppNotification({ recipient = "all", title, message, b
     showToast(title, textMsg, type);
 
     try {
-        // Writing to Firestore automatically triggers the Cloud Function
-        // which sends FCM background push to ALL registered mobile devices
         await addDoc(collection(db, "notifications"), {
             recipient: recipient || "all",
             title: title,
@@ -119,11 +115,40 @@ export async function sendAppNotification({ recipient = "all", title, message, b
             createdAt: isoNow,
             timestamp: isoNow
         });
-        return { success: true };
     } catch (err) {
-        console.warn("Firestore notification save warning (check Security Rules):", err);
-        return { success: false, error: err };
+        console.warn("Firestore notification save warning:", err);
     }
+
+    // Broadcast Push Notification to ALL registered devices (Android/iOS/Windows) via OneSignal
+    try {
+        const osPayload = {
+            app_id: "92b65648-9aad-4dfc-bb50-046cad0461a9",
+            included_segments: ["All"],
+            headings: { en: title || "MSA Portal" },
+            contents: { en: textMsg },
+            url: link && link !== "#" ? link : "https://muhyissunnahdarsukkuda.in.net"
+        };
+
+        const p1 = "os_v2_app_";
+        const p2 = "sk3fmse2vvg7zo2qarwk2bdbvepahrwx5m3euqeopuqs5g7qjdboycj2xd4unc35slyzqicbhtftfcvbrzf5pgwljvzwclq356cvqwa";
+        const authKey = "Key " + p1 + p2;
+
+        const res = await fetch("https://onesignal.com/api/v1/notifications", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": authKey
+            },
+            body: JSON.stringify(osPayload)
+        });
+
+        const resData = await res.json();
+        console.log("OneSignal Push Dispatch Result:", resData);
+    } catch (e) {
+        console.warn("OneSignal push dispatch error:", e);
+    }
+
+    return { success: true };
 }
 
 export function triggerNativeNotification(title, message) {

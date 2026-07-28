@@ -13,7 +13,6 @@ function initToggleMenu() {
     const closeBtn = document.getElementById("closeLoginDrawerBtn") || document.getElementById("closeDrawerBtn");
 
     if (loginMenuToggleBtn && loginDropdownMenu) {
-        // Direct click handler to ensure reliable toggling
         loginMenuToggleBtn.onclick = (e) => {
             e.preventDefault();
             e.stopPropagation();
@@ -34,6 +33,195 @@ function initToggleMenu() {
                 !loginMenuToggleBtn.contains(e.target)) {
                 loginDropdownMenu.classList.add("hidden");
             }
+        });
+    }
+
+    initCommandPalette();
+}
+
+// Global Command Palette (Ctrl+K / Cmd+K)
+function initCommandPalette() {
+    if (typeof document === "undefined") return;
+
+    // Injects Command Palette Modal DOM if missing
+    if (!document.getElementById("globalCmdPaletteModal")) {
+        const modal = document.createElement("div");
+        modal.id = "globalCmdPaletteModal";
+        modal.className = "cmd-palette-backdrop hidden";
+        modal.innerHTML = `
+            <div class="cmd-palette-box">
+                <div class="cmd-palette-header">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                    <input type="text" id="cmdPaletteInput" placeholder="Type a command or search page (e.g. Library, Events, Admin)..." autocomplete="off">
+                    <span class="cmd-palette-badge">ESC</span>
+                </div>
+                <div id="cmdPaletteList" class="cmd-palette-list">
+                    <!-- Dynamic navigation options -->
+                </div>
+            </div>
+        `;
+        document.body.appendChild(modal);
+
+        // Inject Command Palette Styles
+        if (!document.getElementById("cmdPaletteStyles")) {
+            const style = document.createElement("style");
+            style.id = "cmdPaletteStyles";
+            style.textContent = `
+                .cmd-palette-backdrop {
+                    position: fixed;
+                    inset: 0;
+                    background: rgba(0, 0, 0, 0.6);
+                    backdrop-filter: blur(12px);
+                    -webkit-backdrop-filter: blur(12px);
+                    z-index: 99999;
+                    display: flex;
+                    align-items: flex-start;
+                    justify-content: center;
+                    padding-top: 15vh;
+                    opacity: 0;
+                    pointer-events: none;
+                    transition: opacity 0.2s ease;
+                }
+                .cmd-palette-backdrop:not(.hidden) {
+                    opacity: 1;
+                    pointer-events: auto;
+                }
+                .cmd-palette-box {
+                    width: 90%;
+                    max-width: 580px;
+                    background: var(--surface-solid, #0f172a);
+                    border: 1px solid var(--border, rgba(255,255,255,0.15));
+                    border-radius: 18px;
+                    box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+                    overflow: hidden;
+                }
+                .cmd-palette-header {
+                    display: flex;
+                    align-items: center;
+                    padding: 1rem 1.25rem;
+                    border-bottom: 1px solid var(--border, rgba(255,255,255,0.1));
+                    gap: 0.75rem;
+                    color: var(--text-dim, #94a3b8);
+                }
+                .cmd-palette-header input {
+                    flex: 1;
+                    background: transparent;
+                    border: none;
+                    outline: none;
+                    color: var(--text-main, #f8fafc);
+                    font-size: 1rem;
+                    font-family: inherit;
+                }
+                .cmd-palette-badge {
+                    font-size: 0.7rem;
+                    font-weight: 700;
+                    padding: 3px 7px;
+                    border-radius: 6px;
+                    background: rgba(255,255,255,0.1);
+                    color: var(--text-dim, #94a3b8);
+                }
+                .cmd-palette-list {
+                    max-height: 320px;
+                    overflow-y: auto;
+                    padding: 0.5rem;
+                }
+                .cmd-item {
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                    padding: 0.75rem 1rem;
+                    border-radius: 10px;
+                    color: var(--text-main, #f8fafc);
+                    text-decoration: none;
+                    font-size: 0.9rem;
+                    cursor: pointer;
+                    transition: background 0.15s ease;
+                }
+                .cmd-item:hover, .cmd-item.selected {
+                    background: rgba(37, 99, 235, 0.2);
+                    color: #60a5fa;
+                }
+                .cmd-item-title {
+                    display: flex;
+                    align-items: center;
+                    gap: 0.75rem;
+                }
+                .cmd-item-category {
+                    font-size: 0.75rem;
+                    color: var(--text-dim, #94a3b8);
+                }
+            `;
+            document.head.appendChild(style);
+        }
+    }
+
+    const modal = document.getElementById("globalCmdPaletteModal");
+    const input = document.getElementById("cmdPaletteInput");
+    const list = document.getElementById("cmdPaletteList");
+
+    const commands = [
+        { icon: "🌐", title: "Home Page", url: "index.html", cat: "Navigation" },
+        { icon: "📚", title: "Digital Library & Audio Archive", url: "library.html", cat: "Resources" },
+        { icon: "📅", title: "News & Upcoming Events", url: "events.html", cat: "Information" },
+        { icon: "🖼️", title: "Photo & Media Gallery", url: "gallery.html", cat: "Media" },
+        { icon: "🎥", title: "Video Portal & Lectures", url: "videos.html", cat: "Media" },
+        { icon: "🏆", title: "Student Achievements & Honors", url: "achievements.html", cat: "Honors" },
+        { icon: "🎓", title: "Alumni Directory", url: "alumni.html", cat: "Directory" },
+        { icon: "🔑", title: "Student / Faculty Portal Login", url: "login.html", cat: "Authentication" },
+        { icon: "🛡️", title: "Admin Portal", url: "admin.html", cat: "Management" }
+    ];
+
+    function renderCmds(query = "") {
+        if (!list) return;
+        const q = query.toLowerCase().trim();
+        const filtered = commands.filter(c => !q || c.title.toLowerCase().includes(q) || c.cat.toLowerCase().includes(q));
+
+        if (filtered.length === 0) {
+            list.innerHTML = `<div style="padding:1.5rem; text-align:center; color:var(--text-dim); font-size:0.85rem;">No matching page commands found</div>`;
+            return;
+        }
+
+        list.innerHTML = filtered.map((c, idx) => `
+            <a href="${c.url}" class="cmd-item ${idx === 0 ? 'selected' : ''}">
+                <span class="cmd-item-title">
+                    <span>${c.icon}</span>
+                    <span>${c.title}</span>
+                </span>
+                <span class="cmd-item-category">${c.cat}</span>
+            </a>
+        `).join("");
+    }
+
+    function toggleCmdPalette(show) {
+        if (!modal) return;
+        if (show) {
+            modal.classList.remove("hidden");
+            renderCmds("");
+            setTimeout(() => input?.focus(), 50);
+        } else {
+            modal.classList.add("hidden");
+            if (input) input.value = "";
+        }
+    }
+
+    // Keydown listener for Ctrl+K / Cmd+K and Esc
+    document.addEventListener("keydown", (e) => {
+        if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") {
+            e.preventDefault();
+            const isHidden = modal?.classList.contains("hidden");
+            toggleCmdPalette(isHidden);
+        } else if (e.key === "Escape" && modal && !modal.classList.contains("hidden")) {
+            toggleCmdPalette(false);
+        }
+    });
+
+    if (input) {
+        input.addEventListener("input", (e) => renderCmds(e.target.value));
+    }
+
+    if (modal) {
+        modal.addEventListener("click", (e) => {
+            if (e.target === modal) toggleCmdPalette(false);
         });
     }
 }
@@ -57,20 +245,17 @@ onAuthStateChanged(auth, async (user) => {
 
     const links = Array.from(loginDropdownMenu.querySelectorAll("a"));
     
-    // Find Login link (href contains login.html, but not signup=true)
     const loginLink = links.find(a => {
         const href = a.getAttribute("href") || "";
         return href.includes("login.html") && !href.includes("signup=true");
     }) || loginDropdownMenu.querySelector("#dropdownLoginBtn");
 
-    // Find Signup link
     const signupLink = links.find(a => {
         const href = a.getAttribute("href") || "";
         return href.includes("signup=true");
     }) || loginDropdownMenu.querySelector("#dropdownSignupBtn");
 
     if (!user) {
-        // User is NOT logged in -> Show "Login" and "New Registration"
         if (loginLink) {
             loginLink.setAttribute("href", "login.html");
             loginLink.style.cursor = "pointer";
@@ -90,7 +275,6 @@ onAuthStateChanged(auth, async (user) => {
             signupLink.onclick = null;
         }
     } else {
-        // User IS logged in -> Turn "Login" into "Log Out"
         if (loginLink) {
             loginLink.removeAttribute("href");
             loginLink.style.cursor = "pointer";

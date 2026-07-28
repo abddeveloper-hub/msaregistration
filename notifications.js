@@ -55,7 +55,8 @@ export async function sendAppNotification({ recipient = "all", title, message, b
 }
 
 export function triggerNativeNotification(title, message) {
-    if (!("Notification" in window) || Notification.permission !== "granted") return;
+    if (!("Notification" in window)) return;
+
     const text = message || title;
     const header = message ? title : "MSA Portal";
     
@@ -64,23 +65,47 @@ export function triggerNativeNotification(title, message) {
         iconUrl = new URL("icon-192.png", window.location.href).href;
     } catch(e) {}
 
-    if ("serviceWorker" in navigator) {
-        navigator.serviceWorker.ready.then(reg => {
-            reg.showNotification(header, {
+    const fireNotif = () => {
+        try {
+            const notif = new Notification(header, {
                 body: text,
                 icon: iconUrl,
                 badge: iconUrl,
                 vibrate: [300, 100, 300, 100, 300],
                 tag: "msa-sys-notif-" + Date.now(),
                 renotify: true,
-                requireInteraction: false,
-                data: { url: './' }
+                requireInteraction: false
             });
-        }).catch(() => {
-            try { new Notification(header, { body: text, icon: iconUrl }); } catch (e) {}
-        });
-    } else {
-        try { new Notification(header, { body: text, icon: iconUrl }); } catch (e) {}
+            notif.onclick = function() {
+                try { window.focus(); } catch(e) {}
+                this.close();
+            };
+        } catch (err) {
+            if ("serviceWorker" in navigator) {
+                navigator.serviceWorker.ready.then(reg => {
+                    reg.showNotification(header, {
+                        body: text,
+                        icon: iconUrl,
+                        badge: iconUrl,
+                        vibrate: [300, 100, 300, 100, 300],
+                        tag: "msa-sys-notif-" + Date.now(),
+                        renotify: true,
+                        requireInteraction: false,
+                        data: { url: './' }
+                    });
+                }).catch(() => {});
+            }
+        }
+    };
+
+    if (Notification.permission === "granted") {
+        fireNotif();
+    } else if (Notification.permission === "default") {
+        Notification.requestPermission().then(permission => {
+            if (permission === "granted") {
+                fireNotif();
+            }
+        }).catch(() => {});
     }
 }
 
@@ -180,8 +205,18 @@ export async function runNotificationDiagnostic() {
         return { success: false, reason: "Permission Not Granted" };
     }
 
-    let swDispatched = false;
-    if ("serviceWorker" in navigator) {
+    let notifDispatched = false;
+    try {
+        const notif = new Notification("Live Test Notification 🔔", {
+            body: "System notifications are active and working on your device!",
+            icon: "./icon-192.png"
+        });
+        notifDispatched = true;
+    } catch(e) {
+        console.warn("Direct Notification error:", e);
+    }
+
+    if (!notifDispatched && "serviceWorker" in navigator) {
         try {
             const reg = await navigator.serviceWorker.ready;
             await reg.showNotification("Live Test Notification 🔔", {
@@ -193,22 +228,10 @@ export async function runNotificationDiagnostic() {
                 renotify: true,
                 requireInteraction: true
             });
-            swDispatched = true;
+            notifDispatched = true;
         } catch(e) {
             console.warn("SW reg.showNotification error:", e);
             diagReport.push("SW Push Error: " + (e.message || e));
-        }
-    }
-
-    if (!swDispatched) {
-        try {
-            new Notification("Live Test Notification 🔔", {
-                body: "System notifications are active and working on your device!",
-                icon: "./icon-192.png"
-            });
-        } catch(e) {
-            console.warn("Direct Notification error:", e);
-            diagReport.push("Direct Push Error: " + (e.message || e));
         }
     }
 

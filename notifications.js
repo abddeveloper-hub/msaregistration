@@ -27,43 +27,71 @@ if (typeof window !== "undefined") {
     }).catch(err => console.warn("FCM isSupported check notice:", err));
 }
 
-// Automatically register device push token in Firestore for all app installations
+// Automatically register device push token in Firestore for all app installations & Android devices
 export async function registerDeviceForPushNotifications() {
     if (typeof window === "undefined" || !("Notification" in window)) return;
     if (Notification.permission !== "granted") return;
 
     try {
-        const supported = await isSupported();
-        if (!supported) return;
+        if (!("serviceWorker" in navigator)) return;
+        const swReg = await navigator.serviceWorker.ready;
+        if (!swReg || !swReg.pushManager) return;
 
-        const messagingInstance = messaging || getMessaging(app);
-        if (!messagingInstance) return;
+        let token = null;
+        let endpoint = null;
 
-        let swReg = null;
-        if ("serviceWorker" in navigator) {
-            swReg = await navigator.serviceWorker.ready;
+        // 1. Try FCM getToken first
+        try {
+            const supported = await isSupported();
+            if (supported) {
+                const messagingInstance = messaging || getMessaging(app);
+                if (messagingInstance) {
+                    token = await getToken(messagingInstance, {
+                        serviceWorkerRegistration: swReg,
+                        vapidKey: "BC8hZ0WjN38P21-GZ46l1Q_b8XN34m8K7n4W_vnmnZ_K7n4W"
+                    }).catch(() => null);
+                }
+            }
+        } catch(e) {}
+
+        // 2. Standard WebPush Subscription fallback for Android Chrome
+        if (!token) {
+            try {
+                let sub = await swReg.pushManager.getSubscription();
+                if (!sub) {
+                    sub = await swReg.pushManager.subscribe({
+                        userVisibleOnly: true
+                    }).catch(() => null);
+                }
+                if (sub) {
+                    endpoint = sub.endpoint;
+                    token = sub.endpoint;
+                }
+            } catch(subErr) {
+                console.warn("PushManager subscribe notice:", subErr);
+            }
         }
 
-        const currentToken = await getToken(messagingInstance, {
-            serviceWorkerRegistration: swReg || undefined
-        });
-
-        if (currentToken) {
+        if (token || endpoint) {
+            const targetToken = token || endpoint;
             const isStandalone = window.navigator.standalone || window.matchMedia('(display-mode: standalone)').matches;
-            const tokenDocId = currentToken.replace(/[^a-zA-Z0-9]/g, "_").slice(-64);
+            const tokenDocId = String(targetToken).replace(/[^a-zA-Z0-9]/g, "_").slice(-64);
             const user = auth.currentUser;
 
             await setDoc(doc(db, "push_tokens", tokenDocId), {
-                token: currentToken,
+                token: targetToken,
+                endpoint: endpoint || targetToken,
                 uid: user ? user.uid : "anonymous",
-                platform: navigator.platform || "Web",
+                platform: navigator.platform || "Android",
                 userAgent: navigator.userAgent,
                 isInstalledApp: Boolean(isStandalone),
                 updatedAt: new Date().toISOString()
             }, { merge: true });
+
+            console.log("Push Token successfully saved to Firestore push_tokens!");
         }
     } catch (err) {
-        console.warn("FCM device token registration notice:", err);
+        console.warn("Device push token registration notice:", err);
     }
 }
 
@@ -104,8 +132,8 @@ async function dispatchBackgroundPushToTokens({ title, message, link, type }) {
 
         tokensSnap.forEach(docSnap => {
             const tokenData = docSnap.data();
-            if (tokenData && tokenData.token) {
-                sendFcmPayloadToToken(tokenData.token, { title, message, link, type });
+            if (tokenData) {
+                sendFcmPayloadToToken(tokenData, { title, message, link, type });
             }
         });
     } catch (e) {
@@ -113,9 +141,17 @@ async function dispatchBackgroundPushToTokens({ title, message, link, type }) {
     }
 }
 
-async function sendFcmPayloadToToken(token, { title, message, link, type }) {
+async function sendFcmPayloadToToken(tokenData, { title, message, link, type }) {
+    const targetUrl = typeof tokenData === "string" ? tokenData : (tokenData.endpoint || tokenData.token);
+    if (!targetUrl) return;
+
+    let postUrl = "https://fcm.googleapis.com/fcm/send";
+    if (targetUrl.startsWith("http")) {
+        postUrl = targetUrl;
+    }
+
     const payload = {
-        to: token,
+        to: targetUrl,
         notification: {
             title: title || "MSA Portal",
             body: message || "New notification",
@@ -132,7 +168,7 @@ async function sendFcmPayloadToToken(token, { title, message, link, type }) {
     };
 
     try {
-        await fetch("https://fcm.googleapis.com/fcm/send", {
+        await fetch(postUrl, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"

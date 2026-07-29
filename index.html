@@ -508,36 +508,60 @@
     <script type="module" src="app.js?v=4"></script>
     <script type="module" src="nav-menu.js"></script>
 
-    <!-- Scroll Animations Logic -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const observerOptions = {
-                root: null,
-                rootMargin: '0px',
-                threshold: 0.15
-            };
 
-            const observer = new IntersectionObserver((entries, observer) => {
+            // ── Universal Text Slide-In Reveal ──────────────────────────────
+            const SELECTORS = 'h1, h2, h3, h4, h5, h6, p, li, blockquote, ' +
+                              '.eyebrow-label, small, label, figcaption, ' +
+                              '.pill-badge, .hero-lead, .hero-actions, ' +
+                              '.portal-card, .animate-on-scroll';
+
+            // Elements to never animate (nav, footer utility text, etc.)
+            const SKIP = el =>
+                el.closest('nav, header, .nav-wrapper, footer, ' +
+                            '#loginDropdownMenu, #nav-drawer-overlay, ' +
+                            '#globalCmdPaletteModal, script, style, noscript') ||
+                el.classList.contains('txt-reveal'); // already tagged
+
+            const DELAY_CLASSES = ['','delay-1','delay-2','delay-3','delay-4','delay-5','delay-6','delay-7','delay-8'];
+
+            // Tag elements with txt-reveal and stagger within their parent
+            document.querySelectorAll(SELECTORS).forEach(el => {
+                if (SKIP(el)) return;
+
+                // Determine stagger index among siblings of same type group
+                const siblings = Array.from(el.parentElement?.children || [])
+                    .filter(s => !SKIP(s) && !s.classList.contains('txt-reveal'));
+                const idx = siblings.indexOf(el);
+
+                el.classList.add('txt-reveal');
+                if (idx > 0 && idx <= 8) el.classList.add(DELAY_CLASSES[idx]);
+            });
+
+            // Intersection Observer to trigger .in-view
+            const observer = new IntersectionObserver((entries, obs) => {
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
+                        entry.target.classList.add('in-view');
+                        // Also keep old is-visible working
                         entry.target.classList.add('is-visible');
-                        // Optional: stop observing once animated
-                        // observer.unobserve(entry.target); 
+                        obs.unobserve(entry.target);
                     }
                 });
-            }, observerOptions);
+            }, { root: null, rootMargin: '0px 0px -6% 0px', threshold: 0.08 });
 
-            const animatedElements = document.querySelectorAll('.animate-on-scroll');
-            animatedElements.forEach(el => observer.observe(el));
+            document.querySelectorAll('.txt-reveal, .animate-on-scroll').forEach(el => observer.observe(el));
 
-            // Immediately trigger hero animations if already in viewport on load
+            // Hero elements are always visible immediately
             setTimeout(() => {
-                document.querySelectorAll('.hero-section .animate-on-scroll').forEach(el => {
-                    el.classList.add('is-visible');
+                document.querySelectorAll('.hero-section .txt-reveal, .hero-section .animate-on-scroll').forEach(el => {
+                    el.classList.add('in-view', 'is-visible');
                 });
-            }, 100);
+            }, 80);
         });
     </script>
+
 
     <!-- PWA Registration -->
     <script>

@@ -81,11 +81,23 @@ document.addEventListener('DOMContentLoaded', () => {
     let allPhotos = [];
     let currentFilter = 'all';
 
+    function getPhotoTime(photo) {
+        if (!photo) return 0;
+        const val = photo.createdAt || photo.timestamp || photo.date || photo.addedAt || photo.uploadedAt;
+        if (!val) return 0;
+        if (typeof val.toDate === 'function') return val.toDate().getTime();
+        if (typeof val.seconds === 'number') return val.seconds * 1000;
+        const parsed = new Date(val).getTime();
+        return isNaN(parsed) ? 0 : parsed;
+    }
+
     function formatAddedDate(rawDate) {
         if (!rawDate) return '';
         let dateObj;
         if (rawDate && typeof rawDate.toDate === 'function') {
             dateObj = rawDate.toDate();
+        } else if (rawDate && typeof rawDate.seconds === 'number') {
+            dateObj = new Date(rawDate.seconds * 1000);
         } else {
             dateObj = new Date(rawDate);
         }
@@ -150,7 +162,10 @@ document.addEventListener('DOMContentLoaded', () => {
         galleryGrid.innerHTML = '';
         let visibleCount = 0;
 
-        allPhotos.forEach(photo => {
+        // Sort: Newest (largest timestamp) at the top, older (smaller timestamp) at the bottom
+        const sortedPhotos = [...allPhotos].sort((a, b) => getPhotoTime(b) - getPhotoTime(a));
+
+        sortedPhotos.forEach(photo => {
             const photoCategory = (photo.category || 'Events').toLowerCase();
             const matchFilter = currentFilter === 'all' || photoCategory === currentFilter.toLowerCase();
             const matchCampus = currentCampusFilter === 'all' || (photo.campus || '').toLowerCase().includes(currentCampusFilter.toLowerCase());
@@ -200,86 +215,85 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 allPhotos = defaultGalleryItems;
             }
-            allPhotos.sort((a, b) => new Date(b.createdAt || b.timestamp || 0) - new Date(a.createdAt || a.timestamp || 0));
+            allPhotos.sort((a, b) => getPhotoTime(b) - getPhotoTime(a));
             renderFilterButtons();
             renderGallery();
         }, (err) => {
             console.warn("Gallery load notice, using curated photos:", err);
             allPhotos = defaultGalleryItems;
+            allPhotos.sort((a, b) => getPhotoTime(b) - getPhotoTime(a));
             renderFilterButtons();
             renderGallery();
         });
     } catch(e) {
         allPhotos = defaultGalleryItems;
+        allPhotos.sort((a, b) => getPhotoTime(b) - getPhotoTime(a));
         renderFilterButtons();
         renderGallery();
     }
 
     function bindLightbox() {
-        const items = document.querySelectorAll('.gallery-item');
         const lightbox = document.getElementById('lightbox');
-        const lightboxImg = document.getElementById('lightboxImg');
-        const lightboxCaption = document.getElementById('lightboxCaption');
+        const scrollContainer = document.getElementById('lightboxScrollContainer');
         const lightboxClose = document.getElementById('lightboxClose');
-        const lightboxPrev = document.getElementById('lightboxPrev');
-        const lightboxNext = document.getElementById('lightboxNext');
+        const itemsWithImages = Array.from(document.querySelectorAll('.gallery-item')).filter(item => item.querySelector('img'));
 
-        if (!lightbox) return;
+        if (!lightbox || !scrollContainer) return;
 
-        let currentIndex = -1;
-        const itemsWithImages = Array.from(items).filter(item => item.querySelector('img'));
-
-        function updateLightboxContent(item) {
-            const img = item.querySelector('img');
-            if (img) {
-                lightboxImg.src = img.src;
+        function buildVerticalFeed(selectedIndex) {
+            scrollContainer.innerHTML = itemsWithImages.map((item, idx) => {
+                const img = item.querySelector('img');
+                const photoSrc = img ? img.src : '';
+                const photoAlt = img ? (img.alt || 'Gallery Photo') : '';
                 const captionText = item.getAttribute('data-caption') || '';
                 const dateText = item.getAttribute('data-date') || '';
-                lightboxCaption.innerHTML = `
-                    <div style="font-size:1.05rem; font-weight:600; color:#fff;">${captionText}</div>
-                    ${dateText ? `<div style="font-size:0.85rem; color:rgba(255,255,255,0.75); margin-top:0.4rem;">🕒 Added: ${dateText}</div>` : ''}
+
+                return `
+                    <div class="lightbox-slide" id="lightbox-slide-${idx}">
+                        <img src="${photoSrc}" alt="${photoAlt}" loading="lazy">
+                        <div class="lightbox-slide-info">
+                            <div class="lightbox-slide-title">${photoAlt}</div>
+                            ${captionText && captionText !== photoAlt ? `<div class="lightbox-slide-desc">${captionText}</div>` : ''}
+                            ${dateText ? `<div class="lightbox-slide-meta"><span>🕒 Added: ${dateText}</span></div>` : ''}
+                        </div>
+                    </div>
                 `;
-            }
+            }).join('');
+
+            lightbox.classList.add('open');
+            document.body.style.overflow = 'hidden';
+
+            // Instantly snap to the clicked photo (exact single screen alignment)
+            setTimeout(() => {
+                const targetSlide = document.getElementById(`lightbox-slide-${selectedIndex}`);
+                if (targetSlide) {
+                    targetSlide.scrollIntoView({ behavior: 'auto', block: 'start' });
+                }
+            }, 30);
         }
 
         itemsWithImages.forEach((item, index) => {
             item.addEventListener('click', () => {
-                updateLightboxContent(item);
-                currentIndex = index;
-                lightbox.classList.add('open');
+                buildVerticalFeed(index);
             });
         });
 
-        const closeLightbox = () => lightbox.classList.remove('open');
-        const showPrev = (e) => {
-            e.stopPropagation();
-            if (currentIndex > 0) {
-                currentIndex--;
-                const prevItem = itemsWithImages[currentIndex];
-                updateLightboxContent(prevItem);
-            }
-        };
-        const showNext = (e) => {
-            e.stopPropagation();
-            if (currentIndex < itemsWithImages.length - 1) {
-                currentIndex++;
-                const nextItem = itemsWithImages[currentIndex];
-                updateLightboxContent(nextItem);
-            }
+        const closeLightbox = () => {
+            lightbox.classList.remove('open');
+            document.body.style.overflow = '';
         };
 
         lightboxClose?.addEventListener('click', closeLightbox);
-        lightboxPrev?.addEventListener('click', showPrev);
-        lightboxNext?.addEventListener('click', showNext);
+
         lightbox?.addEventListener('click', (e) => {
-            if (e.target === lightbox) closeLightbox();
+            if (e.target === lightbox || e.target === scrollContainer) {
+                closeLightbox();
+            }
         });
 
         document.addEventListener('keydown', (e) => {
             if (!lightbox.classList.contains('open')) return;
             if (e.key === 'Escape') closeLightbox();
-            if (e.key === 'ArrowLeft') showPrev(e);
-            if (e.key === 'ArrowRight') showNext(e);
         });
     }
 });

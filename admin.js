@@ -1200,9 +1200,25 @@ if (galleryAdminGrid) {
     // Render Admin Gallery Grid
     onSnapshot(collection(db, "gallery"), (snap) => {
         galleryAdminGrid.innerHTML = '';
+        const items = [];
         snap.forEach(docSnap => {
-            const data = docSnap.data();
-            const id = docSnap.id;
+            items.push({ id: docSnap.id, ...docSnap.data() });
+        });
+
+        items.sort((a, b) => {
+            const getTime = (p) => {
+                const val = p.createdAt || p.timestamp || p.date || p.addedAt || p.uploadedAt;
+                if (!val) return 0;
+                if (typeof val.toDate === 'function') return val.toDate().getTime();
+                if (typeof val.seconds === 'number') return val.seconds * 1000;
+                const t = new Date(val).getTime();
+                return isNaN(t) ? 0 : t;
+            };
+            return getTime(b) - getTime(a);
+        });
+
+        items.forEach(data => {
+            const id = data.id;
             const item = document.createElement('div');
             item.className = 'portal-card';
             item.style.padding = '0.75rem';

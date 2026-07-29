@@ -196,8 +196,9 @@
         }
 
         .videos-grid {
-            columns: 3 300px;
-            gap: 1rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
         }
 
         .videos-item {
@@ -424,7 +425,7 @@
 
         @media (max-width: 768px) {
             .videos-grid {
-                columns: 2 150px;
+                grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
             }
 
             .lightbox-nav.prev {
@@ -442,7 +443,7 @@
 
         @media (max-width: 480px) {
             .videos-grid {
-                columns: 1;
+                grid-template-columns: 1fr;
             }
         }
     </style>

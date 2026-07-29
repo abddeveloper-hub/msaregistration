@@ -28,6 +28,167 @@ td {
     display: none !important;
 }
 
+/* ==========================================
+   GLOBAL HEADER & NAVIGATION STYLING
+   ========================================== */
+.nav-wrapper {
+    position: sticky;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    background: var(--surface-solid, #ffffff);
+    border-bottom: 1px solid var(--border, #e5e7eb);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+}
+
+.navbar {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0.75rem 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    position: relative;
+}
+
+.brand-lockup {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    text-decoration: none;
+    color: var(--text-main, #1f2937);
+}
+
+.brand-logo-img {
+    width: 42px;
+    height: 42px;
+    object-fit: contain;
+    flex-shrink: 0;
+}
+
+.brand-text {
+    display: flex;
+    flex-direction: column;
+}
+
+.brand-text strong {
+    font-size: 1.1rem;
+    line-height: 1.15;
+    color: var(--text-main, #1f2937);
+}
+
+.brand-text span {
+    font-size: 0.65rem;
+    letter-spacing: 0.12em;
+    color: var(--text-dim, #6b7280);
+    text-transform: uppercase;
+}
+
+.nav-links {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+}
+
+.nav-links a {
+    color: var(--text-dim, #4b5563);
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 600;
+    transition: color 0.15s ease;
+}
+
+.nav-links a:hover {
+    color: var(--primary, #0f4c3a);
+}
+
+.nav-actions {
+    position: relative !important;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+#loginMenuToggleBtn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    border: 1px solid var(--border, #e5e7eb);
+    background: var(--surface, #ffffff);
+    color: var(--text-main, #1f2937);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+#loginMenuToggleBtn:hover {
+    background: var(--surface-raised, #f3f4f6);
+}
+
+#loginDropdownMenu {
+    position: absolute !important;
+    top: calc(100% + 0.6rem) !important;
+    right: 0 !important;
+    left: auto !important;
+    z-index: 10000;
+    background: var(--surface-solid, #ffffff);
+    border: 1px solid var(--border, #e5e7eb);
+    border-radius: 16px;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.12);
+    min-width: 240px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    padding: 0.4rem 0;
+}
+
+#loginDropdownMenu.hidden {
+    display: none !important;
+}
+
+#loginDropdownMenu a {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1.1rem;
+    color: var(--text-main, #1f2937);
+    text-decoration: none;
+    font-size: 0.88rem;
+    font-weight: 500;
+    transition: background 0.15s ease;
+}
+
+#loginDropdownMenu a:hover {
+    background: var(--surface-raised, #f3f4f6);
+    color: var(--primary, #0f4c3a);
+}
+
+/* Mobile Adjustments for Header */
+@media (max-width: 900px) {
+    .nav-links {
+        display: none !important;
+    }
+    .navbar {
+        padding: 0.6rem 1rem;
+    }
+    .brand-logo-img {
+        width: 36px;
+        height: 36px;
+    }
+    .brand-text strong {
+        font-size: 0.95rem;
+    }
+    .brand-text span {
+        font-size: 0.58rem;
+    }
+}
+
 /* Quranic Islamic Calligraphy Font Fallbacks */
 @font-face {
     font-family: 'arab quran islamic 140';

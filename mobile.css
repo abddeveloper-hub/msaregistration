@@ -1059,6 +1059,10 @@ html, body {
         -webkit-backdrop-filter: blur(16px) !important;
     }
 
+    #loginDropdownMenu.hidden {
+        display: none !important;
+    }
+
     .cmd-palette-backdrop {
         padding-top: 5vh !important;
     }

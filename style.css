@@ -23,6 +23,11 @@ td {
     font-family: 'El Messiri', 'Inter', sans-serif !important;
 }
 
+/* Utility Hidden Class */
+.hidden {
+    display: none !important;
+}
+
 /* Quranic Islamic Calligraphy Font Fallbacks */
 @font-face {
     font-family: 'arab quran islamic 140';

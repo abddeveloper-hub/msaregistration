@@ -3,23 +3,19 @@
    Supplements style.css for small screens
    ========================================== */
 
-html,
-body {
+html, body {
     overflow-x: hidden;
     width: 100%;
     max-width: 100%;
 }
 
-.portal-layout,
-.admin-layout,
-.app-container {
+.portal-layout, .admin-layout, .app-container {
     max-width: 100%;
     overflow-x: hidden;
 }
 
 /* ---- Medium Screens (Tablets / Small Laptops) ---- */
 @media (max-width: 900px) {
-
     .admin-layout,
     .portal-layout {
         grid-template-columns: 1fr;
@@ -68,8 +64,8 @@ body {
     }
 
     /* Overview stat grids */
-    #view-overview>div:first-of-type,
-    #view-global-analytics>div:first-of-type {
+    #view-overview > div:first-of-type,
+    #view-global-analytics > div:first-of-type {
         grid-template-columns: 1fr 1fr !important;
     }
 }
@@ -113,8 +109,8 @@ body {
     }
 
     /* Stat cards full width on mobile */
-    #view-overview>div:first-of-type,
-    #view-global-analytics>div:first-of-type {
+    #view-overview > div:first-of-type,
+    #view-global-analytics > div:first-of-type {
         grid-template-columns: 1fr !important;
     }
 
@@ -129,20 +125,20 @@ body {
         min-width: 520px;
     }
 
-    section>div>table,
-    .admin-view>div>table {
+    section > div > table,
+    .admin-view > div > table {
         min-width: 520px;
     }
 
     /* Wrap all table containers */
-    .admin-view>div[style*="background: var(--glass)"],
-    .admin-view>div[style*="border-radius: 2rem"] {
+    .admin-view > div[style*="background: var(--glass)"],
+    .admin-view > div[style*="border-radius: 2rem"] {
         overflow-x: auto;
         -webkit-overflow-scrolling: touch;
     }
 
     /* Modal fix */
-    #modalBody>div {
+    #modalBody > div {
         grid-template-columns: 1fr !important;
         text-align: center;
     }
@@ -268,12 +264,12 @@ body {
     }
 
     /* Force grids in profiles to 1 column on mobile */
-    #studentDetailBody>div>div[style*="display:grid"],
+    #studentDetailBody > div > div[style*="display:grid"],
     #viewInstitutionDetail div[style*="1fr 1fr"],
     #adminModalBody div[style*="display: grid"] {
         grid-template-columns: 1fr !important;
     }
-
+    
     #studentDetailBody div[style*="grid-column: span 2"],
     #adminModalBody div[style*="grid-column: span 2"] {
         grid-column: auto !important;
@@ -294,12 +290,12 @@ body {
         grid-template-columns: 1fr !important;
     }
 
-    #adminModalBody>* {
+    #adminModalBody > * {
         grid-column: auto !important;
     }
 
     /* Analytics charts side by side -> stacked */
-    #view-global-analytics>div:last-of-type {
+    #view-global-analytics > div:last-of-type {
         grid-template-columns: 1fr !important;
     }
 
@@ -310,7 +306,7 @@ body {
         gap: 1rem;
     }
 
-    #view-students .view-header>div {
+    #view-students .view-header > div {
         flex-direction: column !important;
         width: 100%;
     }
@@ -354,26 +350,19 @@ body {
         white-space: normal;
         overflow-x: visible;
     }
-
-    #attendanceGridTable th,
-    #attendanceGridTable td {
+    #attendanceGridTable th, #attendanceGridTable td {
         padding: 0.75rem 0.25rem;
         font-size: 0.85rem;
         word-break: break-word;
     }
-
-    #attendanceGridTable th:nth-child(3),
-    #attendanceGridTable td:nth-child(3) {
-        display: none;
-        /* Hide Batch column on mobile */
+    #attendanceGridTable th:nth-child(3), #attendanceGridTable td:nth-child(3) {
+        display: none; /* Hide Batch column on mobile */
     }
-
-    #attendanceGridTable .att-actions>div {
+    #attendanceGridTable .att-actions > div {
         display: flex;
         gap: 0.25rem !important;
         width: 100%;
     }
-
     .btn-att {
         flex: 1;
         padding: 0.6rem 0 !important;
@@ -382,13 +371,13 @@ body {
     }
 
     /* ---- Landing Page: Contact section 2-col grid -> 1 col ---- */
-    #contactSection>div {
+    #contactSection > div {
         grid-template-columns: 1fr !important;
         gap: 2rem !important;
     }
 
     /* ---- Landing Page: About section inner grid -> 1 col ---- */
-    #aboutInstitution>div>div:last-child {
+    #aboutInstitution > div > div:last-child {
         grid-template-columns: 1fr !important;
     }
 
@@ -407,7 +396,7 @@ body {
     }
 
     /* ---- Landing Page: Campus grid -> 2 col on tablet ---- */
-    #ourCampuses>div>div:last-child {
+    #ourCampuses > div > div:last-child {
         grid-template-columns: 1fr 1fr !important;
     }
 
@@ -480,7 +469,7 @@ body {
     }
 
     /* Campus grid -> 1 col on very small phones */
-    #ourCampuses>div>div:last-child {
+    #ourCampuses > div > div:last-child {
         grid-template-columns: 1fr !important;
     }
 
@@ -493,7 +482,6 @@ body {
 
 /* ---- index.html Registration Page Mobile ---- */
 @media (max-width: 900px) {
-
     /* Hide sidebar on registration page on mobile */
     .app-container .app-sidebar {
         display: none !important;
@@ -640,15 +628,11 @@ body {
 }
 
 @media (max-width: 900px) {
-
-    .portal-layout,
-    .admin-layout {
+    .portal-layout, .admin-layout {
         grid-template-columns: 1fr !important;
     }
-
-    .sidebar,
-    .admin-sidebar,
-    .portal-sidebar {
+    
+    .sidebar, .admin-sidebar, .portal-sidebar {
         position: fixed !important;
         top: 0 !important;
         left: -280px !important;
@@ -664,9 +648,7 @@ body {
         padding-bottom: calc(2rem + env(safe-area-inset-bottom)) !important;
     }
 
-    .sidebar.active,
-    .admin-sidebar.active,
-    .portal-sidebar.active {
+    .sidebar.active, .admin-sidebar.active, .portal-sidebar.active {
         transform: translateX(280px) !important;
     }
 
@@ -722,7 +704,7 @@ body {
         left: 0;
         right: 0;
         bottom: 0;
-        background: rgba(0, 0, 0, 0.4);
+        background: rgba(0,0,0,0.4);
         z-index: 1900;
         display: none;
     }
@@ -731,15 +713,14 @@ body {
         display: block;
     }
 
-    .main-content,
-    .admin-main {
+    .main-content, .admin-main {
         padding: 1rem 1rem 2rem !important;
     }
 
     body.drawer-open {
         overflow: hidden;
     }
-
+    
     .mobile-nav {
         display: none !important;
     }
@@ -766,7 +747,6 @@ body {
 
 /* ---- Fix Grids and Empty States for Mobile ---- */
 @media (max-width: 768px) {
-
     .videos-grid,
     .gallery-grid {
         grid-template-columns: 1fr !important;
@@ -780,14 +760,12 @@ body {
     }
 
     /* ---- Hero Sections Font Fix for Mobile ---- */
-    .gallery-hero h1,
-    .Programs-hero h1 {
+    .gallery-hero h1, .Programs-hero h1 {
         font-size: clamp(2rem, 8vw, 2.5rem) !important;
         margin-bottom: 0.75rem !important;
     }
-
-    .gallery-hero p,
-    .Programs-hero p {
+    
+    .gallery-hero p, .Programs-hero p {
         font-size: 1rem !important;
         line-height: 1.5 !important;
     }
@@ -796,14 +774,20 @@ body {
 /* ---- Mobile Header 3-Dots Button Top Right & Brand Lockup Left ---- */
 @media (max-width: 900px) {
     #loginMenuToggleBtn {
-        position: fixed !important;
+        position: absolute !important;
         right: 0.85rem !important;
         left: auto !important;
-        top: 0.85rem !important;
-        z-index: 100001 !important;
+        top: 50% !important;
+        transform: translateY(-50%) !important;
+        z-index: 1000 !important;
         display: flex !important;
         align-items: center !important;
         justify-content: center !important;
+        width: 38px !important;
+        height: 38px !important;
+        border-radius: 50% !important;
+        background: var(--surface) !important;
+        border: 1px solid var(--border) !important;
     }
 
     .navbar {
@@ -847,38 +831,16 @@ body {
    STRUCTURED MOBILE TYPOGRAPHY & SINGLE-LINE LAYOUTS
    ==================================================== */
 @media (max-width: 768px) {
-
     /* Micro-adjusted mobile base font for tight, structured alignment */
     html {
         font-size: 14.5px !important;
     }
 
     /* Headings Scaled & Structured to fit single line where appropriate */
-    h1,
-    .h1 {
-        font-size: clamp(1.35rem, 4.8vw, 1.75rem) !important;
-        line-height: 1.25 !important;
-        letter-spacing: -0.01em !important;
-    }
-
-    h2,
-    .h2 {
-        font-size: clamp(1.15rem, 4.2vw, 1.45rem) !important;
-        line-height: 1.25 !important;
-        letter-spacing: -0.01em !important;
-    }
-
-    h3,
-    .h3 {
-        font-size: clamp(1.02rem, 3.8vw, 1.22rem) !important;
-        line-height: 1.3 !important;
-    }
-
-    h4,
-    .h4 {
-        font-size: clamp(0.92rem, 3.2vw, 1.08rem) !important;
-        line-height: 1.3 !important;
-    }
+    h1, .h1 { font-size: clamp(1.35rem, 4.8vw, 1.75rem) !important; line-height: 1.25 !important; letter-spacing: -0.01em !important; }
+    h2, .h2 { font-size: clamp(1.15rem, 4.2vw, 1.45rem) !important; line-height: 1.25 !important; letter-spacing: -0.01em !important; }
+    h3, .h3 { font-size: clamp(1.02rem, 3.8vw, 1.22rem) !important; line-height: 1.3 !important; }
+    h4, .h4 { font-size: clamp(0.92rem, 3.2vw, 1.08rem) !important; line-height: 1.3 !important; }
 
     .view-title {
         font-size: clamp(1.15rem, 4vw, 1.4rem) !important;
@@ -893,19 +855,7 @@ body {
     }
 
     /* Force Buttons, Badges, Tabs, and Action Tags to Stay Single Line */
-    .btn,
-    button,
-    .btn-main,
-    .btn-secondary,
-    .btn-ghost,
-    .btn-att,
-    .tab-btn,
-    .filter-btn,
-    .pill-tag,
-    .badge,
-    .status-badge,
-    .nav-link,
-    .tag {
+    .btn, button, .btn-main, .btn-secondary, .btn-ghost, .btn-att, .tab-btn, .filter-btn, .pill-tag, .badge, .status-badge, .nav-link, .tag {
         white-space: nowrap !important;
         font-size: 0.78rem !important;
         padding: 0.42rem 0.7rem !important;
@@ -914,9 +864,7 @@ body {
     }
 
     /* Keep icons from forcing wraps */
-    .btn svg,
-    button svg,
-    a svg {
+    .btn svg, button svg, a svg {
         flex-shrink: 0 !important;
     }
 
@@ -925,11 +873,7 @@ body {
         gap: 0.6rem !important;
     }
 
-    .view-header>div,
-    .view-actions,
-    .filter-bar,
-    .search-bar-container,
-    .tab-bar {
+    .view-header > div, .view-actions, .filter-bar, .search-bar-container, .tab-bar {
         display: flex !important;
         flex-wrap: nowrap !important;
         overflow-x: auto !important;
@@ -940,12 +884,7 @@ body {
     }
 
     /* Filter Tabs & Segmented Nav Controls - Scrollable Single Row */
-    .filter-tabs,
-    .segmented-control,
-    .nav-tabs,
-    .tabs-container,
-    .role-selector,
-    .tab-list {
+    .filter-tabs, .segmented-control, .nav-tabs, .tabs-container, .role-selector, .tab-list {
         display: flex !important;
         flex-wrap: nowrap !important;
         overflow-x: auto !important;
@@ -955,16 +894,11 @@ body {
         scrollbar-width: none !important;
     }
 
-    .filter-tabs::-webkit-scrollbar,
-    .segmented-control::-webkit-scrollbar,
-    .nav-tabs::-webkit-scrollbar {
+    .filter-tabs::-webkit-scrollbar, .segmented-control::-webkit-scrollbar, .nav-tabs::-webkit-scrollbar {
         display: none !important;
     }
 
-    .filter-tabs .tab,
-    .segmented-control button,
-    .nav-tabs a,
-    .role-selector button {
+    .filter-tabs .tab, .segmented-control button, .nav-tabs a, .role-selector button {
         white-space: nowrap !important;
         flex-shrink: 0 !important;
         font-size: 0.76rem !important;
@@ -972,15 +906,11 @@ body {
     }
 
     /* Stat Cards Optimization - Single Line Labels & Values */
-    .stat-card-premium,
-    .stat-card {
+    .stat-card-premium, .stat-card {
         padding: 0.75rem 0.9rem !important;
     }
 
-    .stat-label,
-    .stat-card-label,
-    .stat-lbl,
-    .stat-info h4 {
+    .stat-label, .stat-card-label, .stat-lbl, .stat-info h4 {
         font-size: 0.72rem !important;
         white-space: nowrap !important;
         overflow: hidden !important;
@@ -989,16 +919,13 @@ body {
         text-transform: uppercase !important;
     }
 
-    .stat-info .val,
-    .stat-value,
-    .stat-val {
+    .stat-info .val, .stat-value, .stat-val {
         font-size: 1.3rem !important;
         line-height: 1.15 !important;
         white-space: nowrap !important;
     }
 
-    .stat-subtext,
-    .stat-desc {
+    .stat-subtext, .stat-desc {
         font-size: 0.68rem !important;
         white-space: nowrap !important;
         overflow: hidden !important;
@@ -1006,8 +933,7 @@ body {
     }
 
     /* Table Headers & Compact Table Cells - Prevent 2-line wraps in th/td */
-    table th,
-    .data-table th {
+    table th, .data-table th {
         font-size: 0.7rem !important;
         padding: 0.45rem 0.6rem !important;
         white-space: nowrap !important;
@@ -1015,15 +941,14 @@ body {
         letter-spacing: 0.03em !important;
     }
 
-    table td,
-    .data-table td {
+    table td, .data-table td {
         font-size: 0.78rem !important;
         padding: 0.5rem 0.6rem !important;
         white-space: nowrap !important;
     }
 
     /* Notification Permission Banner single-line layout */
-    #notifPermissionBanner>div {
+    #notifPermissionBanner > div {
         flex-direction: row !important;
         align-items: center !important;
         justify-content: space-between !important;
@@ -1031,17 +956,14 @@ body {
         gap: 0.5rem !important;
     }
 
-    #notifPermissionBanner div span,
-    #notifPermissionBanner div div {
+    #notifPermissionBanner div span, #notifPermissionBanner div div {
         font-size: 0.76rem !important;
         white-space: nowrap !important;
         overflow: hidden !important;
         text-overflow: ellipsis !important;
     }
 
-    #enableNotifBtn,
-    #testNotifBtn,
-    #bannerGuideBtn {
+    #enableNotifBtn, #testNotifBtn, #bannerGuideBtn {
         white-space: nowrap !important;
         font-size: 0.74rem !important;
         padding: 4px 9px !important;
@@ -1049,21 +971,13 @@ body {
     }
 
     /* Form Labels & Inputs Compact */
-    .input-field label,
-    .form-group label,
-    label.label {
+    .input-field label, .form-group label, label.label {
         font-size: 0.76rem !important;
         margin-bottom: 0.25rem !important;
         white-space: nowrap !important;
     }
 
-    .input,
-    input[type="text"],
-    input[type="email"],
-    input[type="password"],
-    input[type="tel"],
-    select,
-    textarea {
+    .input, input[type="text"], input[type="email"], input[type="password"], input[type="tel"], select, textarea {
         font-size: 0.82rem !important;
         padding: 0.5rem 0.7rem !important;
     }
@@ -1089,14 +1003,12 @@ body {
         font-size: 1.1rem !important;
     }
 
-    .btn,
-    button {
+    .btn, button {
         padding: 0.38rem 0.6rem !important;
         font-size: 0.74rem !important;
     }
 
-    .stat-info .val,
-    .stat-value {
+    .stat-info .val, .stat-value {
         font-size: 1.2rem !important;
     }
 }
@@ -1139,23 +1051,30 @@ body {
 @media (max-width: 900px) {
     #loginDropdownMenu {
         position: fixed !important;
-        top: 3.5rem !important;
+        top: 4rem !important;
         right: 0.85rem !important;
         left: auto !important;
+        height: auto !important;
+        max-height: calc(100vh - 5rem) !important;
         z-index: 100002 !important;
         background: var(--surface-solid, #0f172a) !important;
         border: 1px solid var(--border) !important;
         border-radius: 16px !important;
         box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5) !important;
-        min-width: 240px !important;
+        min-width: 260px !important;
         max-width: calc(100vw - 1.7rem) !important;
+        padding: 3.5rem 1rem 1.25rem !important;
         backdrop-filter: blur(16px) !important;
         -webkit-backdrop-filter: blur(16px) !important;
     }
 
     #loginDropdownMenu.hidden {
         display: none !important;
+        opacity: 0 !important;
+        visibility: hidden !important;
+        pointer-events: none !important;
     }
+}
 
     .cmd-palette-backdrop {
         padding-top: 5vh !important;
@@ -1168,7 +1087,6 @@ body {
 
 /* Prevent iOS Safari auto-zoom on form inputs */
 @media (max-width: 768px) {
-
     input[type="text"],
     input[type="password"],
     input[type="email"],
@@ -1181,3 +1099,5 @@ body {
         font-size: 16px !important;
     }
 }
+
+

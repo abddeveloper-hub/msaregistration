@@ -13,16 +13,37 @@ function initToggleMenu() {
     const closeBtn = document.getElementById("closeLoginDrawerBtn") || document.getElementById("closeDrawerBtn");
 
     if (loginMenuToggleBtn && loginDropdownMenu) {
+        const updateToggleIcon = (isOpen) => {
+            if (isOpen) {
+                loginMenuToggleBtn.innerHTML = `
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                `;
+            } else {
+                loginMenuToggleBtn.innerHTML = `
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                        <circle cx="12" cy="5" r="1.5" />
+                        <circle cx="12" cy="12" r="1.5" />
+                        <circle cx="12" cy="19" r="1.5" />
+                    </svg>
+                `;
+            }
+        };
+
         loginMenuToggleBtn.onclick = (e) => {
             e.preventDefault();
             e.stopPropagation();
-            loginDropdownMenu.classList.toggle("hidden");
+            const isOpen = loginDropdownMenu.classList.toggle("hidden") === false;
+            updateToggleIcon(isOpen);
         };
 
         if (closeBtn) {
             closeBtn.onclick = (e) => {
                 e.preventDefault();
                 loginDropdownMenu.classList.add("hidden");
+                updateToggleIcon(false);
             };
         }
 
@@ -32,11 +53,39 @@ function initToggleMenu() {
                 !loginDropdownMenu.contains(e.target) && 
                 !loginMenuToggleBtn.contains(e.target)) {
                 loginDropdownMenu.classList.add("hidden");
+                updateToggleIcon(false);
             }
         });
     }
 
     initCommandPalette();
+    initScrollToTop();
+}
+
+function initScrollToTop() {
+    if (typeof document === "undefined") return;
+    let btn = document.getElementById("scrollToTopBtn");
+    if (!btn) {
+        btn = document.createElement("button");
+        btn.id = "scrollToTopBtn";
+        btn.className = "scroll-to-top-btn";
+        btn.setAttribute("aria-label", "Scroll to top");
+        btn.setAttribute("title", "Scroll to top");
+        btn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg>`;
+        document.body.appendChild(btn);
+    }
+
+    btn.addEventListener("click", () => {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+
+    window.addEventListener("scroll", () => {
+        if (window.scrollY > 300) {
+            btn.classList.add("visible");
+        } else {
+            btn.classList.remove("visible");
+        }
+    }, { passive: true });
 }
 
 // Global Command Palette (Ctrl+K / Cmd+K)
@@ -257,6 +306,7 @@ onAuthStateChanged(auth, async (user) => {
     if (!user) {
         if (loginLink) {
             loginLink.setAttribute("href", "login.html");
+            loginLink.style.display = "flex";
             loginLink.style.cursor = "pointer";
             loginLink.innerHTML = `
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
@@ -266,7 +316,7 @@ onAuthStateChanged(auth, async (user) => {
         }
         if (signupLink) {
             signupLink.setAttribute("href", "login.html?signup=true");
-            signupLink.style.display = "";
+            signupLink.style.display = "flex";
             signupLink.innerHTML = `
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
                 <span>New Registration</span>
@@ -274,40 +324,54 @@ onAuthStateChanged(auth, async (user) => {
             signupLink.onclick = null;
         }
     } else {
+        const currentPath = window.location.pathname.toLowerCase();
+        const isAlreadyOnDashboard = currentPath.includes("student.html") || 
+                                     currentPath.includes("teacher.html") || 
+                                     currentPath.includes("admin.html") || 
+                                     currentPath.includes("portal.html");
+
+        // Position 8: My Dashboard (hidden if already on dashboard page)
         if (loginLink) {
-            loginLink.removeAttribute("href");
-            loginLink.style.cursor = "pointer";
-            loginLink.innerHTML = `
+            if (isAlreadyOnDashboard) {
+                loginLink.style.display = "none";
+            } else {
+                let targetPage = "student.html";
+                try {
+                    const snap = await getDoc(doc(db, "users", user.uid));
+                    if (snap.exists()) {
+                        const role = snap.data().role;
+                        if (role === "admin") targetPage = "admin.html";
+                        else if (role === "faculty") targetPage = "teacher.html";
+                    }
+                } catch (e) {
+                    console.warn("User role fetch error:", e);
+                }
+                loginLink.setAttribute("href", targetPage);
+                loginLink.style.display = "flex";
+                loginLink.style.cursor = "pointer";
+                loginLink.innerHTML = `
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+                    <span>My Dashboard</span>
+                `;
+                loginLink.onclick = null;
+            }
+        }
+
+        // Position 9: Log Out (Always the LAST item in the menu)
+        if (signupLink) {
+            signupLink.removeAttribute("href");
+            signupLink.style.display = "flex";
+            signupLink.style.cursor = "pointer";
+            signupLink.innerHTML = `
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
                 <span style="color: var(--danger, #ef4444); font-weight: 600;">Log Out</span>
             `;
-            loginLink.onclick = (e) => {
+            signupLink.onclick = (e) => {
                 e.preventDefault();
                 signOut(auth).then(() => {
                     window.location.reload();
                 }).catch(err => console.error("Logout error:", err));
             };
-        }
-
-        if (signupLink) {
-            let targetPage = "student.html";
-            try {
-                const snap = await getDoc(doc(db, "users", user.uid));
-                if (snap.exists()) {
-                    const role = snap.data().role;
-                    if (role === "admin") targetPage = "admin.html";
-                    else if (role === "faculty") targetPage = "teacher.html";
-                }
-            } catch (e) {
-                console.warn("User role fetch error:", e);
-            }
-            signupLink.setAttribute("href", targetPage);
-            signupLink.style.display = "";
-            signupLink.innerHTML = `
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-                <span>My Dashboard</span>
-            `;
-            signupLink.onclick = null;
         }
     }
 });

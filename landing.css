@@ -15,14 +15,13 @@ body.landing-page {
    ============================================================ */
 .animate-on-scroll {
     opacity: 0;
-    transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
-                transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-    will-change: opacity, transform;
+    transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.slide-from-left  { transform: translateX(-60px); }
-.slide-from-right { transform: translateX(60px); }
-.slide-up         { transform: translateY(40px); }
+.slide-from-left  { transform: translateX(-24px); }
+.slide-from-right { transform: translateX(24px); }
+.slide-up         { transform: translateY(20px); }
 
 .animate-on-scroll.is-visible {
     opacity: 1;
@@ -39,12 +38,11 @@ body.landing-page {
    HERO SECTION — Intentional, generous whitespace
    ============================================================ */
 .hero-section {
-    min-height: 92vh;
+    min-height: 85vh;
     display: flex;
     align-items: center;
     justify-content: center;
-    /* Spatial step: 8rem top = 128px, matches space-16 * 2 */
-    padding: 8rem 2rem var(--space-20);
+    padding: 10.5rem 2rem var(--space-16);
     position: relative;
     background-color: var(--bg);
     overflow: hidden;
@@ -87,18 +85,18 @@ body.landing-page {
     letter-spacing: 0.12em;
     text-transform: uppercase;
     border-radius: 6px;
-    margin-bottom: var(--space-8);
+    margin-bottom: var(--space-6);
     box-shadow: var(--shadow-sm);
 }
 
 /* Hero H1 — editorial tight tracking */
 .hero-content h1 {
     font-family: var(--font-display);
-    font-size: clamp(3rem, 8vw, 6.5rem);
-    line-height: 1.05;
+    font-size: clamp(2.4rem, 5.5vw, 4.8rem);
+    line-height: 1.15;
     color: var(--text-main);
     font-weight: 700;
-    letter-spacing: -0.03em;
+    letter-spacing: -0.02em;
     margin-bottom: var(--space-6);
 }
 
@@ -350,4 +348,80 @@ body.landing-page {
 #faqSection,
 #contactSection {
     border-top: 1px solid var(--accent) !important;
+}
+
+/* ============================================================
+   FAQ ACCORDION STYLING
+   ============================================================ */
+.faq-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    max-width: 860px;
+    margin: 0 auto;
+}
+
+.faq-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    overflow: hidden;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.faq-item:hover {
+    border-color: var(--primary);
+}
+
+.faq-question {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.25rem 1.5rem;
+    background: transparent;
+    border: none;
+    color: var(--text-main);
+    font-family: var(--font-display);
+    font-size: 1.1rem;
+    font-weight: 700;
+    cursor: pointer;
+    text-align: left;
+    gap: 1rem;
+    transition: color 0.2s ease;
+}
+
+.faq-question:hover {
+    color: var(--primary);
+}
+
+.faq-icon {
+    font-size: 1.3rem;
+    font-weight: 400;
+    color: var(--primary);
+    transition: transform 0.3s ease;
+    flex-shrink: 0;
+}
+
+.faq-item.open .faq-icon {
+    transform: rotate(45deg);
+}
+
+.faq-answer {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.35s cubic-bezier(0.16, 1, 0.3, 1), padding 0.35s ease;
+    padding: 0 1.5rem;
+}
+
+.faq-item.open .faq-answer {
+    max-height: 300px;
+    padding: 0 1.5rem 1.25rem 1.5rem;
+}
+
+.faq-answer p {
+    color: var(--text-dim);
+    line-height: 1.65;
+    font-size: 0.95rem;
+    margin: 0;
 }

@@ -99,8 +99,11 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         const existingSelect = document.getElementById('achievementCampusFilter');
-        filterContainer.innerHTML = '';
+        // Remove existing category buttons only
+        const oldBtns = filterContainer.querySelectorAll('.filter-btn');
+        oldBtns.forEach(btn => btn.remove());
 
+        // Insert new category buttons before select dropdown
         dynamicCategories.forEach(cat => {
             const btn = document.createElement('button');
             btn.className = `filter-btn ${currentFilter.toLowerCase() === cat.toLowerCase() ? 'active' : ''}`;
@@ -111,12 +114,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 renderFilterButtons();
                 renderAchievements();
             });
-            filterContainer.appendChild(btn);
+            if (existingSelect) {
+                filterContainer.insertBefore(btn, existingSelect);
+            } else {
+                filterContainer.appendChild(btn);
+            }
         });
-
-        if (existingSelect) {
-            filterContainer.appendChild(existingSelect);
-        }
     }
 
     function renderAchievements() {

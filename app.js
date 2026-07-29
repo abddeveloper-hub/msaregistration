@@ -376,6 +376,13 @@ function initPwaInstall() {
     });
 
     mobileInstallBtn?.addEventListener("click", openPwaModal);
+    const footerInstallBtn = document.getElementById("footerInstallBtn");
+    if (footerInstallBtn) {
+        footerInstallBtn.addEventListener("click", (e) => {
+            e.preventDefault();
+            openPwaModal();
+        });
+    }
     closePwaBtn?.addEventListener("click", closePwaModal);
     pwaInstallActionBtn?.addEventListener("click", () => {
         if (deferredInstallPrompt) {
@@ -559,16 +566,4 @@ document.addEventListener("DOMContentLoaded", () => {
             card.style.transform = `perspective(1000px) rotateX(0) rotateY(0) scale3d(1, 1, 1)`;
         });
     });
-
-    // 4. Dynamic Island Navbar Scroll
-    const navWrapper = document.querySelector('.nav-wrapper');
-    if (navWrapper) {
-        window.addEventListener('scroll', () => {
-            if (window.scrollY > 50) {
-                navWrapper.classList.add('floating');
-            } else {
-                navWrapper.classList.remove('floating');
-            }
-        });
-    }
 });

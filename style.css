@@ -661,24 +661,29 @@ img {
 
 .nav-wrapper {
     position: fixed;
-    inset-inline: 0;
-    top: 0;
-    width: 100%;
-    margin-inline: auto;
+    left: 50%;
+    top: 1rem;
+    transform: translateX(-50%);
+    width: min(1200px, calc(100% - 2.5rem));
     z-index: 1000;
-    background: var(--surface-solid, #ffffff);
-    border-bottom: 1px solid var(--border);
-    box-shadow: var(--shadow-sm);
-    transition: background 0.3s ease, border-color 0.3s ease;
+    background: rgba(255, 255, 255, 0.92);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.09), 0 1.5px 6px rgba(0,0,0,0.06);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    transition: background 0.3s ease, box-shadow 0.3s ease;
+    padding-inline: 0.5rem;
 }
 
 .navbar {
-    width: min(1180px, calc(100% - 2rem));
-    min-height: 74px;
+    width: 100%;
+    min-height: 64px;
     margin-inline: auto;
     display: flex;
     align-items: center;
     justify-content: space-between;
+    padding-inline: 1rem;
     gap: 1rem;
 }
 
@@ -4236,58 +4241,56 @@ input {
     color: var(--text-main) !important;
 }
 
+/* ─── RIGHT SLIDE DRAWER ─── */
+#nav-drawer-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.25);
+    z-index: 9999;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.35s ease;
+}
+#nav-drawer-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
 #loginDropdownMenu {
     position: fixed !important;
     top: 0 !important;
     right: 0 !important;
-    left: auto !important;
     bottom: 0 !important;
+    left: auto !important;
     width: 320px !important;
-    max-width: 85vw !important;
-    height: 100vh !important;
+    max-width: 88vw !important;
+    height: 100dvh !important;
     background: var(--surface) !important;
     border: none !important;
     border-left: 1px solid var(--border) !important;
     border-radius: 0 !important;
-    box-shadow: var(--shadow-lg) !important;
+    box-shadow: -8px 0 40px rgba(0,0,0,0.18) !important;
     z-index: 10000 !important;
     display: flex !important;
     flex-direction: column !important;
     padding: 4.5rem 1.25rem 2rem !important;
     margin: 0 !important;
-    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease !important;
-    transform: translateX(0) !important;
-    opacity: 1 !important;
-    visibility: visible !important;
     overflow-y: auto !important;
-}
-
-#loginDropdownMenu.hidden {
-    display: none !important;
-    opacity: 0 !important;
-    visibility: hidden !important;
-    pointer-events: none !important;
+    /* Slide animation */
     transform: translateX(100%) !important;
-    box-shadow: none !important;
+    transition: transform 0.38s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    visibility: hidden !important;
 }
 
-#loginDropdownMenu::before {
-    content: "" !important;
-    position: fixed !important;
-    inset: 0 !important;
-    background: rgba(15, 76, 58, 0.25) !important;
-    backdrop-filter: blur(8px) !important;
-    -webkit-backdrop-filter: blur(8px) !important;
-    opacity: 1 !important;
-    z-index: -1 !important;
-    pointer-events: auto !important;
-    transition: opacity 0.3s ease !important;
+#loginDropdownMenu.open {
+    transform: translateX(0) !important;
+    visibility: visible !important;
 }
 
-#loginDropdownMenu.hidden::before {
-    display: none !important;
-    opacity: 0 !important;
-    pointer-events: none !important;
+/* Keep .hidden compatible but unused for animation */
+#loginDropdownMenu.hidden {
+    transform: translateX(100%) !important;
+    visibility: hidden !important;
 }
 
 #loginDropdownMenu::after {

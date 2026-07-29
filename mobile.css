@@ -1051,28 +1051,32 @@ html, body {
 @media (max-width: 900px) {
     #loginDropdownMenu {
         position: fixed !important;
-        top: 4rem !important;
-        right: 0.85rem !important;
+        top: 0 !important;
+        right: 0 !important;
+        bottom: 0 !important;
         left: auto !important;
-        height: auto !important;
-        max-height: calc(100vh - 5rem) !important;
-        z-index: 100002 !important;
-        background: var(--surface-solid, #0f172a) !important;
-        border: 1px solid var(--border) !important;
-        border-radius: 16px !important;
-        box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5) !important;
-        min-width: 260px !important;
-        max-width: calc(100vw - 1.7rem) !important;
-        padding: 3.5rem 1rem 1.25rem !important;
-        backdrop-filter: blur(16px) !important;
-        -webkit-backdrop-filter: blur(16px) !important;
-    }
-
-    #loginDropdownMenu.hidden {
-        display: none !important;
-        opacity: 0 !important;
+        width: 290px !important;
+        max-width: 88vw !important;
+        height: 100dvh !important;
+        max-height: unset !important;
+        border-radius: 0 !important;
+        padding: 4.5rem 1rem 1.5rem !important;
+        border-left: 1px solid var(--border) !important;
+        border-top: none !important;
+        border-bottom: none !important;
+        border-right: none !important;
+        box-shadow: -8px 0 32px rgba(0,0,0,0.22) !important;
+        transform: translateX(100%) !important;
+        transition: transform 0.38s cubic-bezier(0.16, 1, 0.3, 1) !important;
         visibility: hidden !important;
-        pointer-events: none !important;
+    }
+    #loginDropdownMenu.open {
+        transform: translateX(0) !important;
+        visibility: visible !important;
+    }
+    #loginDropdownMenu.hidden {
+        transform: translateX(100%) !important;
+        visibility: hidden !important;
     }
 }
 

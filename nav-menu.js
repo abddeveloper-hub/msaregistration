@@ -8,53 +8,62 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 
 function initToggleMenu() {
-    const loginMenuToggleBtn = document.getElementById("loginMenuToggleBtn");
-    const loginDropdownMenu = document.getElementById("loginDropdownMenu");
+    const toggleBtn = document.getElementById("loginMenuToggleBtn");
+    const drawer   = document.getElementById("loginDropdownMenu");
     const closeBtn = document.getElementById("closeLoginDrawerBtn") || document.getElementById("closeDrawerBtn");
 
-    if (loginMenuToggleBtn && loginDropdownMenu) {
-        const updateToggleIcon = (isOpen) => {
-            if (isOpen) {
-                loginMenuToggleBtn.innerHTML = `
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-                        <line x1="18" y1="6" x2="6" y2="18"></line>
-                        <line x1="6" y1="6" x2="18" y2="18"></line>
-                    </svg>
-                `;
-            } else {
-                loginMenuToggleBtn.innerHTML = `
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                        <circle cx="12" cy="5" r="1.5" />
-                        <circle cx="12" cy="12" r="1.5" />
-                        <circle cx="12" cy="19" r="1.5" />
-                    </svg>
-                `;
-            }
-        };
+    // Move drawer to body so it escapes the navbar's transform context
+    // (transform on parent breaks position:fixed child anchoring)
+    if (drawer && drawer.parentElement !== document.body) {
+        document.body.appendChild(drawer);
+    }
 
-        loginMenuToggleBtn.onclick = (e) => {
+    // Create overlay once
+    let overlay = document.getElementById("nav-drawer-overlay");
+    if (!overlay) {
+        overlay = document.createElement("div");
+        overlay.id = "nav-drawer-overlay";
+        document.body.appendChild(overlay);
+    }
+
+    function openDrawer() {
+        drawer.classList.add("open");
+        drawer.classList.remove("hidden");
+        overlay.classList.add("active");
+        document.body.style.overflow = "hidden";
+        toggleBtn.innerHTML = `
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>`;
+    }
+
+    function closeDrawer() {
+        drawer.classList.remove("open");
+        drawer.classList.add("hidden");
+        overlay.classList.remove("active");
+        document.body.style.overflow = "";
+        toggleBtn.innerHTML = `
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                <circle cx="12" cy="5" r="1.5" />
+                <circle cx="12" cy="12" r="1.5" />
+                <circle cx="12" cy="19" r="1.5" />
+            </svg>`;
+    }
+
+    if (toggleBtn && drawer) {
+        toggleBtn.addEventListener("click", (e) => {
             e.preventDefault();
             e.stopPropagation();
-            const isOpen = loginDropdownMenu.classList.toggle("hidden") === false;
-            updateToggleIcon(isOpen);
-        };
+            drawer.classList.contains("open") ? closeDrawer() : openDrawer();
+        });
 
-        if (closeBtn) {
-            closeBtn.onclick = (e) => {
-                e.preventDefault();
-                loginDropdownMenu.classList.add("hidden");
-                updateToggleIcon(false);
-            };
-        }
+        if (closeBtn) closeBtn.addEventListener("click", closeDrawer);
 
-        document.addEventListener("click", (e) => {
-            if (loginDropdownMenu && 
-                !loginDropdownMenu.classList.contains("hidden") && 
-                !loginDropdownMenu.contains(e.target) && 
-                !loginMenuToggleBtn.contains(e.target)) {
-                loginDropdownMenu.classList.add("hidden");
-                updateToggleIcon(false);
-            }
+        overlay.addEventListener("click", closeDrawer);
+
+        document.addEventListener("keydown", (e) => {
+            if (e.key === "Escape" && drawer.classList.contains("open")) closeDrawer();
         });
     }
 

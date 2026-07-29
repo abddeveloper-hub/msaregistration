@@ -28,34 +28,6 @@ td {
     display: none !important;
 }
 
-/* Header Nav Actions & Dropdown Positioning */
-.nav-actions {
-    position: relative !important;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-#loginDropdownMenu {
-    position: absolute !important;
-    top: calc(100% + 0.5rem) !important;
-    right: 0 !important;
-    left: auto !important;
-    z-index: 99999 !important;
-    background: var(--surface-solid, #0f172a);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4);
-    min-width: 230px;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-}
-
-#loginDropdownMenu.hidden {
-    display: none !important;
-}
-
 /* Quranic Islamic Calligraphy Font Fallbacks */
 @font-face {
     font-family: 'arab quran islamic 140';
@@ -4495,6 +4467,7 @@ input:checked+.toggle-slider:before {
     0% {
         background-position: -200% 0;
     }
+
     100% {
         background-position: 200% 0;
     }
@@ -4523,16 +4496,31 @@ body.dark-mode .skeleton-box {
     border-radius: 4px;
     width: 100%;
 }
-.skeleton-text.short { width: 40%; }
-.skeleton-text.medium { width: 70%; }
-.skeleton-text.title { height: 22px; width: 60%; margin-bottom: 12px; }
+
+.skeleton-text.short {
+    width: 40%;
+}
+
+.skeleton-text.medium {
+    width: 70%;
+}
+
+.skeleton-text.title {
+    height: 22px;
+    width: 60%;
+    margin-bottom: 12px;
+}
 
 .skeleton-avatar {
     width: 48px;
     height: 48px;
     border-radius: 50%;
 }
-.skeleton-avatar.large { width: 80px; height: 80px; }
+
+.skeleton-avatar.large {
+    width: 80px;
+    height: 80px;
+}
 
 .skeleton-card {
     background: var(--surface, #ffffff);
@@ -4542,7 +4530,7 @@ body.dark-mode .skeleton-box {
     display: flex;
     flex-direction: column;
     gap: 1rem;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
 }
 
 .skeleton-grid {
@@ -4612,9 +4600,17 @@ body.dark-mode .skeleton-box {
 }
 
 @keyframes pulseBadge {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.15); }
-    100% { transform: scale(1); }
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.15);
+    }
+
+    100% {
+        transform: scale(1);
+    }
 }
 
 /* Notification Drawer */
@@ -4778,18 +4774,26 @@ body.dark-mode .skeleton-box {
     transition: all 0.3s ease;
 }
 
-.toast-banner.toast-media { border-left-color: #ec4899; }
-.toast-banner.toast-exam { border-left-color: #8b5cf6; }
-.toast-banner.toast-approval { border-left-color: #10b981; }
+.toast-banner.toast-media {
+    border-left-color: #ec4899;
+}
+
+.toast-banner.toast-exam {
+    border-left-color: #8b5cf6;
+}
+
+.toast-banner.toast-approval {
+    border-left-color: #10b981;
+}
 
 @keyframes toastSlideIn {
     from {
         opacity: 0;
         transform: translateX(100%) scale(0.9);
     }
+
     to {
         opacity: 1;
         transform: translateX(0) scale(1);
     }
 }
-

@@ -28,6 +28,34 @@ td {
     display: none !important;
 }
 
+/* Header Nav Actions & Dropdown Positioning */
+.nav-actions {
+    position: relative !important;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+#loginDropdownMenu {
+    position: absolute !important;
+    top: calc(100% + 0.5rem) !important;
+    right: 0 !important;
+    left: auto !important;
+    z-index: 99999 !important;
+    background: var(--surface-solid, #0f172a);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4);
+    min-width: 230px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+#loginDropdownMenu.hidden {
+    display: none !important;
+}
+
 /* Quranic Islamic Calligraphy Font Fallbacks */
 @font-face {
     font-family: 'arab quran islamic 140';

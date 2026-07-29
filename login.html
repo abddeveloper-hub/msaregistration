@@ -290,197 +290,152 @@
             display: none;
         }
 
-        /* Side-by-side Mobile Layout (Blue panel left, Sign In panel right) */
+        /* Modern Mobile Login Card Layout (Sleek Top Blue Header + Full-Width Sign-In Form) */
         @media (max-width: 768px) {
             body.unified-login-page {
-                padding: 0.5rem;
-                align-items: center;
+                padding: 1rem 0.5rem;
+                align-items: flex-start;
+                background: #f8fafc;
             }
             .login-split-container {
-                width: 98%;
-                max-width: 100%;
+                width: 96%;
+                max-width: 480px;
                 margin: 0.5rem auto;
-                min-height: calc(100vh - 1rem);
-                border-radius: 18px;
+                min-height: auto;
+                border-radius: 24px;
                 display: flex !important;
-                flex-direction: row !important; /* Preserve side-by-side layout on mobile */
-                box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12);
+                flex-direction: column !important;
+                box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
                 overflow: hidden;
+                background: #ffffff;
             }
             .login-left-panel {
-                flex: 0.85;
-                padding: 1.25rem 0.85rem;
+                flex: none;
+                padding: 2.25rem 1.5rem;
                 display: flex;
                 flex-direction: column;
-                justify-content: space-between;
+                align-items: center;
+                text-align: center;
                 background: linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%);
                 color: #ffffff;
                 box-sizing: border-box;
             }
-            .login-right-panel {
-                flex: 1.15;
-                padding: 1.25rem 0.85rem;
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                justify-content: center;
-                background: #ffffff;
-                box-sizing: border-box;
-            }
             .login-logo {
-                width: 38px;
-                height: 38px;
-                border-radius: 10px;
+                width: 48px;
+                height: 48px;
+                border-radius: 12px;
                 margin-bottom: 1rem;
+                box-shadow: 0 8px 20px rgba(0,0,0,0.15);
             }
             .login-logo img {
-                width: 24px;
-                height: 24px;
-            }
-            .brand-lockup {
-                margin-bottom: 1rem !important;
-                gap: 0.4rem !important;
-            }
-            .brand-logo-img {
-                width: 28px !important;
-                height: 28px !important;
-            }
-            .brand-text strong {
-                font-size: 0.72rem !important;
-                line-height: 1.1 !important;
-            }
-            .brand-text span {
-                font-size: 0.52rem !important;
-                letter-spacing: 0.05em !important;
+                width: 32px;
+                height: 32px;
             }
             .login-branding h1 {
-                font-size: clamp(1.15rem, 3.8vw, 1.6rem);
+                font-size: 1.75rem;
                 line-height: 1.15;
                 margin-bottom: 0.5rem;
                 letter-spacing: -0.02em;
+                color: #ffffff;
             }
             .login-branding p {
-                font-size: 0.72rem;
-                line-height: 1.35;
+                font-size: 0.85rem;
+                line-height: 1.45;
                 opacity: 0.92;
+                max-width: 340px;
+                margin: 0 auto;
             }
             .login-footer-left {
-                font-size: 0.58rem;
-                opacity: 0.75;
-                line-height: 1.2;
+                display: none; /* Hide duplicate left copyright on mobile header */
+            }
+            .login-right-panel {
+                flex: none;
+                padding: 2rem 1.5rem 1.75rem;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                background: #ffffff;
+                box-sizing: border-box;
+                width: 100%;
             }
             .login-form-container {
                 width: 100%;
                 max-width: 100%;
             }
             .login-form-container h2 {
-                font-size: 1.35rem;
-                margin-bottom: 0.2rem;
+                font-size: 1.6rem;
+                font-weight: 700;
+                margin-bottom: 0.35rem;
+                text-align: center;
             }
             .login-form-container > p {
-                font-size: 0.76rem;
-                margin-bottom: 1rem;
+                font-size: 0.88rem;
+                color: #64748b;
+                margin-bottom: 1.5rem;
+                text-align: center;
             }
             .input-group {
-                margin-bottom: 0.85rem;
+                margin-bottom: 1.15rem;
             }
             .input-group label {
-                font-size: 0.75rem;
-                margin-bottom: 0.25rem;
-            }
-            .input-icon-wrapper span {
-                left: 0.65rem;
-                font-size: 0.95rem;
-            }
-            .input-icon-wrapper input {
-                padding: 0.65rem 0.65rem 0.65rem 2.2rem;
-                font-size: 16px !important; /* Prevents iOS Safari auto-zoom */
-                border-radius: 8px;
-            }
-            .role-selector-section {
-                margin-bottom: 1rem;
-            }
-            .role-selector-section label {
-                font-size: 0.75rem;
+                font-size: 0.82rem;
+                font-weight: 600;
                 margin-bottom: 0.35rem;
             }
-            .role-cards {
-                gap: 0.35rem;
-            }
-            .role-card {
-                padding: 0.45rem 0.25rem;
-                min-width: 52px;
-                border-radius: 8px;
-                gap: 0.2rem;
-            }
-            .role-card .role-icon {
-                font-size: 1.1rem;
-            }
-            .role-card .role-name {
-                font-size: 0.68rem;
-            }
-            .login-btn {
-                padding: 0.65rem;
-                font-size: 0.85rem;
-                border-radius: 10px;
-            }
-            .toggle-mode-wrapper {
-                margin-top: 0.75rem;
-                font-size: 0.75rem;
-            }
-            .login-footer-right {
-                font-size: 0.72rem;
-                padding-top: 0.75rem;
-            }
-        }
-
-        /* Support for small mobile screens (width <= 480px) */
-        @media (max-width: 480px) {
-            .login-split-container {
-                width: 100%;
-                margin: 0.2rem auto;
-                min-height: calc(100vh - 0.4rem);
-                border-radius: 14px;
-            }
-            .login-left-panel {
-                flex: 0.8;
-                padding: 1rem 0.6rem;
-            }
-            .login-right-panel {
-                flex: 1.2;
-                padding: 1rem 0.6rem;
-            }
-            .login-branding h1 {
-                font-size: 1.1rem;
-            }
-            .login-branding p {
-                font-size: 0.68rem;
-                line-height: 1.25;
-            }
-            .login-form-container h2 {
-                font-size: 1.2rem;
-            }
-            .login-form-container > p {
-                font-size: 0.7rem;
-                margin-bottom: 0.75rem;
+            .input-icon-wrapper span {
+                left: 0.85rem;
+                font-size: 1.05rem;
             }
             .input-icon-wrapper input {
-                padding: 0.55rem 0.55rem 0.55rem 1.9rem;
-                font-size: 16px !important;
+                padding: 0.8rem 0.85rem 0.8rem 2.6rem;
+                font-size: 16px !important; /* Prevents iOS Safari auto-zoom */
+                border-radius: 12px;
+                background: #f1f5f9;
+            }
+            .role-selector-section {
+                margin-bottom: 1.5rem;
+            }
+            .role-selector-section label {
+                font-size: 0.82rem;
+                font-weight: 600;
+                margin-bottom: 0.5rem;
+            }
+            .role-cards {
+                display: flex;
+                gap: 0.6rem;
+                width: 100%;
             }
             .role-card {
-                padding: 0.35rem 0.15rem;
-                min-width: 46px;
+                flex: 1;
+                padding: 0.75rem 0.4rem;
+                border-radius: 12px;
+                gap: 0.35rem;
+                background: #f8fafc;
             }
             .role-card .role-icon {
-                font-size: 0.95rem;
+                font-size: 1.25rem;
             }
             .role-card .role-name {
-                font-size: 0.62rem;
+                font-size: 0.76rem;
             }
             .login-btn {
-                padding: 0.55rem;
+                width: 100%;
+                padding: 0.85rem;
+                font-size: 0.95rem;
+                font-weight: 600;
+                border-radius: 12px;
+                background: #3b82f6;
+                color: #ffffff;
+            }
+            .toggle-mode-wrapper {
+                margin-top: 1.25rem;
+                font-size: 0.85rem;
+                text-align: center;
+            }
+            .login-footer-right {
                 font-size: 0.8rem;
+                padding-top: 1rem;
+                text-align: center;
             }
         }
     </style>

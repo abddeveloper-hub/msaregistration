@@ -780,21 +780,17 @@ img {
 }
 
 .hero-section {
-    min-height: 92svh;
+    min-height: 85vh;
     position: relative;
     isolation: isolate;
     display: grid;
     align-items: center;
     padding: 7rem 1rem 3rem;
     overflow: hidden;
-    background-image: linear-gradient(180deg, 
-        rgba(10, 25, 47, 0.72) 0%, 
-        rgba(15, 76, 58, 0.68) 50%, 
-        rgba(10, 25, 47, 0.88) 100%), 
-        url('hero-bg.jpg');
-    background-size: cover;
-    background-position: center 30%;
-    background-repeat: no-repeat;
+    background-image: url('download (9).jpg') !important;
+    background-size: cover !important;
+    background-position: center center !important;
+    background-repeat: no-repeat !important;
 }
 
 @keyframes auroraShift {
@@ -815,14 +811,10 @@ img {
     position: absolute;
     inset: 0;
     z-index: -1;
-    background-image: linear-gradient(180deg, 
-        rgba(10, 25, 47, 0.75) 0%, 
-        rgba(15, 76, 58, 0.70) 50%, 
-        rgba(10, 25, 47, 0.88) 100%), 
-        url('hero-bg.jpg');
-    background-size: cover;
-    background-position: center 30%;
-    background-repeat: no-repeat;
+    background-image: url('download (9).jpg') !important;
+    background-size: cover !important;
+    background-position: center center !important;
+    background-repeat: no-repeat !important;
 }
 
 .hero-bg::after {
@@ -1967,12 +1959,22 @@ table th {
     }
 
     .hero-section {
-        min-height: auto;
-        padding: 5.3rem 1rem 1.4rem;
+        min-height: 75vh !important;
+        padding: 6.5rem 1.25rem 3.5rem !important;
+        background-image: url('download (9).jpg') !important;
+        background-size: cover !important;
+        background-position: center center !important;
+        background-repeat: no-repeat !important;
     }
 
     .hero-bg {
-        background: linear-gradient(180deg, color-mix(in srgb, var(--bg) 76%, transparent), var(--bg) 78%);
+        position: absolute;
+        inset: 0;
+        z-index: -1;
+        background-image: url('download (9).jpg') !important;
+        background-size: cover !important;
+        background-position: center center !important;
+        background-repeat: no-repeat !important;
     }
 
     .nav-actions #navLoginBtn {

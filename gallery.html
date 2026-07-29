@@ -264,9 +264,11 @@
         .lightbox-scroll-container {
             width: 100%;
             height: 100dvh;
-            overflow-y: auto;
+            overflow-y: scroll !important;
             scroll-snap-type: y mandatory;
             -webkit-overflow-scrolling: touch;
+            touch-action: pan-y !important;
+            overscroll-behavior-y: contain;
             padding: 0;
             margin: 0;
             display: flex;
@@ -278,6 +280,7 @@
             scroll-snap-stop: always;
             height: 100dvh;
             min-height: 100dvh;
+            max-height: 100dvh;
             width: 100%;
             display: flex;
             flex-direction: column;
@@ -287,6 +290,7 @@
             padding: 2.5rem 1rem;
             box-sizing: border-box;
             position: relative;
+            touch-action: pan-y !important;
         }
 
         .lightbox-slide img {
@@ -328,6 +332,73 @@
             align-items: center;
             justify-content: center;
             gap: 0.35rem;
+        }
+
+        /* Double-Tap Heart Animation & Like Button */
+        .lightbox-img-wrapper {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            user-select: none;
+            max-width: 90vw;
+        }
+
+        .heart-pop {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            pointer-events: none;
+            z-index: 100;
+            color: #ef4444;
+            filter: drop-shadow(0 8px 30px rgba(239, 68, 68, 0.8));
+            animation: heartPopAnim 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+
+        @keyframes heartPopAnim {
+            0% { transform: translate(-50%, -50%) scale(0) rotate(-15deg); opacity: 0; }
+            40% { transform: translate(-50%, -50%) scale(1.35) rotate(0deg); opacity: 1; }
+            70% { transform: translate(-50%, -50%) scale(1.15) rotate(5deg); opacity: 0.9; }
+            100% { transform: translate(-50%, -50%) scale(1.6) rotate(0deg); opacity: 0; }
+        }
+
+        .like-btn {
+            background: rgba(255, 255, 255, 0.12);
+            border: 1px solid rgba(255, 255, 255, 0.22);
+            color: #fff;
+            padding: 0.45rem 1.2rem;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
+            transition: all 0.25s ease;
+            backdrop-filter: blur(8px);
+        }
+
+        .like-btn:hover {
+            background: rgba(239, 68, 68, 0.25);
+            border-color: #ef4444;
+            color: #fca5a5;
+        }
+
+        .like-btn.liked {
+            background: rgba(239, 68, 68, 0.9);
+            border-color: #ef4444;
+            color: #fff;
+            box-shadow: 0 4px 18px rgba(239, 68, 68, 0.45);
+        }
+
+        .like-btn svg {
+            transition: transform 0.25s ease;
+        }
+
+        .like-btn:hover svg, .like-btn.liked svg {
+            transform: scale(1.2);
         }
 
         /* Empty state */

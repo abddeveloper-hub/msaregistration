@@ -247,18 +247,75 @@ document.addEventListener('DOMContentLoaded', () => {
                 const photoAlt = img ? (img.alt || 'Gallery Photo') : '';
                 const captionText = item.getAttribute('data-caption') || '';
                 const dateText = item.getAttribute('data-date') || '';
+                const initialLikes = Math.floor(Math.random() * 30) + 12;
 
                 return `
                     <div class="lightbox-slide" id="lightbox-slide-${idx}">
-                        <img src="${photoSrc}" alt="${photoAlt}" loading="lazy">
+                        <div class="lightbox-img-wrapper" id="img-wrapper-${idx}">
+                            <img src="${photoSrc}" alt="${photoAlt}" loading="lazy">
+                        </div>
                         <div class="lightbox-slide-info">
                             <div class="lightbox-slide-title">${photoAlt}</div>
                             ${captionText && captionText !== photoAlt ? `<div class="lightbox-slide-desc">${captionText}</div>` : ''}
-                            ${dateText ? `<div class="lightbox-slide-meta"><span>🕒 Added: ${dateText}</span></div>` : ''}
+                            <div style="display:flex; align-items:center; justify-content:center; gap:0.85rem; flex-wrap:wrap; margin-top:0.5rem;">
+                                ${dateText ? `<div class="lightbox-slide-meta"><span>🕒 ${dateText}</span></div>` : ''}
+                                <button class="like-btn" id="like-btn-${idx}" type="button">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+                                    <span id="like-count-${idx}">${initialLikes} Likes</span>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 `;
             }).join('');
+
+            // Attach double-tap and like click handlers for each slide
+            itemsWithImages.forEach((_, idx) => {
+                const wrapper = document.getElementById(`img-wrapper-${idx}`);
+                const likeBtn = document.getElementById(`like-btn-${idx}`);
+                const likeCountEl = document.getElementById(`like-count-${idx}`);
+                let lastTap = 0;
+                let isLiked = false;
+                let currentLikes = parseInt(likeCountEl?.textContent || '15', 10);
+
+                function triggerHeartPop() {
+                    if (!wrapper) return;
+                    const heart = document.createElement('div');
+                    heart.className = 'heart-pop';
+                    heart.innerHTML = `<svg width="84" height="84" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>`;
+                    wrapper.appendChild(heart);
+                    setTimeout(() => heart.remove(), 820);
+
+                    if (!isLiked) {
+                        isLiked = true;
+                        currentLikes++;
+                        if (likeBtn) likeBtn.classList.add('liked');
+                        if (likeCountEl) likeCountEl.textContent = `${currentLikes} Likes`;
+                    }
+                }
+
+                if (wrapper) {
+                    wrapper.addEventListener('click', () => {
+                        const currentTime = new Date().getTime();
+                        const tapLength = currentTime - lastTap;
+                        if (tapLength < 300 && tapLength > 0) {
+                            triggerHeartPop();
+                        }
+                        lastTap = currentTime;
+                    });
+                }
+
+                if (likeBtn) {
+                    likeBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        isLiked = !isLiked;
+                        currentLikes += isLiked ? 1 : -1;
+                        likeBtn.classList.toggle('liked', isLiked);
+                        if (likeCountEl) likeCountEl.textContent = `${currentLikes} Likes`;
+                        if (isLiked) triggerHeartPop();
+                    });
+                }
+            });
 
             lightbox.classList.add('open');
             document.body.style.overflow = 'hidden';

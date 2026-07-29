@@ -167,8 +167,7 @@ function initCommandPalette() {
         { icon: "🎥", title: "Video Portal & Lectures", url: "videos.html", cat: "Media" },
         { icon: "🏆", title: "Student Achievements & Honors", url: "achievements.html", cat: "Honors" },
         { icon: "🎓", title: "Alumni Directory", url: "alumni.html", cat: "Directory" },
-        { icon: "🔑", title: "Student / Faculty Portal Login", url: "login.html", cat: "Authentication" },
-        { icon: "🛡️", title: "Admin Portal", url: "admin.html", cat: "Management" }
+        { icon: "🔑", title: "Student / Faculty Portal Login", url: "login.html", cat: "Authentication" }
     ];
 
     function renderCmds(query = "") {

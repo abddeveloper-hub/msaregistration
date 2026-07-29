@@ -4,7 +4,7 @@ try {
   console.warn('FCM SW import notice:', e);
 }
 
-const CACHE_NAME = 'msaukkuda-portal-v45-notif';
+const CACHE_NAME = 'msaukkuda-portal-v46-notif';
 const ASSETS = [
   './',
   './index.html',
@@ -23,6 +23,7 @@ const ASSETS = [
   './style.css',
   './mobile.css',
   './app.js',
+  './nav-menu.js',
   './achievements.js',
   './alumni.js',
   './events.js',
@@ -35,10 +36,7 @@ const ASSETS = [
   './admin.js',
   './portal.js',
   './firebase-config.js',
-  './manifest.json',
-  './assets/mdu-hero.png',
-  './fonts/ArabQuranIslamic140-K7n4W.ttf',
-  './fonts/ArabQuranIslamic140-vnmnZ.ttf'
+  './manifest.json'
 ];
 
 self.addEventListener('install', (event) => {

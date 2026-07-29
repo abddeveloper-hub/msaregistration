@@ -112,7 +112,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!filterContainer) return;
 
         const existingSelect = document.getElementById('galleryCampusFilter');
-        const defaultCats = ['all', 'events', 'campus', 'academic', 'posters'];
+        const defaultCats = ['all', 'events', 'campus', 'academic'];
         const customCats = [];
 
         allPhotos.forEach(p => {

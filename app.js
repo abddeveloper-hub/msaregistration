@@ -148,10 +148,13 @@ function loadPublicStats() {
         
         onSnapshot(doc(db, 'settings', 'liveStream'), (docSnap) => {
             if (docSnap.exists() && docSnap.data().isLive) {
+                const liveBadgeHtml = `<a href="live.html" class="live-announcement-link" style="color:var(--bg); background:var(--primary); padding:2px 8px; border-radius:4px; text-decoration:none; font-weight:bold; font-size:0.85rem;"><img src="logo.png?v=2" alt="Logo" class="app-logo-img" style="width:12px; height:12px; animation: pulseLogo 2s infinite; margin-right:4px;"> LIVE NOW: ${docSnap.data().title || 'Special Event'}</a>`;
                 if (!banner.classList.contains('hidden')) {
-                    textEl.innerHTML += ` <span style="margin: 0 10px;">|</span> <a href="live.html" style="color:var(--bg); background:var(--primary); padding:2px 8px; border-radius:4px; text-decoration:none; font-weight:bold; font-size:0.85rem;"><img src="logo.png?v=2" alt="Logo" class="app-logo-img" style="width:12px; height:12px; animation: pulseLogo 2s infinite; margin-right:4px;"> LIVE NOW</a>`;
+                    if (!textEl.querySelector('.live-announcement-link')) {
+                        textEl.innerHTML += ` <span style="margin: 0 10px;">|</span> ` + liveBadgeHtml;
+                    }
                 } else {
-                    textEl.innerHTML = `<a href="live.html" style="color:var(--bg); background:var(--primary); padding:2px 8px; border-radius:4px; text-decoration:none; font-weight:bold; font-size:0.85rem;"><img src="logo.png?v=2" alt="Logo" class="app-logo-img" style="width:12px; height:12px; animation: pulseLogo 2s infinite; margin-right:4px;"> LIVE NOW: ${docSnap.data().title || 'Special Event'}</a>`;
+                    textEl.innerHTML = liveBadgeHtml;
                     banner.classList.remove('hidden');
                 }
             }
@@ -489,7 +492,6 @@ onAuthStateChanged(auth, async (user) => {
 
 initTheme();
 initPwaInstall();
-initAuthUI();
 loadPublicStats();
 
 // ==========================================

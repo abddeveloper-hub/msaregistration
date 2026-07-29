@@ -23,10 +23,10 @@ td {
     font-family: 'El Messiri', 'Inter', sans-serif !important;
 }
 
-/* Custom Uploaded Quranic Islamic Calligraphy Fonts */
+/* Quranic Islamic Calligraphy Font Fallbacks */
 @font-face {
     font-family: 'arab quran islamic 140';
-    src: url('./fonts/ArabQuranIslamic140-K7n4W.ttf') format('truetype');
+    src: local('Amiri Quran'), local('Amiri');
     font-weight: normal;
     font-style: normal;
     font-display: swap;
@@ -34,7 +34,7 @@ td {
 
 @font-face {
     font-family: 'ArabQuranIslamic140';
-    src: url('./fonts/ArabQuranIslamic140-K7n4W.ttf') format('truetype');
+    src: local('Amiri Quran'), local('Amiri');
     font-weight: normal;
     font-style: normal;
     font-display: swap;
@@ -42,7 +42,7 @@ td {
 
 @font-face {
     font-family: 'ArabQuranIslamic140-Bold';
-    src: url('./fonts/ArabQuranIslamic140-vnmnZ.ttf') format('truetype');
+    src: local('Amiri Quran'), local('Amiri');
     font-weight: bold;
     font-style: normal;
     font-display: swap;

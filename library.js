@@ -121,10 +121,39 @@ try {
     renderResources();
 }
 
+function updateFilterTabCounts() {
+    const counts = {
+        all: allResources.length,
+        pdf: allResources.filter(r => r.type === 'pdf').length,
+        audio: allResources.filter(r => r.type === 'audio').length,
+        link: allResources.filter(r => r.type === 'link').length,
+        notes: allResources.filter(r => r.type === 'notes').length
+    };
+
+    filterBtns.forEach(btn => {
+        const filter = btn.getAttribute('data-filter') || 'all';
+        const count = counts[filter] !== undefined ? counts[filter] : 0;
+        const labels = {
+            all: 'All Items',
+            pdf: '📚 PDFs & Kitabs',
+            audio: '🎧 Audio & Recitations',
+            link: '🔗 Reference Links',
+            notes: '📝 Syllabi & Notes'
+        };
+        btn.textContent = `${labels[filter] || filter} (${count})`;
+    });
+}
+
 function renderResources() {
     if (!libraryGrid) return;
     
     libraryGrid.innerHTML = '';
+    updateFilterTabCounts();
+
+    const clearBtn = document.getElementById('clearSearchBtn');
+    if (clearBtn) {
+        clearBtn.style.display = currentSearch.trim() ? 'block' : 'none';
+    }
     
     const filtered = allResources.filter(r => {
         // Filter by Type
@@ -175,7 +204,7 @@ function renderResources() {
         let typeBadgeBg = 'rgba(37,99,235,0.12)';
         let typeBadgeColor = '#2563eb';
         let formatLabel = 'PDF Document';
-        let actionLabel = 'View / Download PDF';
+        let actionLabel = 'View / Download PDF 📄';
 
         if (res.type === 'audio') {
             typeIcon = '🎧';
@@ -201,6 +230,19 @@ function renderResources() {
         const authorText = res.author ? `by ${res.author}` : '';
         const descText = res.description || 'Reference item for MSA Ukkuda Dars curriculum.';
         const sizeText = res.fileSize ? `• ${res.fileSize}` : '';
+
+        // Audio Player Embed snippet for Audio type
+        let audioPlayerSnippet = '';
+        if (res.type === 'audio' && res.url && res.url !== '#') {
+            audioPlayerSnippet = `
+                <div style="margin-bottom: 1rem; background: var(--bg); padding: 0.6rem; border-radius: 12px; border: 1px solid var(--border);">
+                    <audio controls style="width: 100%; height: 36px;">
+                        <source src="${res.url}" type="audio/mpeg">
+                        Your browser does not support the audio player.
+                    </audio>
+                </div>
+            `;
+        }
 
         card.innerHTML = `
             <div>
@@ -231,10 +273,12 @@ function renderResources() {
                 <p style="color: var(--text-dim); font-size: 0.83rem; line-height: 1.45; margin-bottom: 1.25rem;">
                     ${descText}
                 </p>
+
+                ${audioPlayerSnippet}
             </div>
 
             <!-- Download / Open Button -->
-            <a href="${res.url || '#'}" target="_blank" class="btn btn-outline" style="width: 100%; justify-content: center; font-size: 0.82rem; font-weight: 600; padding: 0.6rem 1rem; border-radius: 10px; text-decoration: none; display: inline-flex; align-items: center; gap: 0.5rem;">
+            <a href="${res.url || '#'}" ${res.url && res.url !== '#' ? 'target="_blank"' : ''} class="btn btn-outline" style="width: 100%; justify-content: center; font-size: 0.82rem; font-weight: 600; padding: 0.6rem 1rem; border-radius: 10px; text-decoration: none; display: inline-flex; align-items: center; gap: 0.5rem;">
                 ${actionLabel}
             </a>
         `;
@@ -247,6 +291,19 @@ if (searchInput) {
     searchInput.addEventListener('input', (e) => {
         currentSearch = e.target.value;
         renderResources();
+    });
+}
+
+// Clear Search Button Event Listener
+const clearSearchBtn = document.getElementById('clearSearchBtn');
+if (clearSearchBtn) {
+    clearSearchBtn.addEventListener('click', () => {
+        if (searchInput) {
+            searchInput.value = '';
+            currentSearch = '';
+            renderResources();
+            searchInput.focus();
+        }
     });
 }
 

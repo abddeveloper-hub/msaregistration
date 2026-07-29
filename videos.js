@@ -193,6 +193,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const driveId = item.getAttribute("data-drive-id");
             
             const iframe = document.getElementById("lightboxIframe");
+            if (!iframe) return;
             let videoEl = document.getElementById("lightboxVideoEl");
             if (!videoEl) {
                 videoEl = document.createElement("video");
@@ -201,7 +202,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 videoEl.style.width = "100%";
                 videoEl.style.height = "100%";
                 videoEl.style.display = "none";
-                iframe.parentNode.appendChild(videoEl);
+                if (iframe.parentNode) iframe.parentNode.appendChild(videoEl);
             }
             
             if (videoType === 'file' && fileUrl) {

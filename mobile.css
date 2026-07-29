@@ -1039,4 +1039,48 @@ html, body {
     }
 }
 
+/* ==========================================
+   MOBILE DROPDOWN MENU & IOS AUTO-ZOOM FIXES
+   ========================================== */
+@media (max-width: 900px) {
+    #loginDropdownMenu {
+        position: fixed !important;
+        top: 3.5rem !important;
+        right: 0.85rem !important;
+        left: auto !important;
+        z-index: 100002 !important;
+        background: var(--surface-solid, #0f172a) !important;
+        border: 1px solid var(--border) !important;
+        border-radius: 16px !important;
+        box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5) !important;
+        min-width: 240px !important;
+        max-width: calc(100vw - 1.7rem) !important;
+        backdrop-filter: blur(16px) !important;
+        -webkit-backdrop-filter: blur(16px) !important;
+    }
+
+    .cmd-palette-backdrop {
+        padding-top: 5vh !important;
+    }
+
+    .cmd-palette-box {
+        width: 95% !important;
+    }
+}
+
+/* Prevent iOS Safari auto-zoom on form inputs */
+@media (max-width: 768px) {
+    input[type="text"],
+    input[type="password"],
+    input[type="email"],
+    input[type="number"],
+    input[type="tel"],
+    input[type="url"],
+    input[type="search"],
+    select,
+    textarea {
+        font-size: 16px !important;
+    }
+}
+
 

@@ -92,7 +92,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderFilterButtons() {
         if (!filterContainer) return;
 
-        const defaultCategories = ['all', 'Quran & Qira\'at', 'Inter-Madrasa', 'Academic', 'Sahityotsav'];
+        const defaultCategories = ['all', 'Academic', 'Sahityotsav'];
         const dynamicCategories = new Set(defaultCategories);
         allAchievements.forEach(item => {
             if (item.category) dynamicCategories.add(item.category);

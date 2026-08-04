@@ -654,9 +654,10 @@
 
 
     <!-- Islamic Content Hub Script -->
+    <script src="hadiths.js"></script>
     <script>
     (function() {
-        const HADITHS = [
+        const HADITHS_DEFAULT = [
             { arabic: 'إِنَّمَا الأَعْمَالُ بِالنِّيَّاتِ، وَإِنَّمَا لِكُلِّ امْرِئٍ مَا نَوَى', text: '"Actions are but by intentions, and every person shall have only that which they intended."', source: 'Sahih Al-Bukhari 1 · Sahih Muslim 1907', day: 'On Intentions' },
             { arabic: 'الْمُسْلِمُ مَنْ سَلِمَ الْمُسْلِمُونَ مِنْ لِسَانِهِ وَيَدِهِ', text: '"A Muslim is one from whose tongue and hand the Muslims are safe."', source: 'Sahih Al-Bukhari 10 · Sahih Muslim 40', day: 'On Character' },
             { arabic: 'لاَ يُؤْمِنُ أَحَدُكُمْ حَتَّى يُحِبَّ لأَخِيهِ مَا يُحِبُّ لِنَفْسِهِ', text: '"None of you truly believes until he loves for his brother what he loves for himself."', source: 'Sahih Al-Bukhari 13 · Sahih Muslim 45', day: 'On Brotherhood' },
@@ -736,11 +737,12 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             const now = new Date();
-            const hi = getDayIndex(HADITHS);
+            const hadithsList = (window.HADITHS_365 && window.HADITHS_365.length > 0) ? window.HADITHS_365 : HADITHS_DEFAULT;
+            const hi = getDayIndex(hadithsList);
             const di = getDayIndex(DUAS);
             const ri = getDayIndex(REMINDERS);
 
-            const h = HADITHS[hi];
+            const h = hadithsList[hi];
             const d = DUAS[di];
             const r = REMINDERS[ri];
 

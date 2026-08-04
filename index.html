@@ -318,6 +318,95 @@
             </div>
         </section>
 
+        <!-- ══ Islamic Content Hub ══ -->
+        <section id="islamicHub" style="padding: 8rem 2rem; background: var(--surface); border-top: 1px solid var(--border); position: relative; overflow: hidden;">
+
+            <!-- Subtle geometric background -->
+            <div aria-hidden="true" style="position:absolute;inset:0;pointer-events:none;opacity:0.03;background-image:url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2280%22 height=%2280%22 viewBox=%220 0 80 80%22%3E%3Cpath fill=%22%230f4c3a%22 d=%22M40 0l5 15h15l-12 9 5 15-13-9-13 9 5-15-12-9h15z%22/%3E%3C/svg%3E');background-size:80px 80px;"></div>
+
+            <div style="max-width: 1200px; margin: 0 auto; position: relative;">
+
+                <!-- Section Header -->
+                <div class="section-header" style="text-align: center; margin-bottom: 3.5rem;">
+                    <p class="animate-on-scroll slide-up" style="color: var(--primary); font-weight: 700; text-transform: uppercase; letter-spacing: 0.15em; font-size: 0.85rem; margin-bottom: 0.75rem;">
+                        ☽ Islamic Content Hub
+                    </p>
+                    <h2 class="animate-on-scroll slide-up delay-100" style="font-family: var(--font-display); font-size: clamp(2rem, 4vw, 3rem); font-weight: 700; color: var(--text-main); margin-bottom: 0.75rem;">
+                        Daily Inspiration &amp; Reminders
+                    </h2>
+                    <p class="animate-on-scroll slide-up delay-200" style="color: var(--text-dim); font-size: 1rem; max-width: 520px; margin: 0 auto; line-height: 1.7;">
+                        Refreshed daily — Hadith, Dua, and an Islamic reminder to nourish the heart.
+                    </p>
+                </div>
+
+                <!-- 3 Cards Grid -->
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.75rem;">
+
+                    <!-- Card 1: Daily Hadith -->
+                    <div class="animate-on-scroll slide-from-left" style="background: var(--bg); border: 1px solid var(--border); border-radius: 24px; padding: 2.25rem; box-shadow: 0 4px 24px rgba(0,0,0,0.05); display: flex; flex-direction: column; gap: 1.25rem; transition: transform 0.25s ease, box-shadow 0.25s ease;" onmouseover="this.style.transform='translateY(-4px)';this.style.boxShadow='0 16px 40px rgba(15,76,58,0.12)'" onmouseout="this.style.transform='';this.style.boxShadow='0 4px 24px rgba(0,0,0,0.05)'">
+                        <div style="display: flex; align-items: center; gap: 0.75rem;">
+                            <div style="width:42px;height:42px;border-radius:12px;background:rgba(15,76,58,0.1);display:flex;align-items:center;justify-content:center;font-size:1.25rem;flex-shrink:0;">📖</div>
+                            <div>
+                                <p style="font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: var(--primary); margin-bottom: 0.1rem;">Daily Hadith</p>
+                                <p style="font-size: 0.8rem; color: var(--text-dim);" id="hadithDay">—</p>
+                            </div>
+                        </div>
+
+                        <blockquote id="hadithArabic" style="font-family: 'Amiri', 'El Messiri', serif; font-size: 1.3rem; line-height: 1.8; color: var(--text-main); text-align: right; direction: rtl; margin: 0; border-right: 3px solid var(--primary); padding-right: 1rem; font-style: normal;">
+                            —
+                        </blockquote>
+
+                        <p id="hadithText" style="font-size: 0.95rem; color: var(--text-dim); line-height: 1.75; font-style: italic; margin: 0; flex-grow: 1;">Loading...</p>
+
+                        <p id="hadithSource" style="font-size: 0.78rem; font-weight: 600; color: var(--primary); padding-top: 0.75rem; border-top: 1px solid var(--border);">—</p>
+                    </div>
+
+                    <!-- Card 2: Dua of the Day -->
+                    <div class="animate-on-scroll slide-up delay-100" style="background: linear-gradient(135deg, rgba(15,76,58,0.06) 0%, rgba(15,76,58,0.02) 100%); border: 1px solid rgba(15,76,58,0.2); border-radius: 24px; padding: 2.25rem; box-shadow: 0 4px 24px rgba(0,0,0,0.05); display: flex; flex-direction: column; gap: 1.25rem; transition: transform 0.25s ease, box-shadow 0.25s ease;" onmouseover="this.style.transform='translateY(-4px)';this.style.boxShadow='0 16px 40px rgba(15,76,58,0.14)'" onmouseout="this.style.transform='';this.style.boxShadow='0 4px 24px rgba(0,0,0,0.05)'">
+                        <div style="display: flex; align-items: center; gap: 0.75rem;">
+                            <div style="width:42px;height:42px;border-radius:12px;background:rgba(15,76,58,0.15);display:flex;align-items:center;justify-content:center;font-size:1.25rem;flex-shrink:0;">🤲</div>
+                            <div>
+                                <p style="font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: var(--primary); margin-bottom: 0.1rem;">Dua of the Day</p>
+                                <p style="font-size: 0.8rem; color: var(--text-dim);" id="duaOccasion">—</p>
+                            </div>
+                        </div>
+
+                        <p id="duaArabic" style="font-family: 'Amiri', 'El Messiri', serif; font-size: 1.4rem; line-height: 1.9; color: var(--text-main); text-align: center; direction: rtl; margin: 0.25rem 0; background: rgba(15,76,58,0.06); padding: 1rem; border-radius: 12px;">—</p>
+
+                        <p id="duaTranslit" style="font-size: 0.88rem; color: var(--primary); font-style: italic; text-align: center; margin: 0;">—</p>
+
+                        <p id="duaTranslation" style="font-size: 0.93rem; color: var(--text-dim); line-height: 1.7; text-align: center; margin: 0; flex-grow: 1;">Loading...</p>
+
+                        <p id="duaSource" style="font-size: 0.78rem; font-weight: 600; color: var(--text-dim); padding-top: 0.75rem; border-top: 1px solid rgba(15,76,58,0.15);">—</p>
+                    </div>
+
+                    <!-- Card 3: Islamic Reminder -->
+                    <div class="animate-on-scroll slide-from-right" style="background: var(--primary); border-radius: 24px; padding: 2.25rem; box-shadow: 0 8px 32px rgba(15,76,58,0.3); display: flex; flex-direction: column; gap: 1.25rem; transition: transform 0.25s ease, box-shadow 0.25s ease;" onmouseover="this.style.transform='translateY(-4px)';this.style.boxShadow='0 20px 48px rgba(15,76,58,0.4)'" onmouseout="this.style.transform='';this.style.boxShadow='0 8px 32px rgba(15,76,58,0.3)'">
+                        <div style="display: flex; align-items: center; gap: 0.75rem;">
+                            <div style="width:42px;height:42px;border-radius:12px;background:rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;font-size:1.25rem;flex-shrink:0;">💡</div>
+                            <div>
+                                <p style="font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: rgba(255,255,255,0.7); margin-bottom: 0.1rem;">Islamic Reminder</p>
+                                <p style="font-size: 0.8rem; color: rgba(255,255,255,0.55);" id="reminderTopic">—</p>
+                            </div>
+                        </div>
+
+                        <p id="reminderArabic" style="font-family: 'Amiri', 'El Messiri', serif; font-size: 1.25rem; line-height: 1.8; color: rgba(255,255,255,0.9); text-align: right; direction: rtl; margin: 0; border-right: 3px solid rgba(255,255,255,0.3); padding-right: 1rem;">—</p>
+
+                        <p id="reminderText" style="font-size: 0.95rem; color: rgba(255,255,255,0.85); line-height: 1.75; margin: 0; flex-grow: 1;">Loading...</p>
+
+                        <p id="reminderSource" style="font-size: 0.78rem; font-weight: 600; color: rgba(255,255,255,0.55); padding-top: 0.75rem; border-top: 1px solid rgba(255,255,255,0.15);">—</p>
+                    </div>
+
+                </div>
+
+                <!-- Day indicator + nav dots -->
+                <div style="display: flex; justify-content: center; align-items: center; gap: 1.5rem; margin-top: 2.5rem;">
+                    <p class="animate-on-scroll slide-up" id="islamicDateDisplay" style="font-size: 0.85rem; color: var(--text-dim); font-weight: 500;"></p>
+                </div>
+
+            </div>
+        </section>
+
         <!-- FAQ Section -->
         <section id="faqSection"
             style="padding: 8rem 2rem; background: var(--bg-desert); border-top: 1px solid var(--border);">
@@ -562,6 +651,126 @@
         });
     </script>
 
+
+    <!-- Islamic Content Hub Script -->
+    <script>
+    (function() {
+        const HADITHS = [
+            { arabic: 'إِنَّمَا الأَعْمَالُ بِالنِّيَّاتِ، وَإِنَّمَا لِكُلِّ امْرِئٍ مَا نَوَى', text: '"Actions are but by intentions, and every person shall have only that which they intended."', source: 'Sahih Al-Bukhari 1 · Sahih Muslim 1907', day: 'On Intentions' },
+            { arabic: 'الْمُسْلِمُ مَنْ سَلِمَ الْمُسْلِمُونَ مِنْ لِسَانِهِ وَيَدِهِ', text: '"A Muslim is one from whose tongue and hand the Muslims are safe."', source: 'Sahih Al-Bukhari 10 · Sahih Muslim 40', day: 'On Character' },
+            { arabic: 'لاَ يُؤْمِنُ أَحَدُكُمْ حَتَّى يُحِبَّ لأَخِيهِ مَا يُحِبُّ لِنَفْسِهِ', text: '"None of you truly believes until he loves for his brother what he loves for himself."', source: 'Sahih Al-Bukhari 13 · Sahih Muslim 45', day: 'On Brotherhood' },
+            { arabic: 'طَلَبُ الْعِلْمِ فَرِيضَةٌ عَلَى كُلِّ مُسْلِمٍ', text: '"Seeking knowledge is an obligation upon every Muslim."', source: 'Ibn Majah 224 · Classified Sahih', day: 'On Knowledge' },
+            { arabic: 'خَيْرُكُمْ مَنْ تَعَلَّمَ الْقُرْآنَ وَعَلَّمَهُ', text: '"The best of you are those who learn the Quran and teach it."', source: 'Sahih Al-Bukhari 5027', day: 'On the Quran' },
+            { arabic: 'الدِّينُ النَّصِيحَةُ', text: '"Religion is sincere advice (naseeha)."', source: 'Sahih Muslim 55', day: 'On Sincerity' },
+            { arabic: 'مَنْ كَانَ يُؤْمِنُ بِاللهِ وَالْيَوْمِ الآخِرِ فَلْيَقُلْ خَيْرًا أَوْ لِيَصْمُتْ', text: '"Whoever believes in Allah and the Last Day, let him speak good or remain silent."', source: 'Sahih Al-Bukhari 6018 · Sahih Muslim 47', day: 'On Speech' },
+            { arabic: 'أَكْمَلُ الْمُؤْمِنِينَ إِيمَانًا أَحْسَنُهُمْ خُلُقًا', text: '"The most complete of the believers in faith are those with the best character."', source: 'Abu Dawud 4682 · Tirmidhi 1162', day: 'On Good Character' },
+            { arabic: 'الصِّيَامُ جُنَّةٌ', text: '"Fasting is a shield (against sins and Hell-fire)."', source: 'Sahih Al-Bukhari 1894 · Sahih Muslim 1151', day: 'On Fasting' },
+            { arabic: 'مَنْ صَامَ رَمَضَانَ إِيمَانًا وَاحْتِسَابًا غُفِرَ لَهُ مَا تَقَدَّمَ مِنْ ذَنْبِهِ', text: '"Whoever fasts Ramadan with faith and seeking reward, his past sins will be forgiven."', source: 'Sahih Al-Bukhari 38 · Sahih Muslim 760', day: 'On Ramadan' },
+            { arabic: 'مَنْ تَوَاضَعَ لِلَّهِ رَفَعَهُ اللَّهُ', text: '"Whoever humbles himself for Allah, Allah will raise him."', source: 'Sahih Muslim 2588', day: 'On Humility' },
+            { arabic: 'الْكَلِمَةُ الطَّيِّبَةُ صَدَقَةٌ', text: '"A kind word is charity."', source: 'Sahih Al-Bukhari 2989 · Sahih Muslim 1009', day: 'On Kindness' },
+            { arabic: 'إِنَّ اللَّهَ رَفِيقٌ يُحِبُّ الرِّفْقَ', text: '"Indeed Allah is gentle and He loves gentleness."', source: 'Sahih Al-Bukhari 6927 · Sahih Muslim 2593', day: 'On Gentleness' },
+            { arabic: 'اتَّقِ اللهَ حَيْثُمَا كُنْتَ وَأَتْبِعِ السَّيِّئَةَ الْحَسَنَةَ تَمْحُهَا', text: '"Fear Allah wherever you are, and follow a bad deed with a good one to erase it."', source: 'Tirmidhi 1987 · Classified Hasan Sahih', day: 'On Taqwa' },
+            { arabic: 'مَنْ سَلَكَ طَرِيقًا يَلْتَمِسُ فِيهِ عِلْمًا سَهَّلَ اللَّهُ لَهُ طَرِيقًا إِلَى الْجَنَّةِ', text: '"Whoever takes a path in search of knowledge, Allah will ease for him the path to Paradise."', source: 'Sahih Muslim 2699', day: 'On Seeking Knowledge' },
+            { arabic: 'إِنَّ مِنْ أَحَبِّكُمْ إِلَيَّ أَحْسَنَكُمْ أَخْلَاقًا', text: '"The most beloved of you to me are those with the best character."', source: 'Sahih Al-Bukhari 3759', day: 'On Character' },
+            { arabic: 'الصَّلَوَاتُ الْخَمْسُ وَالْجُمُعَةُ إِلَى الْجُمُعَةِ كَفَّارَةٌ لِمَا بَيْنَهُنَّ', text: '"The five daily prayers and Jumu\'ah to Jumu\'ah are expiations for what is between them."', source: 'Sahih Muslim 233', day: 'On Prayer' },
+            { arabic: 'حَقُّ الْمُسْلِمِ عَلَى الْمُسْلِمِ سِتٌّ', text: '"The Muslim has six rights over another Muslim: greet him, accept his invitation, advise him, say Yarhamukallah when he sneezes, visit him when sick, and follow his funeral."', source: 'Sahih Muslim 2162', day: 'On Muslim Rights' },
+            { arabic: 'إِنَّ اللَّهَ لَا يَنْظُرُ إِلَى صُوَرِكُمْ وَأَمْوَالِكُمْ وَلَكِنْ يَنْظُرُ إِلَى قُلُوبِكُمْ وَأَعْمَالِكُمْ', text: '"Indeed Allah does not look at your appearances or your wealth, but He looks at your hearts and your deeds."', source: 'Sahih Muslim 2564', day: 'On the Heart' },
+            { arabic: 'مَنْ أَحَبَّ أَنْ يُبْسَطَ لَهُ فِي رِزْقِهِ وَيُنْسَأَ لَهُ فِي أَثَرِهِ فَلْيَصِلْ رَحِمَهُ', text: '"Whoever wishes his provision to be expanded and his lifespan to be extended, let him maintain ties of kinship."', source: 'Sahih Al-Bukhari 5986 · Sahih Muslim 2557', day: 'On Family Ties' },
+        ];
+
+        const DUAS = [
+            { occasion: 'Morning Dua', arabic: 'اللَّهُمَّ بِكَ أَصْبَحْنَا وَبِكَ أَمْسَيْنَا وَبِكَ نَحْيَا وَبِكَ نَمُوتُ وَإِلَيْكَ النُّشُورُ', translit: 'Allahumma bika asbahna wa bika amsayna wa bika nahya wa bika namutu wa ilayka al-nushur', translation: 'O Allah, by You we enter the morning, by You we enter the evening, by You we live and die — and to You is the resurrection.', source: 'Tirmidhi 3391 · Abu Dawud 5068' },
+            { occasion: 'Evening Dua', arabic: 'اللَّهُمَّ بِكَ أَمْسَيْنَا وَبِكَ أَصْبَحْنَا وَبِكَ نَحْيَا وَبِكَ نَمُوتُ وَإِلَيْكَ الْمَصِيرُ', translit: 'Allahumma bika amsayna wa bika asbahna wa bika nahya wa bika namutu wa ilayka al-masir', translation: 'O Allah, by You we enter the evening, by You we enter the morning, by You we live and die — and to You is the return.', source: 'Tirmidhi 3391' },
+            { occasion: 'Entering Home', arabic: 'بِسْمِ اللهِ وَلَجْنَا، وَبِسْمِ اللهِ خَرَجْنَا، وَعَلَى اللهِ رَبِّنَا تَوَكَّلْنَا', translit: 'Bismillahi walajna, wa bismillahi kharajna, wa \'ala Allahi rabbina tawakkalna', translation: 'In the name of Allah we enter, in the name of Allah we leave, and upon Allah our Lord do we rely.', source: 'Abu Dawud 5096' },
+            { occasion: 'Before Eating', arabic: 'بِسْمِ اللهِ وَعَلَى بَرَكَةِ اللهِ', translit: 'Bismillahi wa \'ala barakatillah', translation: 'In the name of Allah and with the blessings of Allah (I begin).', source: 'Ibn Majah 3264' },
+            { occasion: 'After Eating', arabic: 'الْحَمْدُ لِلَّهِ الَّذِي أَطْعَمَنَا وَسَقَانَا وَجَعَلَنَا مُسْلِمِينَ', translit: 'Alhamdulillahil-ladhi at\'amana wa saqana wa ja\'alana muslimin', translation: 'Praise be to Allah who fed us and gave us drink, and made us Muslims.', source: 'Abu Dawud 3850 · Tirmidhi 3457' },
+            { occasion: 'Before Sleeping', arabic: 'بِاسْمِكَ اللَّهُمَّ أَمُوتُ وَأَحْيَا', translit: 'Bismika Allahumma amutu wa ahya', translation: 'In Your name, O Allah, I die and I live.', source: 'Sahih Al-Bukhari 6324' },
+            { occasion: 'Upon Waking', arabic: 'الْحَمْدُ لِلَّهِ الَّذِي أَحْيَانَا بَعْدَ مَا أَمَاتَنَا وَإِلَيْهِ النُّشُورُ', translit: 'Alhamdulillahil-ladhi ahyana ba\'da ma amatana wa ilayhi al-nushur', translation: 'Praise be to Allah who gave us life after causing us to die, and to Him is the resurrection.', source: 'Sahih Al-Bukhari 6312' },
+            { occasion: 'Dua for Knowledge', arabic: 'رَبِّ زِدْنِي عِلْمًا', translit: 'Rabbi zidni \'ilma', translation: 'O my Lord, increase me in knowledge.', source: 'Surah Taha 20:114' },
+            { occasion: 'Dua for Ease', arabic: 'رَبَّنَا آتِنَا فِي الدُّنْيَا حَسَنَةً وَفِي الآخِرَةِ حَسَنَةً وَقِنَا عَذَابَ النَّارِ', translit: 'Rabbana atina fid-dunya hasanatan wa fil-akhirati hasanatan wa qina \'adhab al-nar', translation: 'Our Lord, give us good in this world and good in the Hereafter, and protect us from the punishment of Fire.', source: 'Surah Al-Baqarah 2:201' },
+            { occasion: 'Seeking Forgiveness', arabic: 'أَسْتَغْفِرُ اللَّهَ الَّذِي لَا إِلَهَ إِلَّا هُوَ الْحَيُّ الْقَيُّومُ وَأَتُوبُ إِلَيْهِ', translit: 'Astaghfirullaha al-ladhi la ilaha illa Huwa al-Hayyu al-Qayyum wa atubu ilayh', translation: 'I seek forgiveness from Allah — there is no god but He, the Ever-Living, the Self-Sustaining — and I repent to Him.', source: 'Abu Dawud 1517 · Tirmidhi 3577' },
+            { occasion: 'Dua for Parents', arabic: 'رَبِّ اغْفِرْ لِي وَلِوَالِدَيَّ', translit: 'Rabbigh-fir li wa li walidayya', translation: 'My Lord, forgive me and my parents.', source: 'Surah Nuh 71:28' },
+            { occasion: 'Protection & Safety', arabic: 'اللَّهُمَّ احْفَظْنِي مِنْ بَيْنِ يَدَيَّ وَمِنْ خَلْفِي', translit: 'Allahumma ihfadhni min bayni yadayya wa min khalfi', translation: 'O Allah, protect me from my front and from behind me.', source: 'Abu Dawud 5074 · Tirmidhi 3427' },
+        ];
+
+        const REMINDERS = [
+            { topic: 'On Gratitude', arabic: 'لَئِنْ شَكَرْتُمْ لَأَزِيدَنَّكُمْ', text: 'Allah says: "If you are grateful, I will surely increase you." — Gratitude is not just for the big moments; thank Allah for every breath, every meal, every moment of health. Shukr transforms ordinary life into worship.', source: 'Surah Ibrahim 14:7' },
+            { topic: 'On Patience', arabic: 'إِنَّ اللَّهَ مَعَ الصَّابِرِينَ', text: '"Indeed, Allah is with the patient." — When trials feel overwhelming, remember that Allah\'s companionship is the greatest honour. Sabr is not passive waiting — it is active trust in Allah\'s wisdom and timing.', source: 'Surah Al-Baqarah 2:153' },
+            { topic: 'On Tawakkul', arabic: 'وَمَنْ يَتَوَكَّلْ عَلَى اللَّهِ فَهُوَ حَسْبُهُ', text: '"And whoever relies upon Allah — then He is sufficient for him." — Tie your camel first, then put your full trust in Allah. Tawakkul means doing your part wholeheartedly while leaving the results to Allah.', source: 'Surah At-Talaq 65:3' },
+            { topic: 'On Seeking Forgiveness', arabic: 'إِنَّ اللَّهَ يُحِبُّ التَّوَّابِينَ', text: '"Indeed, Allah loves those who are constantly repentant." — No sin is too great for Allah\'s mercy. Make istighfar a daily habit — morning, evening, after prayer. The Prophet ﷺ sought forgiveness over 70 times a day.', source: 'Surah Al-Baqarah 2:222' },
+            { topic: 'On Knowledge', arabic: 'يَرْفَعِ اللَّهُ الَّذِينَ آمَنُوا مِنكُمْ وَالَّذِينَ أُوتُوا الْعِلْمَ دَرَجَاتٍ', text: '"Allah raises those who have believed among you and those who were given knowledge, in degrees." — Every hour spent in learning is an act of worship. The pen of a scholar is mightier than the sword.', source: 'Surah Al-Mujadila 58:11' },
+            { topic: 'On Prayer', arabic: 'إِنَّ الصَّلَاةَ تَنْهَىٰ عَنِ الْفَحْشَاءِ وَالْمُنكَرِ', text: '"Indeed, prayer prohibits immorality and wrongdoing." — Salah is not just a ritual; it is a conversation with your Creator five times a day. Guard it, beautify it, and feel it in your heart — not just in your limbs.', source: 'Surah Al-Ankabut 29:45' },
+            { topic: 'On Family', arabic: 'وَبِالْوَالِدَيْنِ إِحْسَانًا', text: '"And be good to parents." — After worshipping Allah, goodness to parents is the highest duty. A kind word, a gentle smile, or simply sitting with them could be your path to Jannah.', source: 'Surah Al-Isra 17:23' },
+            { topic: 'On Dhikr', arabic: 'أَلَا بِذِكْرِ اللَّهِ تَطْمَئِنُّ الْقُلُوبُ', text: '"Verily, in the remembrance of Allah do hearts find rest." — In anxiety, repeat SubhanAllah. In difficulty, say Alhamdulillah. In hope, say Allahu Akbar. Dhikr is the medicine of the heart.', source: 'Surah Ar-Ra\'d 13:28' },
+            { topic: 'On Truthfulness', arabic: 'يَا أَيُّهَا الَّذِينَ آمَنُوا اتَّقُوا اللَّهَ وَكُونُوا مَعَ الصَّادِقِينَ', text: '"O you who have believed, fear Allah and be with the truthful." — Truthfulness is the foundation of character. A single honest word can build trust for years; a single lie can destroy it forever.', source: 'Surah At-Tawbah 9:119' },
+            { topic: 'On Charity', arabic: 'لَنْ تَنَالُوا الْبِرَّ حَتَّىٰ تُنفِقُوا مِمَّا تُحِبُّونَ', text: '"You will never attain righteousness until you spend from what you love." — Give from what matters to you. Even a smile is sadaqah. Even removing harm from a path is sadaqah. Generosity opens doors only Allah can open.', source: 'Surah Al-Imran 3:92' },
+            { topic: 'On Hope in Allah', arabic: 'قُلْ يَا عِبَادِيَ الَّذِينَ أَسْرَفُوا عَلَىٰ أَنفُسِهِمْ لَا تَقْنَطُوا مِنْ رَحْمَةِ اللَّهِ', text: '"Say: O My servants who have transgressed against themselves — do not despair of the mercy of Allah." — No matter how far you feel, Allah\'s door of mercy is always open. Return to Him — now, today, this moment.', source: 'Surah Az-Zumar 39:53' },
+            { topic: 'On Purifying the Heart', arabic: 'قَدْ أَفْلَحَ مَن زَكَّاهَا', text: '"He has succeeded who purifies it (the soul)." — Success is not only in grades or wealth — it is in the purity of the heart. Guard what enters your eyes, your ears, and your thoughts. A clean heart is the greatest treasure.', source: 'Surah Ash-Shams 91:9' },
+        ];
+
+        const HIJRI_MONTHS = ['Muharram','Safar','Rabi\' al-Awwal','Rabi\' al-Thani','Jumada al-Awwal','Jumada al-Thani','Rajab','Sha\'ban','Ramadan','Shawwal','Dhu al-Qi\'dah','Dhu al-Hijjah'];
+        const DAYS_EN = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+
+        function getDayIndex(arr) {
+            const start = new Date(2025, 0, 1);
+            const diff = Math.floor((Date.now() - start) / 86400000);
+            return diff % arr.length;
+        }
+
+        function toHijri(date) {
+            // Simple approximate Hijri converter
+            const jd = Math.floor((date.getTime() / 86400000) + 2440587.5);
+            let l = jd - 1948440 + 10632;
+            const n = Math.floor((l - 1) / 10631);
+            l = l - 10631 * n + 354;
+            const j = Math.floor((10985 - l) / 5316) * Math.floor((50 * l) / 17719) +
+                      Math.floor(l / 5670) * Math.floor((43 * l) / 15238);
+            l = l - Math.floor((30 - j) / 15) * Math.floor((17719 * j) / 50) -
+                Math.floor(j / 16) * Math.floor((15238 * j) / 43) + 29;
+            const month = Math.floor((24 * l) / 709);
+            const day = l - Math.floor((709 * month) / 24);
+            const year = 30 * n + j - 30;
+            return { day, month: month - 1, year };
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const now = new Date();
+            const hi = getDayIndex(HADITHS);
+            const di = getDayIndex(DUAS);
+            const ri = getDayIndex(REMINDERS);
+
+            const h = HADITHS[hi];
+            const d = DUAS[di];
+            const r = REMINDERS[ri];
+
+            // Hadith card
+            document.getElementById('hadithDay').textContent = h.day;
+            document.getElementById('hadithArabic').textContent = h.arabic;
+            document.getElementById('hadithText').textContent = h.text;
+            document.getElementById('hadithSource').textContent = '📚 ' + h.source;
+
+            // Dua card
+            document.getElementById('duaOccasion').textContent = d.occasion;
+            document.getElementById('duaArabic').textContent = d.arabic;
+            document.getElementById('duaTranslit').textContent = d.translit;
+            document.getElementById('duaTranslation').textContent = d.translation;
+            document.getElementById('duaSource').textContent = '📚 ' + d.source;
+
+            // Reminder card
+            document.getElementById('reminderTopic').textContent = r.topic;
+            document.getElementById('reminderArabic').textContent = r.arabic;
+            document.getElementById('reminderText').textContent = r.text;
+            document.getElementById('reminderSource').textContent = '📖 ' + r.source;
+
+            // Date display
+            const hDate = toHijri(now);
+            const dayName = DAYS_EN[now.getDay()];
+            const greg = now.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+            document.getElementById('islamicDateDisplay').textContent =
+                dayName + ' · ' + greg + '  |  ' + hDate.day + ' ' + (HIJRI_MONTHS[hDate.month] || '') + ' ' + hDate.year + ' AH';
+        });
+    })();
+    </script>
 
     <!-- PWA Registration -->
     <script>

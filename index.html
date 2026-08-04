@@ -1000,75 +1000,149 @@
                 source = document.getElementById('reminderSource').textContent.trim();
             }
 
+            // Clean source of emoji characters for sharp canvas rendering
+            source = source.replace(/[\u{1F300}-\u{1F9FF}]|[\u{2600}-\u{26FF}]|📚|📖/gu, '').trim();
+
             const w = 1080, h = 1080;
 
-            const grad = ctx.createLinearGradient(0, 0, w, h);
-            grad.addColorStop(0, '#0F4C3A');
-            grad.addColorStop(0.5, '#0B3C2E');
-            grad.addColorStop(1, '#052219');
-            ctx.fillStyle = grad;
+            // 1. Luxury Dark Emerald Radial Background
+            const bgGrad = ctx.createRadialGradient(w/2, h/2, 100, w/2, h/2, 700);
+            bgGrad.addColorStop(0, '#0F523E');
+            bgGrad.addColorStop(0.6, '#0B3B2D');
+            bgGrad.addColorStop(1, '#051A14');
+            ctx.fillStyle = bgGrad;
             ctx.fillRect(0, 0, w, h);
 
-            ctx.strokeStyle = '#F4C430';
-            ctx.lineWidth = 8;
-            ctx.strokeRect(40, 40, w - 80, h - 80);
+            // 2. Double Gold Borders with Corner Accents
+            ctx.strokeStyle = '#D4AF37'; // Royal Gold
+            ctx.lineWidth = 6;
+            ctx.strokeRect(45, 45, w - 90, h - 90);
 
-            ctx.strokeStyle = 'rgba(244, 196, 48, 0.35)';
+            ctx.strokeStyle = 'rgba(212, 175, 55, 0.4)';
             ctx.lineWidth = 2;
-            ctx.strokeRect(54, 54, w - 108, h - 108);
+            ctx.strokeRect(57, 57, w - 114, h - 114);
 
+            // Corner Ornaments
+            const drawCorner = (x, y, r1, r2) => {
+                ctx.strokeStyle = '#D4AF37';
+                ctx.lineWidth = 3;
+                ctx.beginPath();
+                ctx.arc(x, y, 16, r1, r2);
+                ctx.stroke();
+            };
+            drawCorner(70, 70, 0, Math.PI / 2);
+            drawCorner(w - 70, 70, Math.PI / 2, Math.PI);
+            drawCorner(w - 70, h - 70, Math.PI, (3 * Math.PI) / 2);
+            drawCorner(70, h - 70, (3 * Math.PI) / 2, 2 * Math.PI);
+
+            // 3. Top Branding Header
             ctx.textAlign = 'center';
             ctx.fillStyle = 'rgba(255, 255, 255, 0.65)';
-            ctx.font = '600 24px Inter, sans-serif';
-            ctx.fillText('☽  MSA UKKUDA  •  ISLAMIC CONTENT HUB', w / 2, 115);
+            ctx.font = '600 22px Inter, sans-serif';
+            ctx.fillText('☪  MSA UKKUDA  •  ISLAMIC CONTENT HUB', w / 2, 110);
 
+            // 4. Category Title (Gold & Bold)
             ctx.fillStyle = '#F4C430';
-            ctx.font = 'bold 36px "Playfair Display", serif';
-            ctx.fillText(title + (sub && sub !== '—' ? '  |  ' + sub.toUpperCase() : ''), w / 2, 185);
+            ctx.font = 'bold 30px Inter, sans-serif';
+            ctx.fillText(title, w / 2, 160);
 
-            ctx.strokeStyle = 'rgba(244, 196, 48, 0.4)';
+            // Subtitle / Topic (If exists, placed on separate line to prevent overflow)
+            let startY = 205;
+            if (sub && sub !== '—') {
+                ctx.fillStyle = '#E2E8F0';
+                ctx.font = '500 24px "Playfair Display", serif';
+                ctx.fillText(sub, w / 2, 198);
+                startY = 230;
+            }
+
+            // Gold Ornamental Line with Diamond
+            ctx.strokeStyle = 'rgba(212, 175, 55, 0.4)';
+            ctx.lineWidth = 1.5;
             ctx.beginPath();
-            ctx.moveTo(w / 2 - 160, 215);
-            ctx.lineTo(w / 2 + 160, 215);
+            ctx.moveTo(w / 2 - 140, startY);
+            ctx.lineTo(w / 2 + 140, startY);
             ctx.stroke();
 
+            ctx.fillStyle = '#D4AF37';
+            ctx.font = '16px serif';
+            ctx.fillText('◆', w / 2, startY + 5);
+
+            // 5. Calculate Body Text Heights for Dynamic Vertical Centering
+            const maxTextWidth = 880;
+            
+            // Adjust Arabic font size according to length
+            const arabicFontSize = arabic.length > 120 ? 38 : (arabic.length > 70 ? 44 : 50);
+            const arabicLineHeight = arabicFontSize * 1.5;
+            ctx.font = `${arabicFontSize}px "Amiri", "El Messiri", serif`;
+            const arabicLines = getWrappedLines(ctx, arabic, maxTextWidth);
+
+            ctx.font = 'italic 28px Inter, sans-serif';
+            const englishLines = getWrappedLines(ctx, text, maxTextWidth);
+            const englishLineHeight = 44;
+
+            const totalArabicH = arabicLines.length * arabicLineHeight;
+            const totalEnglishH = englishLines.length * englishLineHeight;
+            const contentH = totalArabicH + 45 + totalEnglishH;
+
+            // Compute ideal Y starting position so content is vertically centered
+            const boxTop = startY + 40;
+            const boxBottom = 880;
+            const availableH = boxBottom - boxTop;
+            let currentY = boxTop + (availableH - contentH) / 2;
+
+            if (currentY < boxTop) currentY = boxTop;
+
+            // 6. Draw Arabic Text
             ctx.fillStyle = '#FFFFFF';
-            ctx.font = '46px "Amiri", "El Messiri", serif';
-            wrapText(ctx, arabic, w / 2, 320, 920, 75);
+            ctx.font = `${arabicFontSize}px "Amiri", "El Messiri", serif`;
+            ctx.direction = 'rtl';
 
-            ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
-            ctx.font = 'italic 30px Inter, sans-serif';
-            wrapText(ctx, text, w / 2, 610, 880, 50);
+            for (let i = 0; i < arabicLines.length; i++) {
+                ctx.fillText(arabicLines[i], w / 2, currentY + (i * arabicLineHeight));
+            }
 
+            currentY += totalArabicH + 45;
+
+            // 7. Draw English Translation Text
+            ctx.direction = 'ltr';
+            ctx.fillStyle = 'rgba(240, 246, 252, 0.92)';
+            ctx.font = 'italic 28px Inter, sans-serif';
+
+            for (let i = 0; i < englishLines.length; i++) {
+                ctx.fillText(englishLines[i], w / 2, currentY + (i * englishLineHeight));
+            }
+
+            // 8. Footer Source Citation
             ctx.fillStyle = '#F4C430';
-            ctx.font = 'bold 28px Inter, sans-serif';
+            ctx.font = '600 26px Inter, sans-serif';
             ctx.fillText(source, w / 2, 940);
 
+            // Watermark / Link
             ctx.fillStyle = 'rgba(255, 255, 255, 0.45)';
-            ctx.font = '500 22px Inter, sans-serif';
-            ctx.fillText('msaregistration.github.io', w / 2, 995);
+            ctx.font = '500 20px Inter, sans-serif';
+            ctx.fillText('msaregistration.github.io', w / 2, 985);
 
             modal.style.display = 'flex';
         };
 
-        function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
-            if (!text) return;
+        function getWrappedLines(ctx, text, maxWidth) {
+            if (!text) return [];
             const words = text.split(' ');
+            const lines = [];
             let line = '';
-            let currentY = y;
 
             for (let n = 0; n < words.length; n++) {
                 const testLine = line + words[n] + ' ';
                 const metrics = ctx.measureText(testLine);
                 if (metrics.width > maxWidth && n > 0) {
-                    ctx.fillText(line.trim(), x, currentY);
+                    lines.push(line.trim());
                     line = words[n] + ' ';
-                    currentY += lineHeight;
                 } else {
                     line = testLine;
                 }
             }
-            ctx.fillText(line.trim(), x, currentY);
+            if (line.trim()) lines.push(line.trim());
+            return lines;
         }
 
         window.closeCardModal = function() {

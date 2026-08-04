@@ -322,9 +322,10 @@
 
                         <div style="display: flex; gap: 0.5rem; margin-top: auto; padding-top: 0.75rem; border-top: 1px solid var(--border); align-items: center; justify-content: space-between; flex-wrap: wrap;">
                             <p id="hadithSource" style="font-size: 0.78rem; font-weight: 600; color: var(--primary); margin: 0;">—</p>
-                            <div style="display: flex; gap: 0.4rem;">
-                                <button onclick="shareItem('hadith')" style="background: rgba(37,211,102,0.12); color: #128C7E; border: none; border-radius: 8px; padding: 0.35rem 0.65rem; font-size: 0.75rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 0.3rem; transition: all 0.2s;" onmouseover="this.style.background='rgba(37,211,102,0.22)'" onmouseout="this.style.background='rgba(37,211,102,0.12)'" title="Share on WhatsApp">💬 Share</button>
-                                <button onclick="copyItem('hadith')" style="background: var(--surface); color: var(--text-main); border: 1px solid var(--border); border-radius: 8px; padding: 0.35rem 0.65rem; font-size: 0.75rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 0.3rem; transition: all 0.2s;" onmouseover="this.style.background='var(--border)'" onmouseout="this.style.background='var(--surface)'" title="Copy Text">📋 Copy</button>
+                            <div style="display: flex; gap: 0.35rem;">
+                                <button onclick="shareItem('hadith')" style="background: rgba(37,211,102,0.12); color: #128C7E; border: none; border-radius: 8px; padding: 0.35rem 0.6rem; font-size: 0.75rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 0.25rem; transition: all 0.2s;" onmouseover="this.style.background='rgba(37,211,102,0.22)'" onmouseout="this.style.background='rgba(37,211,102,0.12)'" title="Share on WhatsApp">💬 Share</button>
+                                <button onclick="copyItem('hadith')" style="background: var(--surface); color: var(--text-main); border: 1px solid var(--border); border-radius: 8px; padding: 0.35rem 0.6rem; font-size: 0.75rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 0.25rem; transition: all 0.2s;" onmouseover="this.style.background='var(--border)'" onmouseout="this.style.background='var(--surface)'" title="Copy Text">📋 Copy</button>
+                                <button onclick="openCardGenerator('hadith')" style="background: rgba(15,76,58,0.1); color: var(--primary); border: 1px solid rgba(15,76,58,0.2); border-radius: 8px; padding: 0.35rem 0.6rem; font-size: 0.75rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 0.25rem; transition: all 0.2s;" onmouseover="this.style.background='rgba(15,76,58,0.2)'" onmouseout="this.style.background='rgba(15,76,58,0.1)'" title="Save as Image Card">🖼️ Card</button>
                             </div>
                         </div>
                     </div>
@@ -347,9 +348,10 @@
 
                         <div style="display: flex; gap: 0.5rem; margin-top: auto; padding-top: 0.75rem; border-top: 1px solid rgba(15,76,58,0.15); align-items: center; justify-content: space-between; flex-wrap: wrap;">
                             <p id="duaSource" style="font-size: 0.78rem; font-weight: 600; color: var(--text-dim); margin: 0;">—</p>
-                            <div style="display: flex; gap: 0.4rem;">
-                                <button onclick="shareItem('dua')" style="background: rgba(37,211,102,0.15); color: #075E54; border: none; border-radius: 8px; padding: 0.35rem 0.65rem; font-size: 0.75rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 0.3rem; transition: all 0.2s;" onmouseover="this.style.background='rgba(37,211,102,0.25)'" onmouseout="this.style.background='rgba(37,211,102,0.15)'" title="Share on WhatsApp">💬 Share</button>
-                                <button onclick="copyItem('dua')" style="background: rgba(15,76,58,0.08); color: var(--primary); border: 1px solid rgba(15,76,58,0.2); border-radius: 8px; padding: 0.35rem 0.65rem; font-size: 0.75rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 0.3rem; transition: all 0.2s;" onmouseover="this.style.background='rgba(15,76,58,0.15)'" onmouseout="this.style.background='rgba(15,76,58,0.08)'" title="Copy Text">📋 Copy</button>
+                            <div style="display: flex; gap: 0.35rem;">
+                                <button onclick="shareItem('dua')" style="background: rgba(37,211,102,0.15); color: #075E54; border: none; border-radius: 8px; padding: 0.35rem 0.6rem; font-size: 0.75rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 0.25rem; transition: all 0.2s;" onmouseover="this.style.background='rgba(37,211,102,0.25)'" onmouseout="this.style.background='rgba(37,211,102,0.15)'" title="Share on WhatsApp">💬 Share</button>
+                                <button onclick="copyItem('dua')" style="background: rgba(15,76,58,0.08); color: var(--primary); border: 1px solid rgba(15,76,58,0.2); border-radius: 8px; padding: 0.35rem 0.6rem; font-size: 0.75rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 0.25rem; transition: all 0.2s;" onmouseover="this.style.background='rgba(15,76,58,0.15)'" onmouseout="this.style.background='rgba(15,76,58,0.08)'" title="Copy Text">📋 Copy</button>
+                                <button onclick="openCardGenerator('dua')" style="background: rgba(15,76,58,0.12); color: var(--primary); border: 1px solid rgba(15,76,58,0.25); border-radius: 8px; padding: 0.35rem 0.6rem; font-size: 0.75rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 0.25rem; transition: all 0.2s;" onmouseover="this.style.background='rgba(15,76,58,0.22)'" onmouseout="this.style.background='rgba(15,76,58,0.12)'" title="Save as Image Card">🖼️ Card</button>
                             </div>
                         </div>
                     </div>
@@ -370,9 +372,10 @@
 
                         <div style="display: flex; gap: 0.5rem; margin-top: auto; padding-top: 0.75rem; border-top: 1px solid rgba(255,255,255,0.15); align-items: center; justify-content: space-between; flex-wrap: wrap;">
                             <p id="reminderSource" style="font-size: 0.78rem; font-weight: 600; color: rgba(255,255,255,0.55); margin: 0;">—</p>
-                            <div style="display: flex; gap: 0.4rem;">
-                                <button onclick="shareItem('reminder')" style="background: rgba(37,211,102,0.3); color: #fff; border: none; border-radius: 8px; padding: 0.35rem 0.65rem; font-size: 0.75rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 0.3rem; transition: all 0.2s;" onmouseover="this.style.background='rgba(37,211,102,0.45)'" onmouseout="this.style.background='rgba(37,211,102,0.3)'" title="Share on WhatsApp">💬 Share</button>
-                                <button onclick="copyItem('reminder')" style="background: rgba(255,255,255,0.15); color: #fff; border: 1px solid rgba(255,255,255,0.25); border-radius: 8px; padding: 0.35rem 0.65rem; font-size: 0.75rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 0.3rem; transition: all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.3)'" onmouseout="this.style.background='rgba(255,255,255,0.15)'" title="Copy Text">📋 Copy</button>
+                            <div style="display: flex; gap: 0.35rem;">
+                                <button onclick="shareItem('reminder')" style="background: rgba(37,211,102,0.3); color: #fff; border: none; border-radius: 8px; padding: 0.35rem 0.6rem; font-size: 0.75rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 0.25rem; transition: all 0.2s;" onmouseover="this.style.background='rgba(37,211,102,0.45)'" onmouseout="this.style.background='rgba(37,211,102,0.3)'" title="Share on WhatsApp">💬 Share</button>
+                                <button onclick="copyItem('reminder')" style="background: rgba(255,255,255,0.15); color: #fff; border: 1px solid rgba(255,255,255,0.25); border-radius: 8px; padding: 0.35rem 0.6rem; font-size: 0.75rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 0.25rem; transition: all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.3)'" onmouseout="this.style.background='rgba(255,255,255,0.15)'" title="Copy Text">📋 Copy</button>
+                                <button onclick="openCardGenerator('reminder')" style="background: rgba(255,255,255,0.25); color: #fff; border: 1px solid rgba(255,255,255,0.35); border-radius: 8px; padding: 0.35rem 0.6rem; font-size: 0.75rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 0.25rem; transition: all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.4)'" onmouseout="this.style.background='rgba(255,255,255,0.25)'" title="Save as Image Card">🖼️ Card</button>
                             </div>
                         </div>
                     </div>
@@ -969,8 +972,138 @@
                 alert('Copied to clipboard!');
             });
         };
+
+        window.openCardGenerator = function(type) {
+            const modal = document.getElementById('cardModal');
+            const canvas = document.getElementById('quoteCanvas');
+            const ctx = canvas.getContext('2d');
+
+            let title = '', sub = '', arabic = '', text = '', source = '';
+
+            if (type === 'hadith') {
+                title = 'DAILY HADITH';
+                sub = document.getElementById('hadithDay').textContent.trim();
+                arabic = document.getElementById('hadithArabic').textContent.trim();
+                text = document.getElementById('hadithText').textContent.trim();
+                source = document.getElementById('hadithSource').textContent.trim();
+            } else if (type === 'dua') {
+                title = 'DUA OF THE DAY';
+                sub = document.getElementById('duaOccasion').textContent.trim();
+                arabic = document.getElementById('duaArabic').textContent.trim();
+                text = document.getElementById('duaTranslation').textContent.trim();
+                source = document.getElementById('duaSource').textContent.trim();
+            } else if (type === 'reminder') {
+                title = 'ISLAMIC REMINDER';
+                sub = document.getElementById('reminderTopic').textContent.trim();
+                arabic = document.getElementById('reminderArabic').textContent.trim();
+                text = document.getElementById('reminderText').textContent.trim();
+                source = document.getElementById('reminderSource').textContent.trim();
+            }
+
+            const w = 1080, h = 1080;
+
+            const grad = ctx.createLinearGradient(0, 0, w, h);
+            grad.addColorStop(0, '#0F4C3A');
+            grad.addColorStop(0.5, '#0B3C2E');
+            grad.addColorStop(1, '#052219');
+            ctx.fillStyle = grad;
+            ctx.fillRect(0, 0, w, h);
+
+            ctx.strokeStyle = '#F4C430';
+            ctx.lineWidth = 8;
+            ctx.strokeRect(40, 40, w - 80, h - 80);
+
+            ctx.strokeStyle = 'rgba(244, 196, 48, 0.35)';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(54, 54, w - 108, h - 108);
+
+            ctx.textAlign = 'center';
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.65)';
+            ctx.font = '600 24px Inter, sans-serif';
+            ctx.fillText('☽  MSA UKKUDA  •  ISLAMIC CONTENT HUB', w / 2, 115);
+
+            ctx.fillStyle = '#F4C430';
+            ctx.font = 'bold 36px "Playfair Display", serif';
+            ctx.fillText(title + (sub && sub !== '—' ? '  |  ' + sub.toUpperCase() : ''), w / 2, 185);
+
+            ctx.strokeStyle = 'rgba(244, 196, 48, 0.4)';
+            ctx.beginPath();
+            ctx.moveTo(w / 2 - 160, 215);
+            ctx.lineTo(w / 2 + 160, 215);
+            ctx.stroke();
+
+            ctx.fillStyle = '#FFFFFF';
+            ctx.font = '46px "Amiri", "El Messiri", serif';
+            wrapText(ctx, arabic, w / 2, 320, 920, 75);
+
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+            ctx.font = 'italic 30px Inter, sans-serif';
+            wrapText(ctx, text, w / 2, 610, 880, 50);
+
+            ctx.fillStyle = '#F4C430';
+            ctx.font = 'bold 28px Inter, sans-serif';
+            ctx.fillText(source, w / 2, 940);
+
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.45)';
+            ctx.font = '500 22px Inter, sans-serif';
+            ctx.fillText('msaregistration.github.io', w / 2, 995);
+
+            modal.style.display = 'flex';
+        };
+
+        function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
+            if (!text) return;
+            const words = text.split(' ');
+            let line = '';
+            let currentY = y;
+
+            for (let n = 0; n < words.length; n++) {
+                const testLine = line + words[n] + ' ';
+                const metrics = ctx.measureText(testLine);
+                if (metrics.width > maxWidth && n > 0) {
+                    ctx.fillText(line.trim(), x, currentY);
+                    line = words[n] + ' ';
+                    currentY += lineHeight;
+                } else {
+                    line = testLine;
+                }
+            }
+            ctx.fillText(line.trim(), x, currentY);
+        }
+
+        window.closeCardModal = function() {
+            document.getElementById('cardModal').style.display = 'none';
+        };
+
+        window.downloadQuoteCard = function() {
+            const canvas = document.getElementById('quoteCanvas');
+            const link = document.createElement('a');
+            link.download = 'msa-ukkuda-daily-reminder.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        };
     })();
     </script>
+
+    <!-- Quote Card Generator Modal -->
+    <div id="cardModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); z-index: 10000; align-items: center; justify-content: center; padding: 1.5rem; overflow-y: auto;">
+        <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 24px; max-width: 540px; width: 100%; padding: 2rem; box-shadow: 0 24px 60px rgba(0,0,0,0.4); text-align: center; position: relative;">
+            <button onclick="closeCardModal()" style="position: absolute; top: 1.25rem; right: 1.25rem; background: rgba(0,0,0,0.06); border: none; font-size: 1.25rem; cursor: pointer; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--text-main);">&times;</button>
+            <h3 style="font-family: var(--font-display); font-size: 1.4rem; color: var(--text-main); margin-bottom: 0.25rem; font-weight: 700;">🎨 Download Image Card</h3>
+            <p style="font-size: 0.85rem; color: var(--text-dim); margin-bottom: 1.5rem;">Perfect size for WhatsApp Status &amp; Instagram Stories</p>
+            <div style="border-radius: 16px; overflow: hidden; box-shadow: 0 12px 32px rgba(0,0,0,0.2); margin-bottom: 1.5rem; background: #052219;">
+                <canvas id="quoteCanvas" width="1080" height="1080" style="width: 100%; height: auto; display: block; border-radius: 16px;"></canvas>
+            </div>
+            <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                <button onclick="downloadQuoteCard()" style="background: var(--primary); color: #fff; border: none; padding: 0.85rem 1.75rem; border-radius: 14px; font-weight: 700; font-size: 0.95rem; cursor: pointer; display: flex; align-items: center; gap: 0.5rem; box-shadow: 0 6px 20px rgba(15,76,58,0.3); transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.03)'" onmouseout="this.style.transform='scale(1)'">
+                    📥 Download PNG Image
+                </button>
+                <button onclick="closeCardModal()" style="background: var(--bg-desert); color: var(--text-main); border: 1px solid var(--border); padding: 0.85rem 1.25rem; border-radius: 14px; font-weight: 600; font-size: 0.9rem; cursor: pointer;">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
 
     <!-- PWA Registration -->
     <script>

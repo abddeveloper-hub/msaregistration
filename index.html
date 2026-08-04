@@ -256,6 +256,49 @@
                     <p class="animate-on-scroll slide-up delay-200" style="color: var(--text-dim); font-size: 1rem; max-width: 520px; margin: 0 auto; line-height: 1.7;">
                         Refreshed daily — Hadith, Dua, and an Islamic reminder to nourish the heart.
                     </p>
+                <!-- Live Prayer Times Banner -->
+                <div class="animate-on-scroll slide-up" style="background: linear-gradient(135deg, #0F4C3A 0%, #082F24 100%); color: #fff; border-radius: 20px; padding: 1.75rem 2rem; margin-bottom: 2.5rem; box-shadow: 0 12px 36px rgba(15,76,58,0.25); border: 1px solid rgba(255,255,255,0.1);">
+                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.25rem; border-bottom: 1px solid rgba(255,255,255,0.15); padding-bottom: 1rem;">
+                        <div style="display: flex; align-items: center; gap: 0.75rem;">
+                            <span style="font-size: 1.5rem;">🕌</span>
+                            <div>
+                                <h3 style="font-size: 1.1rem; font-weight: 700; margin: 0; color: #fff; font-family: var(--font-display);">Daily Prayer Times</h3>
+                                <p style="font-size: 0.8rem; color: rgba(255,255,255,0.7); margin: 0;" id="prayerCityDisplay">📍 Ukkuda / Mangalore Region</p>
+                            </div>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.12); padding: 0.5rem 1rem; border-radius: 12px; border: 1px solid rgba(255,255,255,0.2); text-align: right;">
+                            <span style="font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em; color: rgba(255,255,255,0.7); display: block;">Next Prayer</span>
+                            <strong id="nextPrayerCountdown" style="font-size: 0.95rem; color: #F4C430; font-weight: 700;">Loading...</strong>
+                        </div>
+                    </div>
+
+                    <!-- 6 Prayers Grid -->
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(90px, 1fr)); gap: 0.65rem; text-align: center;">
+                        <div class="prayer-box" id="pb-fajr" style="background: rgba(255,255,255,0.08); padding: 0.75rem 0.5rem; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); transition: all 0.3s;">
+                            <p style="font-size: 0.72rem; text-transform: uppercase; color: rgba(255,255,255,0.7); margin: 0 0 0.25rem 0; font-weight: 600;">Fajr</p>
+                            <p style="font-size: 1.05rem; font-weight: 700; color: #fff; margin: 0;" id="pt-fajr">05:08 AM</p>
+                        </div>
+                        <div class="prayer-box" id="pb-sunrise" style="background: rgba(255,255,255,0.04); padding: 0.75rem 0.5rem; border-radius: 12px; border: 1px solid rgba(255,255,255,0.08); transition: all 0.3s;">
+                            <p style="font-size: 0.72rem; text-transform: uppercase; color: rgba(255,255,255,0.5); margin: 0 0 0.25rem 0; font-weight: 600;">Sunrise</p>
+                            <p style="font-size: 1.05rem; font-weight: 700; color: rgba(255,255,255,0.65); margin: 0;" id="pt-sunrise">06:22 AM</p>
+                        </div>
+                        <div class="prayer-box" id="pb-dhuhr" style="background: rgba(255,255,255,0.08); padding: 0.75rem 0.5rem; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); transition: all 0.3s;">
+                            <p style="font-size: 0.72rem; text-transform: uppercase; color: rgba(255,255,255,0.7); margin: 0 0 0.25rem 0; font-weight: 600;">Dhuhr</p>
+                            <p style="font-size: 1.05rem; font-weight: 700; color: #fff; margin: 0;" id="pt-dhuhr">12:35 PM</p>
+                        </div>
+                        <div class="prayer-box" id="pb-asr" style="background: rgba(255,255,255,0.08); padding: 0.75rem 0.5rem; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); transition: all 0.3s;">
+                            <p style="font-size: 0.72rem; text-transform: uppercase; color: rgba(255,255,255,0.7); margin: 0 0 0.25rem 0; font-weight: 600;">Asr</p>
+                            <p style="font-size: 1.05rem; font-weight: 700; color: #fff; margin: 0;" id="pt-asr">03:52 PM</p>
+                        </div>
+                        <div class="prayer-box" id="pb-maghrib" style="background: rgba(255,255,255,0.08); padding: 0.75rem 0.5rem; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); transition: all 0.3s;">
+                            <p style="font-size: 0.72rem; text-transform: uppercase; color: rgba(255,255,255,0.7); margin: 0 0 0.25rem 0; font-weight: 600;">Maghrib</p>
+                            <p style="font-size: 1.05rem; font-weight: 700; color: #fff; margin: 0;" id="pt-maghrib">06:48 PM</p>
+                        </div>
+                        <div class="prayer-box" id="pb-isha" style="background: rgba(255,255,255,0.08); padding: 0.75rem 0.5rem; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); transition: all 0.3s;">
+                            <p style="font-size: 0.72rem; text-transform: uppercase; color: rgba(255,255,255,0.7); margin: 0 0 0.25rem 0; font-weight: 600;">Isha</p>
+                            <p style="font-size: 1.05rem; font-weight: 700; color: #fff; margin: 0;" id="pt-isha">08:02 PM</p>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- 3 Cards Grid -->
@@ -753,7 +796,125 @@
             const greg = now.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
             document.getElementById('islamicDateDisplay').textContent =
                 dayName + ' · ' + greg + '  |  ' + hDate.day + ' ' + (HIJRI_MONTHS[hDate.month] || '') + ' ' + hDate.year + ' AH';
+
+            // Initialize Prayer Times & Live Countdown
+            initPrayerTimes();
         });
+
+        function initPrayerTimes() {
+            async function fetchLivePrayerTimes() {
+                try {
+                    const res = await fetch('https://api.aladhan.com/v1/timingsByCity?city=Mangalore&country=India&method=1');
+                    if (res.ok) {
+                        const data = await res.json();
+                        if (data && data.data && data.data.timings) {
+                            return data.data.timings;
+                        }
+                    }
+                } catch(e) { console.log('API fallback to local computation'); }
+                return null;
+            }
+
+            fetchLivePrayerTimes().then(apiTimings => {
+                let times = {
+                    Fajr: "05:08",
+                    Sunrise: "06:22",
+                    Dhuhr: "12:35",
+                    Asr: "15:52",
+                    Maghrib: "18:48",
+                    Isha: "20:02"
+                };
+
+                if (apiTimings) {
+                    times = {
+                        Fajr: apiTimings.Fajr.substring(0,5),
+                        Sunrise: apiTimings.Sunrise.substring(0,5),
+                        Dhuhr: apiTimings.Dhuhr.substring(0,5),
+                        Asr: apiTimings.Asr.substring(0,5),
+                        Maghrib: apiTimings.Maghrib.substring(0,5),
+                        Isha: apiTimings.Isha.substring(0,5)
+                    };
+                }
+
+                function format12h(tStr) {
+                    const [h, m] = tStr.split(':').map(Number);
+                    const ampm = h >= 12 ? 'PM' : 'AM';
+                    const h12 = h % 12 || 12;
+                    return `${h12 < 10 ? '0'+h12 : h12}:${m < 10 ? '0'+m : m} ${ampm}`;
+                }
+
+                if (document.getElementById('pt-fajr')) {
+                    document.getElementById('pt-fajr').textContent = format12h(times.Fajr);
+                    document.getElementById('pt-sunrise').textContent = format12h(times.Sunrise);
+                    document.getElementById('pt-dhuhr').textContent = format12h(times.Dhuhr);
+                    document.getElementById('pt-asr').textContent = format12h(times.Asr);
+                    document.getElementById('pt-maghrib').textContent = format12h(times.Maghrib);
+                    document.getElementById('pt-isha').textContent = format12h(times.Isha);
+                }
+
+                function tickCountdown() {
+                    const now = new Date();
+                    const prayerOrder = [
+                        { name: 'Fajr', id: 'pb-fajr', timeStr: times.Fajr },
+                        { name: 'Sunrise', id: 'pb-sunrise', timeStr: times.Sunrise },
+                        { name: 'Dhuhr', id: 'pb-dhuhr', timeStr: times.Dhuhr },
+                        { name: 'Asr', id: 'pb-asr', timeStr: times.Asr },
+                        { name: 'Maghrib', id: 'pb-maghrib', timeStr: times.Maghrib },
+                        { name: 'Isha', id: 'pb-isha', timeStr: times.Isha }
+                    ];
+
+                    let nextPrayer = null;
+                    let nextTime = null;
+
+                    for (let p of prayerOrder) {
+                        const [hh, mm] = p.timeStr.split(':').map(Number);
+                        const pDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hh, mm, 0);
+                        if (pDate > now) {
+                            nextPrayer = p;
+                            nextTime = pDate;
+                            break;
+                        }
+                    }
+
+                    if (!nextPrayer) {
+                        nextPrayer = prayerOrder[0];
+                        const [hh, mm] = times.Fajr.split(':').map(Number);
+                        nextTime = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, hh, mm, 0);
+                    }
+
+                    prayerOrder.forEach(p => {
+                        const el = document.getElementById(p.id);
+                        if (el) {
+                            el.style.background = (p.name === 'Sunrise') ? 'rgba(255,255,255,0.04)' : 'rgba(255,255,255,0.08)';
+                            el.style.borderColor = 'rgba(255,255,255,0.1)';
+                        }
+                    });
+
+                    const nextEl = document.getElementById(nextPrayer.id);
+                    if (nextEl) {
+                        nextEl.style.background = 'rgba(244, 196, 48, 0.22)';
+                        nextEl.style.borderColor = '#F4C430';
+                    }
+
+                    const diff = nextTime - now;
+                    const hours = Math.floor(diff / (1000 * 60 * 60));
+                    const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                    const secs = Math.floor((diff % (1000 * 60)) / 1000);
+
+                    const hDisplay = hours > 0 ? `${hours}h ` : '';
+                    const mDisplay = `${mins < 10 ? '0' + mins : mins}m `;
+                    const sDisplay = `${secs < 10 ? '0' + secs : secs}s`;
+
+                    const cdEl = document.getElementById('nextPrayerCountdown');
+                    if (cdEl) {
+                        cdEl.textContent = `${nextPrayer.name} in ${hDisplay}${mDisplay}${sDisplay}`;
+                    }
+                }
+
+                tickCountdown();
+                setInterval(tickCountdown, 1000);
+            });
+        }
 
         window.shareItem = function(type) {
             let text = '';

@@ -815,14 +815,15 @@ img {
     background-size: cover !important;
     background-position: center center !important;
     background-repeat: no-repeat !important;
+    filter: brightness(1.15) contrast(1.05) saturate(1.08);
 }
 
 .hero-bg::after {
     content: '';
     position: absolute;
     inset: auto 0 0;
-    height: 34%;
-    background: linear-gradient(0deg, var(--bg), transparent);
+    height: 18%;
+    background: linear-gradient(0deg, rgba(0,0,0,0.25), transparent);
 }
 
 .hero-inner {

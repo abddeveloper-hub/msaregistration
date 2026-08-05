@@ -260,10 +260,10 @@ function renderResources() {
         if (res.type === 'pdf' || res.type === 'notes') {
             buttonsHtml = `
                 <div style="display: flex; gap: 0.5rem; width: 100%;">
-                    <button type="button" class="btn btn-main open-pdf-btn" style="flex: 1; justify-content: center; font-size: 0.8rem; font-weight: 600; padding: 0.6rem 0.5rem; border-radius: 10px; gap: 0.35rem; white-space: nowrap;">
+                    <a href="${res.url || '#'}" target="_blank" rel="noopener noreferrer" class="btn btn-main open-pdf-btn" style="flex: 1; justify-content: center; font-size: 0.8rem; font-weight: 600; padding: 0.6rem 0.5rem; border-radius: 10px; gap: 0.35rem; white-space: nowrap; text-decoration: none; display: inline-flex; align-items: center;">
                         👁️ Read PDF
-                    </button>
-                    <a href="${res.url || '#'}" target="_blank" download class="btn btn-outline download-pdf-btn" style="flex: 1; justify-content: center; font-size: 0.8rem; font-weight: 600; padding: 0.6rem 0.5rem; border-radius: 10px; text-decoration: none; gap: 0.35rem; white-space: nowrap;">
+                    </a>
+                    <a href="${res.url || '#'}" target="_blank" download class="btn btn-outline download-pdf-btn" style="flex: 1; justify-content: center; font-size: 0.8rem; font-weight: 600; padding: 0.6rem 0.5rem; border-radius: 10px; text-decoration: none; gap: 0.35rem; white-space: nowrap; display: inline-flex; align-items: center;">
                         📥 Download
                     </a>
                 </div>
@@ -271,10 +271,10 @@ function renderResources() {
         } else if (res.type === 'audio') {
             buttonsHtml = `
                 <div style="display: flex; gap: 0.5rem; width: 100%;">
-                    <a href="${res.url || '#'}" target="_blank" class="btn btn-main" style="flex: 1; justify-content: center; font-size: 0.8rem; font-weight: 600; padding: 0.6rem 0.5rem; border-radius: 10px; text-decoration: none; gap: 0.35rem; white-space: nowrap;">
+                    <a href="${res.url || '#'}" target="_blank" class="btn btn-main" style="flex: 1; justify-content: center; font-size: 0.8rem; font-weight: 600; padding: 0.6rem 0.5rem; border-radius: 10px; text-decoration: none; gap: 0.35rem; white-space: nowrap; display: inline-flex; align-items: center;">
                         🎧 Play Audio
                     </a>
-                    <a href="${res.url || '#'}" target="_blank" download class="btn btn-outline" style="flex: 1; justify-content: center; font-size: 0.8rem; font-weight: 600; padding: 0.6rem 0.5rem; border-radius: 10px; text-decoration: none; gap: 0.35rem; white-space: nowrap;">
+                    <a href="${res.url || '#'}" target="_blank" download class="btn btn-outline" style="flex: 1; justify-content: center; font-size: 0.8rem; font-weight: 600; padding: 0.6rem 0.5rem; border-radius: 10px; text-decoration: none; gap: 0.35rem; white-space: nowrap; display: inline-flex; align-items: center;">
                         📥 Download
                     </a>
                 </div>
@@ -327,8 +327,10 @@ function renderResources() {
         const openPdfBtn = card.querySelector('.open-pdf-btn');
         if (openPdfBtn) {
             openPdfBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                openPdfModal(res);
+                if (res.url && res.url !== '#') {
+                    e.preventDefault();
+                    openPdfModal(res);
+                }
             });
         }
 
@@ -373,15 +375,20 @@ function openPdfModal(res) {
         `;
     }
 
+    pdfModal.style.display = 'flex';
     pdfModal.classList.remove('hidden');
     document.body.style.overflow = 'hidden';
 }
 
 function closePdfModal() {
-    if (pdfModal) pdfModal.classList.add('hidden');
+    if (pdfModal) {
+        pdfModal.style.display = 'none';
+        pdfModal.classList.add('hidden');
+    }
     if (pdfViewerContainer) pdfViewerContainer.innerHTML = '';
     document.body.style.overflow = '';
 }
+
 
 if (closePdfModalBtn) closePdfModalBtn.addEventListener('click', closePdfModal);
 if (pdfModal) {

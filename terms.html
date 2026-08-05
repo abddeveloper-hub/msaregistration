@@ -4,32 +4,468 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Terms of Service | Muhyissunnah Dars Ukkuda</title>
+  <meta name="description" content="Terms of Service for Muhyissunnah Dars Ukkuda Official Portal — acceptable use, responsibilities, and guidelines." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=El+Messiri:wght@400;500;600;700&family=Cairo:wght@400;700&family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Aref+Ruqaa:wght@400;700&family=Amiri:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css?v=55" />
   <link rel="stylesheet" href="landing.css" />
   <link rel="stylesheet" href="mobile.css?v=55" />
+  <link rel="icon" type="image/png" href="logo.png?v=2">
+  <meta name="theme-color" content="#FFFFFF">
   <style>
-    body { padding: 2rem; }
-    .policy-card { max-width: 900px; margin: 2rem auto; background: var(--surface); border: 1px solid var(--border); border-radius: 24px; padding: 2rem; box-shadow: var(--shadow-sm); }
-    h1, h2 { font-family: var(--font-display); margin-bottom: 1rem; }
-    p, li { color: var(--text-dim); line-height: 1.8; }
-    ul { padding-left: 1.2rem; display: grid; gap: 0.5rem; }
+    /* ── Hero ── */
+    .policy-hero {
+      padding: 9rem 2rem 5rem;
+      background: var(--bg-desert);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .policy-hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 70% 60% at 50% 0%, var(--primary-glow), transparent 70%);
+      pointer-events: none;
+    }
+    .policy-hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--primary-glow);
+      color: var(--primary);
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      padding: 0.4rem 1.2rem;
+      border-radius: 30px;
+      margin-bottom: 1.5rem;
+    }
+    .policy-hero h1 {
+      font-family: var(--font-display);
+      font-size: clamp(2.5rem, 5vw, 4rem);
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 1rem;
+    }
+    .policy-hero p {
+      color: var(--text-dim);
+      font-size: 1.1rem;
+      max-width: 640px;
+      margin: 0 auto 2rem;
+      line-height: 1.7;
+    }
+    .policy-meta {
+      display: inline-flex;
+      gap: 2rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 50px;
+      padding: 0.6rem 2rem;
+      font-size: 0.85rem;
+      color: var(--text-dim);
+    }
+    .policy-meta span { display: flex; align-items: center; gap: 0.4rem; }
+
+    /* ── Body ── */
+    .policy-body {
+      max-width: 880px;
+      margin: 0 auto;
+      padding: 4rem 2rem 6rem;
+    }
+
+    /* ── Section Cards ── */
+    .policy-section {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 2rem 2.5rem;
+      margin-bottom: 1.5rem;
+      box-shadow: var(--shadow-sm);
+      transition: box-shadow 0.3s ease, transform 0.3s ease;
+    }
+    .policy-section:hover {
+      box-shadow: var(--shadow-md);
+      transform: translateY(-2px);
+    }
+    .policy-section-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1.2rem;
+    }
+    .policy-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      background: var(--primary-glow);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .policy-icon svg { color: var(--primary); }
+    .policy-section h2 {
+      font-family: var(--font-display);
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--text-main);
+      margin: 0;
+    }
+    .policy-section p {
+      color: var(--text-dim);
+      line-height: 1.85;
+      font-size: 0.97rem;
+      margin: 0;
+    }
+    .policy-section ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: grid;
+      gap: 0.65rem;
+    }
+    .policy-section ul li {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      color: var(--text-dim);
+      line-height: 1.7;
+      font-size: 0.97rem;
+    }
+    .policy-section ul li::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--primary);
+      flex-shrink: 0;
+      margin-top: 0.55rem;
+    }
+
+    /* ── Agreement Banner ── */
+    .agreement-banner {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--primary);
+      border-radius: 16px;
+      padding: 1.5rem 2rem;
+      margin-bottom: 2.5rem;
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+    }
+    .agreement-banner svg { color: var(--primary); flex-shrink: 0; margin-top: 2px; }
+    .agreement-banner p { color: var(--text-dim); font-size: 0.95rem; line-height: 1.7; margin: 0; }
+
+    /* ── Contact Card ── */
+    .policy-contact-card {
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark, #7c5c2a));
+      border-radius: 20px;
+      padding: 2.5rem;
+      text-align: center;
+      margin-top: 2rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .policy-contact-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 60% 70% at 80% 20%, rgba(255,255,255,0.12), transparent 60%);
+    }
+    .policy-contact-card h3 {
+      font-family: var(--font-display);
+      font-size: 1.5rem;
+      color: #fff;
+      margin-bottom: 0.5rem;
+      position: relative;
+    }
+    .policy-contact-card p {
+      color: rgba(255,255,255,0.8);
+      margin-bottom: 1.5rem;
+      position: relative;
+    }
+    .policy-contact-card .btn-white {
+      background: #fff;
+      color: var(--primary);
+      border: none;
+      border-radius: 50px;
+      padding: 0.75rem 2rem;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 0.95rem;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      position: relative;
+    }
+    .policy-contact-card .btn-white:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+    }
+
+    .policy-back {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.9rem;
+      margin-bottom: 2rem;
+      transition: gap 0.2s ease;
+    }
+    .policy-back:hover { gap: 0.75rem; }
   </style>
 </head>
-<body>
-  <div class="policy-card">
-    <h1>Terms of Service</h1>
-    <p>By using this portal, you agree to use it responsibly and only for legitimate academic or administrative purposes.</p>
-    <h2>Acceptable Use</h2>
-    <ul>
-      <li>Provide accurate information during registration</li>
-      <li>Protect your account credentials and avoid unauthorized sharing</li>
-      <li>Use the portal in a respectful and lawful manner</li>
-    </ul>
-    <h2>Account Responsibility</h2>
-    <p>Users are responsible for all activity performed through their account and should immediately report any suspicious access.</p>
-    <h2>Contact</h2>
-    <p>For questions about these terms, contact portal@msaukkuda.org.</p>
-    <p><a href="index.html" class="btn btn-ghost" style="margin-top:1rem;">Back to Home</a></p>
-  </div>
+<body class="landing-page">
+
+  <!-- Navbar -->
+  <header class="nav-wrapper">
+    <nav class="navbar" aria-label="Primary navigation">
+      <a class="brand-lockup" href="index.html" aria-label="Muhyissunnah Dars Ukkuda home">
+        <img src="logo.png?v=2" alt="MSA Ukkuda Logo" class="brand-logo-img">
+        <span class="brand-text">
+          <strong style="font-family: 'Aref Ruqaa', 'Amiri', serif; letter-spacing: 0.04em; font-size: 1.35rem; line-height: 1; text-transform: uppercase; font-weight: 700;"><span class="brand-text-styled">Muhyissunnah Dars</span></strong>
+          <span style="letter-spacing: 0.15em;">Ukkuda Official Portal</span>
+        </span>
+      </a>
+
+      <div class="nav-links">
+        <a href="library.html">Digital Library</a>
+        <a href="events.html">News &amp; Events</a>
+        <a href="gallery.html">Gallery</a>
+        <a href="videos.html">Videos</a>
+        <a href="achievements.html">Achievements</a>
+        <a href="alumni.html">Alumni</a>
+        <a href="login.html" class="nav-login-btn">Login</a>
+      </div>
+
+      <div class="nav-actions" style="position: relative;">
+        <button class="btn btn-ghost icon-btn" id="loginMenuToggleBtn" type="button" title="Menu" aria-label="Open menu">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <circle cx="12" cy="5" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="12" cy="19" r="1.5"/>
+          </svg>
+        </button>
+        <div id="loginDropdownMenu" class="hidden">
+          <a href="index.html" class="btn btn-ghost" style="border-radius:0;border:none;border-bottom:1px solid var(--border);justify-content:flex-start;padding:1rem;text-decoration:none;gap:0.75rem;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Home
+          </a>
+          <a href="library.html" class="btn btn-ghost" style="border-radius:0;border:none;border-bottom:1px solid var(--border);justify-content:flex-start;padding:1rem;text-decoration:none;gap:0.75rem;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>Digital Library
+          </a>
+          <a href="events.html" class="btn btn-ghost" style="border-radius:0;border:none;border-bottom:1px solid var(--border);justify-content:flex-start;padding:1rem;text-decoration:none;gap:0.75rem;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>News &amp; Events
+          </a>
+          <a href="gallery.html" class="btn btn-ghost" style="border-radius:0;border:none;border-bottom:1px solid var(--border);justify-content:flex-start;padding:1rem;text-decoration:none;gap:0.75rem;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>Gallery
+          </a>
+          <a href="videos.html" class="btn btn-ghost" style="border-radius:0;border:none;border-bottom:1px solid var(--border);justify-content:flex-start;padding:1rem;text-decoration:none;gap:0.75rem;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>Videos
+          </a>
+          <a href="achievements.html" class="btn btn-ghost" style="border-radius:0;border:none;border-bottom:1px solid var(--border);justify-content:flex-start;padding:1rem;text-decoration:none;gap:0.75rem;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>Achievements
+          </a>
+          <a href="alumni.html" class="btn btn-ghost" style="border-radius:0;border:none;border-bottom:1px solid var(--border);justify-content:flex-start;padding:1rem;text-decoration:none;gap:0.75rem;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>Alumni Directory
+          </a>
+          <a href="login.html" class="btn btn-ghost" style="border-radius:0;border:none;border-bottom:1px solid var(--border);justify-content:flex-start;padding:1rem;text-decoration:none;gap:0.75rem;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>Login
+          </a>
+          <a href="login.html?signup=true" class="btn btn-ghost" style="border-radius:0;border:none;justify-content:flex-start;padding:1rem;text-decoration:none;gap:0.75rem;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>New Registration
+          </a>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main id="mainContent">
+    <!-- Hero -->
+    <section class="policy-hero">
+      <div class="policy-hero-badge">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        Terms &amp; Conditions
+      </div>
+      <h1>Terms of Service</h1>
+      <p>By accessing and using this portal, you agree to abide by these terms, which ensure a safe, respectful, and lawful experience for all members of our academic community.</p>
+      <div class="policy-meta">
+        <span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          Effective: January 2025
+        </span>
+        <span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          4 min read
+        </span>
+      </div>
+    </section>
+
+    <!-- Content -->
+    <div class="policy-body">
+      <a href="index.html" class="policy-back">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+        Back to Home
+      </a>
+
+      <!-- Agreement notice -->
+      <div class="agreement-banner">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <p>By registering, logging in, or using any feature of this portal, you confirm that you have read, understood, and agree to be bound by these Terms of Service. If you do not agree, please do not use this portal.</p>
+      </div>
+
+      <!-- Section 1 -->
+      <div class="policy-section animate-on-scroll slide-up">
+        <div class="policy-section-header">
+          <div class="policy-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+          </div>
+          <h2>Acceptable Use</h2>
+        </div>
+        <p>You agree to use this portal only for its intended academic and administrative purposes. Specifically, you must:</p>
+        <ul style="margin-top: 1rem;">
+          <li>Provide accurate and truthful information during registration and throughout your use of the portal</li>
+          <li>Use the portal respectfully and in accordance with all applicable laws</li>
+          <li>Refrain from uploading, sharing, or transmitting harmful, abusive, or inappropriate content</li>
+          <li>Not attempt to access accounts, data, or systems you are not authorised to use</li>
+          <li>Not use automated tools, bots, or scripts to scrape or interfere with the portal</li>
+        </ul>
+      </div>
+
+      <!-- Section 2 -->
+      <div class="policy-section animate-on-scroll slide-up">
+        <div class="policy-section-header">
+          <div class="policy-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          </div>
+          <h2>Account Responsibility</h2>
+        </div>
+        <p>You are solely responsible for all activity conducted through your account. This means you must:</p>
+        <ul style="margin-top: 1rem;">
+          <li>Keep your password confidential and never share it with anyone</li>
+          <li>Immediately notify the administration at <a href="mailto:portal@msaukkuda.org" style="color: var(--primary); text-decoration: none;">portal@msaukkuda.org</a> if you suspect unauthorised access</li>
+          <li>Log out of shared or public devices after each session</li>
+          <li>Ensure that any device used to access the portal is reasonably secured</li>
+        </ul>
+      </div>
+
+      <!-- Section 3 -->
+      <div class="policy-section animate-on-scroll slide-up">
+        <div class="policy-section-header">
+          <div class="policy-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>
+          </div>
+          <h2>Academic Integrity</h2>
+        </div>
+        <p>This portal is a tool to support your academic journey. You agree to uphold the highest standards of academic integrity, including:</p>
+        <ul style="margin-top: 1rem;">
+          <li>Not misrepresenting your attendance, grades, or academic records</li>
+          <li>Not assisting others in fraudulently using the portal</li>
+          <li>Respecting the intellectual property of the institution, faculty, and fellow students</li>
+        </ul>
+      </div>
+
+      <!-- Section 4 -->
+      <div class="policy-section animate-on-scroll slide-up">
+        <div class="policy-section-header">
+          <div class="policy-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          </div>
+          <h2>Termination &amp; Suspension</h2>
+        </div>
+        <p>The institution reserves the right to suspend or terminate access to the portal at any time, with or without prior notice, if a user is found to be in violation of these terms. Grounds for termination include but are not limited to:</p>
+        <ul style="margin-top: 1rem;">
+          <li>Repeated or serious violations of the acceptable use policy</li>
+          <li>Providing false registration information</li>
+          <li>Actions that compromise the security or integrity of the portal</li>
+          <li>Withdrawal or completion of enrolment at the institution</li>
+        </ul>
+      </div>
+
+      <!-- Section 5 -->
+      <div class="policy-section animate-on-scroll slide-up">
+        <div class="policy-section-header">
+          <div class="policy-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <h2>Changes to These Terms</h2>
+        </div>
+        <p>We may update these Terms of Service from time to time to reflect changes in our services, legal requirements, or institutional policies. When we do, we will update the effective date at the top of this page. Continued use of the portal after such changes constitutes your acceptance of the revised terms. We encourage you to review this page periodically.</p>
+      </div>
+
+      <!-- Contact Card -->
+      <div class="policy-contact-card animate-on-scroll slide-up">
+        <h3>Questions About These Terms?</h3>
+        <p>Contact our administration team — we're here to help clarify anything.</p>
+        <a href="mailto:portal@msaukkuda.org" class="btn-white">Email Administration</a>
+      </div>
+
+      <div style="text-align: center; margin-top: 2rem;">
+        <a href="privacy.html" style="color: var(--primary); font-size: 0.9rem; text-decoration: none;">View our Privacy Policy →</a>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="ultra-footer">
+    <div class="footer-grid">
+      <div class="footer-brand animate-on-scroll slide-from-left">
+        <h4><span class="brand-text-styled">Muhyissunnah Dars</span></h4>
+        <p>Delivering a robust, pristine digital infrastructure for academic excellence. Optimized for seamless institutional management and absolute clarity.</p>
+      </div>
+      <div class="footer-col animate-on-scroll slide-up delay-100">
+        <h5>Portals</h5>
+        <ul>
+          <li><a href="student.html">Student Access</a></li>
+          <li><a href="teacher.html">Faculty Dashboard</a></li>
+          <li><a href="login.html">Portal Login</a></li>
+        </ul>
+      </div>
+      <div class="footer-col animate-on-scroll slide-up delay-200">
+        <h5>Institution</h5>
+        <ul>
+          <li><a href="index.html#aboutInstitution">About Us</a></li>
+          <li><a href="events.html">News &amp; Events</a></li>
+          <li><a href="gallery.html">Gallery</a></li>
+          <li><a href="alumni.html">Alumni</a></li>
+        </ul>
+      </div>
+      <div class="footer-col animate-on-scroll slide-from-right delay-300">
+        <h5>Support &amp; Legal</h5>
+        <ul>
+          <li><a href="index.html#faqSection">Help &amp; FAQ</a></li>
+          <li><a href="privacy.html">Privacy Policy</a></li>
+          <li><a href="terms.html">Terms of Service</a></li>
+          <li><a href="mailto:portal@msaukkuda.org">Contact Administration</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom animate-on-scroll slide-up delay-400">
+      <span>&copy; 2026 <span class="brand-text-styled">Muhyissunnah Dars Ukkuda</span>. All rights reserved.</span>
+      <div style="display: flex; gap: 1.5rem; align-items: center;">
+        <a href="https://www.instagram.com/msa_ukkuda" target="_blank" rel="noopener noreferrer"
+          style="color: var(--text-main); display: flex; align-items: center; gap: 0.5rem; text-decoration: none; font-weight: 500; transition: color 0.3s ease;"
+          onmouseover="this.style.color='#E1306C'" onmouseout="this.style.color='var(--text-main)'">
+          <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+          Instagram
+        </a>
+        <a href="https://www.youtube.com/channel/UCNSNAMOCYCPafxYAZCx7L9Q" target="_blank" rel="noopener noreferrer"
+          style="color: var(--text-main); display: flex; align-items: center; gap: 0.5rem; text-decoration: none; font-weight: 500; transition: color 0.3s ease;"
+          onmouseover="this.style.color='#ef4444'" onmouseout="this.style.color='var(--text-main)'">
+          <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"/></svg>
+          YouTube
+        </a>
+        <span style="display: flex; align-items: center; gap: 0.5rem;">
+          <span style="display: inline-block; width: 8px; height: 8px; background: var(--success); border-radius: 50%;"></span>
+          Systems Operational
+        </span>
+      </div>
+    </div>
+  </footer>
+
+  <script type="module" src="nav-menu.js"></script>
 </body>
 </html>

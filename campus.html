@@ -231,6 +231,86 @@
             font-weight: 700;
             margin-bottom: 0.5rem;
         }
+        /* Search & Filter Bar */
+        .search-filter-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            align-items: center;
+            margin-bottom: 1.25rem;
+        }
+
+        .search-input-wrap {
+            position: relative;
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .search-input-wrap svg {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-dim);
+            pointer-events: none;
+        }
+
+        .search-input-wrap input {
+            width: 100%;
+            padding: 0.75rem 1rem 0.75rem 2.75rem;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            background: var(--surface);
+            color: var(--text-main);
+            font-size: 0.95rem;
+            font-family: var(--font-ui);
+            transition: border-color 0.2s, box-shadow 0.2s;
+            box-sizing: border-box;
+        }
+
+        .search-input-wrap input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-glow);
+        }
+
+        .batch-filter-select {
+            padding: 0.75rem 1.25rem;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            background: var(--surface);
+            color: var(--text-main);
+            font-size: 0.9rem;
+            font-family: var(--font-ui);
+            cursor: pointer;
+            min-width: 160px;
+            transition: border-color 0.2s;
+        }
+
+        .batch-filter-select:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .results-count {
+            font-size: 0.85rem;
+            color: var(--text-dim);
+            white-space: nowrap;
+            padding: 0.5rem 0;
+        }
+
+        .results-count strong {
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        /* highlight matched text */
+        mark {
+            background: rgba(15, 76, 58, 0.15);
+            color: var(--primary);
+            border-radius: 3px;
+            padding: 0 2px;
+        }
     </style>
 </head>
 <body class="campus-page">
@@ -317,10 +397,6 @@
 
         <div class="campus-stats-bar">
             <div class="campus-stat-chip">
-                <div class="val" id="statMudarriseen">0</div>
-                <div class="lbl">Assigned Mudarriseen</div>
-            </div>
-            <div class="campus-stat-chip">
                 <div class="val" id="statStudents">0</div>
                 <div class="lbl">Enrolled Students</div>
             </div>
@@ -336,10 +412,7 @@
 
         <!-- Campus Filter Tabs -->
         <div class="campus-tabs">
-            <button class="tab-btn active" data-tab="tabFaculty">
-                <span>👨‍🏫</span> Assigned Mudarriseen
-            </button>
-            <button class="tab-btn" data-tab="tabStudents">
+            <button class="tab-btn active" data-tab="tabStudents">
                 <span>🎓</span> Enrolled Students
             </button>
             <button class="tab-btn" data-tab="tabAchievements">
@@ -350,15 +423,20 @@
             </button>
         </div>
 
-        <!-- Tab 1: Faculty / Mudarriseen -->
-        <div id="tabFaculty" class="tab-pane active">
-            <div id="facultyGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.5rem;">
-                <p style="grid-column: 1/-1; text-align: center; color: var(--text-dim);">Loading Mudarriseen...</p>
-            </div>
-        </div>
-
         <!-- Tab 2: Enrolled Students -->
-        <div id="tabStudents" class="tab-pane">
+        <div id="tabStudents" class="tab-pane active">
+            <!-- Search & Filter Bar -->
+            <div class="search-filter-bar">
+                <div class="search-input-wrap">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                    <input type="text" id="studentSearch" placeholder="Search by name or roll number…" autocomplete="off">
+                </div>
+                <select class="batch-filter-select" id="batchFilter">
+                    <option value="">All Batches</option>
+                </select>
+                <span class="results-count" id="resultsCount"></span>
+            </div>
+
             <div class="portal-card" style="padding: 1.5rem; overflow-x: auto;">
                 <table class="data-table" style="width: 100%;">
                     <thead>

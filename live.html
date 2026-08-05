@@ -4,11 +4,89 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Live Stream | MSA UKKUDA</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=El+Messiri:wght@400;500;600;700&family=Cairo:wght@400;700&family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Aref+Ruqaa:wght@400;700&family=Amiri:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css?v=55">
     <link rel="stylesheet" href="landing.css">
     <link rel="stylesheet" href="mobile.css?v=55">
     <link rel="icon" type="image/png" href="logo.png?v=2">
+    <meta name="theme-color" content="#FFFFFF">
+    <meta name="description" content="Watch live broadcasts from Muhyissunnah Dars Ukkuda — lectures, events and more.">
+    <style>
+      /* Live badge pulse */
+      @keyframes livePulse {
+        0%, 100% { box-shadow: 0 0 0 0 rgba(239,68,68,0.4); }
+        50% { box-shadow: 0 0 0 10px rgba(239,68,68,0); }
+      }
+      .live-badge-dot {
+        width: 10px; height: 10px; border-radius: 50%;
+        background: #ef4444;
+        animation: livePulse 1.5s ease infinite;
+        flex-shrink: 0;
+      }
+      .live-status-wrap {
+        display: flex; align-items: center; justify-content: center;
+        gap: 0.6rem;
+        padding: 0.5rem 1.5rem;
+        border-radius: 50px;
+        border: 1px solid;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        font-size: 0.82rem;
+        display: inline-flex;
+        margin-bottom: 1.5rem;
+      }
+      /* offline state */
+      .offline-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 24px;
+        padding: 4rem 3rem;
+        text-align: center;
+        box-shadow: var(--shadow-sm);
+        max-width: 540px;
+        margin: 0 auto;
+      }
+      .offline-icon-wrap {
+        width: 88px; height: 88px;
+        border-radius: 50%;
+        background: var(--surface);
+        border: 2px solid var(--border);
+        display: flex; align-items: center; justify-content: center;
+        margin: 0 auto 2rem;
+      }
+      .offline-icon-wrap svg { color: var(--text-dim); opacity: 0.5; }
+      .offline-card h3 {
+        font-family: var(--font-display);
+        font-size: 1.5rem;
+        color: var(--text-main);
+        margin-bottom: 0.75rem;
+      }
+      .offline-card p { color: var(--text-dim); font-size: 1rem; line-height: 1.7; margin-bottom: 0.5rem; }
+      .offline-suggestions {
+        display: flex; flex-wrap: wrap; gap: 0.75rem;
+        justify-content: center;
+        margin-top: 2rem;
+      }
+      /* video container */
+      .live-video-wrap {
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: var(--shadow-lg);
+        background: #000;
+        max-width: 900px;
+        margin: 0 auto;
+      }
+      .live-video-wrap iframe {
+        display: block;
+        width: 100%;
+        aspect-ratio: 16 / 9;
+        height: auto;
+        border: none;
+      }
+    </style>
 </head>
 <body class="landing-page" style="background: var(--bg);">
     <header class="nav-wrapper">
@@ -71,24 +149,104 @@
         </nav>
     </header>
 
-    <main id="mainContent" style="padding: 8rem 2rem 6rem; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 80vh;">
-        <div style="max-width: 1000px; width: 100%; text-align: center;">
-            <div id="liveStreamStatus" style="display: inline-block; padding: 0.5rem 1.5rem; background: rgba(220, 38, 38, 0.1); color: #ef4444; border: 1px solid #ef4444; border-radius: 50px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; font-size: 0.85rem; margin-bottom: 1.5rem;">
-                <img src="logo.png?v=2" alt="Logo" class="app-logo-img" style="width:16px; height:16px; animation: pulseLogo 2s infinite; margin-right:8px;"> Checking Status...
-            </div>
-            
-            <h2 id="liveStreamTitle" style="font-family: var(--font-display); font-size: clamp(2rem, 4vw, 3rem); font-weight: 700; color: var(--text-main); margin-bottom: 3rem;">Live Stream</h2>
-            
-            <div id="liveStreamVideoContainer" class="portal-card" style="padding: 0; overflow: hidden; border-radius: 16px; display: none;">
-                <iframe id="liveStreamIframe" width="100%" height="500" src="" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="display: block;"></iframe>
+    <main id="mainContent" style="padding: 8rem 2rem 5rem; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 80vh; background: var(--bg-desert);">
+        <div style="max-width: 960px; width: 100%; text-align: center;">
+
+            <!-- Status Badge -->
+            <div id="liveStreamStatus" class="live-status-wrap" style="background: rgba(220,38,38,0.08); color: #ef4444; border-color: rgba(239,68,68,0.4);">
+                <span class="live-badge-dot"></span>
+                Checking Status...
             </div>
 
-            <div id="offlineMessage" style="display: none; padding: 4rem 2rem; background: var(--surface); border: 1px solid var(--border); border-radius: 16px;">
-                <p style="color: var(--text-dim); font-size: 1.2rem;">There is no active live stream at the moment.</p>
-                <p style="color: var(--text-dim); font-size: 0.9rem; margin-top: 0.5rem;">Please check our events page for upcoming schedules.</p>
+            <!-- Title -->
+            <h1 id="liveStreamTitle" style="font-family: var(--font-display); font-size: clamp(2.2rem, 4vw, 3.2rem); font-weight: 700; color: var(--text-main); margin-bottom: 2.5rem; line-height: 1.2;">Live Stream</h1>
+
+            <!-- Video Container (shown when live) -->
+            <div id="liveStreamVideoContainer" class="live-video-wrap" style="display: none; margin-bottom: 2rem;">
+                <iframe id="liveStreamIframe" src="" title="Live Stream" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+
+            <!-- Offline State -->
+            <div id="offlineMessage" class="offline-card" style="display: none;">
+                <div class="offline-icon-wrap">
+                    <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M16.5 9.4L7.55 4.24"/>
+                        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                        <polyline points="3.29 7 12 12 20.71 7"/>
+                        <line x1="12" y1="22" x2="12" y2="12"/>
+                    </svg>
+                </div>
+                <h3>No Live Stream Right Now</h3>
+                <p>There is no active broadcast at the moment. Check back soon — we go live for lectures, events, and special programs.</p>
+                <p style="font-size: 0.88rem; margin-top: 0.25rem;">Subscribe to our YouTube channel to get notified when we go live.</p>
+                <div class="offline-suggestions">
+                    <a href="events.html" class="btn btn-main" style="padding: 0.65rem 1.5rem; font-size: 0.9rem;">View Upcoming Events</a>
+                    <a href="https://www.youtube.com/channel/UCNSNAMOCYCPafxYAZCx7L9Q" target="_blank" rel="noopener noreferrer" class="btn btn-outline" style="padding: 0.65rem 1.5rem; font-size: 0.9rem; display: flex; align-items: center; gap: 0.5rem;">
+                        <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"/></svg>
+                        Subscribe on YouTube
+                    </a>
+                    <a href="videos.html" class="btn btn-ghost" style="padding: 0.65rem 1.5rem; font-size: 0.9rem;">Watch Past Videos</a>
+                </div>
             </div>
         </div>
     </main>
+
+    <!-- Footer -->
+    <footer class="ultra-footer">
+        <div class="footer-grid">
+            <div class="footer-brand animate-on-scroll slide-from-left">
+                <h4><span class="brand-text-styled">Muhyissunnah Dars</span></h4>
+                <p>Delivering a robust, pristine digital infrastructure for academic excellence. Optimized for seamless institutional management and absolute clarity.</p>
+            </div>
+            <div class="footer-col animate-on-scroll slide-up delay-100">
+                <h5>Portals</h5>
+                <ul>
+                    <li><a href="student.html">Student Access</a></li>
+                    <li><a href="teacher.html">Faculty Dashboard</a></li>
+                    <li><a href="login.html">Portal Login</a></li>
+                </ul>
+            </div>
+            <div class="footer-col animate-on-scroll slide-up delay-200">
+                <h5>Institution</h5>
+                <ul>
+                    <li><a href="index.html#aboutInstitution">About Us</a></li>
+                    <li><a href="events.html">News &amp; Events</a></li>
+                    <li><a href="gallery.html">Gallery</a></li>
+                    <li><a href="alumni.html">Alumni</a></li>
+                </ul>
+            </div>
+            <div class="footer-col animate-on-scroll slide-from-right delay-300">
+                <h5>Support &amp; Legal</h5>
+                <ul>
+                    <li><a href="index.html#faqSection">Help &amp; FAQ</a></li>
+                    <li><a href="privacy.html">Privacy Policy</a></li>
+                    <li><a href="terms.html">Terms of Service</a></li>
+                    <li><a href="mailto:portal@msaukkuda.org">Contact Administration</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom animate-on-scroll slide-up delay-400">
+            <span>&copy; 2026 <span class="brand-text-styled">Muhyissunnah Dars Ukkuda</span>. All rights reserved.</span>
+            <div style="display: flex; gap: 1.5rem; align-items: center;">
+                <a href="https://www.instagram.com/msa_ukkuda" target="_blank" rel="noopener noreferrer"
+                    style="color: var(--text-main); display: flex; align-items: center; gap: 0.5rem; text-decoration: none; font-weight: 500; transition: color 0.3s ease;"
+                    onmouseover="this.style.color='#E1306C'" onmouseout="this.style.color='var(--text-main)'">
+                    <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+                    Instagram
+                </a>
+                <a href="https://www.youtube.com/channel/UCNSNAMOCYCPafxYAZCx7L9Q" target="_blank" rel="noopener noreferrer"
+                    style="color: var(--text-main); display: flex; align-items: center; gap: 0.5rem; text-decoration: none; font-weight: 500; transition: color 0.3s ease;"
+                    onmouseover="this.style.color='#ef4444'" onmouseout="this.style.color='var(--text-main)'">
+                    <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"/></svg>
+                    YouTube
+                </a>
+                <span style="display: flex; align-items: center; gap: 0.5rem;">
+                    <span style="display: inline-block; width: 8px; height: 8px; background: var(--success); border-radius: 50%;"></span>
+                    Systems Operational
+                </span>
+            </div>
+        </div>
+    </footer>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
@@ -108,13 +266,14 @@
             if (docSnap.exists()) {
                 const data = docSnap.data();
                 if (data.isLive && data.url) {
-                    statusBadge.innerHTML = '<img src="logo.png?v=2" alt="Logo" class="app-logo-img" style="width:16px; height:16px; animation: pulseLogo 2s infinite; margin-right:8px;"> LIVE NOW';
+                    statusBadge.innerHTML = '<span class="live-badge-dot"></span> LIVE NOW';
+                    statusBadge.style.background = 'rgba(239,68,68,0.08)';
                     statusBadge.style.color = '#ef4444';
-                    statusBadge.style.borderColor = '#ef4444';
-                    
+                    statusBadge.style.borderColor = 'rgba(239,68,68,0.4)';
+
                     titleEl.textContent = data.title || 'Live Stream';
                     iframe.src = data.url;
-                    
+
                     videoContainer.style.display = 'block';
                     offlineMsg.style.display = 'none';
                 } else {
@@ -130,14 +289,13 @@
             statusBadge.style.color = 'var(--text-dim)';
             statusBadge.style.borderColor = 'var(--border)';
             statusBadge.style.background = 'transparent';
-            
-            titleEl.textContent = 'Live Stream Offline';
+
+            titleEl.textContent = 'Live Stream';
             iframe.src = '';
-            
+
+            videoContainer.style.display = 'none';
             offlineMsg.style.display = 'block';
         }
-
-
     </script>
     <script type="module" src="nav-menu.js"></script>
 </body>

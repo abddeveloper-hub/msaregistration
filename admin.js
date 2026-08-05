@@ -2618,3 +2618,169 @@ if (editAlumniForm) {
         }
     });
 }
+
+// ═══════════════════════════════════════════════════════════
+// GLOBAL SEARCH ENGINE
+// ═══════════════════════════════════════════════════════════
+(function initGlobalSearch() {
+    const searchInput = document.getElementById('adminGlobalSearch');
+    const clearBtn    = document.getElementById('adminSearchClearBtn');
+    const filterChips = document.getElementById('searchFilterChips');
+    const resultsView = document.getElementById('viewGlobalSearch');
+    const resultsGrid = document.getElementById('searchResultsGrid');
+    const noResults   = document.getElementById('searchNoResults');
+    const resultsDesc = document.getElementById('searchResultsDesc');
+    const backBtn     = document.getElementById('searchBackBtn');
+    const chipEls     = document.querySelectorAll('.filter-chip');
+
+    if (!searchInput) return;
+
+    let activeFilter = 'all';
+    let previousSection = null;
+
+    // Ctrl+K shortcut
+    document.addEventListener('keydown', (e) => {
+        if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+            e.preventDefault();
+            searchInput.focus();
+            searchInput.select();
+        }
+        if (e.key === 'Escape' && document.activeElement === searchInput) {
+            clearSearch();
+            searchInput.blur();
+        }
+    });
+
+    // Filter chip clicks
+    chipEls.forEach(chip => {
+        chip.addEventListener('click', () => {
+            chipEls.forEach(c => c.classList.remove('active'));
+            chip.classList.add('active');
+            activeFilter = chip.dataset.filter;
+            runSearch(searchInput.value.trim());
+        });
+    });
+
+    // Clear button
+    if (clearBtn) clearBtn.addEventListener('click', clearSearch);
+    if (backBtn)  backBtn.addEventListener('click', clearSearch);
+
+    function clearSearch() {
+        searchInput.value = '';
+        if (clearBtn) clearBtn.style.display = 'none';
+        if (filterChips) filterChips.style.display = 'none';
+        document.querySelectorAll('.admin-section').forEach(s => s.classList.add('hidden'));
+        const goTo = previousSection || document.getElementById('viewOverview');
+        if (goTo) goTo.classList.remove('hidden');
+        previousSection = null;
+        // Restore nav highlight
+        document.querySelectorAll('#adminNav .nav-item').forEach(n => n.classList.remove('active'));
+        const overviewNav = document.querySelector('#adminNav .nav-item[data-target="viewOverview"]');
+        if (overviewNav) overviewNav.classList.add('active');
+    }
+
+    // Highlight matched text
+    function hl(text, query) {
+        if (!query) return String(text || '');
+        const escaped = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        return String(text || '').replace(new RegExp(`(${escaped})`, 'gi'), '<mark class="search-hl">$1</mark>');
+    }
+
+    function getType(u) {
+        if (u._isAlumni) return 'alumni';
+        if (String(u.role || '').toLowerCase() === 'faculty') return 'faculty';
+        return 'student';
+    }
+
+    function getStatusClass(status) {
+        const s = String(status || '').toLowerCase();
+        if (['admitted', 'accepted', 'approved'].includes(s)) return 'admitted';
+        if (s === 'rejected') return 'rejected';
+        return 'pending';
+    }
+
+    function buildCard(u, query) {
+        const type    = getType(u);
+        const name    = u.fullName || u.name || 'Unknown';
+        const roll    = u.rollNumber ? `Roll: ${u.rollNumber}` : '';
+        const campus  = u.campus || u.campusId || u.institution || '';
+        const status  = u.status || (type === 'faculty' ? 'Active' : 'Pending');
+        const initial = (name[0] || '?').toUpperCase();
+        const subInfo = [roll, campus].filter(Boolean).join(' · ');
+
+        const div = document.createElement('div');
+        div.className = 'search-result-item';
+        div.innerHTML = `
+            <div class="result-avatar ${type}">${initial}</div>
+            <div class="result-meta">
+                <strong>${hl(name, query)}</strong>
+                <span>${hl(subInfo, query) || '&nbsp;'}</span>
+            </div>
+            <span class="result-badge ${type}">${type}</span>
+            <span class="result-status ${getStatusClass(status)}">${status}</span>
+        `;
+        return div;
+    }
+
+    function runSearch(query) {
+        if (!query) { clearSearch(); return; }
+
+        if (filterChips) filterChips.style.display = 'flex';
+        if (clearBtn) clearBtn.style.display = 'block';
+
+        // Save current section before switching to search
+        const currentlyVisible = document.querySelector('.admin-section:not(.hidden):not(#viewGlobalSearch)');
+        if (currentlyVisible) previousSection = currentlyVisible;
+
+        document.querySelectorAll('.admin-section').forEach(s => s.classList.add('hidden'));
+        if (resultsView) resultsView.classList.remove('hidden');
+
+        const q = query.toLowerCase();
+
+        // Merge users + alumni
+        const users  = (typeof allUsers !== 'undefined' ? allUsers : []);
+        const alumni = (window._adminAllAlumni || []);
+        const combined = [
+            ...users.map(u => ({ ...u, _isAlumni: false })),
+            ...alumni.map(a => ({ ...a, _isAlumni: true }))
+        ];
+
+        const filtered = combined.filter(u => {
+            const type = getType(u);
+            if (activeFilter !== 'all' && type !== activeFilter) return false;
+            const blob = [u.fullName, u.name, u.rollNumber, u.email,
+                          u.phone, u.campus, u.campusId, u.institution,
+                          u.batch, u.status, u.role]
+                .map(v => String(v || '').toLowerCase()).join(' ');
+            return blob.includes(q);
+        });
+
+        // Students first, then faculty, then alumni
+        const order = { student: 0, faculty: 1, alumni: 2 };
+        filtered.sort((a, b) => (order[getType(a)] ?? 3) - (order[getType(b)] ?? 3));
+
+        if (resultsGrid) {
+            resultsGrid.innerHTML = '';
+            filtered.forEach(u => resultsGrid.appendChild(buildCard(u, query)));
+        }
+        if (noResults) noResults.style.display = filtered.length === 0 ? 'block' : 'none';
+        if (resultsDesc) {
+            resultsDesc.textContent = filtered.length > 0
+                ? `${filtered.length} record${filtered.length !== 1 ? 's' : ''} found for "${query}"`
+                : `No records found for "${query}"`;
+        }
+    }
+
+    // Debounced input
+    let debounceTimer;
+    searchInput.addEventListener('input', () => {
+        const val = searchInput.value.trim();
+        if (clearBtn) clearBtn.style.display = val ? 'block' : 'none';
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(() => runSearch(val), 220);
+    });
+
+    // Expose alumni data for search
+    window._adminAllAlumni = [];
+    Object.defineProperty(window, '_adminSearchReady', { value: true, configurable: true });
+})();

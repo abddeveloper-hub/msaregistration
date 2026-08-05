@@ -30,7 +30,7 @@ if (campusBadge) {
     }
 }
 if (campusDescription) {
-    campusDescription.innerText = `Official portal section for ${targetCampus}. Explore assigned Mudarriseen, enrolled students, honours, and campus life media.`;
+    campusDescription.innerText = `Official portal section for ${targetCampus}. Explore enrolled students, honours, and campus life media.`;
 }
 
 // ----------------------------------------------------
@@ -51,13 +51,75 @@ tabBtns.forEach(btn => {
     });
 });
 
-// ----------------------------------------------------
-// 1. Fetch Assigned Mudarriseen (Faculty) & Students
-// ----------------------------------------------------
-const facultyGrid = document.getElementById('facultyGrid');
+// Grab DOM references
 const studentsTableBody = document.getElementById('studentsTableBody');
-const statMudarriseen = document.getElementById('statMudarriseen');
 const statStudents = document.getElementById('statStudents');
+const studentSearchInput = document.getElementById('studentSearch');
+const batchFilterSelect = document.getElementById('batchFilter');
+const resultsCountEl = document.getElementById('resultsCount');
+
+// Store full student list for client-side filtering
+let allStudentData = [];
+
+// Highlight matched text
+function highlight(text, query) {
+    if (!query) return text;
+    const escaped = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    return String(text).replace(new RegExp(`(${escaped})`, 'gi'), '<mark>$1</mark>');
+}
+
+// Render the filtered student table
+function renderStudents() {
+    const query = (studentSearchInput?.value || '').toLowerCase().trim();
+    const batchFilter = (batchFilterSelect?.value || '').toLowerCase().trim();
+
+    const filtered = allStudentData.filter(s => {
+        const name = (s.fullName || '').toLowerCase();
+        const roll = (s.rollNumber || '').toString().toLowerCase();
+        const batch = (s.batch || '').toLowerCase();
+
+        const matchesSearch = !query || name.includes(query) || roll.includes(query);
+        const matchesBatch = !batchFilter || batch === batchFilter;
+        return matchesSearch && matchesBatch;
+    });
+
+    if (resultsCountEl) {
+        if (query || batchFilter) {
+            resultsCountEl.innerHTML = `<strong>${filtered.length}</strong> of ${allStudentData.length} students`;
+        } else {
+            resultsCountEl.innerHTML = '';
+        }
+    }
+
+    if (!studentsTableBody) return;
+
+    if (filtered.length === 0) {
+        studentsTableBody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:var(--text-dim); padding:2rem;">
+            ${query || batchFilter ? `No students match your search.` : `No enrolled students registered under ${targetCampus} yet.`}
+        </td></tr>`;
+        return;
+    }
+
+    studentsTableBody.innerHTML = '';
+    filtered.forEach(s => {
+        const roll = s.rollNumber || 'N/A';
+        const name = s.fullName || 'Unnamed Student';
+        const batch = s.batch || 'General Batch';
+        const statBadge = `<span style="color:var(--success); font-weight:bold; text-transform:uppercase; font-size:0.8rem;">Admitted</span>`;
+        studentsTableBody.innerHTML += `
+            <tr>
+                <td><strong>${highlight(roll, query)}</strong></td>
+                <td>${highlight(name, query)}</td>
+                <td>${batch}</td>
+                <td>${statBadge}</td>
+            </tr>
+        `;
+    });
+}
+
+// Attach live event listeners
+if (studentSearchInput) studentSearchInput.addEventListener('input', renderStudents);
+if (batchFilterSelect) batchFilterSelect.addEventListener('change', renderStudents);
 
 onSnapshot(collection(db, "users"), (snapshot) => {
     const allUsers = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
@@ -70,50 +132,19 @@ onSnapshot(collection(db, "users"), (snapshot) => {
         return c1.includes(target) || target.includes(c1) || c2.includes(target) || target.includes(c2);
     };
 
-    // Filter Faculty
-    const facultyList = allUsers.filter(u => u.role === 'faculty' && matchesTargetCampus(u));
-    if (statMudarriseen) statMudarriseen.innerText = facultyList.length;
-
-    if (facultyGrid) {
-        if (facultyList.length === 0) {
-            facultyGrid.innerHTML = `
-                <div style="grid-column: 1/-1; text-align: center; padding: 3rem; background: var(--surface); border-radius: 16px; border: 1px solid var(--border);">
-                    <p style="font-size: 1.1rem; color: var(--text-dim);">No Mudarriseen assigned to ${targetCampus} yet.</p>
-                    <p style="font-size: 0.85rem; color: var(--text-dim); margin-top: 0.5rem;">The Admin can assign faculty members in the Admin Portal.</p>
-                </div>
-            `;
-        } else {
-            facultyGrid.innerHTML = '';
-            facultyList.forEach(f => {
-                const initial = (f.fullName || 'M')[0].toUpperCase();
-                facultyGrid.innerHTML += `
-                    <div class="faculty-card">
-                        <div class="faculty-avatar">${initial}</div>
-                        <div class="faculty-info">
-                            <h4>${f.fullName || 'Mudarris'}</h4>
-                            <p>${f.email || 'Email not listed'}</p>
-                            <p>${f.phone ? '📞 ' + f.phone : 'Faculty Member'}</p>
-                            <span class="badge-role">Mudarris / Faculty</span>
-                        </div>
-                    </div>
-                `;
-            });
-        }
-    }
-
     // Filter Students (ONLY show admitted and accepted students)
     const isAdmittedOrAccepted = (status) => {
         const s = String(status || '').toLowerCase().trim();
         return s === 'admitted' || s === 'accepted' || s === 'approved';
     };
 
-    const studentList = allUsers.filter(u => 
-        (u.role === 'student' || u.rollNumber) && 
-        isAdmittedOrAccepted(u.status) && 
+    const studentList = allUsers.filter(u =>
+        (u.role === 'student' || u.rollNumber) &&
+        isAdmittedOrAccepted(u.status) &&
         matchesTargetCampus(u)
     );
 
-    // Sort by Roll Number (numerical & alphabetical)
+    // Sort by Roll Number
     studentList.sort((a, b) => {
         const rollA = (a.rollNumber || '').toString().trim();
         const rollB = (b.rollNumber || '').toString().trim();
@@ -122,25 +153,25 @@ onSnapshot(collection(db, "users"), (snapshot) => {
 
     if (statStudents) statStudents.innerText = studentList.length;
 
-    if (studentsTableBody) {
-        if (studentList.length === 0) {
-            studentsTableBody.innerHTML = `<tr><td colspan="4" style="text-align: center; color: var(--text-dim); padding: 2rem;">No enrolled students registered under ${targetCampus} yet.</td></tr>`;
-        } else {
-            studentsTableBody.innerHTML = '';
-            studentList.forEach(s => {
-                const statBadge = `<span style="color:var(--success); font-weight:bold; text-transform:uppercase; font-size:0.8rem;">Admitted</span>`;
+    // Store data globally for filtering
+    allStudentData = studentList;
 
-                studentsTableBody.innerHTML += `
-                    <tr>
-                        <td><strong>${s.rollNumber || 'N/A'}</strong></td>
-                        <td>${s.fullName || 'Unnamed Student'}</td>
-                        <td>${s.batch || 'General Batch'}</td>
-                        <td>${statBadge}</td>
-                    </tr>
-                `;
-            });
-        }
+    // Populate batch dropdown (unique batches)
+    if (batchFilterSelect) {
+        const batches = [...new Set(studentList.map(s => s.batch).filter(Boolean))].sort();
+        const currentVal = batchFilterSelect.value;
+        batchFilterSelect.innerHTML = '<option value="">All Batches</option>';
+        batches.forEach(b => {
+            const opt = document.createElement('option');
+            opt.value = b.toLowerCase();
+            opt.textContent = b;
+            if (b.toLowerCase() === currentVal) opt.selected = true;
+            batchFilterSelect.appendChild(opt);
+        });
     }
+
+    // Render the table
+    renderStudents();
 });
 
 // ----------------------------------------------------

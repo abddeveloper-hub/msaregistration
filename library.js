@@ -10,7 +10,7 @@ const filterBtns = document.querySelectorAll('.filter-btn');
 const searchInput = document.getElementById('librarySearchInput');
 const resourceCountSpan = document.getElementById('visibleResourceCount');
 
-// Pre-loaded curated fallback library items
+// Pre-loaded curated library items with working PDFs, Audio, and Reference Links
 const defaultLibraryItems = [
     {
         id: "def-1",
@@ -18,8 +18,8 @@ const defaultLibraryItems = [
         category: "Fiqh / Jurisprudence",
         type: "pdf",
         author: "Shaikh Zainuddin Makhdoom",
-        description: "Standard jurisprudence reference and explanatory notes for advanced students.",
-        url: "#",
+        description: "Standard jurisprudence reference and explanatory notes for advanced Dars students.",
+        url: "https://ia800204.us.archive.org/11/items/FathAl-Muin/Fath_al-Muin.pdf",
         fileSize: "4.8 MB",
         createdAt: "2026-07-01T10:00:00Z"
     },
@@ -30,7 +30,7 @@ const defaultLibraryItems = [
         type: "pdf",
         author: "Jalaluddin Al-Mahalli & Al-Suyuti",
         description: "Complete chapter summaries and grammatical breakdown for Dars syllabus.",
-        url: "#",
+        url: "https://ia800305.us.archive.org/12/items/TafseerAlJalalayn/TafseerAlJalalayn.pdf",
         fileSize: "6.2 MB",
         createdAt: "2026-06-25T10:00:00Z"
     },
@@ -40,8 +40,8 @@ const defaultLibraryItems = [
         category: "Qira'at & Quran Audio",
         type: "audio",
         author: "Qari Faculty Team",
-        description: "High-quality audio exercises for Makharij and Ahkam Al-Tajweed.",
-        url: "#",
+        description: "High-quality audio recitation for Tajweed rules and Surah Fatiha / Juz Amma practice.",
+        url: "https://server8.mp3quran.net/afs/001.mp3",
         fileSize: "18.5 MB",
         createdAt: "2026-06-20T10:00:00Z"
     },
@@ -51,8 +51,8 @@ const defaultLibraryItems = [
         category: "Arabic Grammar & Morphology",
         type: "notes",
         author: "Ibn Malik",
-        description: "Quick revision charts covering poetic meters and grammatical rules.",
-        url: "#",
+        description: "Quick revision charts covering poetic meters and grammatical rules for Nahw.",
+        url: "https://ia801308.us.archive.org/34/items/AlfiyyahIbnMalik/Alfiyyah.pdf",
         fileSize: "1.5 MB",
         createdAt: "2026-06-15T10:00:00Z"
     },
@@ -62,19 +62,30 @@ const defaultLibraryItems = [
         category: "Hadith Studies",
         type: "pdf",
         author: "Imam Al-Bukhari / Faculty Notes",
-        description: "Selected Kitab Al-Eman HADITH narrations with sanad commentary.",
-        url: "#",
+        description: "Selected Kitab Al-Eman HADITH narrations with sanad commentary and vocabulary.",
+        url: "https://ia800203.us.archive.org/4/items/SahihBukhariEnglishArabic/Sahih-Bukhari-Arabic-English.pdf",
         fileSize: "3.4 MB",
         createdAt: "2026-06-10T10:00:00Z"
     },
     {
         id: "def-6",
-        title: "Digital Manuscripts & Research Portal",
+        title: "Nukhbat al-Fikar in Hadith Terminology",
+        category: "Mustalah al-Hadith",
+        type: "pdf",
+        author: "Ibn Hajar al-Asqalani",
+        description: "Foundational text on Hadith methodology, grading, and narrator classification.",
+        url: "https://ia800303.us.archive.org/14/items/NukhbatAlFikar/Nukhbat_al_Fikar.pdf",
+        fileSize: "2.1 MB",
+        createdAt: "2026-06-05T10:00:00Z"
+    },
+    {
+        id: "def-7",
+        title: "Digital Manuscripts & Research Archive",
         category: "Academic Archives",
         type: "link",
         author: "MSA Research Repository",
-        description: "Online archive portal for historical dars manuscripts and manuscripts digitizations.",
-        url: "#",
+        description: "Online archive portal for historical dars manuscripts and manuscript digitizations.",
+        url: "https://archive.org/details/islamicmanuscripts",
         fileSize: "External Link",
         createdAt: "2026-06-01T10:00:00Z"
     }
@@ -278,11 +289,67 @@ function renderResources() {
             </div>
 
             <!-- Download / Open Button -->
-            <a href="${res.url || '#'}" ${res.url && res.url !== '#' ? 'target="_blank"' : ''} class="btn btn-outline" style="width: 100%; justify-content: center; font-size: 0.82rem; font-weight: 600; padding: 0.6rem 1rem; border-radius: 10px; text-decoration: none; display: inline-flex; align-items: center; gap: 0.5rem;">
+            <a href="${res.url || '#'}" ${res.url && res.url !== '#' ? 'target="_blank"' : ''} class="btn btn-outline resource-action-btn" style="width: 100%; justify-content: center; font-size: 0.82rem; font-weight: 600; padding: 0.6rem 1rem; border-radius: 10px; text-decoration: none; display: inline-flex; align-items: center; gap: 0.5rem;">
                 ${actionLabel}
             </a>
         `;
+
+        // Handle button action: open PDF Modal for PDFs/notes or new tab for external link/audio
+        const actionBtn = card.querySelector('.resource-action-btn');
+        if (actionBtn) {
+            actionBtn.addEventListener('click', (e) => {
+                if (res.type === 'pdf' || res.type === 'notes') {
+                    if (res.url && res.url !== '#') {
+                        e.preventDefault();
+                        openPdfModal(res);
+                    }
+                }
+            });
+        }
+
+
         libraryGrid.appendChild(card);
+    });
+}
+
+// PDF Reader Modal Handler
+const pdfModal = document.getElementById('pdfReaderModal');
+const pdfFrame = document.getElementById('pdfFrame');
+const pdfModalTitle = document.getElementById('pdfModalTitle');
+const pdfModalMeta = document.getElementById('pdfModalMeta');
+const pdfDownloadDirectBtn = document.getElementById('pdfDownloadDirectBtn');
+const closePdfModalBtn = document.getElementById('closePdfModalBtn');
+
+function openPdfModal(res) {
+    if (!pdfModal || !pdfFrame) {
+        window.open(res.url, '_blank');
+        return;
+    }
+
+    if (pdfModalTitle) pdfModalTitle.textContent = res.title;
+    if (pdfModalMeta) pdfModalMeta.textContent = `${res.category || 'Kitab'} • ${res.author || 'Author'} • ${res.fileSize || 'PDF'}`;
+    if (pdfDownloadDirectBtn) {
+        pdfDownloadDirectBtn.href = res.url;
+    }
+
+    // Embed Google Docs PDF viewer or direct link
+    const viewerUrl = `https://docs.google.com/viewer?url=${encodeURIComponent(res.url)}&embedded=true`;
+    pdfFrame.src = viewerUrl;
+
+    pdfModal.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+}
+
+function closePdfModal() {
+    if (pdfModal) pdfModal.classList.add('hidden');
+    if (pdfFrame) pdfFrame.src = '';
+    document.body.style.overflow = '';
+}
+
+if (closePdfModalBtn) closePdfModalBtn.addEventListener('click', closePdfModal);
+if (pdfModal) {
+    pdfModal.addEventListener('click', (e) => {
+        if (e.target === pdfModal) closePdfModal();
     });
 }
 
@@ -321,3 +388,4 @@ filterBtns.forEach(btn => {
         renderResources();
     });
 });
+

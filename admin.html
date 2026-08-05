@@ -248,6 +248,65 @@
                 </div>
             </div>
 
+            <!-- LIBRARY MANAGEMENT VIEW -->
+            <div id="viewLibrary" class="admin-section hidden">
+                <div class="view-header">
+                    <h2 class="view-title">Digital Library Management</h2>
+                    <p class="view-desc">Add and publish Kitabs, PDFs, Syllabi Notes, and Audio Recitations for students.</p>
+                </div>
+
+                <div class="portal-card" style="max-width: 650px; margin-bottom: 2.5rem;">
+                    <h3>Add New Library Resource</h3>
+                    <form id="adminAddLibraryForm" style="margin-top: 1rem;">
+                        <div class="input-field">
+                            <label class="label">Resource Title</label>
+                            <input type="text" id="libTitle" class="input" placeholder="E.g., Tafseer Al-Jalalayn Module" required>
+                        </div>
+                        <div class="grid-2" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;">
+                            <div class="input-field">
+                                <label class="label">Resource Type</label>
+                                <select id="libType" class="input" required>
+                                    <option value="pdf">📚 PDF Kitab / Book</option>
+                                    <option value="notes">📝 Syllabi & Notes</option>
+                                    <option value="audio">🎧 Audio & Recitation</option>
+                                    <option value="link">🔗 Reference Link</option>
+                                </select>
+                            </div>
+                            <div class="input-field">
+                                <label class="label">Category / Subject</label>
+                                <input type="text" id="libCategory" class="input" placeholder="E.g., Fiqh, Hadith, Tafseer" required>
+                            </div>
+                        </div>
+                        <div class="grid-2" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;">
+                            <div class="input-field">
+                                <label class="label">Author / Scholar</label>
+                                <input type="text" id="libAuthor" class="input" placeholder="E.g., Shaikh Zainuddin">
+                            </div>
+                            <div class="input-field">
+                                <label class="label">File Size</label>
+                                <input type="text" id="libFileSize" class="input" placeholder="E.g., 4.5 MB">
+                            </div>
+                        </div>
+                        <div class="input-field" style="margin-top: 1rem;">
+                            <label class="label">Resource URL / PDF Link</label>
+                            <input type="url" id="libUrl" class="input" placeholder="https://... (Direct PDF or Audio URL)" required>
+                        </div>
+                        <div class="input-field" style="margin-top: 1rem;">
+                            <label class="label">Description</label>
+                            <textarea id="libDesc" class="input" rows="2" placeholder="Brief overview of the book or material..."></textarea>
+                        </div>
+                        <button type="submit" id="addLibBtn" class="btn btn-main" style="margin-top: 1.25rem; width: 100%;">Publish to Library</button>
+                        <p id="libMsg" style="margin-top: 0.75rem; text-align: center; font-size: 0.85rem; color: var(--success); display: none;"></p>
+                    </form>
+                </div>
+
+                <h3 style="margin-bottom: 1rem;">Published Resources</h3>
+                <div id="adminLibraryList" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.25rem;">
+                    <p style="color: var(--text-dim);">Loading library items...</p>
+                </div>
+            </div>
+
+
             <!-- MEDIA MANAGEMENT VIEW -->
             <div id="viewGalleryUpload" class="admin-section hidden">
                 <div class="view-header">

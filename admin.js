@@ -2784,3 +2784,88 @@ if (editAlumniForm) {
     window._adminAllAlumni = [];
     Object.defineProperty(window, '_adminSearchReady', { value: true, configurable: true });
 })();
+
+// ═══════════════════════════════════════════════════════════
+// ADMIN LIBRARY MANAGEMENT
+// ═══════════════════════════════════════════════════════════
+(function initAdminLibrary() {
+    const form = document.getElementById('adminAddLibraryForm');
+    const msg = document.getElementById('libMsg');
+    const listGrid = document.getElementById('adminLibraryList');
+
+    if (form) {
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('addLibBtn');
+            btn.disabled = true;
+            btn.textContent = 'Publishing...';
+
+            const newItem = {
+                title: document.getElementById('libTitle').value.trim(),
+                type: document.getElementById('libType').value,
+                category: document.getElementById('libCategory').value.trim(),
+                author: document.getElementById('libAuthor').value.trim() || 'Dars Faculty',
+                fileSize: document.getElementById('libFileSize').value.trim() || 'PDF Document',
+                url: document.getElementById('libUrl').value.trim(),
+                description: document.getElementById('libDesc').value.trim(),
+                createdAt: new Date().toISOString()
+            };
+
+            try {
+                await addDoc(collection(db, "library_resources"), newItem);
+                form.reset();
+                if (msg) {
+                    msg.textContent = 'Resource successfully published to Digital Library!';
+                    msg.style.display = 'block';
+                    setTimeout(() => msg.style.display = 'none', 3000);
+                }
+            } catch (err) {
+                alert("Error adding library item: " + err.message);
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Publish to Library';
+            }
+        });
+    }
+
+    if (listGrid) {
+        onSnapshot(collection(db, "library_resources"), (snapshot) => {
+            const items = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+            if (items.length === 0) {
+                listGrid.innerHTML = '<p style="color: var(--text-dim); grid-column: 1/-1;">No custom library resources uploaded yet. Default curated Kitabs are visible on the public page.</p>';
+                return;
+            }
+            listGrid.innerHTML = '';
+            items.forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'portal-card';
+                card.style.cssText = 'padding: 1.25rem; display: flex; flex-direction: column; justify-content: space-between; border: 1px solid var(--border); border-radius: 14px;';
+                card.innerHTML = `
+                    <div>
+                        <span style="font-size: 0.72rem; font-weight: 700; color: var(--primary); text-transform: uppercase;">${item.category || 'Library'}</span>
+                        <h4 style="margin: 0.25rem 0 0.5rem; font-size: 1rem; color: var(--text-main);">${item.title}</h4>
+                        <p style="font-size: 0.8rem; color: var(--text-dim); margin-bottom: 0.75rem;">${item.author ? 'By ' + item.author : ''} • ${item.type?.toUpperCase() || 'PDF'}</p>
+                    </div>
+                    <div style="display: flex; gap: 0.5rem; margin-top: 1rem;">
+                        <a href="${item.url}" target="_blank" class="btn btn-outline" style="flex: 1; text-decoration: none; text-align: center; padding: 0.4rem; font-size: 0.8rem;">View</a>
+                        <button class="btn btn-ghost delete-lib-btn" data-id="${item.id}" style="color: var(--error); padding: 0.4rem 0.75rem; font-size: 0.8rem;">Delete</button>
+                    </div>
+                `;
+                listGrid.appendChild(card);
+            });
+
+            listGrid.querySelectorAll('.delete-lib-btn').forEach(b => {
+                b.addEventListener('click', async () => {
+                    if (confirm("Are you sure you want to remove this library resource?")) {
+                        try {
+                            await deleteDoc(doc(db, "library_resources", b.dataset.id));
+                        } catch (err) {
+                            alert("Error deleting item: " + err.message);
+                        }
+                    }
+                });
+            });
+        });
+    }
+})();
+

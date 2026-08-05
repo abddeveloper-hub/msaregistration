@@ -255,6 +255,38 @@ function renderResources() {
             `;
         }
 
+        // Dual Action Buttons: Read Online vs Direct Download
+        let buttonsHtml = '';
+        if (res.type === 'pdf' || res.type === 'notes') {
+            buttonsHtml = `
+                <div style="display: flex; gap: 0.5rem; width: 100%;">
+                    <button type="button" class="btn btn-main open-pdf-btn" style="flex: 1; justify-content: center; font-size: 0.8rem; font-weight: 600; padding: 0.6rem 0.5rem; border-radius: 10px; gap: 0.35rem; white-space: nowrap;">
+                        👁️ Read PDF
+                    </button>
+                    <a href="${res.url || '#'}" target="_blank" download class="btn btn-outline download-pdf-btn" style="flex: 1; justify-content: center; font-size: 0.8rem; font-weight: 600; padding: 0.6rem 0.5rem; border-radius: 10px; text-decoration: none; gap: 0.35rem; white-space: nowrap;">
+                        📥 Download
+                    </a>
+                </div>
+            `;
+        } else if (res.type === 'audio') {
+            buttonsHtml = `
+                <div style="display: flex; gap: 0.5rem; width: 100%;">
+                    <a href="${res.url || '#'}" target="_blank" class="btn btn-main" style="flex: 1; justify-content: center; font-size: 0.8rem; font-weight: 600; padding: 0.6rem 0.5rem; border-radius: 10px; text-decoration: none; gap: 0.35rem; white-space: nowrap;">
+                        🎧 Play Audio
+                    </a>
+                    <a href="${res.url || '#'}" target="_blank" download class="btn btn-outline" style="flex: 1; justify-content: center; font-size: 0.8rem; font-weight: 600; padding: 0.6rem 0.5rem; border-radius: 10px; text-decoration: none; gap: 0.35rem; white-space: nowrap;">
+                        📥 Download
+                    </a>
+                </div>
+            `;
+        } else {
+            buttonsHtml = `
+                <a href="${res.url || '#'}" target="_blank" rel="noopener noreferrer" class="btn btn-main" style="width: 100%; justify-content: center; font-size: 0.82rem; font-weight: 600; padding: 0.6rem 1rem; border-radius: 10px; text-decoration: none; display: inline-flex; align-items: center; gap: 0.5rem;">
+                    🔗 Open External Reference
+                </a>
+            `;
+        }
+
         card.innerHTML = `
             <div>
                 <!-- Top Row: Icon + Format Pill -->
@@ -288,25 +320,17 @@ function renderResources() {
                 ${audioPlayerSnippet}
             </div>
 
-            <!-- Download / Open Button -->
-            <a href="${res.url || '#'}" ${res.url && res.url !== '#' ? 'target="_blank"' : ''} class="btn btn-outline resource-action-btn" style="width: 100%; justify-content: center; font-size: 0.82rem; font-weight: 600; padding: 0.6rem 1rem; border-radius: 10px; text-decoration: none; display: inline-flex; align-items: center; gap: 0.5rem;">
-                ${actionLabel}
-            </a>
+            ${buttonsHtml}
         `;
 
-        // Handle button action: open PDF Modal for PDFs/notes or new tab for external link/audio
-        const actionBtn = card.querySelector('.resource-action-btn');
-        if (actionBtn) {
-            actionBtn.addEventListener('click', (e) => {
-                if (res.type === 'pdf' || res.type === 'notes') {
-                    if (res.url && res.url !== '#') {
-                        e.preventDefault();
-                        openPdfModal(res);
-                    }
-                }
+        // Attach Read PDF Modal event handler
+        const openPdfBtn = card.querySelector('.open-pdf-btn');
+        if (openPdfBtn) {
+            openPdfBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                openPdfModal(res);
             });
         }
-
 
         libraryGrid.appendChild(card);
     });

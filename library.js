@@ -338,27 +338,40 @@ function renderResources() {
 
 // PDF Reader Modal Handler
 const pdfModal = document.getElementById('pdfReaderModal');
-const pdfFrame = document.getElementById('pdfFrame');
+const pdfViewerContainer = document.getElementById('pdfViewerContainer');
 const pdfModalTitle = document.getElementById('pdfModalTitle');
 const pdfModalMeta = document.getElementById('pdfModalMeta');
+const pdfOpenNewTabBtn = document.getElementById('pdfOpenNewTabBtn');
 const pdfDownloadDirectBtn = document.getElementById('pdfDownloadDirectBtn');
 const closePdfModalBtn = document.getElementById('closePdfModalBtn');
 
 function openPdfModal(res) {
-    if (!pdfModal || !pdfFrame) {
+    if (!pdfModal) {
         window.open(res.url, '_blank');
         return;
     }
 
     if (pdfModalTitle) pdfModalTitle.textContent = res.title;
     if (pdfModalMeta) pdfModalMeta.textContent = `${res.category || 'Kitab'} • ${res.author || 'Author'} • ${res.fileSize || 'PDF'}`;
-    if (pdfDownloadDirectBtn) {
-        pdfDownloadDirectBtn.href = res.url;
-    }
+    if (pdfOpenNewTabBtn) pdfOpenNewTabBtn.href = res.url;
+    if (pdfDownloadDirectBtn) pdfDownloadDirectBtn.href = res.url;
 
-    // Embed Google Docs PDF viewer or direct link
-    const viewerUrl = `https://docs.google.com/viewer?url=${encodeURIComponent(res.url)}&embedded=true`;
-    pdfFrame.src = viewerUrl;
+    // Populate Viewer with Google Docs Viewer + Direct PDF fallback bar
+    if (pdfViewerContainer) {
+        const directUrl = res.url;
+        const googleDocsUrl = `https://docs.google.com/viewer?url=${encodeURIComponent(directUrl)}&embedded=true`;
+
+        pdfViewerContainer.innerHTML = `
+            <iframe id="pdfFrame" src="${googleDocsUrl}" style="width: 100%; height: 100%; border: none;"></iframe>
+            <div id="pdfFallbackBar" style="padding: 0.75rem 1rem; background: var(--surface-raised); border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; gap: 1rem; font-size: 0.82rem; flex-wrap: wrap;">
+                <span style="color: var(--text-dim);">If preview doesn't load in iframe:</span>
+                <div style="display: flex; gap: 0.5rem;">
+                    <a href="${directUrl}" target="_blank" rel="noopener noreferrer" class="btn btn-main" style="padding: 0.35rem 0.85rem; font-size: 0.78rem; text-decoration: none;">Open PDF in Full Tab ↗️</a>
+                    <a href="${directUrl}" target="_blank" download class="btn btn-outline" style="padding: 0.35rem 0.85rem; font-size: 0.78rem; text-decoration: none;">Download File 📥</a>
+                </div>
+            </div>
+        `;
+    }
 
     pdfModal.classList.remove('hidden');
     document.body.style.overflow = 'hidden';
@@ -366,7 +379,7 @@ function openPdfModal(res) {
 
 function closePdfModal() {
     if (pdfModal) pdfModal.classList.add('hidden');
-    if (pdfFrame) pdfFrame.src = '';
+    if (pdfViewerContainer) pdfViewerContainer.innerHTML = '';
     document.body.style.overflow = '';
 }
 
@@ -376,6 +389,7 @@ if (pdfModal) {
         if (e.target === pdfModal) closePdfModal();
     });
 }
+
 
 // Search Input Event Listener
 if (searchInput) {

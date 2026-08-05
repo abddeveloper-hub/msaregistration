@@ -323,16 +323,13 @@ function renderResources() {
             ${buttonsHtml}
         `;
 
-        // Attach Read PDF Modal event handler
+        // Read PDF button opens PDF file in new browser tab for 100% native compatibility
         const openPdfBtn = card.querySelector('.open-pdf-btn');
-        if (openPdfBtn) {
-            openPdfBtn.addEventListener('click', (e) => {
-                if (res.url && res.url !== '#') {
-                    e.preventDefault();
-                    openPdfModal(res);
-                }
-            });
+        if (openPdfBtn && res.url && res.url !== '#') {
+            openPdfBtn.href = res.url;
+            openPdfBtn.target = '_blank';
         }
+
 
         libraryGrid.appendChild(card);
     });

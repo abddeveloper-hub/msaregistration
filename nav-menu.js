@@ -69,6 +69,7 @@ function initToggleMenu() {
 
     initCommandPalette();
     initScrollToTop();
+    initTasbeehWidget();
 }
 
 function initScrollToTop() {
@@ -281,6 +282,449 @@ function initCommandPalette() {
             if (e.target === modal) toggleCmdPalette(false);
         });
     }
+}
+
+// Global Digital Tasbeeh & Adhkar Widget
+function initTasbeehWidget() {
+    if (typeof document === "undefined") return;
+
+    // Inject Floating Button if missing
+    if (!document.getElementById("tasbeehFloatingBtn")) {
+        const btn = document.createElement("button");
+        btn.id = "tasbeehFloatingBtn";
+        btn.className = "tasbeeh-floating-btn";
+        btn.setAttribute("aria-label", "Open Digital Tasbeeh Counter");
+        btn.setAttribute("title", "Digital Tasbeeh & Adhkar Counter");
+        btn.innerHTML = `<span style="font-size: 1.25rem; line-height: 1;">📿</span>`;
+        document.body.appendChild(btn);
+    }
+
+    // Inject Modal DOM if missing
+    if (!document.getElementById("tasbeehModal")) {
+        const modal = document.createElement("div");
+        modal.id = "tasbeehModal";
+        modal.className = "tasbeeh-modal-backdrop hidden";
+        modal.innerHTML = `
+            <div class="tasbeeh-modal-box">
+                <div class="tasbeeh-header">
+                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                        <span style="font-size: 1.4rem;">📿</span>
+                        <div>
+                            <h3 style="font-size: 1.1rem; font-weight: 700; margin: 0; color: var(--text-main, #f8fafc); font-family: var(--font-display, inherit);">Digital Tasbeeh</h3>
+                            <p style="font-size: 0.75rem; color: var(--text-dim, #94a3b8); margin: 0;">Daily Remembrance Counter</p>
+                        </div>
+                    </div>
+                    <button id="closeTasbeehModalBtn" class="tasbeeh-close-btn" aria-label="Close">✕</button>
+                </div>
+
+                <div class="tasbeeh-body">
+                    <!-- Dhikr Selector -->
+                    <div class="tasbeeh-select-wrap">
+                        <select id="tasbeehDhikrSelect" class="tasbeeh-select">
+                            <option value="subhanallah">سُبْحَانَ ٱللَّٰهِ — SubhanAllah</option>
+                            <option value="alhamdulillah">ٱلْحَمْدُ لِلَّٰهِ — Alhamdulillah</option>
+                            <option value="allahuakbar">ٱللَّٰهُ أَكْبَرُ — Allahu Akbar</option>
+                            <option value="astaghfirullah">أَسْتَغْفِرُ ٱللَّٰهَ — Astaghfirullah</option>
+                            <option value="lailahaillallah">لَا إِلَٰهَ إِلَّا ٱللَّٰهُ — La ilaha illallah</option>
+                            <option value="salawat">اللَّهُمَّ صَلِّ عَلَى مُحَمَّدٍ — Salawat</option>
+                        </select>
+                    </div>
+
+                    <!-- Arabic Display -->
+                    <div class="tasbeeh-arabic-display" id="tasbeehArabicText">
+                        سُبْحَانَ ٱللَّٰهِ
+                    </div>
+
+                    <!-- Target Chips -->
+                    <div class="tasbeeh-target-chips">
+                        <span class="target-chip active" data-target="33">Target: 33</span>
+                        <span class="target-chip" data-target="100">Target: 100</span>
+                        <span class="target-chip" data-target="0">Unlimited</span>
+                    </div>
+
+                    <!-- Main Counter Button -->
+                    <div class="tasbeeh-counter-area">
+                        <button id="tasbeehCountBtn" class="tasbeeh-count-btn">
+                            <span id="tasbeehCurrentCount" class="tasbeeh-num">0</span>
+                            <span class="tasbeeh-tap-hint">TAP TO COUNT</span>
+                        </button>
+                    </div>
+
+                    <!-- Progress Bar -->
+                    <div class="tasbeeh-progress-bar-wrap">
+                        <div id="tasbeehProgressBar" class="tasbeeh-progress-fill" style="width: 0%;"></div>
+                    </div>
+
+                    <!-- Controls: Reset & Sound Toggle -->
+                    <div class="tasbeeh-actions">
+                        <button id="tasbeehResetBtn" class="tasbeeh-action-btn">
+                            🔄 Reset
+                        </button>
+                        <button id="tasbeehSoundToggleBtn" class="tasbeeh-action-btn">
+                            🔊 Click Sound: ON
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(modal);
+
+        // Inject Tasbeeh Styles
+        if (!document.getElementById("tasbeehWidgetStyles")) {
+            const style = document.createElement("style");
+            style.id = "tasbeehWidgetStyles";
+            style.textContent = `
+                .tasbeeh-floating-btn {
+                    position: fixed;
+                    bottom: 5.5rem;
+                    right: 1.5rem;
+                    width: 48px;
+                    height: 48px;
+                    border-radius: 50%;
+                    background: var(--surface-solid, #0f4c3a);
+                    color: #ffffff;
+                    border: 1px solid rgba(255, 255, 255, 0.2);
+                    box-shadow: 0 8px 24px rgba(15, 76, 58, 0.4);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    cursor: pointer;
+                    z-index: 9998;
+                    transition: transform 0.25s ease, box-shadow 0.25s ease;
+                }
+                .tasbeeh-floating-btn:hover {
+                    transform: scale(1.1);
+                    box-shadow: 0 12px 30px rgba(15, 76, 58, 0.6);
+                }
+                .tasbeeh-modal-backdrop {
+                    position: fixed;
+                    inset: 0;
+                    background: rgba(0, 0, 0, 0.65);
+                    backdrop-filter: blur(10px);
+                    -webkit-backdrop-filter: blur(10px);
+                    z-index: 99999;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    padding: 1rem;
+                    opacity: 0;
+                    pointer-events: none;
+                    transition: opacity 0.25s ease;
+                }
+                .tasbeeh-modal-backdrop:not(.hidden) {
+                    opacity: 1;
+                    pointer-events: auto;
+                }
+                .tasbeeh-modal-box {
+                    width: 100%;
+                    max-width: 420px;
+                    background: var(--surface, #1e293b);
+                    border: 1px solid var(--border, rgba(255,255,255,0.15));
+                    border-radius: 24px;
+                    box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+                    overflow: hidden;
+                    animation: tasbeehPop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+                }
+                @keyframes tasbeehPop {
+                    from { transform: scale(0.85); opacity: 0; }
+                    to { transform: scale(1); opacity: 1; }
+                }
+                .tasbeeh-header {
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                    padding: 1.25rem 1.5rem;
+                    border-bottom: 1px solid var(--border, rgba(255,255,255,0.1));
+                    background: rgba(15, 76, 58, 0.15);
+                }
+                .tasbeeh-close-btn {
+                    background: transparent;
+                    border: none;
+                    color: var(--text-dim, #94a3b8);
+                    font-size: 1.2rem;
+                    cursor: pointer;
+                    padding: 0.25rem 0.5rem;
+                    border-radius: 8px;
+                    transition: color 0.15s;
+                }
+                .tasbeeh-close-btn:hover {
+                    color: var(--text-main, #fff);
+                }
+                .tasbeeh-body {
+                    padding: 1.5rem;
+                    text-align: center;
+                }
+                .tasbeeh-select-wrap {
+                    margin-bottom: 1.25rem;
+                }
+                .tasbeeh-select {
+                    width: 100%;
+                    padding: 0.75rem 1rem;
+                    border-radius: 12px;
+                    border: 1px solid var(--border, rgba(255,255,255,0.2));
+                    background: var(--bg, #0f172a);
+                    color: var(--text-main, #f8fafc);
+                    font-size: 0.9rem;
+                    font-weight: 600;
+                    outline: none;
+                    cursor: pointer;
+                }
+                .tasbeeh-arabic-display {
+                    font-family: 'Amiri', 'Aref Ruqaa', serif;
+                    font-size: 1.8rem;
+                    color: var(--primary, #10b981);
+                    min-height: 50px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    margin-bottom: 1.25rem;
+                    line-height: 1.4;
+                }
+                .tasbeeh-target-chips {
+                    display: flex;
+                    gap: 0.5rem;
+                    justify-content: center;
+                    margin-bottom: 1.5rem;
+                }
+                .target-chip {
+                    font-size: 0.78rem;
+                    font-weight: 700;
+                    padding: 0.35rem 0.85rem;
+                    border-radius: 20px;
+                    border: 1px solid var(--border, rgba(255,255,255,0.15));
+                    background: var(--bg, #0f172a);
+                    color: var(--text-dim, #94a3b8);
+                    cursor: pointer;
+                    transition: all 0.2s ease;
+                }
+                .target-chip.active {
+                    background: var(--primary, #0f4c3a);
+                    color: #ffffff;
+                    border-color: var(--primary, #0f4c3a);
+                }
+                .tasbeeh-counter-area {
+                    margin-bottom: 1.5rem;
+                    display: flex;
+                    justify-content: center;
+                }
+                .tasbeeh-count-btn {
+                    width: 140px;
+                    height: 140px;
+                    border-radius: 50%;
+                    background: linear-gradient(135deg, var(--primary, #0f4c3a), #082f24);
+                    border: 4px solid rgba(255, 255, 255, 0.2);
+                    box-shadow: 0 12px 36px rgba(15, 76, 58, 0.4);
+                    color: #ffffff;
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    justify-content: center;
+                    cursor: pointer;
+                    outline: none;
+                    transition: transform 0.1s ease, box-shadow 0.1s ease;
+                    user-select: none;
+                    -webkit-tap-highlight-color: transparent;
+                }
+                .tasbeeh-count-btn:active {
+                    transform: scale(0.93);
+                    box-shadow: 0 4px 15px rgba(15, 76, 58, 0.6);
+                }
+                .tasbeeh-num {
+                    font-size: 2.75rem;
+                    font-weight: 800;
+                    font-family: 'Inter', sans-serif;
+                    line-height: 1;
+                }
+                .tasbeeh-tap-hint {
+                    font-size: 0.65rem;
+                    font-weight: 700;
+                    letter-spacing: 0.12em;
+                    opacity: 0.75;
+                    margin-top: 0.25rem;
+                }
+                .tasbeeh-progress-bar-wrap {
+                    height: 8px;
+                    background: rgba(255, 255, 255, 0.1);
+                    border-radius: 10px;
+                    overflow: hidden;
+                    margin-bottom: 1.25rem;
+                }
+                .tasbeeh-progress-fill {
+                    height: 100%;
+                    background: var(--primary, #10b981);
+                    transition: width 0.2s ease;
+                }
+                .tasbeeh-actions {
+                    display: flex;
+                    gap: 0.75rem;
+                    justify-content: center;
+                }
+                .tasbeeh-action-btn {
+                    flex: 1;
+                    padding: 0.6rem;
+                    border-radius: 12px;
+                    border: 1px solid var(--border, rgba(255,255,255,0.15));
+                    background: var(--bg, #0f172a);
+                    color: var(--text-main, #f8fafc);
+                    font-size: 0.82rem;
+                    font-weight: 600;
+                    cursor: pointer;
+                    transition: background 0.15s;
+                }
+                .tasbeeh-action-btn:hover {
+                    background: rgba(255, 255, 255, 0.1);
+                }
+            `;
+            document.head.appendChild(style);
+        }
+    }
+
+    const floatingBtn = document.getElementById("tasbeehFloatingBtn");
+    const modal       = document.getElementById("tasbeehModal");
+    const closeBtn   = document.getElementById("closeTasbeehModalBtn");
+    const selectEl    = document.getElementById("tasbeehDhikrSelect");
+    const arabicEl    = document.getElementById("tasbeehArabicText");
+    const countBtn    = document.getElementById("tasbeehCountBtn");
+    const currentNum  = document.getElementById("tasbeehCurrentCount");
+    const progressBar = document.getElementById("tasbeehProgressBar");
+    const resetBtn    = document.getElementById("tasbeehResetBtn");
+    const soundBtn    = document.getElementById("tasbeehSoundToggleBtn");
+    const targetChips = document.querySelectorAll(".target-chip");
+
+    // Arabic Map
+    const dhikrArabicMap = {
+        subhanallah: "سُبْحَانَ ٱللَّٰهِ",
+        alhamdulillah: "ٱلْحَمْدُ لِلَّٰهِ",
+        allahuakbar: "ٱللَّٰهُ أَكْبَرُ",
+        astaghfirullah: "أَسْتَغْفِرُ ٱللَّٰهَ",
+        lailahaillallah: "لَا إِلَٰهَ إِلَّا ٱللَّٰهُ",
+        salawat: "اللَّهُمَّ صَلِّ عَلَى مُحَمَّدٍ"
+    };
+
+    let count = parseInt(localStorage.getItem("msaukkuda:tasbeeh_count") || "0", 10);
+    let target = parseInt(localStorage.getItem("msaukkuda:tasbeeh_target") || "33", 10);
+    let soundOn = localStorage.getItem("msaukkuda:tasbeeh_sound") !== "false";
+
+    function updateUI() {
+        if (currentNum) currentNum.textContent = count;
+        
+        if (target > 0) {
+            const pct = Math.min(100, Math.round((count / target) * 100));
+            if (progressBar) progressBar.style.width = `${pct}%`;
+        } else {
+            if (progressBar) progressBar.style.width = `100%`;
+        }
+
+        if (soundBtn) {
+            soundBtn.textContent = `🔊 Sound: ${soundOn ? 'ON' : 'OFF'}`;
+        }
+    }
+
+    // Audio click sound synthesizer (Web Audio API - no external file needed)
+    function playClickSound() {
+        if (!soundOn || typeof window === "undefined") return;
+        try {
+            const AudioCtx = window.AudioContext || window.webkitAudioContext;
+            if (!AudioCtx) return;
+            const ctx = new AudioCtx();
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = "sine";
+            osc.frequency.setValueAtTime(600, ctx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(120, ctx.currentTime + 0.05);
+            gain.gain.setValueAtTime(0.3, ctx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.05);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start();
+            osc.stop(ctx.currentTime + 0.05);
+        } catch (e) {
+            // Ignore audio context autoplay restrictions
+        }
+    }
+
+    // Tap action
+    function incrementCount() {
+        count++;
+        localStorage.setItem("msaukkuda:tasbeeh_count", count.toString());
+
+        // Haptic feedback for mobile devices
+        if (navigator.vibrate) {
+            navigator.vibrate(count % target === 0 && target > 0 ? [50, 50, 50] : 15);
+        }
+
+        playClickSound();
+        updateUI();
+
+        // Completion flash
+        if (target > 0 && count === target) {
+            if (currentNum) {
+                currentNum.style.color = "#F4C430";
+                setTimeout(() => { currentNum.style.color = ""; }, 1000);
+            }
+        }
+    }
+
+    // Event listeners
+    if (floatingBtn && modal) {
+        floatingBtn.addEventListener("click", () => {
+            modal.classList.remove("hidden");
+            updateUI();
+        });
+    }
+
+    if (closeBtn && modal) {
+        closeBtn.addEventListener("click", () => modal.classList.add("hidden"));
+        modal.addEventListener("click", (e) => {
+            if (e.target === modal) modal.classList.add("hidden");
+        });
+    }
+
+    if (selectEl) {
+        selectEl.addEventListener("change", (e) => {
+            const val = e.target.value;
+            if (arabicEl) arabicEl.textContent = dhikrArabicMap[val] || "";
+        });
+    }
+
+    targetChips.forEach(chip => {
+        chip.addEventListener("click", () => {
+            targetChips.forEach(c => c.classList.remove("active"));
+            chip.classList.add("active");
+            target = parseInt(chip.dataset.target, 10);
+            localStorage.setItem("msaukkuda:tasbeeh_target", target.toString());
+            updateUI();
+        });
+    });
+
+    if (countBtn) countBtn.addEventListener("click", incrementCount);
+
+    if (resetBtn) {
+        resetBtn.addEventListener("click", () => {
+            count = 0;
+            localStorage.setItem("msaukkuda:tasbeeh_count", "0");
+            updateUI();
+        });
+    }
+
+    if (soundBtn) {
+        soundBtn.addEventListener("click", () => {
+            soundOn = !soundOn;
+            localStorage.setItem("msaukkuda:tasbeeh_sound", soundOn.toString());
+            updateUI();
+        });
+    }
+
+    // Set initial target chip
+    targetChips.forEach(c => {
+        if (parseInt(c.dataset.target, 10) === target) {
+            c.classList.add("active");
+        } else {
+            c.classList.remove("active");
+        }
+    });
+
+    updateUI();
 }
 
 if (document.readyState === "loading") {

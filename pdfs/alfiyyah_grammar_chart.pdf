@@ -1,0 +1,58 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 4 0 R /Resources << /Font << /F1 5 0 R >> >> >>
+endobj
+4 0 obj
+<< /Length 1003 >>
+stream
+BT
+/F1 22 Tf
+50 740 Td
+(Alfiyyah Ibn Malik - Nahw & Sarf Chart) Tj
+ET
+BT
+/F1 12 Tf
+50 710 Td
+(Arabic Grammar & Morphology | Ibn Malik) Tj
+ET
+BT
+/F1 11 Tf
+50 670 Td
+16 TL
+(MUHYISSUNNAH DARS UKKUDA - ARABIC GRAMMAR CHART) '
+(================================================) '
+(Text: Alfiyyah Ibn Malik \(1000 Verses of Arabic Grammar\)) '
+() '
+(1. AL-KALAM \(Speech and Its Components\):) '
+(   - Kalamunafadun Mufidun Kastaqim, Wasmun Wa Fi'lun Thumma Harfun Al-Kalim.) '
+(   - Speech consists of Noun \(Ism\), Verb \(Fi'l\), and Particle \(Harf\).) '
+() '
+(2. SIGNS OF NOUNS \(Al-Ism\):) '
+(   - Bil-Jarri Wat-Tanwini Wan-Nida Wa Al, Wa Musnadin Lil-Ismi Tamyizun Hasal.) '
+(   - Nouns are recognized by Genitive case \(Jarr\), Tanween, Alif-Lam, and Musnad.) '
+() '
+(3. SIGNS OF VERBS \(Al-Fi'l\):) '
+(   - Bi-Ta Fa'alta Wa Atat Wa Yaf'ali, Wa Nuni Aqbilanna Fi'lun Yanjali.) '
+(   - Verbs are recognized by Ta-Fa'alta, Ta-at, and Nun al-Tawkeed.) '
+() '
+(Prepared for MSA Ukkuda Grammar Course.) '
+ET
+endstream
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+xref
+0 6
+0000000000 65535 f 
+trailer
+<< /Size 6 /Root 1 0 R >>
+startxref
+500
+%%EOF

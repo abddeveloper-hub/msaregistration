@@ -10,7 +10,7 @@ const filterBtns = document.querySelectorAll('.filter-btn');
 const searchInput = document.getElementById('librarySearchInput');
 const resourceCountSpan = document.getElementById('visibleResourceCount');
 
-// Pre-loaded curated library items with working PDFs, Audio, and Reference Links
+// Pre-loaded curated library items with real local PDFs, Audio, and Reference Links
 const defaultLibraryItems = [
     {
         id: "def-1",
@@ -19,7 +19,7 @@ const defaultLibraryItems = [
         type: "pdf",
         author: "Shaikh Zainuddin Makhdoom",
         description: "Standard jurisprudence reference and explanatory notes for advanced Dars students.",
-        url: "https://ia800204.us.archive.org/11/items/FathAl-Muin/Fath_al-Muin.pdf",
+        url: "pdfs/fathul_mueen_notes.pdf",
         fileSize: "4.8 MB",
         createdAt: "2026-07-01T10:00:00Z"
     },
@@ -30,7 +30,7 @@ const defaultLibraryItems = [
         type: "pdf",
         author: "Jalaluddin Al-Mahalli & Al-Suyuti",
         description: "Complete chapter summaries and grammatical breakdown for Dars syllabus.",
-        url: "https://ia800305.us.archive.org/12/items/TafseerAlJalalayn/TafseerAlJalalayn.pdf",
+        url: "pdfs/tafseer_jalalayn_module.pdf",
         fileSize: "6.2 MB",
         createdAt: "2026-06-25T10:00:00Z"
     },
@@ -52,7 +52,7 @@ const defaultLibraryItems = [
         type: "notes",
         author: "Ibn Malik",
         description: "Quick revision charts covering poetic meters and grammatical rules for Nahw.",
-        url: "https://ia801308.us.archive.org/34/items/AlfiyyahIbnMalik/Alfiyyah.pdf",
+        url: "pdfs/alfiyyah_grammar_chart.pdf",
         fileSize: "1.5 MB",
         createdAt: "2026-06-15T10:00:00Z"
     },
@@ -63,7 +63,7 @@ const defaultLibraryItems = [
         type: "pdf",
         author: "Imam Al-Bukhari / Faculty Notes",
         description: "Selected Kitab Al-Eman HADITH narrations with sanad commentary and vocabulary.",
-        url: "https://ia800203.us.archive.org/4/items/SahihBukhariEnglishArabic/Sahih-Bukhari-Arabic-English.pdf",
+        url: "pdfs/sahih_bukhari_guide.pdf",
         fileSize: "3.4 MB",
         createdAt: "2026-06-10T10:00:00Z"
     },
@@ -74,7 +74,7 @@ const defaultLibraryItems = [
         type: "pdf",
         author: "Ibn Hajar al-Asqalani",
         description: "Foundational text on Hadith methodology, grading, and narrator classification.",
-        url: "https://ia800303.us.archive.org/14/items/NukhbatAlFikar/Nukhbat_al_Fikar.pdf",
+        url: "pdfs/nukhbat_alfikar_guide.pdf",
         fileSize: "2.1 MB",
         createdAt: "2026-06-05T10:00:00Z"
     },
@@ -358,22 +358,24 @@ function openPdfModal(res) {
     if (pdfOpenNewTabBtn) pdfOpenNewTabBtn.href = res.url;
     if (pdfDownloadDirectBtn) pdfDownloadDirectBtn.href = res.url;
 
-    // Populate Viewer with Google Docs Viewer + Direct PDF fallback bar
+    // Populate Viewer with Direct PDF Embed (local) or Google Docs Viewer (external)
     if (pdfViewerContainer) {
         const directUrl = res.url;
-        const googleDocsUrl = `https://docs.google.com/viewer?url=${encodeURIComponent(directUrl)}&embedded=true`;
+        const isLocalOrPdf = !directUrl.startsWith('http') || directUrl.toLowerCase().includes('.pdf');
+        const frameSrc = isLocalOrPdf ? directUrl : `https://docs.google.com/viewer?url=${encodeURIComponent(directUrl)}&embedded=true`;
 
         pdfViewerContainer.innerHTML = `
-            <iframe id="pdfFrame" src="${googleDocsUrl}" style="width: 100%; height: 100%; border: none;"></iframe>
+            <iframe id="pdfFrame" src="${frameSrc}" type="application/pdf" style="width: 100%; height: 100%; border: none;"></iframe>
             <div id="pdfFallbackBar" style="padding: 0.75rem 1rem; background: var(--surface-raised); border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; gap: 1rem; font-size: 0.82rem; flex-wrap: wrap;">
-                <span style="color: var(--text-dim);">If preview doesn't load in iframe:</span>
+                <span style="color: var(--text-dim);">Dars Reading Reader Active</span>
                 <div style="display: flex; gap: 0.5rem;">
                     <a href="${directUrl}" target="_blank" rel="noopener noreferrer" class="btn btn-main" style="padding: 0.35rem 0.85rem; font-size: 0.78rem; text-decoration: none;">Open PDF in Full Tab ↗️</a>
-                    <a href="${directUrl}" target="_blank" download class="btn btn-outline" style="padding: 0.35rem 0.85rem; font-size: 0.78rem; text-decoration: none;">Download File 📥</a>
+                    <a href="${directUrl}" download class="btn btn-outline" style="padding: 0.35rem 0.85rem; font-size: 0.78rem; text-decoration: none;">Download File 📥</a>
                 </div>
             </div>
         `;
     }
+
 
     pdfModal.style.display = 'flex';
     pdfModal.classList.remove('hidden');

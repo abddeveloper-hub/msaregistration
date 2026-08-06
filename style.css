@@ -811,11 +811,11 @@ img {
     position: absolute;
     inset: 0;
     z-index: -1;
-    background-image: url('download (9).jpg') !important;
+    background-image: url('hero-bg.jpg') !important;
     background-size: cover !important;
     background-position: center center !important;
     background-repeat: no-repeat !important;
-    filter: brightness(1.12) contrast(1.05) saturate(1.08);
+    filter: brightness(1.15) contrast(1.08) saturate(1.18);
 }
 
 /* Full-cover shading overlay so text is always readable */
@@ -823,7 +823,7 @@ img {
     content: '';
     position: absolute;
     inset: 0;
-    background: rgba(0, 0, 0, 0.42);
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0.30) 0%, rgba(0, 0, 0, 0.15) 100%);
     z-index: 1;
 }
 
@@ -4829,5 +4829,90 @@ body.dark-mode .skeleton-box {
         opacity: 1;
         transform: translateX(0) scale(1);
     }
+}
+
+/* ============================================================
+   ULTRA FOOTER — Global Clean Structured Layout
+   ============================================================ */
+.ultra-footer {
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    padding: 4rem 2rem 2rem;
+    margin-top: 4rem;
+}
+
+.footer-grid {
+    max-width: 1200px;
+    margin: 0 auto 3rem;
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 2.5rem;
+}
+
+@media (max-width: 768px) {
+    .footer-grid {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+}
+
+.footer-brand h4 {
+    font-family: var(--font-display);
+    font-size: 1.25rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--text-main);
+    margin-bottom: 0.75rem;
+}
+
+.footer-brand p {
+    color: var(--text-dim);
+    line-height: 1.65;
+    max-width: 320px;
+    font-size: 0.9rem;
+    margin: 0;
+}
+
+.footer-col h5 {
+    color: var(--text-main);
+    font-size: 0.75rem;
+    font-weight: 700;
+    margin: 0 0 1rem 0;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+}
+
+.footer-col ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+}
+
+.footer-col a {
+    color: var(--text-dim);
+    text-decoration: none;
+    font-size: 0.875rem;
+    transition: color 0.2s ease;
+}
+
+.footer-col a:hover {
+    color: var(--primary);
+}
+
+.footer-bottom {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding-top: 2rem;
+    border-top: 1px solid var(--border);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    justify-content: space-between;
+    align-items: center;
+    color: var(--text-dim);
+    font-size: 0.82rem;
 }
 

@@ -16,21 +16,59 @@ function normalize(str) {
     return String(str || '').toLowerCase().replace(/[^a-z0-9]/g, '');
 }
 
-// Update DOM Hero Info
+// Update DOM Hero & Overview Info
 const campusTitle = document.getElementById('campusTitle');
 const campusBadge = document.getElementById('campusBadge');
 const campusDescription = document.getElementById('campusDescription');
+const campusSelectDropdown = document.getElementById('campusSelectDropdown');
+const overviewName = document.getElementById('overviewName');
+const overviewLocation = document.getElementById('overviewLocation');
+const overviewType = document.getElementById('overviewType');
 
-if (campusTitle) campusTitle.innerText = targetCampus;
-if (campusBadge) {
-    if (targetCampus.toLowerCase().includes('ukkuda')) {
-        campusBadge.innerHTML = '🏛️ HEADQUARTERS &amp; MAIN CAMPUS';
-    } else {
-        campusBadge.innerHTML = `🏛️ OFFICIAL CAMPUS - ${targetCampus.toUpperCase()}`;
+function updateCampusHeroInfo(name) {
+    if (campusTitle) campusTitle.innerText = name;
+    if (overviewName) overviewName.innerText = name;
+
+    const isHQ = name.toLowerCase().includes('ukkuda');
+    if (campusBadge) {
+        campusBadge.innerHTML = isHQ ? '🏛️ HEADQUARTERS &amp; MAIN CAMPUS' : `🏛️ OFFICIAL CAMPUS - ${name.toUpperCase()}`;
+    }
+    if (campusDescription) {
+        campusDescription.innerText = `Official portal section for ${name}. Explore campus details, enrolled students, honours, and media gallery.`;
+    }
+
+    if (overviewType) {
+        overviewType.innerText = isHQ ? 'Headquarters & Central Seat' : 'Regional Branch Campus';
+    }
+
+    if (overviewLocation) {
+        if (name.includes('UKKUDA') || name.includes('BAJAL')) {
+            overviewLocation.innerText = 'Mangalore Region, Dakshina Kannada';
+        } else if (name.includes('UJIRE')) {
+            overviewLocation.innerText = 'Belthangady / Ujire Region, Dakshina Kannada';
+        } else if (name.includes('GOLIYANGADI') || name.includes('RENJA') || name.includes('KULIYOORPADAVU') || name.includes('SHEKMALE') || name.includes('KOPPA')) {
+            overviewLocation.innerText = 'Puttur / Sullia Region, Dakshina Kannada';
+        } else {
+            overviewLocation.innerText = 'Bantwal Region, Dakshina Kannada';
+        }
     }
 }
-if (campusDescription) {
-    campusDescription.innerText = `Official portal section for ${targetCampus}. Explore enrolled students, honours, and campus life media.`;
+
+updateCampusHeroInfo(targetCampus);
+
+// Sync Dropdown Selection
+if (campusSelectDropdown) {
+    for (let opt of campusSelectDropdown.options) {
+        if (normalize(opt.value) === normalize(targetCampus)) {
+            opt.selected = true;
+            break;
+        }
+    }
+
+    campusSelectDropdown.addEventListener('change', (e) => {
+        const newCampus = e.target.value;
+        window.location.href = `campus.html?name=${encodeURIComponent(newCampus)}`;
+    });
 }
 
 // ----------------------------------------------------

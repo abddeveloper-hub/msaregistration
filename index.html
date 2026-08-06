@@ -193,8 +193,10 @@
         </section>
 
         <!-- Institutional Achievements Section -->
-        <section id="aboutInstitution" style="padding: 8rem 2rem; background: var(--surface); overflow: hidden;">
-            <div style="max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; gap: 4rem;">
+        <section id="aboutInstitution" style="padding: 8rem 2rem; background: var(--surface); overflow: hidden; position: relative;">
+            <!-- Library background image -->
+            <div style="position: absolute; inset: 0; background-image: url('library-bg.jpg'); background-size: cover; background-position: center; background-attachment: fixed; opacity: 0.22; z-index: 0; pointer-events: none;"></div>
+            <div style="max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; gap: 4rem; position: relative; z-index: 1;">
                 <div class="animate-on-scroll slide-from-left" style="max-width: 700px;">
                     <p class="eyebrow-label" style="margin-bottom: 1rem;">Legacy of Excellence</p>
                     <h2
@@ -203,22 +205,82 @@
                 </div>
 
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 4rem;">
-                    <div class="animate-on-scroll slide-up delay-100">
-                        <p style="color: var(--text-dim); font-size: 1.15rem; line-height: 1.8; margin-bottom: 2rem;">
+                    <div class="animate-on-scroll slide-up delay-100" style="display: flex; flex-direction: column; gap: 1.5rem;">
+                        <p style="color: var(--text-dim); font-size: 1.1rem; line-height: 1.85; margin: 0;">
                             For over a decade, <span class="brand-text-styled">Muhyissunnah Dars Ukkuda</span> has stood
-                            at the intersection of rigorous Islamic scholarship and modern academic infrastructure. We
-                            have proudly graduated thousands of students who now serve as community leaders, esteemed
-                            educators, and global professionals.
+                            at the intersection of rigorous Islamic scholarship and modern academic infrastructure. Founded with the vision of reviving classical Sunni learning across the Dakshina Kannada region, we have built a network of 13 active campuses that bring traditional Dars education to every community we serve.
                         </p>
-                        <p style="color: var(--text-dim); font-size: 1.15rem; line-height: 1.8;">
-                            Our uncompromising commitment to holistic education has earned us recognition as a premier
-                            center of learning. By maintaining a highly selective faculty verification standard, we
-                            ensure that every student is guided by the most qualified scholars in their respective
-                            fields.
+                        <p style="color: var(--text-dim); font-size: 1.1rem; line-height: 1.85; margin: 0;">
+                            We have proudly graduated thousands of students who now serve as community leaders, esteemed educators, research scholars, and dedicated professionals — both within India and across the Gulf, Southeast Asia, and beyond. Each graduate carries the values instilled through our rigorous curriculum: precision in knowledge, humility in conduct, and service to the Ummah.
+                        </p>
+                        <p style="color: var(--text-dim); font-size: 1.1rem; line-height: 1.85; margin: 0;">
+                            Our uncompromising commitment to holistic education has earned us recognition as a premier center of learning in Dakshina Kannada. By maintaining a highly selective faculty verification standard, we ensure that every student is guided by the most qualified scholars in their respective fields — teachers who hold direct chains of transmission from the greatest centers of Islamic learning.
+                        </p>
+                        <p style="color: var(--text-dim); font-size: 1.1rem; line-height: 1.85; margin: 0;">
+                            Our curriculum follows the classical Shafi'i Sunni tradition, encompassing subjects from Arabic grammar (<em>Nahw &amp; Sarf</em>), Islamic jurisprudence (<em>Fiqh &amp; Usul al-Fiqh</em>), Quran memorisation and recitation with Tajweed, Hadith sciences, Islamic theology (<em>Aqeedah</em>), and spiritual reformation (<em>Tasawwuf</em>). Each level builds upon the previous, producing graduates of comprehensive scholarly depth.
                         </p>
                     </div>
 
-                    <!-- Key Milestones section removed as per user request -->
+                    <div class="animate-on-scroll slide-up delay-200" style="display: flex; flex-direction: column; gap: 1.5rem;">
+                        <p style="color: var(--text-dim); font-size: 1.1rem; line-height: 1.85; margin: 0;">
+                            Beyond the classroom, <span class="brand-text-styled">MSA</span> fosters a culture of community engagement, spiritual development, and personal accountability. Our residential hostel facilities provide a structured, disciplined, and peaceful environment for students to dedicate themselves fully to their studies — supported by round-the-clock faculty mentorship and pastoral care.
+                        </p>
+                        <p style="color: var(--text-dim); font-size: 1.1rem; line-height: 1.85; margin: 0;">
+                            Embracing the demands of the modern age, we have integrated a fully digital academic management infrastructure — enabling real-time attendance tracking, digital ID generation, online result publishing, live event streaming, and an interactive media archive — all accessible through the MSA Student Portal, empowering students and their families at every step of their academic journey.
+                        </p>
+                        <p style="color: var(--text-dim); font-size: 1.1rem; line-height: 1.85; margin: 0;">
+                            Our Alumni Division connects thousands of graduates in an active, lifelong network. Past students regularly return to contribute as guest lecturers, event judges, and community mentors. This living, breathing network of scholars is perhaps our greatest accomplishment — a testament to the enduring impact of principled Islamic education.
+                        </p>
+
+                        <!-- Key Milestones Mini Grid -->
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 0.5rem;">
+                            <div style="background: rgba(15,76,58,0.06); border: 1px solid var(--border); border-radius: 14px; padding: 1.1rem;">
+                                <div style="font-family: var(--font-display); font-size: 2rem; font-weight: 800; color: var(--primary); line-height: 1;">10+</div>
+                                <div style="font-size: 0.82rem; color: var(--text-dim); margin-top: 0.25rem; font-weight: 600;">Years of Institutional Excellence</div>
+                            </div>
+                            <div style="background: rgba(15,76,58,0.06); border: 1px solid var(--border); border-radius: 14px; padding: 1.1rem;">
+                                <div style="font-family: var(--font-display); font-size: 2rem; font-weight: 800; color: var(--primary); line-height: 1;">13</div>
+                                <div style="font-size: 0.82rem; color: var(--text-dim); margin-top: 0.25rem; font-weight: 600;">Active Campuses Across 4 Districts</div>
+                            </div>
+                            <div style="background: rgba(15,76,58,0.06); border: 1px solid var(--border); border-radius: 14px; padding: 1.1rem;">
+                                <div style="font-family: var(--font-display); font-size: 2rem; font-weight: 800; color: var(--primary); line-height: 1;">500+</div>
+                                <div style="font-size: 0.82rem; color: var(--text-dim); margin-top: 0.25rem; font-weight: 600;">Enrolled Students Network-Wide</div>
+                            </div>
+                            <div style="background: rgba(15,76,58,0.06); border: 1px solid var(--border); border-radius: 14px; padding: 1.1rem;">
+                                <div style="font-family: var(--font-display); font-size: 2rem; font-weight: 800; color: var(--primary); line-height: 1;">50+</div>
+                                <div style="font-size: 0.82rem; color: var(--text-dim); margin-top: 0.25rem; font-weight: 600;">Verified Scholarly Faculty Members</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Core Values Strip -->
+                <div class="animate-on-scroll slide-up delay-300" style="border-top: 1px solid var(--border); padding-top: 3rem; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 2rem;">
+                    <div style="text-align: center;">
+                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">📖</div>
+                        <h4 style="font-family: var(--font-display); font-size: 1rem; font-weight: 700; color: var(--text-main); margin: 0 0 0.35rem 0;">Sacred Knowledge</h4>
+                        <p style="font-size: 0.85rem; color: var(--text-dim); margin: 0; line-height: 1.5;">Classical Dars curriculum passed through unbroken scholarly chains of transmission.</p>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">🕌</div>
+                        <h4 style="font-family: var(--font-display); font-size: 1rem; font-weight: 700; color: var(--text-main); margin: 0 0 0.35rem 0;">Spiritual Formation</h4>
+                        <p style="font-size: 0.85rem; color: var(--text-dim); margin: 0; line-height: 1.5;">Rooted in Sunni tradition, cultivating character, Taqwa, and moral excellence in every student.</p>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">💻</div>
+                        <h4 style="font-family: var(--font-display); font-size: 1rem; font-weight: 700; color: var(--text-main); margin: 0 0 0.35rem 0;">Digital Innovation</h4>
+                        <p style="font-size: 0.85rem; color: var(--text-dim); margin: 0; line-height: 1.5;">Modern infrastructure empowering students and parents with real-time academic management.</p>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">🤝</div>
+                        <h4 style="font-family: var(--font-display); font-size: 1rem; font-weight: 700; color: var(--text-main); margin: 0 0 0.35rem 0;">Community Service</h4>
+                        <p style="font-size: 0.85rem; color: var(--text-dim); margin: 0; line-height: 1.5;">Graduates who lead mosques, run charities, teach communities, and uplift the wider Ummah.</p>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">🏆</div>
+                        <h4 style="font-family: var(--font-display); font-size: 1rem; font-weight: 700; color: var(--text-main); margin: 0 0 0.35rem 0;">Academic Rigour</h4>
+                        <p style="font-size: 0.85rem; color: var(--text-dim); margin: 0; line-height: 1.5;">Structured assessments, merit recognition, and scholarship pathways for exceptional students.</p>
+                    </div>
                 </div>
             </div>
         </section>
@@ -237,244 +299,406 @@
 
 
 
-        <!-- ══ Islamic Content Hub ══ -->
-        <section id="islamicHub" style="padding: 8rem 2rem; background: var(--surface); border-top: 1px solid var(--border); position: relative; overflow: hidden;">
 
-            <!-- Subtle geometric background -->
-            <div aria-hidden="true" style="position:absolute;inset:0;pointer-events:none;opacity:0.03;background-image:url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2280%22 height=%2280%22 viewBox=%220 0 80 80%22%3E%3Cpath fill=%22%230f4c3a%22 d=%22M40 0l5 15h15l-12 9 5 15-13-9-13 9 5-15-12-9h15z%22/%3E%3C/svg%3E');background-size:80px 80px;"></div>
-
-            <div style="max-width: 1200px; margin: 0 auto; position: relative;">
-
-                <!-- Section Header -->
-                <div class="section-header" style="text-align: center; margin-bottom: 3.5rem;">
-                    <p class="animate-on-scroll slide-up" style="color: var(--primary); font-weight: 700; text-transform: uppercase; letter-spacing: 0.15em; font-size: 0.85rem; margin-bottom: 0.75rem;">
-                        ☽ Islamic Content Hub
-                    </p>
-                    <h2 class="animate-on-scroll slide-up delay-100" style="font-family: var(--font-display); font-size: clamp(2rem, 4vw, 3rem); font-weight: 700; color: var(--text-main); margin-bottom: 0.75rem;">
-                        Daily Inspiration &amp; Reminders
-                    </h2>
-                    <p class="animate-on-scroll slide-up delay-200" style="color: var(--text-dim); font-size: 1rem; max-width: 520px; margin: 0 auto 1.25rem auto; line-height: 1.7;">
-                        Refreshed daily — Hadith, Dua, and an Islamic reminder to nourish the heart.
-                    </p>
-                    <button onclick="openBrowseModal()" class="animate-on-scroll slide-up delay-300" style="background: rgba(15,76,58,0.08); color: var(--primary); border: 1px solid rgba(15,76,58,0.25); padding: 0.6rem 1.4rem; border-radius: 50px; font-weight: 700; font-size: 0.88rem; cursor: pointer; display: inline-flex; align-items: center; gap: 0.5rem; transition: all 0.2s; margin-bottom: 1rem;" onmouseover="this.style.background='var(--primary)';this.style.color='#fff';" onmouseout="this.style.background='rgba(15,76,58,0.08)';this.style.color='var(--primary)';">
-                        🔍 Browse All 365 Items (Hadiths, Duas &amp; Reminders)
-                    </button>
-                </div>
-                <!-- Live Prayer Times Banner -->
-                <div class="animate-on-scroll slide-up" style="background: linear-gradient(135deg, #0F4C3A 0%, #082F24 100%); color: #fff; border-radius: 20px; padding: 1.75rem 2rem; margin-bottom: 2.5rem; box-shadow: 0 12px 36px rgba(15,76,58,0.25); border: 1px solid rgba(255,255,255,0.1);">
-                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.25rem; border-bottom: 1px solid rgba(255,255,255,0.15); padding-bottom: 1rem;">
-                        <div style="display: flex; align-items: center; gap: 0.75rem;">
-                            <span style="font-size: 1.5rem;">🕌</span>
-                            <div>
-                                <h3 style="font-size: 1.1rem; font-weight: 700; margin: 0; color: #fff; font-family: var(--font-display);">Daily Prayer Times</h3>
-                                <p style="font-size: 0.8rem; color: rgba(255,255,255,0.7); margin: 0;" id="prayerCityDisplay">📍 Ukkuda / Mangalore Region</p>
-                            </div>
-                        </div>
-                        <div style="background: rgba(255,255,255,0.12); padding: 0.5rem 1rem; border-radius: 12px; border: 1px solid rgba(255,255,255,0.2); text-align: right;">
-                            <span style="font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em; color: rgba(255,255,255,0.7); display: block;">Next Prayer</span>
-                            <strong id="nextPrayerCountdown" style="font-size: 0.95rem; color: #F4C430; font-weight: 700;">Loading...</strong>
-                        </div>
-                    </div>
-
-                    <!-- 6 Prayers Grid -->
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(90px, 1fr)); gap: 0.65rem; text-align: center;">
-                        <div class="prayer-box" id="pb-fajr" style="background: rgba(255,255,255,0.08); padding: 0.75rem 0.5rem; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); transition: all 0.3s;">
-                            <p style="font-size: 0.72rem; text-transform: uppercase; color: rgba(255,255,255,0.7); margin: 0 0 0.25rem 0; font-weight: 600;">Fajr</p>
-                            <p style="font-size: 1.05rem; font-weight: 700; color: #fff; margin: 0;" id="pt-fajr">05:08 AM</p>
-                        </div>
-                        <div class="prayer-box" id="pb-sunrise" style="background: rgba(255,255,255,0.04); padding: 0.75rem 0.5rem; border-radius: 12px; border: 1px solid rgba(255,255,255,0.08); transition: all 0.3s;">
-                            <p style="font-size: 0.72rem; text-transform: uppercase; color: rgba(255,255,255,0.5); margin: 0 0 0.25rem 0; font-weight: 600;">Sunrise</p>
-                            <p style="font-size: 1.05rem; font-weight: 700; color: rgba(255,255,255,0.65); margin: 0;" id="pt-sunrise">06:22 AM</p>
-                        </div>
-                        <div class="prayer-box" id="pb-dhuhr" style="background: rgba(255,255,255,0.08); padding: 0.75rem 0.5rem; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); transition: all 0.3s;">
-                            <p style="font-size: 0.72rem; text-transform: uppercase; color: rgba(255,255,255,0.7); margin: 0 0 0.25rem 0; font-weight: 600;">Dhuhr</p>
-                            <p style="font-size: 1.05rem; font-weight: 700; color: #fff; margin: 0;" id="pt-dhuhr">12:35 PM</p>
-                        </div>
-                        <div class="prayer-box" id="pb-asr" style="background: rgba(255,255,255,0.08); padding: 0.75rem 0.5rem; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); transition: all 0.3s;">
-                            <p style="font-size: 0.72rem; text-transform: uppercase; color: rgba(255,255,255,0.7); margin: 0 0 0.25rem 0; font-weight: 600;">Asr</p>
-                            <p style="font-size: 1.05rem; font-weight: 700; color: #fff; margin: 0;" id="pt-asr">03:52 PM</p>
-                        </div>
-                        <div class="prayer-box" id="pb-maghrib" style="background: rgba(255,255,255,0.08); padding: 0.75rem 0.5rem; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); transition: all 0.3s;">
-                            <p style="font-size: 0.72rem; text-transform: uppercase; color: rgba(255,255,255,0.7); margin: 0 0 0.25rem 0; font-weight: 600;">Maghrib</p>
-                            <p style="font-size: 1.05rem; font-weight: 700; color: #fff; margin: 0;" id="pt-maghrib">06:48 PM</p>
-                        </div>
-                        <div class="prayer-box" id="pb-isha" style="background: rgba(255,255,255,0.08); padding: 0.75rem 0.5rem; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); transition: all 0.3s;">
-                            <p style="font-size: 0.72rem; text-transform: uppercase; color: rgba(255,255,255,0.7); margin: 0 0 0.25rem 0; font-weight: 600;">Isha</p>
-                            <p style="font-size: 1.05rem; font-weight: 700; color: #fff; margin: 0;" id="pt-isha">08:02 PM</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 3 Cards Grid -->
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.75rem;">
-
-                    <!-- Card 1: Daily Hadith -->
-                    <div class="animate-on-scroll slide-from-left" style="background: var(--bg); border: 1px solid var(--border); border-radius: 24px; padding: 2.25rem; box-shadow: 0 4px 24px rgba(0,0,0,0.05); display: flex; flex-direction: column; gap: 1.25rem; transition: transform 0.25s ease, box-shadow 0.25s ease;" onmouseover="this.style.transform='translateY(-4px)';this.style.boxShadow='0 16px 40px rgba(15,76,58,0.12)'" onmouseout="this.style.transform='';this.style.boxShadow='0 4px 24px rgba(0,0,0,0.05)'">
-                        <div style="display: flex; align-items: center; gap: 0.75rem;">
-                            <div style="width:42px;height:42px;border-radius:12px;background:rgba(15,76,58,0.1);display:flex;align-items:center;justify-content:center;font-size:1.25rem;flex-shrink:0;">📖</div>
-                            <div>
-                                <p style="font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: var(--primary); margin-bottom: 0.1rem;">Daily Hadith</p>
-                                <p style="font-size: 0.8rem; color: var(--text-dim);" id="hadithDay">—</p>
-                            </div>
-                        </div>
-
-                        <blockquote id="hadithArabic" style="font-family: 'Amiri', 'El Messiri', serif; font-size: 1.3rem; line-height: 1.8; color: var(--text-main); text-align: right; direction: rtl; margin: 0; border-right: 3px solid var(--primary); padding-right: 1rem; font-style: normal;">
-                            —
-                        </blockquote>
-
-                        <p id="hadithText" style="font-size: 0.95rem; color: var(--text-dim); line-height: 1.75; font-style: italic; margin: 0; flex-grow: 1;">Loading...</p>
-
-                        <div style="display: flex; gap: 0.5rem; margin-top: auto; padding-top: 0.75rem; border-top: 1px solid var(--border); align-items: center; justify-content: space-between; flex-wrap: wrap;">
-                            <p id="hadithSource" style="font-size: 0.78rem; font-weight: 600; color: var(--primary); margin: 0;">—</p>
-                            <div style="display: flex; gap: 0.35rem;">
-                                <button onclick="shareItem('hadith')" style="background: rgba(37,211,102,0.12); color: #128C7E; border: none; border-radius: 8px; padding: 0.35rem 0.6rem; font-size: 0.75rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 0.25rem; transition: all 0.2s;" onmouseover="this.style.background='rgba(37,211,102,0.22)'" onmouseout="this.style.background='rgba(37,211,102,0.12)'" title="Share on WhatsApp">💬 Share</button>
-                                <button onclick="copyItem('hadith')" style="background: var(--surface); color: var(--text-main); border: 1px solid var(--border); border-radius: 8px; padding: 0.35rem 0.6rem; font-size: 0.75rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 0.25rem; transition: all 0.2s;" onmouseover="this.style.background='var(--border)'" onmouseout="this.style.background='var(--surface)'" title="Copy Text">📋 Copy</button>
-                                <button onclick="openCardGenerator('hadith')" style="background: rgba(15,76,58,0.1); color: var(--primary); border: 1px solid rgba(15,76,58,0.2); border-radius: 8px; padding: 0.35rem 0.6rem; font-size: 0.75rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 0.25rem; transition: all 0.2s;" onmouseover="this.style.background='rgba(15,76,58,0.2)'" onmouseout="this.style.background='rgba(15,76,58,0.1)'" title="Save as Image Card">🖼️ Card</button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Card 2: Dua of the Day -->
-                    <div class="animate-on-scroll slide-up delay-100" style="background: linear-gradient(135deg, rgba(15,76,58,0.06) 0%, rgba(15,76,58,0.02) 100%); border: 1px solid rgba(15,76,58,0.2); border-radius: 24px; padding: 2.25rem; box-shadow: 0 4px 24px rgba(0,0,0,0.05); display: flex; flex-direction: column; gap: 1.25rem; transition: transform 0.25s ease, box-shadow 0.25s ease;" onmouseover="this.style.transform='translateY(-4px)';this.style.boxShadow='0 16px 40px rgba(15,76,58,0.14)'" onmouseout="this.style.transform='';this.style.boxShadow='0 4px 24px rgba(0,0,0,0.05)'">
-                        <div style="display: flex; align-items: center; gap: 0.75rem;">
-                            <div style="width:42px;height:42px;border-radius:12px;background:rgba(15,76,58,0.15);display:flex;align-items:center;justify-content:center;font-size:1.25rem;flex-shrink:0;">🤲</div>
-                            <div>
-                                <p style="font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: var(--primary); margin-bottom: 0.1rem;">Dua of the Day</p>
-                                <p style="font-size: 0.8rem; color: var(--text-dim);" id="duaOccasion">—</p>
-                            </div>
-                        </div>
-
-                        <p id="duaArabic" style="font-family: 'Amiri', 'El Messiri', serif; font-size: 1.4rem; line-height: 1.9; color: var(--text-main); text-align: center; direction: rtl; margin: 0.25rem 0; background: rgba(15,76,58,0.06); padding: 1rem; border-radius: 12px;">—</p>
-
-                        <p id="duaTranslit" style="font-size: 0.88rem; color: var(--primary); font-style: italic; text-align: center; margin: 0;">—</p>
-
-                        <p id="duaTranslation" style="font-size: 0.93rem; color: var(--text-dim); line-height: 1.7; text-align: center; margin: 0; flex-grow: 1;">Loading...</p>
-
-                        <div style="display: flex; gap: 0.5rem; margin-top: auto; padding-top: 0.75rem; border-top: 1px solid rgba(15,76,58,0.15); align-items: center; justify-content: space-between; flex-wrap: wrap;">
-                            <p id="duaSource" style="font-size: 0.78rem; font-weight: 600; color: var(--text-dim); margin: 0;">—</p>
-                            <div style="display: flex; gap: 0.35rem;">
-                                <button onclick="shareItem('dua')" style="background: rgba(37,211,102,0.15); color: #075E54; border: none; border-radius: 8px; padding: 0.35rem 0.6rem; font-size: 0.75rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 0.25rem; transition: all 0.2s;" onmouseover="this.style.background='rgba(37,211,102,0.25)'" onmouseout="this.style.background='rgba(37,211,102,0.15)'" title="Share on WhatsApp">💬 Share</button>
-                                <button onclick="copyItem('dua')" style="background: rgba(15,76,58,0.08); color: var(--primary); border: 1px solid rgba(15,76,58,0.2); border-radius: 8px; padding: 0.35rem 0.6rem; font-size: 0.75rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 0.25rem; transition: all 0.2s;" onmouseover="this.style.background='rgba(15,76,58,0.15)'" onmouseout="this.style.background='rgba(15,76,58,0.08)'" title="Copy Text">📋 Copy</button>
-                                <button onclick="openCardGenerator('dua')" style="background: rgba(15,76,58,0.12); color: var(--primary); border: 1px solid rgba(15,76,58,0.25); border-radius: 8px; padding: 0.35rem 0.6rem; font-size: 0.75rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 0.25rem; transition: all 0.2s;" onmouseover="this.style.background='rgba(15,76,58,0.22)'" onmouseout="this.style.background='rgba(15,76,58,0.12)'" title="Save as Image Card">🖼️ Card</button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Card 3: Islamic Reminder -->
-                    <div class="animate-on-scroll slide-from-right" style="background: var(--primary); border-radius: 24px; padding: 2.25rem; box-shadow: 0 8px 32px rgba(15,76,58,0.3); display: flex; flex-direction: column; gap: 1.25rem; transition: transform 0.25s ease, box-shadow 0.25s ease;" onmouseover="this.style.transform='translateY(-4px)';this.style.boxShadow='0 20px 48px rgba(15,76,58,0.4)'" onmouseout="this.style.transform='';this.style.boxShadow='0 8px 32px rgba(15,76,58,0.3)'">
-                        <div style="display: flex; align-items: center; gap: 0.75rem;">
-                            <div style="width:42px;height:42px;border-radius:12px;background:rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;font-size:1.25rem;flex-shrink:0;">💡</div>
-                            <div>
-                                <p style="font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: rgba(255,255,255,0.7); margin-bottom: 0.1rem;">Islamic Reminder</p>
-                                <p style="font-size: 0.8rem; color: rgba(255,255,255,0.55);" id="reminderTopic">—</p>
-                            </div>
-                        </div>
-
-                        <p id="reminderArabic" style="font-family: 'Amiri', 'El Messiri', serif; font-size: 1.25rem; line-height: 1.8; color: rgba(255,255,255,0.9); text-align: right; direction: rtl; margin: 0; border-right: 3px solid rgba(255,255,255,0.3); padding-right: 1rem;">—</p>
-
-                        <p id="reminderText" style="font-size: 0.95rem; color: rgba(255,255,255,0.85); line-height: 1.75; margin: 0; flex-grow: 1;">Loading...</p>
-
-                        <div style="display: flex; gap: 0.5rem; margin-top: auto; padding-top: 0.75rem; border-top: 1px solid rgba(255,255,255,0.15); align-items: center; justify-content: space-between; flex-wrap: wrap;">
-                            <p id="reminderSource" style="font-size: 0.78rem; font-weight: 600; color: rgba(255,255,255,0.55); margin: 0;">—</p>
-                            <div style="display: flex; gap: 0.35rem;">
-                                <button onclick="shareItem('reminder')" style="background: rgba(37,211,102,0.3); color: #fff; border: none; border-radius: 8px; padding: 0.35rem 0.6rem; font-size: 0.75rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 0.25rem; transition: all 0.2s;" onmouseover="this.style.background='rgba(37,211,102,0.45)'" onmouseout="this.style.background='rgba(37,211,102,0.3)'" title="Share on WhatsApp">💬 Share</button>
-                                <button onclick="copyItem('reminder')" style="background: rgba(255,255,255,0.15); color: #fff; border: 1px solid rgba(255,255,255,0.25); border-radius: 8px; padding: 0.35rem 0.6rem; font-size: 0.75rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 0.25rem; transition: all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.3)'" onmouseout="this.style.background='rgba(255,255,255,0.15)'" title="Copy Text">📋 Copy</button>
-                                <button onclick="openCardGenerator('reminder')" style="background: rgba(255,255,255,0.25); color: #fff; border: 1px solid rgba(255,255,255,0.35); border-radius: 8px; padding: 0.35rem 0.6rem; font-size: 0.75rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 0.25rem; transition: all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.4)'" onmouseout="this.style.background='rgba(255,255,255,0.25)'" title="Save as Image Card">🖼️ Card</button>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-
-                <!-- Day indicator + nav dots -->
-                <div style="display: flex; justify-content: center; align-items: center; gap: 1.5rem; margin-top: 2.5rem;">
-                    <p class="animate-on-scroll slide-up" id="islamicDateDisplay" style="font-size: 0.85rem; color: var(--text-dim); font-weight: 500;"></p>
-                </div>
-
-            </div>
-        </section>
 
         <!-- Our Campuses Section -->
         <section id="ourCampuses"
-            style="padding: 6rem 2rem; background: var(--bg-desert); border-top: 1px solid var(--border);">
-            <div style="max-width: 1200px; margin: 0 auto;">
-                <div class="animate-on-scroll slide-from-left" style="text-align: center; margin-bottom: 4rem;">
-                    <p class="eyebrow-label" style="margin-bottom: 0.75rem;">Campus Network</p>
-                    <h2
-                        style="font-family: var(--font-display); font-size: clamp(2.5rem, 5vw, 4rem); font-weight: 700; color: var(--text-main);">
-                        OUR CAMPUSES</h2>
+            style="padding: 7rem 2rem; background: var(--bg-desert); border-top: 1px solid var(--border); position: relative; overflow: hidden;">
+            <!-- Campus garden background -->
+            <div style="position: absolute; inset: 0; background-image: url('campus-bg.jpg'); background-size: cover; background-position: center top; background-attachment: fixed; opacity: 0.20; z-index: 0; pointer-events: none;"></div>
+            <div style="max-width: 1200px; margin: 0 auto; position: relative; z-index: 1;">
+                <!-- Header -->
+                <div class="animate-on-scroll slide-up" style="text-align: center; margin-bottom: 3.5rem;">
+                    <p class="eyebrow-label" style="margin-bottom: 0.75rem;">🏛️ Institutional Network</p>
+                    <h2 style="font-family: var(--font-display); font-size: clamp(2.5rem, 5vw, 4rem); font-weight: 700; color: var(--text-main); margin-bottom: 1rem;">
+                        OUR CAMPUSES
+                    </h2>
+                    <p style="color: var(--text-dim); max-width: 720px; margin: 0 auto; font-size: 1.05rem; line-height: 1.7;">
+                        Muhyissunnah Dars operates 13 specialized campuses across Mangalore and Dakshina Kannada. Each campus is dedicated to traditional Islamic scholarship, academic rigor, modern digital facilities, and spiritual mentorship.
+                    </p>
                 </div>
 
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem;">
-                    <a href="campus.html?name=MSA%20UKKUDA" class="animate-on-scroll slide-up delay-100"
-                        style="padding: 1.5rem; border-radius: 16px; background: var(--surface); border: 1px solid var(--border); box-shadow: var(--shadow-sm); display: flex; align-items: center; gap: 1rem; transition: all 0.2s; text-decoration: none;"><span
-                            style="color: #0066CC; font-size: 1.5rem;">•</span> <strong
-                            style="color: var(--text-main);">MSA UKKUDA</strong> <span
-                            style="color: var(--primary); font-size: 0.85rem; margin-left: auto; font-weight: 700;">HQ
-                            →</span></a>
-                    <a href="campus.html?name=MSA%20CHATEKKAL" class="animate-on-scroll slide-up delay-100"
-                        style="padding: 1.5rem; border-radius: 16px; background: var(--surface); border: 1px solid var(--border); box-shadow: var(--shadow-sm); display: flex; align-items: center; gap: 1rem; transition: all 0.2s; text-decoration: none;"><span
-                            style="color: #0066CC; font-size: 1.5rem;">•</span> <strong
-                            style="color: var(--text-main);">MSA CHATEKKAL</strong> <span
-                            style="color: var(--text-dim); font-size: 0.85rem; margin-left: auto;">View →</span></a>
-                    <a href="campus.html?name=MSA%20MARIKKALA" class="animate-on-scroll slide-up delay-200"
-                        style="padding: 1.5rem; border-radius: 16px; background: var(--surface); border: 1px solid var(--border); box-shadow: var(--shadow-sm); display: flex; align-items: center; gap: 1rem; transition: all 0.2s; text-decoration: none;"><span
-                            style="color: #0066CC; font-size: 1.5rem;">•</span> <strong
-                            style="color: var(--text-main);">MSA MARIKKALA</strong> <span
-                            style="color: var(--text-dim); font-size: 0.85rem; margin-left: auto;">View →</span></a>
-                    <a href="campus.html?name=MSA%20NAVOOR" class="animate-on-scroll slide-up delay-200"
-                        style="padding: 1.5rem; border-radius: 16px; background: var(--surface); border: 1px solid var(--border); box-shadow: var(--shadow-sm); display: flex; align-items: center; gap: 1rem; transition: all 0.2s; text-decoration: none;"><span
-                            style="color: #0066CC; font-size: 1.5rem;">•</span> <strong
-                            style="color: var(--text-main);">MSA NAVOOR</strong> <span
-                            style="color: var(--text-dim); font-size: 0.85rem; margin-left: auto;">View →</span></a>
-                    <a href="campus.html?name=MSA%20GOLIYANGADI" class="animate-on-scroll slide-up delay-300"
-                        style="padding: 1.5rem; border-radius: 16px; background: var(--surface); border: 1px solid var(--border); box-shadow: var(--shadow-sm); display: flex; align-items: center; gap: 1rem; transition: all 0.2s; text-decoration: none;"><span
-                            style="color: #0066CC; font-size: 1.5rem;">•</span> <strong
-                            style="color: var(--text-main);">MSA GOLIYANGADI</strong> <span
-                            style="color: var(--text-dim); font-size: 0.85rem; margin-left: auto;">View →</span></a>
-                    <a href="campus.html?name=MSA%20RENJA" class="animate-on-scroll slide-up delay-300"
-                        style="padding: 1.5rem; border-radius: 16px; background: var(--surface); border: 1px solid var(--border); box-shadow: var(--shadow-sm); display: flex; align-items: center; gap: 1rem; transition: all 0.2s; text-decoration: none;"><span
-                            style="color: #0066CC; font-size: 1.5rem;">•</span> <strong
-                            style="color: var(--text-main);">MSA RENJA</strong> <span
-                            style="color: var(--text-dim); font-size: 0.85rem; margin-left: auto;">View →</span></a>
-                    <a href="campus.html?name=MSA%20KULIYOORPADAVU" class="animate-on-scroll slide-up delay-400"
-                        style="padding: 1.5rem; border-radius: 16px; background: var(--surface); border: 1px solid var(--border); box-shadow: var(--shadow-sm); display: flex; align-items: center; gap: 1rem; transition: all 0.2s; text-decoration: none;"><span
-                            style="color: #0066CC; font-size: 1.5rem;">•</span> <strong
-                            style="color: var(--text-main);">MSA KULIYOORPADAVU</strong> <span
-                            style="color: var(--text-dim); font-size: 0.85rem; margin-left: auto;">View →</span></a>
-                    <a href="campus.html?name=MSA%20BAJAL" class="animate-on-scroll slide-up delay-400"
-                        style="padding: 1.5rem; border-radius: 16px; background: var(--surface); border: 1px solid var(--border); box-shadow: var(--shadow-sm); display: flex; align-items: center; gap: 1rem; transition: all 0.2s; text-decoration: none;"><span
-                            style="color: #0066CC; font-size: 1.5rem;">•</span> <strong
-                            style="color: var(--text-main);">MSA BAJAL</strong> <span
-                            style="color: var(--text-dim); font-size: 0.85rem; margin-left: auto;">View →</span></a>
-                    <a href="campus.html?name=MSA%20SHEKMALE" class="animate-on-scroll slide-up delay-500"
-                        style="padding: 1.5rem; border-radius: 16px; background: var(--surface); border: 1px solid var(--border); box-shadow: var(--shadow-sm); display: flex; align-items: center; gap: 1rem; transition: all 0.2s; text-decoration: none;"><span
-                            style="color: #0066CC; font-size: 1.5rem;">•</span> <strong
-                            style="color: var(--text-main);">MSA SHEKMALE</strong> <span
-                            style="color: var(--text-dim); font-size: 0.85rem; margin-left: auto;">View →</span></a>
-                    <a href="campus.html?name=MSA%20KOPPA" class="animate-on-scroll slide-up delay-500"
-                        style="padding: 1.5rem; border-radius: 16px; background: var(--surface); border: 1px solid var(--border); box-shadow: var(--shadow-sm); display: flex; align-items: center; gap: 1rem; transition: all 0.2s; text-decoration: none;"><span
-                            style="color: #0066CC; font-size: 1.5rem;">•</span> <strong
-                            style="color: var(--text-main);">MSA KOPPA</strong> <span
-                            style="color: var(--text-dim); font-size: 0.85rem; margin-left: auto;">View →</span></a>
-                    <a href="campus.html?name=MSA%20DERADKA" class="animate-on-scroll slide-up delay-500"
-                        style="padding: 1.5rem; border-radius: 16px; background: var(--surface); border: 1px solid var(--border); box-shadow: var(--shadow-sm); display: flex; align-items: center; gap: 1rem; transition: all 0.2s; text-decoration: none;"><span
-                            style="color: #0066CC; font-size: 1.5rem;">•</span> <strong
-                            style="color: var(--text-main);">MSA DERADKA</strong> <span
-                            style="color: var(--text-dim); font-size: 0.85rem; margin-left: auto;">View →</span></a>
-                    <a href="campus.html?name=MSA%20UJIRE" class="animate-on-scroll slide-up delay-500"
-                        style="padding: 1.5rem; border-radius: 16px; background: var(--surface); border: 1px solid var(--border); box-shadow: var(--shadow-sm); display: flex; align-items: center; gap: 1rem; transition: all 0.2s; text-decoration: none;"><span
-                            style="color: #0066CC; font-size: 1.5rem;">•</span> <strong
-                            style="color: var(--text-main);">MSA UJIRE</strong> <span
-                            style="color: var(--text-dim); font-size: 0.85rem; margin-left: auto;">View →</span></a>
-                    <a href="campus.html?name=MSA%20KARVEL" class="animate-on-scroll slide-up delay-500"
-                        style="padding: 1.5rem; border-radius: 16px; background: var(--surface); border: 1px solid var(--border); box-shadow: var(--shadow-sm); display: flex; align-items: center; gap: 1rem; transition: all 0.2s; text-decoration: none;"><span
-                            style="color: #0066CC; font-size: 1.5rem;">•</span> <strong
-                            style="color: var(--text-main);">MSA KARVEL</strong> <span
-                            style="color: var(--text-dim); font-size: 0.85rem; margin-left: auto;">View →</span></a>
+                <!-- Network Stats Counter Bar -->
+                <div class="animate-on-scroll slide-up delay-100" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.25rem; margin-bottom: 3.5rem; text-align: center;">
+                    <div style="background: var(--surface); border: 1px solid var(--border); padding: 1.5rem 1rem; border-radius: 16px; box-shadow: var(--shadow-sm);">
+                        <span style="font-family: var(--font-display); font-size: 2.2rem; font-weight: 800; color: var(--primary); display: block;">13</span>
+                        <span style="font-size: 0.85rem; color: var(--text-dim); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;">Active Campuses</span>
+                    </div>
+                    <div style="background: var(--surface); border: 1px solid var(--border); padding: 1.5rem 1rem; border-radius: 16px; box-shadow: var(--shadow-sm);">
+                        <span style="font-family: var(--font-display); font-size: 2.2rem; font-weight: 800; color: var(--primary); display: block;">500+</span>
+                        <span style="font-size: 0.85rem; color: var(--text-dim); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;">Enrolled Students</span>
+                    </div>
+                    <div style="background: var(--surface); border: 1px solid var(--border); padding: 1.5rem 1rem; border-radius: 16px; box-shadow: var(--shadow-sm);">
+                        <span style="font-family: var(--font-display); font-size: 2.2rem; font-weight: 800; color: var(--primary); display: block;">50+</span>
+                        <span style="font-size: 0.85rem; color: var(--text-dim); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;">Scholarly Faculty</span>
+                    </div>
+                    <div style="background: var(--surface); border: 1px solid var(--border); padding: 1.5rem 1rem; border-radius: 16px; box-shadow: var(--shadow-sm);">
+                        <span style="font-family: var(--font-display); font-size: 2.2rem; font-weight: 800; color: var(--primary); display: block;">100%</span>
+                        <span style="font-size: 0.85rem; color: var(--text-dim); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;">Digital Attendance</span>
+                    </div>
                 </div>
+
+                <!-- Featured HQ Card (MSA Ukkuda) -->
+                <div class="animate-on-scroll slide-up delay-150" style="background: linear-gradient(135deg, #0F4C3A 0%, #082F24 100%); color: #fff; border-radius: 24px; padding: 2.5rem; margin-bottom: 3.5rem; box-shadow: 0 16px 40px rgba(15,76,58,0.3); border: 1px solid rgba(255,255,255,0.15); display: grid; grid-template-columns: 1fr auto; gap: 2rem; align-items: center;">
+                    <div>
+                        <span style="background: rgba(244, 196, 48, 0.2); color: #F4C430; border: 1px solid rgba(244, 196, 48, 0.4); padding: 0.3rem 0.85rem; border-radius: 50px; font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; display: inline-block; margin-bottom: 0.85rem;">🏛️ Central Headquarters</span>
+                        <h3 style="font-family: var(--font-display); font-size: 2rem; font-weight: 700; color: #fff; margin: 0 0 0.75rem 0;">MSA UKKUDA (Main Campus)</h3>
+                        <p style="color: rgba(255,255,255,0.82); font-size: 1rem; line-height: 1.65; max-width: 750px; margin: 0 0 1.5rem 0;">
+                            Serving as the central administrative seat and primary seat of higher learning for Muhyissunnah Dars. Features the Central Library, Hifz &amp; Kitab Research Division, Faculty Assembly, and Grand Mosque Complex.
+                        </p>
+                        <div style="display: flex; flex-wrap: wrap; gap: 0.75rem;">
+                            <span style="background: rgba(255,255,255,0.12); color: #fff; padding: 0.35rem 0.85rem; border-radius: 8px; font-size: 0.82rem; font-weight: 600;">📚 Central Library</span>
+                            <span style="background: rgba(255,255,255,0.12); color: #fff; padding: 0.35rem 0.85rem; border-radius: 8px; font-size: 0.82rem; font-weight: 600;">🕌 Grand Mosque</span>
+                            <span style="background: rgba(255,255,255,0.12); color: #fff; padding: 0.35rem 0.85rem; border-radius: 8px; font-size: 0.82rem; font-weight: 600;">🎓 Advanced Kitab Division</span>
+                            <span style="background: rgba(255,255,255,0.12); color: #fff; padding: 0.35rem 0.85rem; border-radius: 8px; font-size: 0.82rem; font-weight: 600;">🏡 Residential Hostel</span>
+                        </div>
+                    </div>
+                    <div style="display: flex; flex-direction: column; align-items: flex-end; justify-content: center; gap: 1rem;">
+                        <a href="campus.html?name=MSA%20UKKUDA" style="background: #F4C430; color: #082F24; text-decoration: none; padding: 0.9rem 1.75rem; border-radius: 14px; font-weight: 700; font-size: 0.95rem; display: inline-flex; align-items: center; gap: 0.5rem; box-shadow: 0 6px 20px rgba(0,0,0,0.25); transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.04)'" onmouseout="this.style.transform='scale(1)'">
+                            Explore HQ Campus Portal →
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Filter & Search Bar for Campuses -->
+                <div class="animate-on-scroll slide-up delay-200" style="margin-bottom: 2rem; display: flex; flex-direction: column; gap: 1rem;">
+                    <div style="display: flex; gap: 1rem; flex-wrap: wrap; justify-content: space-between; align-items: center;">
+                        <div>
+                            <h3 style="font-family: var(--font-display); font-size: 1.4rem; color: var(--text-main); font-weight: 700; margin: 0 0 0.4rem 0;">Branch Campuses Network</h3>
+                            <p style="font-size: 0.85rem; color: var(--text-dim); margin: 0;">Explore active campuses by location or filter by geographical region.</p>
+                        </div>
+                        <input type="text" id="campusSearchInput" oninput="filterCampusGrid()" placeholder="🔍 Search campus by name or location..." style="padding: 0.65rem 1.25rem; border-radius: 12px; border: 1px solid var(--border); background: var(--surface); color: var(--text-main); font-size: 0.9rem; min-width: 280px; outline: none;">
+                    </div>
+                    <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 0.25rem;">
+                        <button class="campus-region-btn" data-region="all" onclick="selectCampusRegion('all', this)" style="padding: 0.4rem 1.1rem; border-radius: 20px; border: 1px solid var(--primary); background: var(--primary); color: #fff; font-size: 0.82rem; font-weight: 600; cursor: pointer; transition: all 0.2s;">All Campuses (13)</button>
+                        <button class="campus-region-btn" data-region="hq" onclick="selectCampusRegion('hq', this)" style="padding: 0.4rem 1.1rem; border-radius: 20px; border: 1px solid var(--border); background: var(--surface); color: var(--text-main); font-size: 0.82rem; font-weight: 600; cursor: pointer; transition: all 0.2s;">Headquarters (1)</button>
+                        <button class="campus-region-btn" data-region="mangalore" onclick="selectCampusRegion('mangalore', this)" style="padding: 0.4rem 1.1rem; border-radius: 20px; border: 1px solid var(--border); background: var(--surface); color: var(--text-main); font-size: 0.82rem; font-weight: 600; cursor: pointer; transition: all 0.2s;">Mangalore Region (2)</button>
+                        <button class="campus-region-btn" data-region="bantwal" onclick="selectCampusRegion('bantwal', this)" style="padding: 0.4rem 1.1rem; border-radius: 20px; border: 1px solid var(--border); background: var(--surface); color: var(--text-main); font-size: 0.82rem; font-weight: 600; cursor: pointer; transition: all 0.2s;">Bantwal Region (5)</button>
+                        <button class="campus-region-btn" data-region="puttur" onclick="selectCampusRegion('puttur', this)" style="padding: 0.4rem 1.1rem; border-radius: 20px; border: 1px solid var(--border); background: var(--surface); color: var(--text-main); font-size: 0.82rem; font-weight: 600; cursor: pointer; transition: all 0.2s;">Puttur &amp; Belthangady (5)</button>
+                    </div>
+                </div>
+
+                <!-- 13 Campus Cards Grid -->
+                <div id="campusGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.5rem;">
+                    <!-- Campus 1: Ukkuda -->
+                    <div class="campus-card-item animate-on-scroll slide-up" data-name="msa ukkuda main headquarters mangalore" data-region="all hq mangalore" style="background: var(--surface); border: 1px solid var(--border); border-radius: 18px; padding: 1.5rem; box-shadow: var(--shadow-sm); display: flex; flex-direction: column; gap: 1rem; transition: transform 0.25s, box-shadow 0.25s;" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='var(--shadow-md)'" onmouseout="this.style.transform='';this.style.boxShadow='var(--shadow-sm)'">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                            <div>
+                                <span style="background: rgba(15,76,58,0.12); color: var(--primary); font-size: 0.72rem; font-weight: 700; text-transform: uppercase; padding: 0.25rem 0.6rem; border-radius: 6px;">Headquarters</span>
+                                <h4 style="font-family: var(--font-display); font-size: 1.2rem; font-weight: 700; color: var(--text-main); margin: 0.4rem 0 0.1rem 0;">MSA UKKUDA</h4>
+                                <p style="font-size: 0.8rem; color: var(--text-dim); margin: 0;">📍 Ukkuda, Mangalore</p>
+                            </div>
+                            <span style="font-size: 1.6rem;">🏛️</span>
+                        </div>
+                        <p style="font-size: 0.88rem; color: var(--text-dim); line-height: 1.55; margin: 0; flex-grow: 1;">
+                            Main administrative headquarters housing the central faculty, advanced dars curriculum, and registrar division.
+                        </p>
+                        <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border); padding-top: 0.8rem; margin-top: 0.25rem;">
+                            <span style="font-size: 0.78rem; font-weight: 600; color: var(--primary);">HQ · Full Portal</span>
+                            <a href="campus.html?name=MSA%20UKKUDA" style="color: var(--primary); font-weight: 700; font-size: 0.88rem; text-decoration: none;">View Portal →</a>
+                        </div>
+                    </div>
+
+                    <!-- Campus 2: Chatekkal -->
+                    <div class="campus-card-item animate-on-scroll slide-up" data-name="msa chatekkal bantwal region" data-region="all bantwal" style="background: var(--surface); border: 1px solid var(--border); border-radius: 18px; padding: 1.5rem; box-shadow: var(--shadow-sm); display: flex; flex-direction: column; gap: 1rem; transition: transform 0.25s, box-shadow 0.25s;" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='var(--shadow-md)'" onmouseout="this.style.transform='';this.style.boxShadow='var(--shadow-sm)'">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                            <div>
+                                <span style="background: rgba(0,102,204,0.1); color: #0066CC; font-size: 0.72rem; font-weight: 700; text-transform: uppercase; padding: 0.25rem 0.6rem; border-radius: 6px;">Official Campus</span>
+                                <h4 style="font-family: var(--font-display); font-size: 1.2rem; font-weight: 700; color: var(--text-main); margin: 0.4rem 0 0.1rem 0;">MSA CHATEKKAL</h4>
+                                <p style="font-size: 0.8rem; color: var(--text-dim); margin: 0;">📍 Chatekkal Region</p>
+                            </div>
+                            <span style="font-size: 1.6rem;">🏫</span>
+                        </div>
+                        <p style="font-size: 0.88rem; color: var(--text-dim); line-height: 1.55; margin: 0; flex-grow: 1;">
+                            Dedicated Dars branch providing intensive Shafi'i jurisprudence studies, Quranic Tajweed, and student residential facilities.
+                        </p>
+                        <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border); padding-top: 0.8rem; margin-top: 0.25rem;">
+                            <span style="font-size: 0.78rem; font-weight: 600; color: var(--text-dim);">Dars &amp; Hifz Wing</span>
+                            <a href="campus.html?name=MSA%20CHATEKKAL" style="color: var(--primary); font-weight: 700; font-size: 0.88rem; text-decoration: none;">View Portal →</a>
+                        </div>
+                    </div>
+
+                    <!-- Campus 3: Marikkala -->
+                    <div class="campus-card-item animate-on-scroll slide-up" data-name="msa marikkala region" data-region="all bantwal" style="background: var(--surface); border: 1px solid var(--border); border-radius: 18px; padding: 1.5rem; box-shadow: var(--shadow-sm); display: flex; flex-direction: column; gap: 1rem; transition: transform 0.25s, box-shadow 0.25s;" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='var(--shadow-md)'" onmouseout="this.style.transform='';this.style.boxShadow='var(--shadow-sm)'">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                            <div>
+                                <span style="background: rgba(0,102,204,0.1); color: #0066CC; font-size: 0.72rem; font-weight: 700; text-transform: uppercase; padding: 0.25rem 0.6rem; border-radius: 6px;">Official Campus</span>
+                                <h4 style="font-family: var(--font-display); font-size: 1.2rem; font-weight: 700; color: var(--text-main); margin: 0.4rem 0 0.1rem 0;">MSA MARIKKALA</h4>
+                                <p style="font-size: 0.8rem; color: var(--text-dim); margin: 0;">📍 Marikkala Region</p>
+                            </div>
+                            <span style="font-size: 1.6rem;">🎓</span>
+                        </div>
+                        <p style="font-size: 0.88rem; color: var(--text-dim); line-height: 1.55; margin: 0; flex-grow: 1;">
+                            Active learning campus with structured academic classes, student reading rooms, and faculty mentorship programs.
+                        </p>
+                        <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border); padding-top: 0.8rem; margin-top: 0.25rem;">
+                            <span style="font-size: 0.78rem; font-weight: 600; color: var(--text-dim);">Academic Complex</span>
+                            <a href="campus.html?name=MSA%20MARIKKALA" style="color: var(--primary); font-weight: 700; font-size: 0.88rem; text-decoration: none;">View Portal →</a>
+                        </div>
+                    </div>
+
+                    <!-- Campus 4: Navoor -->
+                    <div class="campus-card-item animate-on-scroll slide-up" data-name="msa navoor region" data-region="all bantwal" style="background: var(--surface); border: 1px solid var(--border); border-radius: 18px; padding: 1.5rem; box-shadow: var(--shadow-sm); display: flex; flex-direction: column; gap: 1rem; transition: transform 0.25s, box-shadow 0.25s;" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='var(--shadow-md)'" onmouseout="this.style.transform='';this.style.boxShadow='var(--shadow-sm)'">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                            <div>
+                                <span style="background: rgba(0,102,204,0.1); color: #0066CC; font-size: 0.72rem; font-weight: 700; text-transform: uppercase; padding: 0.25rem 0.6rem; border-radius: 6px;">Official Campus</span>
+                                <h4 style="font-family: var(--font-display); font-size: 1.2rem; font-weight: 700; color: var(--text-main); margin: 0.4rem 0 0.1rem 0;">MSA NAVOOR</h4>
+                                <p style="font-size: 0.8rem; color: var(--text-dim); margin: 0;">📍 Navoor Region</p>
+                            </div>
+                            <span style="font-size: 1.6rem;">📖</span>
+                        </div>
+                        <p style="font-size: 0.88rem; color: var(--text-dim); line-height: 1.55; margin: 0; flex-grow: 1;">
+                            Focuses on Islamic methodology, Arabic grammar (Nahw &amp; Sarf), and digital student management systems.
+                        </p>
+                        <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border); padding-top: 0.8rem; margin-top: 0.25rem;">
+                            <span style="font-size: 0.78rem; font-weight: 600; color: var(--text-dim);">Digital &amp; Classical</span>
+                            <a href="campus.html?name=MSA%20NAVOOR" style="color: var(--primary); font-weight: 700; font-size: 0.88rem; text-decoration: none;">View Portal →</a>
+                        </div>
+                    </div>
+
+                    <!-- Campus 5: Goliyangadi -->
+                    <div class="campus-card-item animate-on-scroll slide-up" data-name="msa goliyangadi region" data-region="all puttur" style="background: var(--surface); border: 1px solid var(--border); border-radius: 18px; padding: 1.5rem; box-shadow: var(--shadow-sm); display: flex; flex-direction: column; gap: 1rem; transition: transform 0.25s, box-shadow 0.25s;" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='var(--shadow-md)'" onmouseout="this.style.transform='';this.style.boxShadow='var(--shadow-sm)'">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                            <div>
+                                <span style="background: rgba(0,102,204,0.1); color: #0066CC; font-size: 0.72rem; font-weight: 700; text-transform: uppercase; padding: 0.25rem 0.6rem; border-radius: 6px;">Official Campus</span>
+                                <h4 style="font-family: var(--font-display); font-size: 1.2rem; font-weight: 700; color: var(--text-main); margin: 0.4rem 0 0.1rem 0;">MSA GOLIYANGADI</h4>
+                                <p style="font-size: 0.8rem; color: var(--text-dim); margin: 0;">📍 Goliyangadi Region</p>
+                            </div>
+                            <span style="font-size: 1.6rem;">🕌</span>
+                        </div>
+                        <p style="font-size: 0.88rem; color: var(--text-dim); line-height: 1.55; margin: 0; flex-grow: 1;">
+                            Traditional Sunni Dars featuring daily congregational study circles, prayer hall, and student library facilities.
+                        </p>
+                        <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border); padding-top: 0.8rem; margin-top: 0.25rem;">
+                            <span style="font-size: 0.78rem; font-weight: 600; color: var(--text-dim);">Dars Study Center</span>
+                            <a href="campus.html?name=MSA%20GOLIYANGADI" style="color: var(--primary); font-weight: 700; font-size: 0.88rem; text-decoration: none;">View Portal →</a>
+                        </div>
+                    </div>
+
+                    <!-- Campus 6: Renja -->
+                    <div class="campus-card-item animate-on-scroll slide-up" data-name="msa renja region" data-region="all puttur" style="background: var(--surface); border: 1px solid var(--border); border-radius: 18px; padding: 1.5rem; box-shadow: var(--shadow-sm); display: flex; flex-direction: column; gap: 1rem; transition: transform 0.25s, box-shadow 0.25s;" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='var(--shadow-md)'" onmouseout="this.style.transform='';this.style.boxShadow='var(--shadow-sm)'">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                            <div>
+                                <span style="background: rgba(0,102,204,0.1); color: #0066CC; font-size: 0.72rem; font-weight: 700; text-transform: uppercase; padding: 0.25rem 0.6rem; border-radius: 6px;">Official Campus</span>
+                                <h4 style="font-family: var(--font-display); font-size: 1.2rem; font-weight: 700; color: var(--text-main); margin: 0.4rem 0 0.1rem 0;">MSA RENJA</h4>
+                                <p style="font-size: 0.8rem; color: var(--text-dim); margin: 0;">📍 Renja Region</p>
+                            </div>
+                            <span style="font-size: 1.6rem;">📚</span>
+                        </div>
+                        <p style="font-size: 0.88rem; color: var(--text-dim); line-height: 1.55; margin: 0; flex-grow: 1;">
+                            Offers foundation to advanced Dars modules with continuous academic tracking and community moral education.
+                        </p>
+                        <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border); padding-top: 0.8rem; margin-top: 0.25rem;">
+                            <span style="font-size: 0.78rem; font-weight: 600; color: var(--text-dim);">Youth Dars Division</span>
+                            <a href="campus.html?name=MSA%20RENJA" style="color: var(--primary); font-weight: 700; font-size: 0.88rem; text-decoration: none;">View Portal →</a>
+                        </div>
+                    </div>
+
+                    <!-- Campus 7: Kuliyoorpadavu -->
+                    <div class="campus-card-item animate-on-scroll slide-up" data-name="msa kuliyoorpadavu region" data-region="all puttur" style="background: var(--surface); border: 1px solid var(--border); border-radius: 18px; padding: 1.5rem; box-shadow: var(--shadow-sm); display: flex; flex-direction: column; gap: 1rem; transition: transform 0.25s, box-shadow 0.25s;" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='var(--shadow-md)'" onmouseout="this.style.transform='';this.style.boxShadow='var(--shadow-sm)'">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                            <div>
+                                <span style="background: rgba(0,102,204,0.1); color: #0066CC; font-size: 0.72rem; font-weight: 700; text-transform: uppercase; padding: 0.25rem 0.6rem; border-radius: 6px;">Official Campus</span>
+                                <h4 style="font-family: var(--font-display); font-size: 1.2rem; font-weight: 700; color: var(--text-main); margin: 0.4rem 0 0.1rem 0;">MSA KULIYOORPADAVU</h4>
+                                <p style="font-size: 0.8rem; color: var(--text-dim); margin: 0;">📍 Kuliyoorpadavu Region</p>
+                            </div>
+                            <span style="font-size: 1.6rem;">🏡</span>
+                        </div>
+                        <p style="font-size: 0.88rem; color: var(--text-dim); line-height: 1.55; margin: 0; flex-grow: 1;">
+                            Equipped with modern classroom infrastructure, residential rooms, and structured daily study schedules.
+                        </p>
+                        <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border); padding-top: 0.8rem; margin-top: 0.25rem;">
+                            <span style="font-size: 0.78rem; font-weight: 600; color: var(--text-dim);">Residential Campus</span>
+                            <a href="campus.html?name=MSA%20KULIYOORPADAVU" style="color: var(--primary); font-weight: 700; font-size: 0.88rem; text-decoration: none;">View Portal →</a>
+                        </div>
+                    </div>
+
+                    <!-- Campus 8: Bajal -->
+                    <div class="campus-card-item animate-on-scroll slide-up" data-name="msa bajal mangalore" data-region="all mangalore" style="background: var(--surface); border: 1px solid var(--border); border-radius: 18px; padding: 1.5rem; box-shadow: var(--shadow-sm); display: flex; flex-direction: column; gap: 1rem; transition: transform 0.25s, box-shadow 0.25s;" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='var(--shadow-md)'" onmouseout="this.style.transform='';this.style.boxShadow='var(--shadow-sm)'">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                            <div>
+                                <span style="background: rgba(0,102,204,0.1); color: #0066CC; font-size: 0.72rem; font-weight: 700; text-transform: uppercase; padding: 0.25rem 0.6rem; border-radius: 6px;">Official Campus</span>
+                                <h4 style="font-family: var(--font-display); font-size: 1.2rem; font-weight: 700; color: var(--text-main); margin: 0.4rem 0 0.1rem 0;">MSA BAJAL</h4>
+                                <p style="font-size: 0.8rem; color: var(--text-dim); margin: 0;">📍 Bajal, Mangalore</p>
+                            </div>
+                            <span style="font-size: 1.6rem;">💻</span>
+                        </div>
+                        <p style="font-size: 0.88rem; color: var(--text-dim); line-height: 1.55; margin: 0; flex-grow: 1;">
+                            Urban Mangalore branch featuring digital classroom learning tools, attendance portal sync, and Hadith studies.
+                        </p>
+                        <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border); padding-top: 0.8rem; margin-top: 0.25rem;">
+                            <span style="font-size: 0.78rem; font-weight: 600; color: var(--text-dim);">Mangalore Urban Wing</span>
+                            <a href="campus.html?name=MSA%20BAJAL" style="color: var(--primary); font-weight: 700; font-size: 0.88rem; text-decoration: none;">View Portal →</a>
+                        </div>
+                    </div>
+
+                    <!-- Campus 9: Shekmale -->
+                    <div class="campus-card-item animate-on-scroll slide-up" data-name="msa shekmale region" data-region="all puttur" style="background: var(--surface); border: 1px solid var(--border); border-radius: 18px; padding: 1.5rem; box-shadow: var(--shadow-sm); display: flex; flex-direction: column; gap: 1rem; transition: transform 0.25s, box-shadow 0.25s;" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='var(--shadow-md)'" onmouseout="this.style.transform='';this.style.boxShadow='var(--shadow-sm)'">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                            <div>
+                                <span style="background: rgba(0,102,204,0.1); color: #0066CC; font-size: 0.72rem; font-weight: 700; text-transform: uppercase; padding: 0.25rem 0.6rem; border-radius: 6px;">Official Campus</span>
+                                <h4 style="font-family: var(--font-display); font-size: 1.2rem; font-weight: 700; color: var(--text-main); margin: 0.4rem 0 0.1rem 0;">MSA SHEKMALE</h4>
+                                <p style="font-size: 0.8rem; color: var(--text-dim); margin: 0;">📍 Shekmale Region</p>
+                            </div>
+                            <span style="font-size: 1.6rem;">📜</span>
+                        </div>
+                        <p style="font-size: 0.88rem; color: var(--text-dim); line-height: 1.55; margin: 0; flex-grow: 1;">
+                            Focuses on foundational Islamic literature, Quran memorization, and classical manuscript studies.
+                        </p>
+                        <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border); padding-top: 0.8rem; margin-top: 0.25rem;">
+                            <span style="font-size: 0.78rem; font-weight: 600; color: var(--text-dim);">Classical Studies</span>
+                            <a href="campus.html?name=MSA%20SHEKMALE" style="color: var(--primary); font-weight: 700; font-size: 0.88rem; text-decoration: none;">View Portal →</a>
+                        </div>
+                    </div>
+
+                    <!-- Campus 10: Koppa -->
+                    <div class="campus-card-item animate-on-scroll slide-up" data-name="msa koppa region" data-region="all puttur" style="background: var(--surface); border: 1px solid var(--border); border-radius: 18px; padding: 1.5rem; box-shadow: var(--shadow-sm); display: flex; flex-direction: column; gap: 1rem; transition: transform 0.25s, box-shadow 0.25s;" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='var(--shadow-md)'" onmouseout="this.style.transform='';this.style.boxShadow='var(--shadow-sm)'">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                            <div>
+                                <span style="background: rgba(0,102,204,0.1); color: #0066CC; font-size: 0.72rem; font-weight: 700; text-transform: uppercase; padding: 0.25rem 0.6rem; border-radius: 6px;">Official Campus</span>
+                                <h4 style="font-family: var(--font-display); font-size: 1.2rem; font-weight: 700; color: var(--text-main); margin: 0.4rem 0 0.1rem 0;">MSA KOPPA</h4>
+                                <p style="font-size: 0.8rem; color: var(--text-dim); margin: 0;">📍 Koppa Region</p>
+                            </div>
+                            <span style="font-size: 1.6rem;">🕌</span>
+                        </div>
+                        <p style="font-size: 0.88rem; color: var(--text-dim); line-height: 1.55; margin: 0; flex-grow: 1;">
+                            Serene residential learning campus providing intensive Tajweed training and comprehensive Islamic jurisprudence.
+                        </p>
+                        <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border); padding-top: 0.8rem; margin-top: 0.25rem;">
+                            <span style="font-size: 0.78rem; font-weight: 600; color: var(--text-dim);">Hifz &amp; Fiqh Wing</span>
+                            <a href="campus.html?name=MSA%20KOPPA" style="color: var(--primary); font-weight: 700; font-size: 0.88rem; text-decoration: none;">View Portal →</a>
+                        </div>
+                    </div>
+
+                    <!-- Campus 11: Deradka -->
+                    <div class="campus-card-item animate-on-scroll slide-up" data-name="msa deradka region" data-region="all bantwal" style="background: var(--surface); border: 1px solid var(--border); border-radius: 18px; padding: 1.5rem; box-shadow: var(--shadow-sm); display: flex; flex-direction: column; gap: 1rem; transition: transform 0.25s, box-shadow 0.25s;" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='var(--shadow-md)'" onmouseout="this.style.transform='';this.style.boxShadow='var(--shadow-sm)'">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                            <div>
+                                <span style="background: rgba(0,102,204,0.1); color: #0066CC; font-size: 0.72rem; font-weight: 700; text-transform: uppercase; padding: 0.25rem 0.6rem; border-radius: 6px;">Official Campus</span>
+                                <h4 style="font-family: var(--font-display); font-size: 1.2rem; font-weight: 700; color: var(--text-main); margin: 0.4rem 0 0.1rem 0;">MSA DERADKA</h4>
+                                <p style="font-size: 0.8rem; color: var(--text-dim); margin: 0;">📍 Deradka Region</p>
+                            </div>
+                            <span style="font-size: 1.6rem;">✨</span>
+                        </div>
+                        <p style="font-size: 0.88rem; color: var(--text-dim); line-height: 1.55; margin: 0; flex-grow: 1;">
+                            Active student campus with personalized faculty guidance, regular assessments, and youth study circles.
+                        </p>
+                        <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border); padding-top: 0.8rem; margin-top: 0.25rem;">
+                            <span style="font-size: 0.78rem; font-weight: 600; color: var(--text-dim);">Youth Dars</span>
+                            <a href="campus.html?name=MSA%20DERADKA" style="color: var(--primary); font-weight: 700; font-size: 0.88rem; text-decoration: none;">View Portal →</a>
+                        </div>
+                    </div>
+
+                    <!-- Campus 12: Ujire -->
+                    <div class="campus-card-item animate-on-scroll slide-up" data-name="msa ujire belthangady region" data-region="all puttur" style="background: var(--surface); border: 1px solid var(--border); border-radius: 18px; padding: 1.5rem; box-shadow: var(--shadow-sm); display: flex; flex-direction: column; gap: 1rem; transition: transform 0.25s, box-shadow 0.25s;" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='var(--shadow-md)'" onmouseout="this.style.transform='';this.style.boxShadow='var(--shadow-sm)'">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                            <div>
+                                <span style="background: rgba(0,102,204,0.1); color: #0066CC; font-size: 0.72rem; font-weight: 700; text-transform: uppercase; padding: 0.25rem 0.6rem; border-radius: 6px;">Official Campus</span>
+                                <h4 style="font-family: var(--font-display); font-size: 1.2rem; font-weight: 700; color: var(--text-main); margin: 0.4rem 0 0.1rem 0;">MSA UJIRE</h4>
+                                <p style="font-size: 0.8rem; color: var(--text-dim); margin: 0;">📍 Ujire / Belthangady</p>
+                            </div>
+                            <span style="font-size: 1.6rem;">🌴</span>
+                        </div>
+                        <p style="font-size: 0.88rem; color: var(--text-dim); line-height: 1.55; margin: 0; flex-grow: 1;">
+                            Prominent Belthangady regional branch providing higher Dars studies, digital library access, and alumni mentorship.
+                        </p>
+                        <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border); padding-top: 0.8rem; margin-top: 0.25rem;">
+                            <span style="font-size: 0.78rem; font-weight: 600; color: var(--text-dim);">Regional Center</span>
+                            <a href="campus.html?name=MSA%20UJIRE" style="color: var(--primary); font-weight: 700; font-size: 0.88rem; text-decoration: none;">View Portal →</a>
+                        </div>
+                    </div>
+
+                    <!-- Campus 13: Karvel -->
+                    <div class="campus-card-item animate-on-scroll slide-up" data-name="msa karvel region" data-region="all bantwal" style="background: var(--surface); border: 1px solid var(--border); border-radius: 18px; padding: 1.5rem; box-shadow: var(--shadow-sm); display: flex; flex-direction: column; gap: 1rem; transition: transform 0.25s, box-shadow 0.25s;" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='var(--shadow-md)'" onmouseout="this.style.transform='';this.style.boxShadow='var(--shadow-sm)'">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                            <div>
+                                <span style="background: rgba(0,102,204,0.1); color: #0066CC; font-size: 0.72rem; font-weight: 700; text-transform: uppercase; padding: 0.25rem 0.6rem; border-radius: 6px;">Official Campus</span>
+                                <h4 style="font-family: var(--font-display); font-size: 1.2rem; font-weight: 700; color: var(--text-main); margin: 0.4rem 0 0.1rem 0;">MSA KARVEL</h4>
+                                <p style="font-size: 0.8rem; color: var(--text-dim); margin: 0;">📍 Karvel Region</p>
+                            </div>
+                            <span style="font-size: 1.6rem;">📚</span>
+                        </div>
+                        <p style="font-size: 0.88rem; color: var(--text-dim); line-height: 1.55; margin: 0; flex-grow: 1;">
+                            Community Dars branch facilitating daily learning, Quranic recitation, and student progress monitoring.
+                        </p>
+                        <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border); padding-top: 0.8rem; margin-top: 0.25rem;">
+                            <span style="font-size: 0.78rem; font-weight: 600; color: var(--text-dim);">Community Dars</span>
+                            <a href="campus.html?name=MSA%20KARVEL" style="color: var(--primary); font-weight: 700; font-size: 0.88rem; text-decoration: none;">View Portal →</a>
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- Campus Admissions Guidance Banner -->
+                <div class="animate-on-scroll slide-up delay-400" style="margin-top: 3rem; background: linear-gradient(135deg, rgba(15,76,58,0.06) 0%, rgba(0,102,204,0.06) 100%); border: 1px solid var(--border); border-radius: 24px; padding: 2.5rem; display: grid; grid-template-columns: 1fr auto; gap: 2rem; align-items: center;">
+                    <div>
+                        <span style="color: var(--primary); font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; display: block; margin-bottom: 0.5rem;">🎒 Admissions Guidance</span>
+                        <h3 style="font-family: var(--font-display); font-size: 1.6rem; font-weight: 700; color: var(--text-main); margin: 0 0 0.75rem 0;">Interested in Enrolling at One of Our Campuses?</h3>
+                        <p style="color: var(--text-dim); font-size: 0.95rem; line-height: 1.6; margin: 0 0 1.25rem 0; max-width: 700px;">
+                            Students can register online for any of our 13 active campuses. Choose your preferred campus during registration, upload student credentials, and receive instant status updates through the student portal.
+                        </p>
+                        <div style="display: flex; gap: 1.5rem; flex-wrap: wrap;">
+                            <div style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.85rem; font-weight: 600; color: var(--text-main);">
+                                <span style="width: 24px; height: 24px; border-radius: 50%; background: var(--primary); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 700;">1</span> Select Preferred Campus
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.85rem; font-weight: 600; color: var(--text-main);">
+                                <span style="width: 24px; height: 24px; border-radius: 50%; background: var(--primary); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 700;">2</span> Submit Student Application
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.85rem; font-weight: 600; color: var(--text-main);">
+                                <span style="width: 24px; height: 24px; border-radius: 50%; background: var(--primary); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 700;">3</span> Faculty Interview &amp; Roll Issuance
+                            </div>
+                        </div>
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 0.75rem; min-width: 200px;">
+                        <a href="login.html?signup=true" class="btn btn-main" style="text-align: center; justify-content: center; width: 100%;">
+                            Apply for Admission →
+                        </a>
+                        <a href="mailto:campuses@msaukkuda.org" class="btn btn-ghost" style="text-align: center; justify-content: center; width: 100%; font-size: 0.85rem;">
+                            Campus Inquiries
+                        </a>
+                    </div>
+                </div>
+
             </div>
         </section>
+
+        <!-- Live Filter Script for Campuses -->
+        <script>
+        let activeRegionFilter = 'all';
+
+        function selectCampusRegion(region, btnElement) {
+            activeRegionFilter = region;
+            document.querySelectorAll('.campus-region-btn').forEach(b => {
+                b.style.background = 'var(--surface)';
+                b.style.color = 'var(--text-main)';
+                b.style.borderColor = 'var(--border)';
+            });
+            btnElement.style.background = 'var(--primary)';
+            btnElement.style.color = '#fff';
+            btnElement.style.borderColor = 'var(--primary)';
+            filterCampusGrid();
+        }
+
+        function filterCampusGrid() {
+            const input = document.getElementById('campusSearchInput');
+            const query = input ? input.value.toLowerCase().trim() : '';
+            const cards = document.querySelectorAll('.campus-card-item');
+
+            cards.forEach(card => {
+                const name = card.getAttribute('data-name') || '';
+                const region = card.getAttribute('data-region') || 'all';
+
+                const matchesQuery = !query || name.includes(query);
+                const matchesRegion = activeRegionFilter === 'all' || region.includes(activeRegionFilter);
+
+                if (matchesQuery && matchesRegion) {
+                    card.style.display = 'flex';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+        </script>
 
         <!-- FAQ Section -->
         <section id="faqSection"
@@ -721,564 +945,7 @@
     </script>
 
 
-    <!-- Islamic Content Hub Scripts -->
-    <script src="hadiths.js"></script>
-    <script src="duas.js"></script>
-    <script src="reminders.js"></script>
-    <script>
-    (function() {
-        const HADITHS_DEFAULT = [
-            { arabic: 'إِنَّمَا الأَعْمَالُ بِالنِّيَّاتِ، وَإِنَّمَا لِكُلِّ امْرِئٍ مَا نَوَى', text: '"Actions are but by intentions, and every person shall have only that which they intended."', source: 'Sahih Al-Bukhari 1 · Sahih Muslim 1907', day: 'On Intentions' }
-        ];
 
-        const DUAS_DEFAULT = [
-            { occasion: 'Morning Dua', arabic: 'اللَّهُمَّ بِكَ أَصْبَحْنَا وَبِكَ أَمْسَيْنَا وَبِكَ نَحْيَا وَبِكَ نَمُوتُ وَإِلَيْكَ النُّشُورُ', translit: 'Allahumma bika asbahna wa bika amsayna wa bika nahya wa bika namutu wa ilayka al-nushur', translation: 'O Allah, by You we enter the morning, by You we enter the evening, by You we live and die — and to You is the resurrection.', source: 'Tirmidhi 3391 · Abu Dawud 5068' }
-        ];
-
-        const REMINDERS_DEFAULT = [
-            { topic: 'On Gratitude', arabic: 'لَئِنْ شَكَرْتُمْ لَأَزِيدَنَّكُمْ', text: 'Allah says: "If you are grateful, I will surely increase you." — Gratitude is not just for the big moments; thank Allah for every breath, every meal, every moment of health. Shukr transforms ordinary life into worship.', source: 'Surah Ibrahim 14:7' }
-        ];
-
-        const HIJRI_MONTHS = ['Muharram','Safar','Rabi\' al-Awwal','Rabi\' al-Thani','Jumada al-Awwal','Jumada al-Thani','Rajab','Sha\'ban','Ramadan','Shawwal','Dhu al-Qi\'dah','Dhu al-Hijjah'];
-        const DAYS_EN = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
-
-        function getDayIndex(arr) {
-            const start = new Date(2025, 0, 1);
-            const diff = Math.floor((Date.now() - start) / 86400000);
-            return diff % arr.length;
-        }
-
-        function toHijri(date) {
-            // Simple approximate Hijri converter
-            const jd = Math.floor((date.getTime() / 86400000) + 2440587.5);
-            let l = jd - 1948440 + 10632;
-            const n = Math.floor((l - 1) / 10631);
-            l = l - 10631 * n + 354;
-            const j = Math.floor((10985 - l) / 5316) * Math.floor((50 * l) / 17719) +
-                      Math.floor(l / 5670) * Math.floor((43 * l) / 15238);
-            l = l - Math.floor((30 - j) / 15) * Math.floor((17719 * j) / 50) -
-                Math.floor(j / 16) * Math.floor((15238 * j) / 43) + 29;
-            const month = Math.floor((24 * l) / 709);
-            const day = l - Math.floor((709 * month) / 24);
-            const year = 30 * n + j - 30;
-            return { day, month: month - 1, year };
-        }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            const now = new Date();
-            const hadithsList = (window.HADITHS_365 && window.HADITHS_365.length > 0) ? window.HADITHS_365 : HADITHS_DEFAULT;
-            const duasList = (window.DUAS_365 && window.DUAS_365.length > 0) ? window.DUAS_365 : DUAS_DEFAULT;
-            const remindersList = (window.REMINDERS_365 && window.REMINDERS_365.length > 0) ? window.REMINDERS_365 : REMINDERS_DEFAULT;
-
-            const hi = getDayIndex(hadithsList);
-            const di = getDayIndex(duasList);
-            const ri = getDayIndex(remindersList);
-
-            const h = hadithsList[hi];
-            const d = duasList[di];
-            const r = remindersList[ri];
-
-            // Hadith card
-            document.getElementById('hadithDay').textContent = h.day;
-            document.getElementById('hadithArabic').textContent = h.arabic;
-            document.getElementById('hadithText').textContent = h.text;
-            document.getElementById('hadithSource').textContent = '📚 ' + h.source;
-
-            // Dua card
-            document.getElementById('duaOccasion').textContent = d.occasion;
-            document.getElementById('duaArabic').textContent = d.arabic;
-            document.getElementById('duaTranslit').textContent = d.translit;
-            document.getElementById('duaTranslation').textContent = d.translation;
-            document.getElementById('duaSource').textContent = '📚 ' + d.source;
-
-            // Reminder card
-            document.getElementById('reminderTopic').textContent = r.topic;
-            document.getElementById('reminderArabic').textContent = r.arabic;
-            document.getElementById('reminderText').textContent = r.text;
-            document.getElementById('reminderSource').textContent = '📖 ' + r.source;
-
-            // Date display
-            const hDate = toHijri(now);
-            const dayName = DAYS_EN[now.getDay()];
-            const greg = now.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
-            document.getElementById('islamicDateDisplay').textContent =
-                dayName + ' · ' + greg + '  |  ' + hDate.day + ' ' + (HIJRI_MONTHS[hDate.month] || '') + ' ' + hDate.year + ' AH';
-
-            // Initialize Prayer Times & Live Countdown
-            initPrayerTimes();
-        });
-
-        function initPrayerTimes() {
-            async function fetchLivePrayerTimes() {
-                try {
-                    const res = await fetch('https://api.aladhan.com/v1/timingsByCity?city=Mangalore&country=India&method=1');
-                    if (res.ok) {
-                        const data = await res.json();
-                        if (data && data.data && data.data.timings) {
-                            return data.data.timings;
-                        }
-                    }
-                } catch(e) { console.log('API fallback to local computation'); }
-                return null;
-            }
-
-            fetchLivePrayerTimes().then(apiTimings => {
-                let times = {
-                    Fajr: "05:08",
-                    Sunrise: "06:22",
-                    Dhuhr: "12:35",
-                    Asr: "15:52",
-                    Maghrib: "18:48",
-                    Isha: "20:02"
-                };
-
-                if (apiTimings) {
-                    times = {
-                        Fajr: apiTimings.Fajr.substring(0,5),
-                        Sunrise: apiTimings.Sunrise.substring(0,5),
-                        Dhuhr: apiTimings.Dhuhr.substring(0,5),
-                        Asr: apiTimings.Asr.substring(0,5),
-                        Maghrib: apiTimings.Maghrib.substring(0,5),
-                        Isha: apiTimings.Isha.substring(0,5)
-                    };
-                }
-
-                function format12h(tStr) {
-                    const [h, m] = tStr.split(':').map(Number);
-                    const ampm = h >= 12 ? 'PM' : 'AM';
-                    const h12 = h % 12 || 12;
-                    return `${h12 < 10 ? '0'+h12 : h12}:${m < 10 ? '0'+m : m} ${ampm}`;
-                }
-
-                if (document.getElementById('pt-fajr')) {
-                    document.getElementById('pt-fajr').textContent = format12h(times.Fajr);
-                    document.getElementById('pt-sunrise').textContent = format12h(times.Sunrise);
-                    document.getElementById('pt-dhuhr').textContent = format12h(times.Dhuhr);
-                    document.getElementById('pt-asr').textContent = format12h(times.Asr);
-                    document.getElementById('pt-maghrib').textContent = format12h(times.Maghrib);
-                    document.getElementById('pt-isha').textContent = format12h(times.Isha);
-                }
-
-                function tickCountdown() {
-                    const now = new Date();
-                    const prayerOrder = [
-                        { name: 'Fajr', id: 'pb-fajr', timeStr: times.Fajr },
-                        { name: 'Sunrise', id: 'pb-sunrise', timeStr: times.Sunrise },
-                        { name: 'Dhuhr', id: 'pb-dhuhr', timeStr: times.Dhuhr },
-                        { name: 'Asr', id: 'pb-asr', timeStr: times.Asr },
-                        { name: 'Maghrib', id: 'pb-maghrib', timeStr: times.Maghrib },
-                        { name: 'Isha', id: 'pb-isha', timeStr: times.Isha }
-                    ];
-
-                    let nextPrayer = null;
-                    let nextTime = null;
-
-                    for (let p of prayerOrder) {
-                        const [hh, mm] = p.timeStr.split(':').map(Number);
-                        const pDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hh, mm, 0);
-                        if (pDate > now) {
-                            nextPrayer = p;
-                            nextTime = pDate;
-                            break;
-                        }
-                    }
-
-                    if (!nextPrayer) {
-                        nextPrayer = prayerOrder[0];
-                        const [hh, mm] = times.Fajr.split(':').map(Number);
-                        nextTime = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, hh, mm, 0);
-                    }
-
-                    prayerOrder.forEach(p => {
-                        const el = document.getElementById(p.id);
-                        if (el) {
-                            el.style.background = (p.name === 'Sunrise') ? 'rgba(255,255,255,0.04)' : 'rgba(255,255,255,0.08)';
-                            el.style.borderColor = 'rgba(255,255,255,0.1)';
-                        }
-                    });
-
-                    const nextEl = document.getElementById(nextPrayer.id);
-                    if (nextEl) {
-                        nextEl.style.background = 'rgba(244, 196, 48, 0.22)';
-                        nextEl.style.borderColor = '#F4C430';
-                    }
-
-                    const diff = nextTime - now;
-                    const hours = Math.floor(diff / (1000 * 60 * 60));
-                    const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-                    const secs = Math.floor((diff % (1000 * 60)) / 1000);
-
-                    const hDisplay = hours > 0 ? `${hours}h ` : '';
-                    const mDisplay = `${mins < 10 ? '0' + mins : mins}m `;
-                    const sDisplay = `${secs < 10 ? '0' + secs : secs}s`;
-
-                    const cdEl = document.getElementById('nextPrayerCountdown');
-                    if (cdEl) {
-                        cdEl.textContent = `${nextPrayer.name} in ${hDisplay}${mDisplay}${sDisplay}`;
-                    }
-                }
-
-                tickCountdown();
-                setInterval(tickCountdown, 1000);
-            });
-        }
-
-        window.shareItem = function(type) {
-            let text = '';
-            if (type === 'hadith') {
-                const arabic = document.getElementById('hadithArabic').textContent.trim();
-                const body = document.getElementById('hadithText').textContent.trim();
-                const src = document.getElementById('hadithSource').textContent.trim();
-                text = `📖 *Daily Hadith — MSA Ukkuda*\n\n${arabic}\n\n${body}\n\n${src}\n\nRead daily reminders at: ${window.location.href}`;
-            } else if (type === 'dua') {
-                const occ = document.getElementById('duaOccasion').textContent.trim();
-                const arabic = document.getElementById('duaArabic').textContent.trim();
-                const translit = document.getElementById('duaTranslit').textContent.trim();
-                const trans = document.getElementById('duaTranslation').textContent.trim();
-                const src = document.getElementById('duaSource').textContent.trim();
-                text = `🤲 *Dua of the Day (${occ}) — MSA Ukkuda*\n\n${arabic}\n\n_${translit}_\n\n"${trans}"\n\n${src}\n\nVisit MSA Ukkuda: ${window.location.href}`;
-            } else if (type === 'reminder') {
-                const topic = document.getElementById('reminderTopic').textContent.trim();
-                const arabic = document.getElementById('reminderArabic').textContent.trim();
-                const body = document.getElementById('reminderText').textContent.trim();
-                const src = document.getElementById('reminderSource').textContent.trim();
-                text = `💡 *Islamic Reminder (${topic}) — MSA Ukkuda*\n\n${arabic}\n\n${body}\n\n${src}\n\nVisit MSA Ukkuda: ${window.location.href}`;
-            }
-            const url = 'https://api.whatsapp.com/send?text=' + encodeURIComponent(text);
-            window.open(url, '_blank');
-        };
-
-        window.copyItem = function(type) {
-            let text = '';
-            if (type === 'hadith') {
-                text = document.getElementById('hadithArabic').textContent.trim() + '\n\n' +
-                       document.getElementById('hadithText').textContent.trim() + '\n\n' +
-                       document.getElementById('hadithSource').textContent.trim();
-            } else if (type === 'dua') {
-                text = document.getElementById('duaArabic').textContent.trim() + '\n\n' +
-                       document.getElementById('duaTranslit').textContent.trim() + '\n\n' +
-                       document.getElementById('duaTranslation').textContent.trim() + '\n\n' +
-                       document.getElementById('duaSource').textContent.trim();
-            } else if (type === 'reminder') {
-                text = document.getElementById('reminderArabic').textContent.trim() + '\n\n' +
-                       document.getElementById('reminderText').textContent.trim() + '\n\n' +
-                       document.getElementById('reminderSource').textContent.trim();
-            }
-            navigator.clipboard.writeText(text).then(() => {
-                alert('Copied to clipboard!');
-            }).catch(() => {
-                const ta = document.createElement('textarea');
-                ta.value = text;
-                document.body.appendChild(ta);
-                ta.select();
-                document.execCommand('copy');
-                document.body.removeChild(ta);
-                alert('Copied to clipboard!');
-            });
-        };
-
-        window.openCardGenerator = function(type) {
-            const modal = document.getElementById('cardModal');
-            const canvas = document.getElementById('quoteCanvas');
-            const ctx = canvas.getContext('2d');
-
-            let title = '', sub = '', arabic = '', text = '', source = '';
-
-            if (type === 'hadith') {
-                title = 'DAILY HADITH';
-                sub = document.getElementById('hadithDay').textContent.trim();
-                arabic = document.getElementById('hadithArabic').textContent.trim();
-                text = document.getElementById('hadithText').textContent.trim();
-                source = document.getElementById('hadithSource').textContent.trim();
-            } else if (type === 'dua') {
-                title = 'DUA OF THE DAY';
-                sub = document.getElementById('duaOccasion').textContent.trim();
-                arabic = document.getElementById('duaArabic').textContent.trim();
-                text = document.getElementById('duaTranslation').textContent.trim();
-                source = document.getElementById('duaSource').textContent.trim();
-            } else if (type === 'reminder') {
-                title = 'ISLAMIC REMINDER';
-                sub = document.getElementById('reminderTopic').textContent.trim();
-                arabic = document.getElementById('reminderArabic').textContent.trim();
-                text = document.getElementById('reminderText').textContent.trim();
-                source = document.getElementById('reminderSource').textContent.trim();
-            }
-
-            // Clean source of emoji characters for sharp canvas rendering
-            source = source.replace(/[\u{1F300}-\u{1F9FF}]|[\u{2600}-\u{26FF}]|📚|📖/gu, '').trim();
-
-            const w = 1080, h = 1080;
-
-            // 1. Luxury Dark Emerald Radial Background
-            const bgGrad = ctx.createRadialGradient(w/2, h/2, 100, w/2, h/2, 700);
-            bgGrad.addColorStop(0, '#0F523E');
-            bgGrad.addColorStop(0.6, '#0B3B2D');
-            bgGrad.addColorStop(1, '#051A14');
-            ctx.fillStyle = bgGrad;
-            ctx.fillRect(0, 0, w, h);
-
-            // 2. Double Gold Borders with Corner Accents
-            ctx.strokeStyle = '#D4AF37'; // Royal Gold
-            ctx.lineWidth = 6;
-            ctx.strokeRect(45, 45, w - 90, h - 90);
-
-            ctx.strokeStyle = 'rgba(212, 175, 55, 0.4)';
-            ctx.lineWidth = 2;
-            ctx.strokeRect(57, 57, w - 114, h - 114);
-
-            // Corner Ornaments
-            const drawCorner = (x, y, r1, r2) => {
-                ctx.strokeStyle = '#D4AF37';
-                ctx.lineWidth = 3;
-                ctx.beginPath();
-                ctx.arc(x, y, 16, r1, r2);
-                ctx.stroke();
-            };
-            drawCorner(70, 70, 0, Math.PI / 2);
-            drawCorner(w - 70, 70, Math.PI / 2, Math.PI);
-            drawCorner(w - 70, h - 70, Math.PI, (3 * Math.PI) / 2);
-            drawCorner(70, h - 70, (3 * Math.PI) / 2, 2 * Math.PI);
-
-            // 3. Top Branding Header
-            ctx.textAlign = 'center';
-            ctx.fillStyle = 'rgba(255, 255, 255, 0.65)';
-            ctx.font = '600 22px Inter, sans-serif';
-            ctx.fillText('☪  MSA UKKUDA  •  ISLAMIC CONTENT HUB', w / 2, 110);
-
-            // 4. Category Title (Gold & Bold)
-            ctx.fillStyle = '#F4C430';
-            ctx.font = 'bold 30px Inter, sans-serif';
-            ctx.fillText(title, w / 2, 160);
-
-            // Subtitle / Topic (If exists, placed on separate line to prevent overflow)
-            let startY = 205;
-            if (sub && sub !== '—') {
-                ctx.fillStyle = '#E2E8F0';
-                ctx.font = '500 24px "Playfair Display", serif';
-                ctx.fillText(sub, w / 2, 198);
-                startY = 230;
-            }
-
-            // Gold Ornamental Line with Diamond
-            ctx.strokeStyle = 'rgba(212, 175, 55, 0.4)';
-            ctx.lineWidth = 1.5;
-            ctx.beginPath();
-            ctx.moveTo(w / 2 - 140, startY);
-            ctx.lineTo(w / 2 + 140, startY);
-            ctx.stroke();
-
-            ctx.fillStyle = '#D4AF37';
-            ctx.font = '16px serif';
-            ctx.fillText('◆', w / 2, startY + 5);
-
-            // 5. Calculate Body Text Heights for Dynamic Vertical Centering
-            const maxTextWidth = 880;
-            
-            // Adjust Arabic font size according to length
-            const arabicFontSize = arabic.length > 120 ? 38 : (arabic.length > 70 ? 44 : 50);
-            const arabicLineHeight = arabicFontSize * 1.5;
-            ctx.font = `${arabicFontSize}px "Amiri", "El Messiri", serif`;
-            const arabicLines = getWrappedLines(ctx, arabic, maxTextWidth);
-
-            ctx.font = 'italic 28px Inter, sans-serif';
-            const englishLines = getWrappedLines(ctx, text, maxTextWidth);
-            const englishLineHeight = 44;
-
-            const totalArabicH = arabicLines.length * arabicLineHeight;
-            const totalEnglishH = englishLines.length * englishLineHeight;
-            const contentH = totalArabicH + 45 + totalEnglishH;
-
-            // Compute ideal Y starting position so content is vertically centered
-            const boxTop = startY + 40;
-            const boxBottom = 880;
-            const availableH = boxBottom - boxTop;
-            let currentY = boxTop + (availableH - contentH) / 2;
-
-            if (currentY < boxTop) currentY = boxTop;
-
-            // 6. Draw Arabic Text
-            ctx.fillStyle = '#FFFFFF';
-            ctx.font = `${arabicFontSize}px "Amiri", "El Messiri", serif`;
-            ctx.direction = 'rtl';
-
-            for (let i = 0; i < arabicLines.length; i++) {
-                ctx.fillText(arabicLines[i], w / 2, currentY + (i * arabicLineHeight));
-            }
-
-            currentY += totalArabicH + 45;
-
-            // 7. Draw English Translation Text
-            ctx.direction = 'ltr';
-            ctx.fillStyle = 'rgba(240, 246, 252, 0.92)';
-            ctx.font = 'italic 28px Inter, sans-serif';
-
-            for (let i = 0; i < englishLines.length; i++) {
-                ctx.fillText(englishLines[i], w / 2, currentY + (i * englishLineHeight));
-            }
-
-            // 8. Footer Source Citation
-            ctx.fillStyle = '#F4C430';
-            ctx.font = '600 26px Inter, sans-serif';
-            ctx.fillText(source, w / 2, 940);
-
-            // Watermark / Link
-            ctx.fillStyle = 'rgba(255, 255, 255, 0.45)';
-            ctx.font = '500 20px Inter, sans-serif';
-            ctx.fillText('msaregistration.github.io', w / 2, 985);
-
-            modal.style.display = 'flex';
-        };
-
-        function getWrappedLines(ctx, text, maxWidth) {
-            if (!text) return [];
-            const words = text.split(' ');
-            const lines = [];
-            let line = '';
-
-            for (let n = 0; n < words.length; n++) {
-                const testLine = line + words[n] + ' ';
-                const metrics = ctx.measureText(testLine);
-                if (metrics.width > maxWidth && n > 0) {
-                    lines.push(line.trim());
-                    line = words[n] + ' ';
-                } else {
-                    line = testLine;
-                }
-            }
-            if (line.trim()) lines.push(line.trim());
-            return lines;
-        }
-
-        window.closeCardModal = function() {
-            document.getElementById('cardModal').style.display = 'none';
-        };
-
-        window.downloadQuoteCard = function() {
-            const canvas = document.getElementById('quoteCanvas');
-            const link = document.createElement('a');
-            link.download = 'msa-ukkuda-daily-reminder.png';
-            link.href = canvas.toDataURL('image/png');
-            link.click();
-        };
-
-        let currentBrowseTab = 'all';
-        window.openBrowseModal = function() {
-            document.getElementById('browseModal').style.display = 'flex';
-            renderBrowseItems();
-        };
-
-        window.closeBrowseModal = function() {
-            document.getElementById('browseModal').style.display = 'none';
-        };
-
-        window.setBrowseTab = function(tab) {
-            currentBrowseTab = tab;
-            document.querySelectorAll('.browse-tab').forEach(btn => {
-                btn.style.background = 'var(--surface)';
-                btn.style.color = 'var(--text-main)';
-                btn.style.borderColor = 'var(--border)';
-            });
-            const activeBtn = document.getElementById('tab-' + tab);
-            if (activeBtn) {
-                activeBtn.style.background = 'var(--primary)';
-                activeBtn.style.color = '#fff';
-                activeBtn.style.borderColor = 'var(--primary)';
-            }
-            renderBrowseItems();
-        };
-
-        window.renderBrowseItems = function() {
-            const container = document.getElementById('browseItemsContainer');
-            const query = (document.getElementById('browseSearchInput').value || '').toLowerCase().trim();
-            if (!container) return;
-
-            let allItems = [];
-            if (window.HADITHS_365 && (currentBrowseTab === 'all' || currentBrowseTab === 'hadith')) {
-                allItems.push(...window.HADITHS_365.map(item => ({ ...item, type: 'hadith', badge: '📖 Hadith', category: item.day })));
-            }
-            if (window.DUAS_365 && (currentBrowseTab === 'all' || currentBrowseTab === 'dua')) {
-                allItems.push(...window.DUAS_365.map(item => ({ ...item, type: 'dua', badge: '🤲 Dua', category: item.occasion, text: item.translation })));
-            }
-            if (window.REMINDERS_365 && (currentBrowseTab === 'all' || currentBrowseTab === 'reminder')) {
-                allItems.push(...window.REMINDERS_365.map(item => ({ ...item, type: 'reminder', badge: '💡 Reminder', category: item.topic })));
-            }
-
-            let filtered = allItems;
-            if (query) {
-                filtered = allItems.filter(item => {
-                    const str = ((item.arabic || '') + ' ' + (item.text || '') + ' ' + (item.translit || '') + ' ' + (item.source || '') + ' ' + (item.category || '')).toLowerCase();
-                    return str.includes(query);
-                });
-            }
-
-            // Cap render at 60 items for super smooth scrolling
-            const displayList = filtered.slice(0, 60);
-
-            if (displayList.length === 0) {
-                container.innerHTML = '<p style="text-align:center; color: var(--text-dim); padding: 3rem 0;">No matching items found for your search.</p>';
-                return;
-            }
-
-            container.innerHTML = displayList.map((item, idx) => `
-                <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 1.25rem; display: flex; flex-direction: column; gap: 0.75rem;">
-                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <span style="font-size: 0.72rem; font-weight: 700; text-transform: uppercase; color: var(--primary); background: rgba(15,76,58,0.08); padding: 0.25rem 0.6rem; border-radius: 6px;">${item.badge} · ${item.category || ''}</span>
-                        <span style="font-size: 0.75rem; color: var(--text-dim); font-weight: 600;">Day ${idx + 1}</span>
-                    </div>
-                    <p style="font-family: 'Amiri', 'El Messiri', serif; font-size: 1.2rem; color: var(--text-main); direction: rtl; text-align: right; margin: 0; line-height: 1.7;">${item.arabic}</p>
-                    ${item.translit ? `<p style="font-size: 0.85rem; color: var(--primary); font-style: italic; margin: 0;">${item.translit}</p>` : ''}
-                    <p style="font-size: 0.9rem; color: var(--text-dim); line-height: 1.6; margin: 0;">${item.text}</p>
-                    <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border); padding-top: 0.6rem; margin-top: 0.25rem;">
-                        <span style="font-size: 0.78rem; font-weight: 600; color: var(--primary);">${item.source}</span>
-                    </div>
-                </div>
-            `).join('');
-        };
-    })();
-    </script>
-
-    <!-- Browse All 365 Items Modal -->
-    <div id="browseModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(8px); z-index: 10000; align-items: center; justify-content: center; padding: 1.5rem;">
-        <div style="background: var(--bg-desert); border: 1px solid var(--border); border-radius: 24px; max-width: 850px; width: 100%; height: 85vh; display: flex; flex-direction: column; box-shadow: 0 24px 60px rgba(0,0,0,0.4); overflow: hidden; position: relative;">
-            <div style="padding: 1.5rem 2rem; background: var(--surface); border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; gap: 1rem;">
-                <div>
-                    <h3 style="font-family: var(--font-display); font-size: 1.35rem; color: var(--text-main); font-weight: 700; margin: 0;">📚 365 Islamic Content Library</h3>
-                    <p style="font-size: 0.8rem; color: var(--text-dim); margin: 0.25rem 0 0 0;">Search through all 365 Hadiths, Duas, and Daily Reminders</p>
-                </div>
-                <button onclick="closeBrowseModal()" style="background: rgba(0,0,0,0.06); border: none; font-size: 1.25rem; cursor: pointer; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--text-main);">&times;</button>
-            </div>
-            <div style="padding: 1.25rem 2rem; background: var(--surface); border-bottom: 1px solid var(--border); display: flex; flex-direction: column; gap: 0.85rem;">
-                <input type="text" id="browseSearchInput" oninput="renderBrowseItems()" placeholder="🔍 Search by topic, keywords, or Arabic text..." style="width: 100%; padding: 0.75rem 1.25rem; border-radius: 14px; border: 1px solid var(--border); background: var(--bg); color: var(--text-main); font-size: 0.95rem; outline: none;">
-                <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-                    <button class="browse-tab" onclick="setBrowseTab('all')" id="tab-all" style="padding: 0.4rem 1rem; border-radius: 30px; font-weight: 600; font-size: 0.82rem; cursor: pointer; border: 1px solid var(--primary); background: var(--primary); color: #fff;">All Items</button>
-                    <button class="browse-tab" onclick="setBrowseTab('hadith')" id="tab-hadith" style="padding: 0.4rem 1rem; border-radius: 30px; font-weight: 600; font-size: 0.82rem; cursor: pointer; border: 1px solid var(--border); background: var(--surface); color: var(--text-main);">📖 Hadiths (365)</button>
-                    <button class="browse-tab" onclick="setBrowseTab('dua')" id="tab-dua" style="padding: 0.4rem 1rem; border-radius: 30px; font-weight: 600; font-size: 0.82rem; cursor: pointer; border: 1px solid var(--border); background: var(--surface); color: var(--text-main);">🤲 Duas (365)</button>
-                    <button class="browse-tab" onclick="setBrowseTab('reminder')" id="tab-reminder" style="padding: 0.4rem 1rem; border-radius: 30px; font-weight: 600; font-size: 0.82rem; cursor: pointer; border: 1px solid var(--border); background: var(--surface); color: var(--text-main);">💡 Reminders (365)</button>
-                </div>
-            </div>
-            <div id="browseItemsContainer" style="padding: 1.5rem 2rem; overflow-y: auto; display: flex; flex-direction: column; gap: 1.25rem; flex-grow: 1;"></div>
-        </div>
-    </div>
-
-    <!-- Quote Card Generator Modal -->
-    <div id="cardModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); z-index: 10000; align-items: center; justify-content: center; padding: 1.5rem; overflow-y: auto;">
-        <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 24px; max-width: 540px; width: 100%; padding: 2rem; box-shadow: 0 24px 60px rgba(0,0,0,0.4); text-align: center; position: relative;">
-            <button onclick="closeCardModal()" style="position: absolute; top: 1.25rem; right: 1.25rem; background: rgba(0,0,0,0.06); border: none; font-size: 1.25rem; cursor: pointer; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--text-main);">&times;</button>
-            <h3 style="font-family: var(--font-display); font-size: 1.4rem; color: var(--text-main); margin-bottom: 0.25rem; font-weight: 700;">🎨 Download Image Card</h3>
-            <p style="font-size: 0.85rem; color: var(--text-dim); margin-bottom: 1.5rem;">Perfect size for WhatsApp Status &amp; Instagram Stories</p>
-            <div style="border-radius: 16px; overflow: hidden; box-shadow: 0 12px 32px rgba(0,0,0,0.2); margin-bottom: 1.5rem; background: #052219;">
-                <canvas id="quoteCanvas" width="1080" height="1080" style="width: 100%; height: auto; display: block; border-radius: 16px;"></canvas>
-            </div>
-            <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
-                <button onclick="downloadQuoteCard()" style="background: var(--primary); color: #fff; border: none; padding: 0.85rem 1.75rem; border-radius: 14px; font-weight: 700; font-size: 0.95rem; cursor: pointer; display: flex; align-items: center; gap: 0.5rem; box-shadow: 0 6px 20px rgba(15,76,58,0.3); transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.03)'" onmouseout="this.style.transform='scale(1)'">
-                    📥 Download PNG Image
-                </button>
-                <button onclick="closeCardModal()" style="background: var(--bg-desert); color: var(--text-main); border: 1px solid var(--border); padding: 0.85rem 1.25rem; border-radius: 14px; font-weight: 600; font-size: 0.9rem; cursor: pointer;">
-                    Close
-                </button>
-            </div>
-        </div>
-    </div>
 
     <!-- PWA Registration -->
     <script>

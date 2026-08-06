@@ -116,6 +116,8 @@ toggleModeLink.addEventListener("click", (e) => {
                 formTitle.textContent = "Create Account";
                 formSubtitle.textContent = "Sign up to begin your journey";
                 nameFieldContainer.classList.remove("hidden");
+                const campusFieldContainer = $("#campusFieldContainer");
+                if (campusFieldContainer) campusFieldContainer.classList.remove("hidden");
                 nameInput.required = true;
                 submitBtn.innerHTML = "Sign Up &rarr;";
                 toggleModeText.innerHTML = `Already have an account? <a href="#" id="toggleModeLink">Sign in</a>`;
@@ -132,6 +134,8 @@ toggleModeLink.addEventListener("click", (e) => {
                 formTitle.textContent = "Sign In";
                 formSubtitle.textContent = "Enter your credentials to continue";
                 nameFieldContainer.classList.add("hidden");
+                const campusFieldContainer = $("#campusFieldContainer");
+                if (campusFieldContainer) campusFieldContainer.classList.add("hidden");
                 nameInput.required = false;
                 if (alumniFieldsContainer) alumniFieldsContainer.classList.add("hidden");
                 submitBtn.innerHTML = "Sign In &rarr;";
@@ -196,6 +200,7 @@ form.addEventListener("submit", async (e) => {
             const userCred = await createUserWithEmailAndPassword(auth, email, password);
             const finalRole = email.toLowerCase() === "admin@msaukkuda.com" ? "admin" : selectedRole;
 
+            const selectedCampus = document.getElementById("loginCampus")?.value || "MSA UKKUDA";
             const dobVal = document.getElementById("loginDob")?.value || "";
             const bloodVal = document.getElementById("loginBlood")?.value.trim() || "";
             const aadharVal = document.getElementById("loginAadhar")?.value.trim() || "";
@@ -218,6 +223,8 @@ form.addEventListener("submit", async (e) => {
                 email,
                 fullName: name,
                 role: finalRole,
+                campus: selectedCampus,
+                campusId: selectedCampus,
                 dob: dobVal,
                 blood: bloodVal,
                 aadhar: aadharVal,

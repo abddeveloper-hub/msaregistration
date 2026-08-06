@@ -219,6 +219,7 @@ function initCommandPalette() {
 
     const commands = [
         { icon: "🌐", title: "Home Page", url: "index.html", cat: "Navigation" },
+        { icon: "🏛️", title: "Campus Network & Portals", url: "campus.html", cat: "Campuses" },
         { icon: "📚", title: "Digital Library & Audio Archive", url: "library.html", cat: "Resources" },
         { icon: "📅", title: "News & Upcoming Events", url: "events.html", cat: "Information" },
         { icon: "🖼️", title: "Photo & Media Gallery", url: "gallery.html", cat: "Media" },

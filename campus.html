@@ -395,6 +395,26 @@
         <h1 id="campusTitle">Loading Campus...</h1>
         <p id="campusDescription">Discover faculty scholars, enrolled students, honours, and activities at this Muhyissunnah Dars campus.</p>
 
+        <!-- Dynamic Campus Switcher -->
+        <div style="margin-top: 1.5rem; display: flex; justify-content: center; align-items: center; gap: 0.75rem; flex-wrap: wrap;">
+            <label for="campusSelectDropdown" style="font-size: 0.88rem; color: var(--text-dim); font-weight: 600;">Switch Campus Portal:</label>
+            <select id="campusSelectDropdown" style="padding: 0.6rem 1.25rem; border-radius: 12px; border: 1px solid var(--border); background: var(--surface); color: var(--text-main); font-weight: 600; font-size: 0.9rem; outline: none; cursor: pointer;">
+                <option value="MSA UKKUDA">MSA UKKUDA (Main HQ)</option>
+                <option value="MSA CHATEKKAL">MSA CHATEKKAL</option>
+                <option value="MSA MARIKKALA">MSA MARIKKALA</option>
+                <option value="MSA NAVOOR">MSA NAVOOR</option>
+                <option value="MSA GOLIYANGADI">MSA GOLIYANGADI</option>
+                <option value="MSA RENJA">MSA RENJA</option>
+                <option value="MSA KULIYOORPADAVU">MSA KULIYOORPADAVU</option>
+                <option value="MSA BAJAL">MSA BAJAL</option>
+                <option value="MSA SHEKMALE">MSA SHEKMALE</option>
+                <option value="MSA KOPPA">MSA KOPPA</option>
+                <option value="MSA DERADKA">MSA DERADKA</option>
+                <option value="MSA UJIRE">MSA UJIRE</option>
+                <option value="MSA KARVEL">MSA KARVEL</option>
+            </select>
+        </div>
+
         <div class="campus-stats-bar">
             <div class="campus-stat-chip">
                 <div class="val" id="statStudents">0</div>
@@ -412,7 +432,10 @@
 
         <!-- Campus Filter Tabs -->
         <div class="campus-tabs">
-            <button class="tab-btn active" data-tab="tabStudents">
+            <button class="tab-btn active" data-tab="tabOverview">
+                <span>🏛️</span> Overview &amp; Facilities
+            </button>
+            <button class="tab-btn" data-tab="tabStudents">
                 <span>🎓</span> Enrolled Students
             </button>
             <button class="tab-btn" data-tab="tabAchievements">
@@ -423,8 +446,48 @@
             </button>
         </div>
 
+        <!-- Tab 1: Campus Overview & Facilities -->
+        <div id="tabOverview" class="tab-pane active" style="margin-bottom: 2rem;">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
+                <div class="portal-card" style="padding: 1.75rem; background: var(--surface); border: 1px solid var(--border); border-radius: 18px;">
+                    <span style="color: var(--primary); font-weight: 700; font-size: 0.8rem; text-transform: uppercase;">Campus Details</span>
+                    <h3 id="overviewName" style="font-family: var(--font-display); font-size: 1.4rem; color: var(--text-main); margin: 0.5rem 0 1rem 0;">MSA UKKUDA</h3>
+                    <ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.75rem; font-size: 0.9rem; color: var(--text-main);">
+                        <li><strong>📍 Location:</strong> <span id="overviewLocation">Mangalore Region, Dakshina Kannada</span></li>
+                        <li><strong>🏛️ Campus Type:</strong> <span id="overviewType">Headquarters &amp; Central Seat</span></li>
+                        <li><strong>👨‍🏫 Academic Leadership:</strong> <span id="overviewScholars">Senior Sunni Scholars &amp; Qualified Lecturers</span></li>
+                        <li><strong>📖 Primary Programs:</strong> Classical Shafi'i Jurisprudence, Kitab Studies, Tajweed &amp; Hifz</li>
+                        <li><strong>💻 Digital Portal:</strong> Real-time Attendance &amp; Result Sync Enabled</li>
+                    </ul>
+                </div>
+
+                <div class="portal-card" style="padding: 1.75rem; background: var(--surface); border: 1px solid var(--border); border-radius: 18px;">
+                    <span style="color: var(--primary); font-weight: 700; font-size: 0.8rem; text-transform: uppercase;">Key Amenities</span>
+                    <h3 style="font-family: var(--font-display); font-size: 1.4rem; color: var(--text-main); margin: 0.5rem 0 1rem 0;">Infrastructure &amp; Facilities</h3>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div style="background: rgba(15,76,58,0.06); padding: 1rem; border-radius: 12px; border: 1px solid var(--border);">
+                            <span style="font-size: 1.25rem; display: block; margin-bottom: 0.25rem;">🕌</span>
+                            <strong style="font-size: 0.85rem; color: var(--text-main);">Congregational Mosque</strong>
+                        </div>
+                        <div style="background: rgba(15,76,58,0.06); padding: 1rem; border-radius: 12px; border: 1px solid var(--border);">
+                            <span style="font-size: 1.25rem; display: block; margin-bottom: 0.25rem;">🏡</span>
+                            <strong style="font-size: 0.85rem; color: var(--text-main);">Student Hostels</strong>
+                        </div>
+                        <div style="background: rgba(15,76,58,0.06); padding: 1rem; border-radius: 12px; border: 1px solid var(--border);">
+                            <span style="font-size: 1.25rem; display: block; margin-bottom: 0.25rem;">📚</span>
+                            <strong style="font-size: 0.85rem; color: var(--text-main);">Academic Library</strong>
+                        </div>
+                        <div style="background: rgba(15,76,58,0.06); padding: 1rem; border-radius: 12px; border: 1px solid var(--border);">
+                            <span style="font-size: 1.25rem; display: block; margin-bottom: 0.25rem;">💻</span>
+                            <strong style="font-size: 0.85rem; color: var(--text-dim);">Digital Study Wing</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Tab 2: Enrolled Students -->
-        <div id="tabStudents" class="tab-pane active">
+        <div id="tabStudents" class="tab-pane">
             <!-- Search & Filter Bar -->
             <div class="search-filter-bar">
                 <div class="search-input-wrap">

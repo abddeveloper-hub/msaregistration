@@ -567,15 +567,29 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
-    // 4. Hero Background Photo Motion Slideshow
-    const slides = document.querySelectorAll('.hero-slide');
-    if (slides.length > 1) {
+    // 4. Hero & Section Background Photo Motion Slideshows
+    const heroSlides = document.querySelectorAll('.hero-slide');
+    if (heroSlides.length > 1) {
         let currentSlide = 0;
         setInterval(() => {
-            slides[currentSlide].classList.remove('active');
-            currentSlide = (currentSlide + 1) % slides.length;
-            slides[currentSlide].classList.add('active');
+            heroSlides[currentSlide].classList.remove('active');
+            currentSlide = (currentSlide + 1) % heroSlides.length;
+            heroSlides[currentSlide].classList.add('active');
         }, 4800);
     }
+
+    // Motion rotator helper for section background photos
+    document.querySelectorAll('.motion-bg-slideshow').forEach(container => {
+        const slides = container.querySelectorAll('.motion-bg-slide');
+        if (slides.length > 1) {
+            let activeIdx = 0;
+            setInterval(() => {
+                slides[activeIdx].classList.remove('active');
+                activeIdx = (activeIdx + 1) % slides.length;
+                slides[activeIdx].classList.add('active');
+            }, 6000);
+        }
+    });
 });
+
 

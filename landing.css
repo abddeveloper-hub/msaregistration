@@ -524,3 +524,43 @@ p.txt-reveal, li.txt-reveal                 { transform: translateY(20px); }
         transition: none !important;
     }
 }
+
+/* ============================================================
+   SECTION BACKGROUND PHOTO MOTION & SMOOTH BLENDING
+   ============================================================ */
+.motion-bg-slideshow {
+    position: absolute;
+    inset: -5%;
+    z-index: 0;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.motion-bg-slide {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+    opacity: 0;
+    transform: scale(1.0);
+    transition: opacity 2.5s ease-in-out, transform 12s cubic-bezier(0.25, 1, 0.5, 1);
+    will-change: opacity, transform;
+}
+
+.motion-bg-slide.active {
+    opacity: 1;
+    transform: scale(1.12);
+}
+
+.motion-blend-divider {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 120px;
+    background: linear-gradient(180deg, var(--surface) 0%, transparent 100%);
+    z-index: 1;
+    pointer-events: none;
+}
+

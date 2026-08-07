@@ -202,8 +202,12 @@
 
         <!-- Institutional Achievements Section -->
         <section id="aboutInstitution" style="padding: 8rem 2rem; background: var(--surface); overflow: hidden; position: relative;">
-            <!-- Library background image -->
-            <div style="position: absolute; inset: 0; background-image: url('library-bg.jpg'); background-size: cover; background-position: center; background-attachment: fixed; opacity: 0.22; z-index: 0; pointer-events: none;"></div>
+            <!-- Motion background layer -->
+            <div class="motion-bg-slideshow" id="aboutMotionSlideshow" style="opacity: 0.24;">
+                <div class="motion-bg-slide active" style="background-image: url('library-bg.jpg');"></div>
+                <div class="motion-bg-slide" style="background-image: url('campus-bg.jpg');"></div>
+                <div class="motion-bg-slide" style="background-image: url('hero-bg.jpg');"></div>
+            </div>
             <div style="max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; gap: 4rem; position: relative; z-index: 1;">
                 <div class="animate-on-scroll slide-from-left" style="max-width: 700px;">
                     <p class="eyebrow-label" style="margin-bottom: 1rem;">Legacy of Excellence</p>
@@ -312,8 +316,13 @@
         <!-- Our Campuses Section -->
         <section id="ourCampuses"
             style="padding: 7rem 2rem; background: var(--bg-desert); border-top: 1px solid var(--border); position: relative; overflow: hidden;">
-            <!-- Campus garden background -->
-            <div style="position: absolute; inset: 0; background-image: url('campus-bg.jpg'); background-size: cover; background-position: center top; background-attachment: fixed; opacity: 0.20; z-index: 0; pointer-events: none;"></div>
+            <div class="motion-blend-divider"></div>
+            <!-- Motion background layer -->
+            <div class="motion-bg-slideshow" id="campusesMotionSlideshow" style="opacity: 0.22;">
+                <div class="motion-bg-slide active" style="background-image: url('campus-bg.jpg');"></div>
+                <div class="motion-bg-slide" style="background-image: url('library-bg.jpg');"></div>
+                <div class="motion-bg-slide" style="background-image: url('download (10).jpg');"></div>
+            </div>
             <div style="max-width: 1200px; margin: 0 auto; position: relative; z-index: 1;">
                 <!-- Header -->
                 <div class="animate-on-scroll slide-up" style="text-align: center; margin-bottom: 3.5rem;">

@@ -298,6 +298,59 @@
             </div>
         </section>
 
+        <!-- Daily Prayer Times & Hijri Calendar Section -->
+        <section id="prayerTimesSection" style="padding: 5rem 2rem; background: var(--surface-raised); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); position: relative; overflow: hidden;">
+            <div style="max-width: 1200px; margin: 0 auto; position: relative; z-index: 1;">
+                <div class="animate-on-scroll slide-up" style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 1.5rem; margin-bottom: 3rem;">
+                    <div>
+                        <span style="background: rgba(15,76,58,0.12); color: var(--primary); font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; padding: 0.4rem 1rem; border-radius: 50px; display: inline-block; margin-bottom: 0.75rem;">🕌 Campus Prayer Timetable</span>
+                        <h2 style="font-family: var(--font-display); font-size: clamp(2rem, 4vw, 3rem); font-weight: 700; color: var(--text-main); margin: 0;">Daily Prayer Schedule &amp; Hijri Date</h2>
+                    </div>
+                    <div style="background: var(--surface); border: 1px solid var(--border); padding: 0.75rem 1.5rem; border-radius: 50px; display: flex; align-items: center; gap: 0.75rem; box-shadow: var(--shadow-sm);">
+                        <span style="font-size: 1.2rem;">📅</span>
+                        <div>
+                            <div id="hijriDateDisplay" style="font-weight: 700; font-size: 0.95rem; color: var(--text-main);">Safar 1448 AH</div>
+                            <div style="font-size: 0.75rem; color: var(--text-dim);">Ukkuda / Mangalore Campus</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Prayer Times Cards Grid -->
+                <div id="prayerCardsGrid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1.25rem;">
+                    <div class="prayer-card" data-prayer="fajr" style="background: var(--surface); border: 1px solid var(--border); border-radius: 18px; padding: 1.5rem 1.25rem; text-align: center; transition: all 0.3s ease;">
+                        <div style="font-size: 1.8rem; margin-bottom: 0.5rem;">🌅</div>
+                        <h3 style="font-size: 1.1rem; font-weight: 700; color: var(--text-main); margin-bottom: 0.25rem;">Fajr</h3>
+                        <div style="font-size: 1.25rem; font-weight: 800; color: var(--primary); margin-bottom: 0.25rem;">05:05 AM</div>
+                        <span class="prayer-status-tag" style="font-size: 0.72rem; color: var(--text-dim); font-weight: 600;">Dawn Prayer</span>
+                    </div>
+                    <div class="prayer-card" data-prayer="dhuhr" style="background: var(--surface); border: 1px solid var(--border); border-radius: 18px; padding: 1.5rem 1.25rem; text-align: center; transition: all 0.3s ease;">
+                        <div style="font-size: 1.8rem; margin-bottom: 0.5rem;">☀️</div>
+                        <h3 style="font-size: 1.1rem; font-weight: 700; color: var(--text-main); margin-bottom: 0.25rem;">Dhuhr</h3>
+                        <div style="font-size: 1.25rem; font-weight: 800; color: var(--primary); margin-bottom: 0.25rem;">12:35 PM</div>
+                        <span class="prayer-status-tag" style="font-size: 0.72rem; color: var(--text-dim); font-weight: 600;">Noon Prayer</span>
+                    </div>
+                    <div class="prayer-card" data-prayer="asr" style="background: var(--surface); border: 1px solid var(--border); border-radius: 18px; padding: 1.5rem 1.25rem; text-align: center; transition: all 0.3s ease;">
+                        <div style="font-size: 1.8rem; margin-bottom: 0.5rem;">🌤️</div>
+                        <h3 style="font-size: 1.1rem; font-weight: 700; color: var(--text-main); margin-bottom: 0.25rem;">Asr</h3>
+                        <div style="font-size: 1.25rem; font-weight: 800; color: var(--primary); margin-bottom: 0.25rem;">04:15 PM</div>
+                        <span class="prayer-status-tag" style="font-size: 0.72rem; color: var(--text-dim); font-weight: 600;">Afternoon Prayer</span>
+                    </div>
+                    <div class="prayer-card" data-prayer="maghrib" style="background: var(--surface); border: 1px solid var(--border); border-radius: 18px; padding: 1.5rem 1.25rem; text-align: center; transition: all 0.3s ease;">
+                        <div style="font-size: 1.8rem; margin-bottom: 0.5rem;">🌆</div>
+                        <h3 style="font-size: 1.1rem; font-weight: 700; color: var(--text-main); margin-bottom: 0.25rem;">Maghrib</h3>
+                        <div style="font-size: 1.25rem; font-weight: 800; color: var(--primary); margin-bottom: 0.25rem;">06:50 PM</div>
+                        <span class="prayer-status-tag" style="font-size: 0.72rem; color: var(--text-dim); font-weight: 600;">Sunset Prayer</span>
+                    </div>
+                    <div class="prayer-card" data-prayer="isha" style="background: var(--surface); border: 1px solid var(--border); border-radius: 18px; padding: 1.5rem 1.25rem; text-align: center; transition: all 0.3s ease;">
+                        <div style="font-size: 1.8rem; margin-bottom: 0.5rem;">🌙</div>
+                        <h3 style="font-size: 1.1rem; font-weight: 700; color: var(--text-main); margin-bottom: 0.25rem;">Isha</h3>
+                        <div style="font-size: 1.25rem; font-weight: 800; color: var(--primary); margin-bottom: 0.25rem;">08:15 PM</div>
+                        <span class="prayer-status-tag" style="font-size: 0.72rem; color: var(--text-dim); font-weight: 600;">Night Prayer</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <!-- Premium Portal Access Section removed -->
 
 

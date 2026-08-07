@@ -1102,6 +1102,14 @@ html, body {
     textarea {
         font-size: 16px !important;
     }
+
+    .scroll-to-top-btn {
+        bottom: calc(75px + env(safe-area-inset-bottom)) !important;
+        right: 1.25rem !important;
+        width: 42px !important;
+        height: 42px !important;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2) !important;
+    }
 }
 
 

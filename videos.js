@@ -93,6 +93,15 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    let searchQuery = '';
+    const searchInput = document.getElementById('videoSearchInput');
+    if (searchInput) {
+        searchInput.addEventListener('input', (e) => {
+            searchQuery = (e.target.value || '').trim().toLowerCase();
+            renderGallery();
+        });
+    }
+
     function renderGallery() {
         galleryGrid.innerHTML = '';
         let visibleCount = 0;
@@ -100,8 +109,14 @@ document.addEventListener('DOMContentLoaded', () => {
         allPhotos.forEach(photo => {
             const videoCategory = photo.category || 'Video';
             const matchFilter = currentFilter === 'all' || videoCategory.toLowerCase() === currentFilter.toLowerCase();
+            
+            const title = (photo.title || '').toLowerCase();
+            const speaker = (photo.speaker || '').toLowerCase();
+            const category = (photo.category || '').toLowerCase();
+            const description = (photo.description || '').toLowerCase();
+            const matchSearch = !searchQuery || title.includes(searchQuery) || speaker.includes(searchQuery) || category.includes(searchQuery) || description.includes(searchQuery);
 
-            if (matchFilter) {
+            if (matchFilter && matchSearch) {
                 visibleCount++;
                 const delay = (visibleCount * 0.05).toFixed(2);
                 
@@ -180,6 +195,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const lightboxClose = document.getElementById('lightboxClose');
         const lightboxPrev = document.getElementById('lightboxPrev');
         const lightboxNext = document.getElementById('lightboxNext');
+        const lightboxShareBtn = document.getElementById('lightboxShareBtn');
 
         if (!lightbox) return;
 
@@ -284,6 +300,30 @@ document.addEventListener('DOMContentLoaded', () => {
         lightbox?.addEventListener('click', (e) => {
             if (e.target === lightbox) closeLightbox();
         });
+
+        if (lightboxShareBtn) {
+            lightboxShareBtn.onclick = (e) => {
+                e.stopPropagation();
+                if (currentIndex >= 0 && itemsWithImages[currentIndex]) {
+                    const item = itemsWithImages[currentIndex];
+                    let meta = {};
+                    try { meta = JSON.parse(decodeURIComponent(item.getAttribute('data-meta'))); } catch(err){}
+                    const title = meta.title || 'Video | Muhyissunnah Dars Ukkuda';
+                    const videoId = item.getAttribute('data-video-id');
+                    const shareUrl = videoId ? `https://www.youtube.com/watch?v=${videoId}` : window.location.href;
+
+                    if (navigator.share) {
+                        navigator.share({ title: title, text: `Watch "${title}" on Muhyissunnah Dars Ukkuda`, url: shareUrl }).catch(() => {});
+                    } else {
+                        navigator.clipboard.writeText(shareUrl).then(() => {
+                            const originalText = lightboxShareBtn.innerHTML;
+                            lightboxShareBtn.innerHTML = '✅ Copied!';
+                            setTimeout(() => { lightboxShareBtn.innerHTML = originalText; }, 2000);
+                        }).catch(() => {});
+                    }
+                }
+            };
+        }
 
         document.addEventListener('keydown', (e) => {
             if (!lightbox.classList.contains('open')) return;

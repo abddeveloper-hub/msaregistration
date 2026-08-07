@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Page Not Found (404) | Muhyissunnah Dars Ukkuda</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=El+Messiri:wght@400;500;600;700&family=Cairo:wght@400;700&family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Aref+Ruqaa:wght@400;700&family=Amiri:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="style.css?v=55">
+    <link rel="stylesheet" href="landing.css">
+    <link rel="stylesheet" href="mobile.css?v=55">
+    <link rel="icon" type="image/png" href="logo.png?v=2">
+    
+    <style>
+        body.error-404-page {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            background: var(--bg);
+            color: var(--text-main);
+            font-family: var(--font-ui);
+        }
+        .error-404-container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 8rem 2rem 4rem;
+            text-align: center;
+        }
+        .error-404-code {
+            font-family: var(--font-display);
+            font-size: clamp(5rem, 15vw, 9rem);
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-lapis) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1;
+            margin-bottom: 0.5rem;
+        }
+        .error-404-title {
+            font-size: clamp(1.5rem, 4vw, 2.2rem);
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--text-main);
+        }
+        .error-404-desc {
+            color: var(--text-dim);
+            font-size: 1.05rem;
+            line-height: 1.6;
+            margin-bottom: 2.5rem;
+        }
+        .error-404-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+    </style>
+</head>
+<body class="error-404-page">
+
+    <!-- Header Navigation -->
+    <header class="nav-wrapper">
+        <nav class="navbar" aria-label="Primary navigation">
+            <a class="brand-lockup" href="index.html" aria-label="Muhyissunnah Dars Ukkuda home">
+                <img src="logo.png?v=2" alt="MSA Ukkuda Logo" class="brand-logo-img">
+                <span class="brand-text">
+                    <strong style="font-family: 'Aref Ruqaa', 'Amiri', serif; letter-spacing: 0.04em; font-size: 1.35rem; line-height: 1; text-transform: uppercase; font-weight: 700;"><span class="brand-text-styled">Muhyissunnah Dars</span></strong>
+                    <span style="letter-spacing: 0.15em;">Ukkuda Official Portal</span>
+                </span>
+            </a>
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="library.html">Digital Library</a>
+                <a href="events.html">News & Events</a>
+                <a href="gallery.html">Gallery</a>
+                <a href="videos.html">Videos</a>
+                <a href="login.html" class="nav-login-btn">Login</a>
+            </div>
+        </nav>
+    </header>
+
+    <!-- 404 Main Content -->
+    <main class="error-404-container">
+        <div class="error-404-code">404</div>
+        <h1 class="error-404-title">Page Not Found</h1>
+        <p class="error-404-desc">The page you are looking for might have been removed, had its name changed, or is temporarily unavailable.</p>
+        <div class="error-404-actions">
+            <a href="index.html" class="btn btn-main" style="padding: 0.75rem 2rem;">Return to Home</a>
+            <a href="contact.html" class="btn btn-secondary" style="padding: 0.75rem 2rem;">Contact Support</a>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="ultra-footer">
+        <div class="footer-bottom" style="border: none; padding: 2rem 0; text-align: center; justify-content: center;">
+            <span>&copy; 2026 <span class="brand-text-styled">Muhyissunnah Dars Ukkuda</span>. All rights reserved.</span>
+        </div>
+    </footer>
+
+    <script type="module" src="nav-menu.js"></script>
+</body>
+</html>

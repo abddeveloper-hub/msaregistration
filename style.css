@@ -4915,4 +4915,18 @@ body.dark-mode .skeleton-box {
     color: var(--text-dim);
     font-size: 0.82rem;
 }
+
+/* Smooth Top Scroll Progress Indicator */
+.scroll-progress-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--primary) 0%, #fcd34d 100%);
+    z-index: 100002;
+    width: 0%;
+    transition: width 0.1s ease-out;
+    pointer-events: none;
+}
+
 

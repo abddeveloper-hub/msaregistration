@@ -566,4 +566,16 @@ document.addEventListener("DOMContentLoaded", () => {
             card.style.transform = `perspective(1000px) rotateX(0) rotateY(0) scale3d(1, 1, 1)`;
         });
     });
+
+    // 4. Hero Background Photo Motion Slideshow
+    const slides = document.querySelectorAll('.hero-slide');
+    if (slides.length > 1) {
+        let currentSlide = 0;
+        setInterval(() => {
+            slides[currentSlide].classList.remove('active');
+            currentSlide = (currentSlide + 1) % slides.length;
+            slides[currentSlide].classList.add('active');
+        }, 4800);
+    }
 });
+

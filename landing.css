@@ -44,11 +44,41 @@ body.landing-page {
     justify-content: center;
     padding: 8.5rem 2rem var(--space-16);
     position: relative;
-    background-image: url('download (9).jpg') !important;
-    background-size: cover !important;
-    background-position: center center !important;
-    background-repeat: no-repeat !important;
     overflow: hidden;
+    background: #000;
+}
+
+.hero-bg-slideshow {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    overflow: hidden;
+}
+
+.hero-slide {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+    opacity: 0;
+    transform: scale(1.0);
+    transition: opacity 2.2s ease-in-out, transform 8.5s cubic-bezier(0.25, 1, 0.5, 1);
+    will-change: opacity, transform;
+    filter: brightness(1.05) contrast(1.05);
+}
+
+.hero-slide.active {
+    opacity: 1;
+    transform: scale(1.10);
+}
+
+.hero-bg-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0.45) 0%, rgba(0, 0, 0, 0.30) 60%, rgba(0, 0, 0, 0.65) 100%);
+    pointer-events: none;
 }
 
 .hero-section::after {

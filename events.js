@@ -115,3 +115,42 @@ if (container && emptyState) {
         container.innerHTML = html;
     }
 }
+
+// Live Event Countdown Timer
+(function initEventCountdown() {
+    const cdDays = document.getElementById("cdDays");
+    const cdHours = document.getElementById("cdHours");
+    const cdMins = document.getElementById("cdMins");
+    const cdSecs = document.getElementById("cdSecs");
+
+    if (!cdDays) return;
+
+    const targetDate = new Date("2026-08-15T09:30:00+05:30").getTime();
+
+    function updateTimer() {
+        const now = new Date().getTime();
+        const diff = targetDate - now;
+
+        if (diff <= 0) {
+            cdDays.textContent = "00";
+            cdHours.textContent = "00";
+            cdMins.textContent = "00";
+            cdSecs.textContent = "00";
+            return;
+        }
+
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const secs = Math.floor((diff % (1000 * 60)) / 1000);
+
+        cdDays.textContent = String(days).padStart(2, "0");
+        cdHours.textContent = String(hours).padStart(2, "0");
+        cdMins.textContent = String(mins).padStart(2, "0");
+        cdSecs.textContent = String(secs).padStart(2, "0");
+    }
+
+    updateTimer();
+    setInterval(updateTimer, 1000);
+})();
+

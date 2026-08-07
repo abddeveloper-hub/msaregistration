@@ -69,6 +69,7 @@ function initToggleMenu() {
 
     initCommandPalette();
     initScrollToTop();
+    initGlobalAudioPlayer();
 }
 
 function initScrollToTop() {
@@ -393,3 +394,251 @@ onAuthStateChanged(auth, async (user) => {
         }
     }
 });
+
+function initGlobalAudioPlayer() {
+    if (typeof document === "undefined" || document.getElementById("globalAudioWidget")) return;
+
+    const widget = document.createElement("div");
+    widget.id = "globalAudioWidget";
+    widget.className = "global-audio-widget collapsed";
+    widget.innerHTML = `
+        <button id="audioWidgetToggleBtn" class="audio-widget-badge" aria-label="Toggle Audio Player">
+            <span class="audio-pulse-dot"></span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
+            <span style="font-weight:700; font-size:0.78rem;">Qira'at &amp; Speeches</span>
+        </button>
+        
+        <div class="audio-widget-panel">
+            <div class="audio-panel-header">
+                <div style="display:flex; align-items:center; gap:0.5rem;">
+                    <span style="font-size:1.1rem;">📖</span>
+                    <div>
+                        <div style="font-weight:700; font-size:0.85rem; color:var(--text-main, #fff);">Dars Audio Player</div>
+                        <div style="font-size:0.72rem; color:var(--text-dim, #94a3b8);">Recitations &amp; Speeches</div>
+                    </div>
+                </div>
+                <button id="closeAudioPanelBtn" style="background:none; border:none; color:var(--text-dim, #94a3b8); cursor:pointer; font-size:1rem; padding:4px;">✕</button>
+            </div>
+            
+            <div class="audio-track-info" style="margin-top: 0.25rem;">
+                <div id="audioTrackTitle" style="font-weight:700; font-size:0.88rem; color:var(--primary, #10b981); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">Surah Yaseen (Recitation)</div>
+                <div id="audioTrackArtist" style="font-size:0.76rem; color:var(--text-dim, #94a3b8);">Qari Safwan Al-Hafiz - MSA Ukkuda</div>
+            </div>
+
+            <audio id="globalAudioEl" src="https://cdn.islamicfinder.org/quran/audio/128/ar.alafasy/036.mp3" preload="none"></audio>
+            
+            <div class="audio-controls" style="margin-top: 0.5rem;">
+                <button id="audioPrevBtn" class="audio-btn" title="Previous Track">⏮</button>
+                <button id="audioPlayBtn" class="audio-btn main-play" title="Play/Pause">▶</button>
+                <button id="audioNextBtn" class="audio-btn" title="Next Track">⏭</button>
+                <div style="flex:1; display:flex; flex-direction:column; gap:2px; min-width:0;">
+                    <input type="range" id="audioProgressInput" min="0" max="100" value="0" style="width:100%; accent-color:var(--primary, #10b981); cursor:pointer; height:4px;">
+                    <div style="display:flex; justify-content:space-between; font-size:0.68rem; color:var(--text-dim, #94a3b8);">
+                        <span id="audioTimeCurrent">0:00</span>
+                        <span id="audioTimeDuration">0:00</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+
+    document.body.appendChild(widget);
+
+    if (!document.getElementById("globalAudioStyles")) {
+        const style = document.createElement("style");
+        style.id = "globalAudioStyles";
+        style.textContent = `
+            .global-audio-widget {
+                position: fixed;
+                bottom: calc(78px + env(safe-area-inset-bottom));
+                left: 1.25rem;
+                z-index: 9998;
+                font-family: var(--font-ui, inherit);
+                transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            }
+            .audio-widget-badge {
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                background: var(--surface-solid, #0f172a);
+                color: var(--text-main, #fff);
+                border: 1px solid var(--border, rgba(255,255,255,0.15));
+                padding: 0.5rem 0.9rem;
+                border-radius: 50px;
+                box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+                cursor: pointer;
+                transition: transform 0.2s, background 0.2s;
+            }
+            .audio-widget-badge:hover {
+                transform: translateY(-2px);
+                border-color: var(--primary, #0f4c3a);
+            }
+            .audio-pulse-dot {
+                width: 8px;
+                height: 8px;
+                border-radius: 50%;
+                background: var(--primary, #10b981);
+                box-shadow: 0 0 0 0 rgba(16,185,129,0.4);
+                animation: audioPulse 1.8s infinite;
+            }
+            @keyframes audioPulse {
+                0%, 100% { box-shadow: 0 0 0 0 rgba(16,185,129,0.5); }
+                50% { box-shadow: 0 0 0 8px rgba(16,185,129,0); }
+            }
+            .global-audio-widget.collapsed .audio-widget-panel {
+                display: none;
+            }
+            .global-audio-widget:not(.collapsed) .audio-widget-badge {
+                display: none;
+            }
+            .audio-widget-panel {
+                width: 310px;
+                background: var(--surface-solid, #0f172a);
+                border: 1px solid var(--border, rgba(255,255,255,0.15));
+                border-radius: 18px;
+                padding: 1rem;
+                box-shadow: 0 12px 32px rgba(0,0,0,0.3);
+                display: flex;
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+            .audio-panel-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                border-bottom: 1px solid var(--border, rgba(255,255,255,0.1));
+                padding-bottom: 0.5rem;
+            }
+            .audio-controls {
+                display: flex;
+                align-items: center;
+                gap: 0.6rem;
+            }
+            .audio-btn {
+                background: var(--surface-raised, rgba(255,255,255,0.08));
+                border: 1px solid var(--border, rgba(255,255,255,0.1));
+                color: var(--text-main, #fff);
+                border-radius: 50%;
+                width: 32px;
+                height: 32px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                font-size: 0.8rem;
+                flex-shrink: 0;
+            }
+            .audio-btn.main-play {
+                background: var(--primary, #0f4c3a);
+                color: #fff;
+                width: 36px;
+                height: 36px;
+                font-size: 0.9rem;
+            }
+            @media (min-width: 769px) {
+                .global-audio-widget {
+                    bottom: 2rem;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    }
+
+    const playlist = [
+        {
+            title: "Surah Yaseen (Recitation)",
+            artist: "Qari Safwan Al-Hafiz - MSA Ukkuda",
+            src: "https://cdn.islamicfinder.org/quran/audio/128/ar.alafasy/036.mp3"
+        },
+        {
+            title: "Surah Al-Mulk (Night Recitation)",
+            artist: "Qari Rayyan Al-Fazili",
+            src: "https://cdn.islamicfinder.org/quran/audio/128/ar.alafasy/067.mp3"
+        },
+        {
+            title: "Surah Ar-Rahman",
+            artist: "Dars Students Qira'at Group",
+            src: "https://cdn.islamicfinder.org/quran/audio/128/ar.alafasy/055.mp3"
+        }
+    ];
+
+    let trackIdx = 0;
+    const audioEl = document.getElementById("globalAudioEl");
+    const playBtn = document.getElementById("audioPlayBtn");
+    const prevBtn = document.getElementById("audioPrevBtn");
+    const nextBtn = document.getElementById("audioNextBtn");
+    const titleEl = document.getElementById("audioTrackTitle");
+    const artistEl = document.getElementById("audioTrackArtist");
+    const progressInput = document.getElementById("audioProgressInput");
+    const timeCurrent = document.getElementById("audioTimeCurrent");
+    const timeDuration = document.getElementById("audioTimeDuration");
+    const toggleBtn = document.getElementById("audioWidgetToggleBtn");
+    const closeBtn = document.getElementById("closeAudioPanelBtn");
+
+    function formatSecs(sec) {
+        if (isNaN(sec)) return "0:00";
+        const m = Math.floor(sec / 60);
+        const s = Math.floor(sec % 60);
+        return `${m}:${s < 10 ? '0' : ''}${s}`;
+    }
+
+    function loadTrack(idx) {
+        trackIdx = idx;
+        const track = playlist[trackIdx];
+        if (!track) return;
+        titleEl.textContent = track.title;
+        artistEl.textContent = track.artist;
+        audioEl.src = track.src;
+        progressInput.value = 0;
+        timeCurrent.textContent = "0:00";
+        timeDuration.textContent = "0:00";
+    }
+
+    toggleBtn?.addEventListener("click", () => widget.classList.remove("collapsed"));
+    closeBtn?.addEventListener("click", () => widget.classList.add("collapsed"));
+
+    playBtn?.addEventListener("click", () => {
+        if (audioEl.paused) {
+            audioEl.play().then(() => {
+                playBtn.textContent = "⏸";
+            }).catch(e => console.warn(e));
+        } else {
+            audioEl.pause();
+            playBtn.textContent = "▶";
+        }
+    });
+
+    prevBtn?.addEventListener("click", () => {
+        trackIdx = (trackIdx - 1 + playlist.length) % playlist.length;
+        loadTrack(trackIdx);
+        audioEl.play().then(() => playBtn.textContent = "⏸").catch(e => console.warn(e));
+    });
+
+    nextBtn?.addEventListener("click", () => {
+        trackIdx = (trackIdx + 1) % playlist.length;
+        loadTrack(trackIdx);
+        audioEl.play().then(() => playBtn.textContent = "⏸").catch(e => console.warn(e));
+    });
+
+    audioEl?.addEventListener("timeupdate", () => {
+        if (audioEl.duration) {
+            const pct = (audioEl.currentTime / audioEl.duration) * 100;
+            progressInput.value = pct;
+            timeCurrent.textContent = formatSecs(audioEl.currentTime);
+            timeDuration.textContent = formatSecs(audioEl.duration);
+        }
+    });
+
+    progressInput?.addEventListener("input", () => {
+        if (audioEl.duration) {
+            audioEl.currentTime = (progressInput.value / 100) * audioEl.duration;
+        }
+    });
+
+    audioEl?.addEventListener("ended", () => {
+        nextBtn?.click();
+    });
+
+    loadTrack(0);
+}
+

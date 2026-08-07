@@ -111,9 +111,19 @@
                     <div style="text-align: left;">
                         <span style="background: var(--primary-glow); color: var(--primary); font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; padding: 0.4rem 1rem; border-radius: 30px; display: inline-block; margin-bottom: 1.5rem;">Featured Event Flyer</span>
                         <h3 style="font-family: var(--font-display); font-size: clamp(1.8rem, 3vw, 2.4rem); font-weight: 700; color: var(--text-main); margin: 0 0 1rem; line-height: 1.2;">Muthaalim Gathering</h3>
-                        <p style="color: var(--text-dim); font-size: 1.1rem; line-height: 1.6; margin-bottom: 2rem;">
+                        <p style="color: var(--text-dim); font-size: 1.1rem; line-height: 1.6; margin-bottom: 1.5rem;">
                             Join us for an inspiring program of Islamic knowledge, spiritual reflection, and community unity. A special gathering tailored for Muthaalim and students.
                         </p>
+                        <!-- Live Countdown Widget -->
+                        <div style="margin-bottom: 1.5rem; background: rgba(15,76,58,0.06); border: 1px solid var(--border); border-radius: 16px; padding: 1rem 1.25rem;">
+                            <div style="font-size: 0.78rem; font-weight: 700; text-transform: uppercase; color: var(--primary); letter-spacing: 0.08em; margin-bottom: 0.5rem;">⏱️ Event Live Countdown</div>
+                            <div id="eventCountdown" style="display: flex; gap: 0.75rem; text-align: center; flex-wrap: wrap;">
+                                <div style="background: var(--surface); padding: 0.5rem 0.8rem; border-radius: 10px; min-width: 55px; border: 1px solid var(--border);"><span id="cdDays" style="font-size: 1.2rem; font-weight: 800; color: var(--text-main); display: block;">00</span><span style="font-size: 0.65rem; color: var(--text-dim); text-transform: uppercase;">Days</span></div>
+                                <div style="background: var(--surface); padding: 0.5rem 0.8rem; border-radius: 10px; min-width: 55px; border: 1px solid var(--border);"><span id="cdHours" style="font-size: 1.2rem; font-weight: 800; color: var(--text-main); display: block;">00</span><span style="font-size: 0.65rem; color: var(--text-dim); text-transform: uppercase;">Hours</span></div>
+                                <div style="background: var(--surface); padding: 0.5rem 0.8rem; border-radius: 10px; min-width: 55px; border: 1px solid var(--border);"><span id="cdMins" style="font-size: 1.2rem; font-weight: 800; color: var(--text-main); display: block;">00</span><span style="font-size: 0.65rem; color: var(--text-dim); text-transform: uppercase;">Mins</span></div>
+                                <div style="background: var(--surface); padding: 0.5rem 0.8rem; border-radius: 10px; min-width: 55px; border: 1px solid var(--border);"><span id="cdSecs" style="font-size: 1.2rem; font-weight: 800; color: var(--primary); display: block;">00</span><span style="font-size: 0.65rem; color: var(--text-dim); text-transform: uppercase;">Secs</span></div>
+                            </div>
+                        </div>
                         <div style="display: flex; flex-wrap: wrap; gap: 1rem;">
                             <a href="posters/muthaalim-gathering.html" target="_blank" class="btn btn-main" style="padding: 0.75rem 2rem;">Interactive Web Poster</a>
                             <a href="posters/muthaalim-gathering.png" download="Muthaalim_Gathering_Poster.png" class="btn btn-outline" style="padding: 0.75rem 2rem;">Download Flyer</a>

@@ -70,6 +70,7 @@
             
             <nav style="flex: 1; display: flex; flex-direction: column; gap: 0.5rem;">
                 <div class="nav-item" data-target="viewDashboard">Dashboard</div>
+                <div class="nav-item" data-target="viewIDCard">Digital ID Card</div>
                 <div class="nav-item" data-target="viewLibrary">Digital Library</div>
                 <div class="nav-item" data-target="viewAssignments">Assignments</div>
                 <div class="nav-item" data-target="viewCalendar">Calendar</div>
@@ -90,6 +91,80 @@
             
             <!-- Toast Container -->
             <div id="toastContainer" style="position: fixed; top: 20px; right: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 10px;"></div>
+
+            <!-- VIEW: Digital Student ID Card -->
+            <div id="viewIDCard" class="dashboard-section hidden">
+                <div class="view-header" style="text-align: center; margin-bottom: 2rem;">
+                    <h2 class="view-title" style="font-family: 'Aref Ruqaa', 'Amiri', serif; font-size: 2.2rem; color: var(--primary);">Official Digital Student ID Card</h2>
+                    <p class="view-desc">Interactive 3D Student Badge with encrypted QR code verification.</p>
+                </div>
+
+                <div class="id-card-view-container">
+                    <div class="id-card-3d-scene">
+                        <div class="id-card-3d-card" id="idCard3DContainer" title="Click to Flip Card">
+                            <!-- FRONT SIDE -->
+                            <div class="id-card-face id-card-front" id="idCardFront">
+                                <div class="id-card-hologram"></div>
+                                <div class="id-card-header">
+                                    <div>
+                                        <div style="font-family:'Aref Ruqaa', serif; font-size:1.1rem; color:#d4af37; font-weight:bold;">MUHYISSUNNAH DARS UKKUDA</div>
+                                        <div style="font-size:0.6rem; color:#a8b2d1; letter-spacing:0.1em; text-transform:uppercase;">Official Student Credentials</div>
+                                    </div>
+                                    <img src="logo.png?v=2" alt="Logo" style="width:32px; height:32px; filter:drop-shadow(0 2px 4px rgba(0,0,0,0.5));">
+                                </div>
+                                <div class="id-card-body">
+                                    <div class="id-card-photo-box">
+                                        <img id="idCardPhoto" src="logo.png?v=2" alt="Student Photo">
+                                    </div>
+                                    <div class="id-card-info-fields">
+                                        <span class="label">Full Name</span>
+                                        <span class="value" id="idCardName">Abdul Wahid</span>
+                                        <span class="label" style="margin-top:0.2rem;">ID Number</span>
+                                        <span class="value" id="idCardNumber" style="color:#64ffda; font-family:monospace;">MSA-2026-8842</span>
+                                        <span class="label" style="margin-top:0.2rem;">Department</span>
+                                        <span class="value" id="idCardDept" style="font-size:0.75rem;">Islamic Studies</span>
+                                    </div>
+                                    <div class="id-card-qr-box">
+                                        <canvas id="idCardQRCanvas"></canvas>
+                                        <span style="font-size:0.55rem; color:#0f3456; font-weight:bold; margin-top:2px;">VERIFY</span>
+                                    </div>
+                                </div>
+                                <div class="id-card-footer">
+                                    <div>VALID: <strong id="idCardExpiry" style="color:#fff;">31 Dec 2026</strong></div>
+                                    <div>BLOOD: <strong id="idCardBlood" style="color:#ff5252;">O+</strong></div>
+                                    <div style="background:#00e676; color:#000; padding:2px 8px; border-radius:4px; font-weight:bold; font-size:0.65rem;" id="idCardStatus">ACTIVE</div>
+                                </div>
+                            </div>
+
+                            <!-- BACK SIDE -->
+                            <div class="id-card-face id-card-back" id="idCardBack">
+                                <div class="id-card-hologram"></div>
+                                <div style="background:#111; height:36px; margin:-1.25rem -1.5rem 0.5rem -1.5rem; display:flex; align-items:center; padding-left:1.5rem; font-family:monospace; font-size:0.65rem; color:#888;">MAGNETIC STRIPE / INSTITUTION BADGE</div>
+                                <div style="font-size:0.75rem; color:#a8b2d1; display:flex; flex-direction:column; gap:0.4rem;">
+                                    <div><strong>Holder:</strong> <span id="idCardBackName">Abdul Wahid</span></div>
+                                    <div><strong>System Key:</strong> <span id="idCardBackId">MSA-2026-8842</span></div>
+                                    <div><strong>Emergency Contact:</strong> +91 98765 43210</div>
+                                    <div style="font-size:0.65rem; color:#666; margin-top:0.3rem;">This credential is non-transferable and property of Muhyissunnah Dars Ukkuda. If found, please return to office.</div>
+                                </div>
+                                <div style="text-align:center; margin-top:auto; padding-top:0.5rem; border-top:1px dashed rgba(255,255,255,0.2);">
+                                    <div id="idCardBarcodeText" style="font-family:'Courier New', monospace; font-size:1.1rem; letter-spacing:0.3em; color:#fff;">*MSA20268842*</div>
+                                    <div style="font-size:0.6rem; color:#8892b0;">BARCODE IDENTIFIER</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- CARD ACTION CONTROLS -->
+                    <div class="id-card-actions">
+                        <button id="flipCardBtn" class="btn btn-outline">&#128472; Flip Card (3D)</button>
+                        <button id="downloadCardBtn" class="btn btn-main">&#128190; Download PNG</button>
+                        <button id="printCardBtn" class="btn btn-ghost">&#128438; Print Badge</button>
+                        <button id="openQRScannerBtn" class="btn btn-ghost">&#128269; Staff Verifier</button>
+                        <button id="uploadPhotoBtn" class="btn btn-ghost">&#128247; Change Photo</button>
+                        <input type="file" id="idCardPhotoInput" accept="image/*" style="display:none;">
+                    </div>
+                </div>
+            </div>
 
             <!-- VIEW: Notifications -->
             <div id="viewNotifications" class="hidden">
@@ -629,5 +704,7 @@
             });
         });
     </script>
+    <script src="qrcode.min.js"></script>
+    <script src="idcard.js"></script>
 </body>
 </html>

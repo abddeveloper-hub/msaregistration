@@ -707,15 +707,22 @@ window.viewStudentDetails = async (uid) => {
 
     body.innerHTML = `
         <!-- Student Header -->
-        <div style="display:flex; gap:1.5rem; margin-bottom:2rem; align-items:center; padding:1.5rem; background:linear-gradient(135deg, rgba(251,191,36,0.1), rgba(100,200,255,0.1)); border-radius:0.75rem; border:1px solid var(--border);">
+        <div style="display:flex; flex-wrap:wrap; gap:1.5rem; margin-bottom:2rem; align-items:center; padding:1.5rem; background:linear-gradient(135deg, rgba(251,191,36,0.1), rgba(100,200,255,0.1)); border-radius:0.75rem; border:1px solid var(--border);">
             <img src="${escapeHtml(s.photoUrl || '')}" style="width:100px; height:100px; object-fit:cover; border-radius:0.75rem; background:#333; border:2px solid var(--primary); flex-shrink:0;">
-            <div style="flex:1;">
+            <div style="flex:1; min-width:200px;">
                 <h2 style="margin:0 0 0.5rem; font-size:1.5rem; color:var(--primary);">${escapeHtml(s.fullName || 'N/A')}</h2>
                 <p style="margin:0 0 0.75rem; font-size:1rem; color:var(--text-dim); font-weight:500;">ID: ${escapeHtml(s.rollNumber || 'Pending')}</p>
-                <div style="display:flex; gap:2rem; font-size:0.9rem;">
+                <div style="display:flex; flex-wrap:wrap; gap:1.5rem; font-size:0.9rem;">
                     <span style="color:var(--text);"><strong>Batch:</strong> ${escapeHtml(s.batch || 'N/A')}</span>
                     <span style="color:var(--text);"><strong>Dars:</strong> ${escapeHtml(s.darsType || 'N/A')}</span>
                 </div>
+            </div>
+            <div style="display:flex; flex-direction:column; align-items:center; gap:0.5rem; background:var(--surface); padding:1rem; border-radius:14px; border:1.5px solid var(--border); box-shadow:0 6px 20px rgba(0,0,0,0.08); flex-shrink:0;">
+                <div style="font-size:0.75rem; font-weight:800; color:var(--accent); text-transform:uppercase; letter-spacing:0.06em;">Digital QR</div>
+                <div style="background:#fff; padding:6px; border-radius:8px; border:1px solid #e2e8f0;">
+                    <canvas id="teacherStudentDetailQR" style="width:140px; height:140px; display:block; image-rendering:-webkit-optimize-contrast; image-rendering:pixelated;"></canvas>
+                </div>
+                <span style="font-size:0.75rem; font-family:monospace; font-weight:bold; color:var(--text-main);">${escapeHtml(s.rollNumber || 'PENDING')}</span>
             </div>
         </div>
 
@@ -753,8 +760,8 @@ window.viewStudentDetails = async (uid) => {
         </div>
 
         <!-- Detailed Attendance Breakdown by Session -->
-        <div style="margin-bottom:2rem;">
-            <h3 style="margin:0 0 1rem; color:var(--text); font-size:1.1rem; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; color:var(--text-dim);">📋 Attendance Breakdown by Session</h3>
+        <div style="margin-bottom:2rem; padding:1.25rem; background:var(--glass); border-radius:0.75rem; border:1px solid var(--border);">
+            <h3 style="margin:0 0 1rem; color:var(--text); font-size:1.1rem; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; color:var(--text-dim);">📋 Detailed Breakdown</h3>
             <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:1.5rem;">
                 ${Object.keys(dars1st).length > 0 ? `
                     <div style="background:linear-gradient(135deg, #fbbf2410, #fbbf2405); border-radius:0.75rem; padding:1.25rem; border:1px solid #fbbf24; border-left:4px solid #fbbf24;">
@@ -865,6 +872,24 @@ window.viewStudentDetails = async (uid) => {
             </div>
         </div>
     `;
+
+    setTimeout(() => {
+        const qrCanvas = document.getElementById('teacherStudentDetailQR');
+        if (qrCanvas) {
+            const studentId = s.rollNumber || s.id || "01";
+            const studentName = s.fullName || "Student";
+            const engine = window.QRCodeEngine || (typeof QRCodeEngine !== "undefined" ? QRCodeEngine : null);
+            const qrUrl = window.IDCardEngine ? window.IDCardEngine.buildPublicVerifyURL(studentId, studentName) : `https://msaregistration.web.app/index.html?verify=${encodeURIComponent(studentId)}&name=${encodeURIComponent(studentName)}`;
+            if (engine) {
+                engine.render(qrCanvas, qrUrl, {
+                    size: 90,
+                    colorDark: "#0F4C3A",
+                    colorLight: "#ffffff",
+                    logoSrc: "logo.png?v=2"
+                });
+            }
+        }
+    }, 100);
 };
 
 window.approveStudent = async (uid) => {

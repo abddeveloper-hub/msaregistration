@@ -188,7 +188,8 @@
                 <div class="nav-item" onclick="window.location.href='teacher.html'">Teacher Portal</div>
             </nav>
 
-            <button id="logoutBtn" class="btn btn-ghost" style="margin-top: auto;">Log Out</button>
+            <button id="openQRScannerBtn" class="btn btn-outline" style="margin-top: auto; margin-bottom: 0.5rem;">Verify Student QR</button>
+            <button id="logoutBtn" class="btn btn-ghost">Log Out</button>
             <button class="btn btn-ghost" style="margin-top: 1rem;" onclick="window.location.href='index.html'">Public Page</button>
         </aside>
 
@@ -1323,5 +1324,7 @@
             });
         });
     </script>
+    <script src="qrcode.min.js"></script>
+    <script src="idcard.js"></script>
 </body>
 </html>

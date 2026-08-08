@@ -87,7 +87,8 @@
                 <div class="nav-item" data-target="viewAlumni">Alumni Directory</div>
             </nav>
 
-            <button id="installAppBtn" class="btn btn-ghost" style="margin-top: auto;">Download App</button>
+            <button id="openQRScannerBtn" class="btn btn-outline" style="margin-top: auto; margin-bottom: 0.5rem;">Verify Student QR</button>
+            <button id="installAppBtn" class="btn btn-ghost">Download App</button>
             <button id="logoutBtn" class="btn btn-ghost" style="margin-top: 1rem;">Log Out</button>
             <button class="btn btn-ghost" style="margin-top: 1rem;" onclick="window.location.href='index.html'">Public Page</button>
         </aside>
@@ -1247,5 +1248,7 @@
             });
         });
     </script>
+    <script src="qrcode.min.js"></script>
+    <script src="idcard.js"></script>
 </body>
 </html>

@@ -4929,4 +4929,205 @@ body.dark-mode .skeleton-box {
     pointer-events: none;
 }
 
+/* ==========================================================================
+   DIGITAL STUDENT ID CARD & 3D FLIP BADGE SYSTEM
+   ========================================================================== */
+.id-card-view-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2rem;
+    padding: 2rem 1rem;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.id-card-3d-scene {
+    perspective: 1200px;
+    width: 100%;
+    max-width: 480px;
+    height: 290px;
+    margin: 0 auto;
+}
+
+.id-card-3d-card {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    border-radius: 20px;
+    cursor: pointer;
+}
+
+.id-card-3d-card.flipped {
+    transform: rotateY(180deg);
+}
+
+.id-card-face {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    border-radius: 20px;
+    padding: 1.25rem 1.5rem;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(212, 175, 55, 0.4);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.id-card-front {
+    background: linear-gradient(135deg, #091a2f 0%, #0f3456 50%, #030d1a 100%);
+    color: #ffffff;
+}
+
+.id-card-back {
+    background: linear-gradient(135deg, #030c17 0%, #0a2239 100%);
+    color: #ffffff;
+    transform: rotateY(180deg);
+}
+
+/* Hologram Shimmer Effect */
+.id-card-hologram {
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(
+        115deg,
+        transparent 20%,
+        rgba(255, 255, 255, 0.08) 40%,
+        rgba(212, 175, 55, 0.18) 50%,
+        rgba(100, 255, 218, 0.12) 60%,
+        transparent 80%
+    );
+    pointer-events: none;
+    transform: rotate(30deg);
+    animation: hologramShimmer 6s infinite linear;
+}
+
+@keyframes hologramShimmer {
+    0% { transform: translateY(-30%) rotate(30deg); }
+    50% { transform: translateY(30%) rotate(30deg); }
+    100% { transform: translateY(-30%) rotate(30deg); }
+}
+
+.id-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 2px solid rgba(212, 175, 55, 0.5);
+    padding-bottom: 0.5rem;
+    position: relative;
+    z-index: 2;
+}
+
+.id-card-body {
+    display: grid;
+    grid-template-columns: 85px 1fr 95px;
+    gap: 0.85rem;
+    align-items: center;
+    margin-top: 0.25rem;
+    position: relative;
+    z-index: 2;
+}
+
+.id-card-photo-box {
+    width: 85px;
+    height: 105px;
+    border-radius: 10px;
+    border: 2px solid var(--accent);
+    overflow: hidden;
+    background: #000;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+}
+
+.id-card-photo-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.id-card-info-fields {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+}
+
+.id-card-info-fields .label {
+    font-size: 0.62rem;
+    color: #a8b2d1;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.id-card-info-fields .value {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: #ffffff;
+}
+
+.id-card-qr-box {
+    background: #ffffff;
+    padding: 5px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.id-card-qr-box canvas {
+    width: 85px !important;
+    height: 85px !important;
+}
+
+.id-card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid rgba(255, 255, 255, 0.15);
+    padding-top: 0.4rem;
+    font-size: 0.68rem;
+    color: #8892b0;
+    position: relative;
+    z-index: 2;
+}
+
+.id-card-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    justify-content: center;
+    margin-top: 1rem;
+}
+
+/* High-DPI Ultra-Sharp QR Canvas Rendering */
+.id-card-qr-box canvas,
+#adminStudentDetailQR,
+#teacherStudentDetailQR {
+    image-rendering: -webkit-optimize-contrast !important;
+    image-rendering: crisp-edges !important;
+    image-rendering: pixelated !important;
+}
+
+.id-card-qr-box {
+    background: #ffffff !important;
+    padding: 6px !important;
+    border-radius: 10px !important;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.3) !important;
+}
+
+.id-card-qr-box canvas {
+    width: 95px !important;
+    height: 95px !important;
+}
+
+
 

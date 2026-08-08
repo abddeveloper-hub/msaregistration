@@ -868,11 +868,20 @@ window.adminViewStudent = async (uid) => {
 
         <div>
             <h3 style="color:var(--primary); margin-bottom:1rem;">Personal Profile</h3>
-            <div style="display:flex; flex-direction:column; align-items:center; gap:1rem; margin-bottom:1.5rem;">
-                <img src="${s.photoUrl || ''}" style="width:120px; height:120px; object-fit:cover; border-radius:1rem; background:var(--glass-heavy); border: 1px solid var(--border);" alt="Student Photo">
-                <span class="status-badge" style="background: ${s.status === 'admitted' ? 'var(--success-dim)' : 'var(--warning-dim)'}; color: ${s.status === 'admitted' ? 'var(--success)' : 'var(--warning)'}; font-size: 0.85rem; padding: 0.3rem 1rem;">
-                    ${(s.status || 'pending').toUpperCase()}
-                </span>
+            <div style="display:flex; justify-content:space-around; align-items:center; gap:1rem; margin-bottom:1.5rem; background:rgba(0,0,0,0.03); padding:1rem; border-radius:12px; border:1px solid var(--border);">
+                <div style="display:flex; flex-direction:column; align-items:center; gap:0.4rem;">
+                    <img src="${s.photoUrl || ''}" style="width:100px; height:100px; object-fit:cover; border-radius:0.75rem; background:var(--glass-heavy); border: 2px solid var(--primary);" alt="Student Photo">
+                    <span class="status-badge" style="background: ${s.status === 'admitted' ? 'var(--success-dim)' : 'var(--warning-dim)'}; color: ${s.status === 'admitted' ? 'var(--success)' : 'var(--warning)'}; font-size: 0.75rem; padding: 0.25rem 0.75rem;">
+                        ${(s.status || 'pending').toUpperCase()}
+                    </span>
+                </div>
+                <div style="display:flex; flex-direction:column; align-items:center; gap:0.4rem; background:var(--surface); padding:0.85rem; border-radius:12px; border:1.5px solid var(--border); box-shadow:0 6px 18px rgba(0,0,0,0.06);">
+                    <div style="font-size:0.7rem; font-weight:800; color:var(--accent); text-transform:uppercase; letter-spacing:0.06em;">Digital ID QR</div>
+                    <div style="background:#fff; padding:6px; border-radius:8px; border:1px solid #e2e8f0;">
+                        <canvas id="adminStudentDetailQR" style="width:130px; height:130px; display:block; image-rendering:-webkit-optimize-contrast; image-rendering:pixelated;"></canvas>
+                    </div>
+                    <span style="font-size:0.7rem; font-family:monospace; font-weight:bold; color:var(--text-main);">${s.rollNumber || 'PENDING'}</span>
+                </div>
             </div>
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; font-size: 0.95rem;">
                 <div style="grid-column: span 2;"><strong style="color:var(--text-dim); font-size:0.8rem; text-transform:uppercase; letter-spacing:0.5px;">Full Name</strong><br><span style="font-size:1.05rem; color:var(--text-main);">${s.fullName || 'N/A'}</span></div>
@@ -908,6 +917,24 @@ window.adminViewStudent = async (uid) => {
     }
 
     modal.classList.add('active');
+
+    setTimeout(() => {
+        const qrCanvas = document.getElementById('adminStudentDetailQR');
+        if (qrCanvas) {
+            const studentId = s.rollNumber || s.id || "01";
+            const studentName = s.fullName || "Student";
+            const engine = window.QRCodeEngine || (typeof QRCodeEngine !== "undefined" ? QRCodeEngine : null);
+            const qrUrl = window.IDCardEngine ? window.IDCardEngine.buildPublicVerifyURL(studentId, studentName) : `https://msaregistration.web.app/index.html?verify=${encodeURIComponent(studentId)}&name=${encodeURIComponent(studentName)}`;
+            if (engine) {
+                engine.render(qrCanvas, qrUrl, {
+                    size: 90,
+                    colorDark: "#0F4C3A",
+                    colorLight: "#ffffff",
+                    logoSrc: "logo.png?v=2"
+                });
+            }
+        }
+    }, 100);
 };
 
 window.adminViewFaculty = async (uid) => {

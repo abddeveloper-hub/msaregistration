@@ -4,7 +4,7 @@ try {
   console.warn('FCM SW import notice:', e);
 }
 
-const CACHE_NAME = 'msaukkuda-portal-v55-forceupdate';
+const CACHE_NAME = 'msaukkuda-portal-v56-idcard-3dpass';
 const ASSETS = [
   './',
   './index.html',
@@ -24,6 +24,8 @@ const ASSETS = [
   './mobile.css',
   './app.js',
   './nav-menu.js',
+  './idcard.js',
+  './qrcode.min.js',
   './achievements.js',
   './alumni.js',
   './events.js',

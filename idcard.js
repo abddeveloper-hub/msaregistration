@@ -5,7 +5,12 @@
 (function (global) {
     'use strict';
 
-    // --- 1. Canvas QRCode Spec Engine (High-DPI HD Ultra-Sharp Rendering) ---
+    function escapeHtml(str) {
+        if (!str) return '';
+        return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    // --- 1. Canvas QRCode Spec Engine ---
     const QRCodeEngine = {
         render: function (canvas, text, options) {
             if (!canvas) return;
@@ -175,7 +180,7 @@
             if (qrCanvas) {
                 QRCodeEngine.render(qrCanvas, qrData, {
                     size: 140,
-                    colorDark: "#0F4C3A",
+                    colorDark: "#000000",
                     colorLight: "#ffffff",
                     logoSrc: "logo.png?v=2"
                 });
@@ -322,65 +327,124 @@
 
         openPublicVerificationModal: function (id, name) {
             let modal = document.getElementById("publicCredentialVerifyModal");
+            const studentId = decodeURIComponent(id || "01");
+            const studentName = decodeURIComponent(name || "Muhammad Muwaz");
+
             if (!modal) {
                 modal = document.createElement("div");
                 modal.id = "publicCredentialVerifyModal";
                 modal.className = "modal-overlay";
-                modal.innerHTML = `
-                    <div class="modal-card glassmorphism-card" style="max-width:520px; width:92%; padding:2rem; border-radius:20px; background:#0B1F1A; color:#ffffff; position:relative; box-shadow:0 25px 60px rgba(0,0,0,0.8); border:2px solid #D4AF37; z-index:99999;">
-                        <button id="closePublicVerifyModal" style="position:absolute; top:16px; right:16px; background:rgba(255,255,255,0.1); border:none; color:#ffffff; font-size:1.5rem; cursor:pointer; width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center;">&times;</button>
-                        
-                        <div style="text-align:center; margin-bottom:1.5rem;">
-                            <img src="logo.png?v=2" alt="MSA Ukkuda Logo" style="width:64px; height:64px; margin:0 auto 0.5rem;">
-                            <div style="font-family:'Aref Ruqaa',serif; font-size:1.4rem; color:#D4AF37; font-weight:bold;">MUHYISSUNNAH DARS UKKUDA</div>
-                            <div style="font-size:0.75rem; letter-spacing:0.15em; color:#64ffda; text-transform:uppercase; margin-top:0.25rem;">Official Public Credential Verification</div>
-                        </div>
-
-                        <div style="background:rgba(0, 230, 118, 0.12); border:1px solid #00e676; border-radius:12px; padding:1.25rem; margin-bottom:1.5rem; text-align:center;">
-                            <div style="color:#00e676; font-size:1.2rem; font-weight:bold; display:flex; align-items:center; justify-content:center; gap:0.5rem;">
-                                <span style="font-size:1.5rem;">&#10004;</span> AUTHENTIC VERIFIED CREDENTIAL
-                            </div>
-                            <p style="font-size:0.8rem; color:#a8b2d1; margin-top:0.4rem;">This record has been authenticated against active institutional registration records.</p>
-                        </div>
-
-                        <div style="display:grid; grid-template-columns:1fr; gap:0.85rem; background:rgba(255,255,255,0.04); padding:1.25rem; border-radius:12px; border:1px solid rgba(255,255,255,0.1); font-size:0.9rem;">
-                            <div style="display:flex; justify-content:space-between; border-bottom:1px solid rgba(255,255,255,0.08); padding-bottom:0.4rem;">
-                                <span style="color:#8892b0;">Student Name:</span>
-                                <strong style="color:#ffffff;" id="pubVerifyName">Muhammad Muwaz</strong>
-                            </div>
-                            <div style="display:flex; justify-content:space-between; border-bottom:1px solid rgba(255,255,255,0.08); padding-bottom:0.4rem;">
-                                <span style="color:#8892b0;">Roll / ID Number:</span>
-                                <strong style="color:#64ffda; font-family:monospace;" id="pubVerifyId">01</strong>
-                            </div>
-                            <div style="display:flex; justify-content:space-between; border-bottom:1px solid rgba(255,255,255,0.08); padding-bottom:0.4rem;">
-                                <span style="color:#8892b0;">Institution:</span>
-                                <strong style="color:#ffffff;">Muhyissunnah Dars Ukkuda</strong>
-                            </div>
-                            <div style="display:flex; justify-content:space-between; border-bottom:1px solid rgba(255,255,255,0.08); padding-bottom:0.4rem;">
-                                <span style="color:#8892b0;">Enrollment Status:</span>
-                                <span style="background:#00e676; color:#000; font-weight:bold; font-size:0.75rem; padding:2px 8px; border-radius:4px;">VERIFIED ACTIVE</span>
-                            </div>
-                            <div style="display:flex; justify-content:space-between;">
-                                <span style="color:#8892b0;">Validity Expiry:</span>
-                                <strong style="color:#ffffff;">31 Dec 2026</strong>
-                            </div>
-                        </div>
-
-                        <div style="margin-top:1.5rem; text-align:center;">
-                            <button id="closePubVerifyBtn" class="btn btn-main" style="width:100%; padding:0.75rem; background:#0F4C3A; color:#fff; font-weight:600; border-radius:10px;">Close Verification</button>
-                        </div>
-                    </div>
-                `;
                 document.body.appendChild(modal);
             }
 
-            const nameEl = document.getElementById("pubVerifyName");
-            const idEl = document.getElementById("pubVerifyId");
-            if (nameEl) nameEl.textContent = decodeURIComponent(name || "Student");
-            if (idEl) idEl.textContent = decodeURIComponent(id || "01");
+            modal.innerHTML = `
+                <div class="modal-card glassmorphism-card" style="max-width:540px; width:92%; padding:1.75rem; border-radius:24px; background:linear-gradient(145deg, #091a2f 0%, #082820 100%); color:#ffffff; position:relative; box-shadow:0 30px 70px rgba(0,0,0,0.85); border:2px solid #D4AF37; z-index:99999; max-height:92vh; overflow-y:auto;">
+                    <button id="closePublicVerifyModal" style="position:absolute; top:16px; right:16px; background:rgba(255,255,255,0.1); border:none; color:#ffffff; font-size:1.5rem; cursor:pointer; width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; z-index:10;">&times;</button>
+                    
+                    <!-- Header Seal -->
+                    <div style="text-align:center; margin-bottom:1.25rem;">
+                        <img src="logo.png?v=2" alt="MSA Ukkuda Logo" style="width:52px; height:52px; margin:0 auto 0.4rem; filter:drop-shadow(0 2px 6px rgba(0,0,0,0.4));">
+                        <div style="font-family:'Aref Ruqaa',serif; font-size:1.35rem; color:#D4AF37; font-weight:bold;">MUHYISSUNNAH DARS UKKUDA</div>
+                        <div style="font-size:0.7rem; letter-spacing:0.15em; color:#00e676; text-transform:uppercase; margin-top:0.2rem; font-weight:bold;">&#10004; OFFICIAL VERIFIED DIGITAL STUDENT ID CARD</div>
+                    </div>
+
+                    <!-- 3D Student ID Card Visual -->
+                    <div class="id-card-3d-scene" style="height:280px; margin-bottom:1.25rem;">
+                        <div class="id-card-3d-card" id="pubCard3DContainer" title="Click to Flip Card">
+                            <!-- FRONT SIDE -->
+                            <div class="id-card-face id-card-front" style="background:linear-gradient(135deg, #091a2f 0%, #0f3456 50%, #030d1a 100%); padding:1.25rem;">
+                                <div class="id-card-hologram"></div>
+                                <div class="id-card-header">
+                                    <div>
+                                        <div style="font-family:'Aref Ruqaa', serif; font-size:1.05rem; color:#d4af37; font-weight:bold;">MUHYISSUNNAH DARS UKKUDA</div>
+                                        <div style="font-size:0.58rem; color:#a8b2d1; letter-spacing:0.1em; text-transform:uppercase;">Official Student Credentials</div>
+                                    </div>
+                                    <img src="logo.png?v=2" alt="Logo" style="width:30px; height:30px;">
+                                </div>
+                                <div class="id-card-body">
+                                    <div class="id-card-photo-box" style="width:85px; height:105px;">
+                                        <img src="logo.png?v=2" alt="Student Photo">
+                                    </div>
+                                    <div class="id-card-info-fields">
+                                        <span class="label">Full Name</span>
+                                        <span class="value" style="font-size:0.95rem; font-weight:bold;">${escapeHtml(studentName)}</span>
+                                        <span class="label" style="margin-top:0.2rem;">ID Number</span>
+                                        <span class="value" style="color:#64ffda; font-family:monospace; font-weight:bold;">ID: ${escapeHtml(studentId)}</span>
+                                        <span class="label" style="margin-top:0.2rem;">Department</span>
+                                        <span class="value" style="font-size:0.75rem;">Islamic Studies</span>
+                                    </div>
+                                    <div class="id-card-qr-box" style="width:80px; height:80px; padding:4px;">
+                                        <canvas id="pubCardQRCanvas" style="width:72px!important; height:72px!important;"></canvas>
+                                    </div>
+                                </div>
+                                <div class="id-card-footer">
+                                    <div>VALID: <strong style="color:#fff;">31 Dec 2026</strong></div>
+                                    <div>BLOOD: <strong style="color:#ff5252;">O+</strong></div>
+                                    <div style="background:#00e676; color:#000; padding:2px 8px; border-radius:4px; font-weight:bold; font-size:0.65rem;">VERIFIED</div>
+                                </div>
+                            </div>
+
+                            <!-- BACK SIDE -->
+                            <div class="id-card-face id-card-back" style="background:linear-gradient(135deg, #030c17 0%, #0a2239 100%); padding:1.25rem;">
+                                <div class="id-card-hologram"></div>
+                                <div style="background:#111; height:32px; margin:-1.25rem -1.25rem 0.5rem -1.25rem; display:flex; align-items:center; padding-left:1.25rem; font-family:monospace; font-size:0.6rem; color:#888;">MAGNETIC STRIPE / INSTITUTION BADGE</div>
+                                <div style="font-size:0.75rem; color:#a8b2d1; display:flex; flex-direction:column; gap:0.35rem;">
+                                    <div><strong>Holder:</strong> <span>${escapeHtml(studentName)}</span></div>
+                                    <div><strong>System Key:</strong> <span>${escapeHtml(studentId)}</span></div>
+                                    <div><strong>Emergency Contact:</strong> +91 98765 43210</div>
+                                    <div style="font-size:0.62rem; color:#666; margin-top:0.2rem;">This credential is non-transferable and property of Muhyissunnah Dars Ukkuda.</div>
+                                </div>
+                                <div style="text-align:center; margin-top:auto; padding-top:0.4rem; border-top:1px dashed rgba(255,255,255,0.2);">
+                                    <div style="font-family:'Courier New', monospace; font-size:1rem; letter-spacing:0.25em; color:#fff;">*${escapeHtml(studentId)}*</div>
+                                    <div style="font-size:0.58rem; color:#8892b0;">AUTHENTICATED BADGE</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Details Summary Card -->
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.75rem; background:rgba(255,255,255,0.04); padding:1rem; border-radius:14px; border:1px solid rgba(255,255,255,0.1); font-size:0.85rem; margin-bottom:1.25rem;">
+                        <div><strong style="color:#8892b0; font-size:0.7rem; text-transform:uppercase;">Student Name</strong><br><span style="color:#ffffff; font-weight:bold; font-size:0.95rem;">${escapeHtml(studentName)}</span></div>
+                        <div><strong style="color:#8892b0; font-size:0.7rem; text-transform:uppercase;">Roll / Student ID</strong><br><span style="color:#64ffda; font-family:monospace; font-weight:bold; font-size:0.95rem;">ID: ${escapeHtml(studentId)}</span></div>
+                        <div><strong style="color:#8892b0; font-size:0.7rem; text-transform:uppercase;">Batch / Dars</strong><br><span style="color:#ffffff;">Batch 1 (Islamic Studies)</span></div>
+                        <div><strong style="color:#8892b0; font-size:0.7rem; text-transform:uppercase;">Enrollment Status</strong><br><span style="color:#00e676; font-weight:bold;">Active Enrolled Student</span></div>
+                    </div>
+
+                    <!-- Controls -->
+                    <div style="display:flex; gap:0.75rem; justify-content:center; flex-wrap:wrap;">
+                        <button id="pubFlipCardBtn" class="btn btn-outline" style="flex:1; min-width:140px;">&#128472; Flip Card (3D)</button>
+                        <button id="closePubVerifyBtn" class="btn btn-main" style="flex:1; min-width:140px; background:#0F4C3A; color:#fff;">Close ID Card</button>
+                    </div>
+                </div>
+            `;
 
             modal.style.display = "flex";
             requestAnimationFrame(() => modal.classList.add("active"));
+
+            // Render mini QR code on public ID card front
+            setTimeout(() => {
+                const qrCanvas = document.getElementById("pubCardQRCanvas");
+                if (qrCanvas && window.QRCodeEngine) {
+                    window.QRCodeEngine.render(qrCanvas, this.buildPublicVerifyURL(studentId, studentName), {
+                        size: 72,
+                        colorDark: "#000000",
+                        colorLight: "#ffffff"
+                    });
+                }
+            }, 100);
+
+            // Flip Card Action
+            const pubFlipBtn = document.getElementById("pubFlipCardBtn");
+            const pubCardContainer = document.getElementById("pubCard3DContainer");
+            if (pubFlipBtn && pubCardContainer) {
+                pubFlipBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    pubCardContainer.classList.toggle("flipped");
+                };
+                pubCardContainer.onclick = () => {
+                    pubCardContainer.classList.toggle("flipped");
+                };
+            }
 
             const closeModal = () => {
                 modal.classList.remove("active");
@@ -462,17 +526,7 @@
                             parsedName = parsed.name || "Student Record";
                         }
 
-                        resultBox.style.display = "block";
-                        resultBox.style.borderColor = "#00e676";
-                        resultBox.style.background = "rgba(0, 230, 118, 0.15)";
-                        resultTitle.style.color = "#00e676";
-                        resultTitle.textContent = "VALID & VERIFIED ENROLLMENT";
-                        resultBody.innerHTML = `
-                            <strong>Student Name:</strong> ${decodeURIComponent(parsedName)}<br>
-                            <strong>ID Number:</strong> ${decodeURIComponent(parsedId)}<br>
-                            <strong>Status:</strong> Active Enrolled<br>
-                            <strong>Valid Until:</strong> 31 Dec 2026
-                        `;
+                        this.openPublicVerificationModal(parsedId, parsedName);
                     } catch (e) {
                         resultBox.style.display = "block";
                         resultBox.style.borderColor = "#ff5252";

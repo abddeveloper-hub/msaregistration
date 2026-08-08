@@ -96,8 +96,43 @@
 
         .login-form-container {
             width: 100%;
-            max-width: 420px;
+            max-width: 440px;
             margin: auto 0;
+        }
+
+        /* Segmented Mode Tabs */
+        .form-mode-tabs {
+            display: flex;
+            background: #f1f5f9;
+            border: 1px solid #e2e8f0;
+            border-radius: 14px;
+            padding: 4px;
+            margin-bottom: 2rem;
+            gap: 4px;
+        }
+
+        .mode-tab {
+            flex: 1;
+            padding: 0.75rem 1rem;
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #64748b;
+            background: transparent;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+        }
+
+        .mode-tab.active {
+            background: #ffffff;
+            color: #4f46e5;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        .mode-tab:hover:not(.active) {
+            color: #0f172a;
         }
 
         .login-form-container h2 {
@@ -105,12 +140,14 @@
             font-weight: 700;
             margin: 0 0 0.5rem 0;
             letter-spacing: -0.02em;
+            color: #0f172a;
         }
 
         .login-form-container > p {
             color: #64748b;
-            margin: 0 0 2.5rem 0;
+            margin: 0 0 2rem 0;
             font-size: 0.95rem;
+            line-height: 1.5;
         }
 
         .input-group {
@@ -118,11 +155,13 @@
         }
 
         .input-group label {
-            display: block;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             font-size: 0.875rem;
             font-weight: 600;
             margin-bottom: 0.5rem;
-            color: #334155;
+            color: #1e293b;
         }
 
         .input-icon-wrapper {
@@ -131,18 +170,90 @@
             align-items: center;
         }
 
-        .input-icon-wrapper span {
+        .input-icon-wrapper span.field-icon,
+        .input-icon-wrapper > span:not(.toggle-password-btn) {
             position: absolute;
             left: 1rem;
-            color: #94a3b8;
+            color: #64748b;
             font-size: 1.2rem;
+            pointer-events: none;
+            z-index: 2;
         }
 
-        .input-icon-wrapper input {
+        .input-icon-wrapper input,
+        .input-icon-wrapper select,
+        .input-icon-wrapper textarea {
             width: 100%;
-            padding: 1rem 1rem 1rem 3rem;
+            padding: 0.875rem 1rem 0.875rem 2.8rem;
+            background: #ffffff;
+            border: 1.5px solid #cbd5e1;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-family: 'Inter', sans-serif;
+            color: #0f172a;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+            box-sizing: border-box;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+        }
+
+        .input-icon-wrapper input::placeholder,
+        .input-icon-wrapper textarea::placeholder {
+            color: #94a3b8;
+            opacity: 1;
+        }
+
+        .input-icon-wrapper input:hover,
+        .input-icon-wrapper select:hover,
+        .input-icon-wrapper textarea:hover {
+            border-color: #94a3b8;
+        }
+
+        .input-icon-wrapper input:focus,
+        .input-icon-wrapper select:focus,
+        .input-icon-wrapper textarea:focus {
+            outline: none;
+            border-color: #4f46e5;
+            background: #ffffff;
+            box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.15);
+        }
+
+        .input-icon-wrapper input.input-error,
+        .input-icon-wrapper select.input-error,
+        .input-icon-wrapper textarea.input-error,
+        .grid-field-input.input-error {
+            border-color: #ef4444 !important;
+            box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.15) !important;
+        }
+
+        /* Password Toggle Button */
+        .toggle-password-btn {
+            position: absolute;
+            right: 0.75rem;
+            background: transparent;
+            border: none;
+            color: #64748b;
+            font-size: 1.1rem;
+            cursor: pointer;
+            padding: 0.4rem 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            transition: color 0.2s ease, background 0.2s ease;
+            z-index: 3;
+        }
+
+        .toggle-password-btn:hover {
+            color: #0f172a;
             background: #f1f5f9;
-            border: 1px solid transparent;
+        }
+
+        /* Grid inputs inside extra forms */
+        .grid-field-input {
+            width: 100%;
+            padding: 0.85rem 1rem;
+            background: #ffffff;
+            border: 1.5px solid #cbd5e1;
             border-radius: 12px;
             font-size: 0.95rem;
             font-family: 'Inter', sans-serif;
@@ -151,56 +262,85 @@
             box-sizing: border-box;
         }
 
-        .input-icon-wrapper input:focus {
+        .grid-field-input:focus {
             outline: none;
-            border-color: #3b82f6;
-            background: #ffffff;
-            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.15);
         }
 
         /* Role Selector */
         .role-selector-section {
-            margin-bottom: 2.5rem;
+            margin-bottom: 2.25rem;
         }
 
         .role-selector-section label {
-            display: block;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             font-size: 0.875rem;
             font-weight: 600;
             margin-bottom: 0.75rem;
-            color: #334155;
+            color: #1e293b;
+        }
+
+        .role-selector-hint {
+            font-size: 0.75rem;
+            font-weight: 400;
+            color: #64748b;
         }
 
         .role-cards {
             display: flex;
-            gap: 1rem;
+            gap: 0.875rem;
             flex-wrap: wrap;
         }
 
         .role-card {
-            flex: 1 1 calc(25% - 0.75rem);
-            min-width: 70px;
-            background: #f8fafc;
-            border: 2px solid transparent;
-            border-radius: 12px;
-            padding: 1rem 0.5rem;
+            flex: 1 1 calc(33.333% - 0.6rem);
+            min-width: 80px;
+            background: #ffffff;
+            border: 2px solid #e2e8f0;
+            border-radius: 14px;
+            padding: 0.875rem 0.5rem;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            gap: 0.5rem;
+            gap: 0.4rem;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            box-sizing: border-box;
         }
 
         .role-card:hover {
-            background: #f1f5f9;
+            border-color: #cbd5e1;
+            background: #f8fafc;
+            transform: translateY(-2px);
         }
 
         .role-card.active {
-            background: rgba(59, 130, 246, 0.05);
-            border-color: #3b82f6;
-            color: #3b82f6;
+            background: #eff6ff;
+            border-color: #4f46e5;
+            color: #4f46e5;
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.12);
+        }
+
+        .role-card.active::after {
+            content: '✓';
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            width: 18px;
+            height: 18px;
+            background: #4f46e5;
+            color: white;
+            font-size: 11px;
+            font-weight: bold;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .role-card .role-icon {
@@ -216,7 +356,7 @@
         .login-btn {
             width: 100%;
             padding: 1rem;
-            background: #3b82f6;
+            background: #4f46e5;
             color: white;
             border: none;
             border-radius: 12px;
@@ -224,7 +364,7 @@
             font-weight: 600;
             cursor: pointer;
             transition: all 0.2s ease;
-            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+            box-shadow: 0 4px 14px rgba(79, 70, 229, 0.35);
             display: flex;
             justify-content: center;
             align-items: center;
@@ -232,9 +372,13 @@
         }
 
         .login-btn:hover {
-            background: #2563eb;
+            background: #4338ca;
             transform: translateY(-1px);
-            box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4);
+            box-shadow: 0 6px 18px rgba(79, 70, 229, 0.45);
+        }
+
+        .login-btn:active {
+            transform: translateY(0);
         }
 
         .toggle-mode-wrapper {
@@ -245,7 +389,7 @@
         }
         
         .toggle-mode-wrapper a {
-            color: #3b82f6;
+            color: #4f46e5;
             font-weight: 600;
             text-decoration: none;
         }
@@ -464,23 +608,29 @@
         <!-- Right Side: Form -->
         <div class="login-right-panel">
             <div class="login-form-container">
+                <!-- Segmented Tabs for Mode Switching -->
+                <div class="form-mode-tabs" role="tablist">
+                    <button type="button" class="mode-tab active" id="tabSignIn" role="tab" aria-selected="true">Sign In</button>
+                    <button type="button" class="mode-tab" id="tabSignUp" role="tab" aria-selected="false">Create Account</button>
+                </div>
+
                 <h2 id="formTitle">Sign In</h2>
                 <p id="formSubtitle">Enter your credentials to continue</p>
                 
                 <form id="unifiedLoginForm">
                     <div id="nameFieldContainer" class="input-group hidden">
-                        <label>Full Name</label>
+                        <label for="loginName"><span>Full Name</span> <span style="color:#ef4444;">*</span></label>
                         <div class="input-icon-wrapper">
-                            <span>👤</span>
-                            <input type="text" id="loginName" placeholder="John Doe">
+                            <span class="field-icon">👤</span>
+                            <input type="text" id="loginName" placeholder="e.g. Abdullah Ahmad">
                         </div>
                     </div>
 
                     <div id="campusFieldContainer" class="input-group hidden">
-                        <label>Preferred Campus</label>
+                        <label for="loginCampus"><span>Preferred Campus</span> <span style="color:#ef4444;">*</span></label>
                         <div class="input-icon-wrapper">
-                            <span>🏛️</span>
-                            <select id="loginCampus" style="width: 100%; padding: 0.8rem 0.8rem 0.8rem 2.5rem; font-size: 0.875rem; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--text-main); font-family: inherit; outline: none;">
+                            <span class="field-icon">🏛️</span>
+                            <select id="loginCampus">
                                 <option value="MSA UKKUDA">MSA UKKUDA (Main HQ)</option>
                                 <option value="MSA CHATEKKAL">MSA CHATEKKAL</option>
                                 <option value="MSA MARIKKALA">MSA MARIKKALA</option>
@@ -499,33 +649,39 @@
                     </div>
 
                     <div class="input-group">
-                        <label>Email Address</label>
+                        <label for="loginEmail"><span>Email Address</span> <span style="color:#ef4444;">*</span></label>
                         <div class="input-icon-wrapper">
-                            <span>✉️</span>
-                            <input type="email" id="loginEmail" placeholder="admin@mdu.edu" required>
+                            <span class="field-icon">✉️</span>
+                            <input type="email" id="loginEmail" placeholder="e.g. student@mdu.edu" required autocomplete="email">
                         </div>
                     </div>
                     
                     <div class="input-group">
-                        <label>Password</label>
+                        <label for="loginPassword"><span>Password</span> <span style="color:#ef4444;">*</span></label>
                         <div class="input-icon-wrapper">
-                            <span>🔒</span>
-                            <input type="password" id="loginPassword" placeholder="••••••••" required>
+                            <span class="field-icon">🔒</span>
+                            <input type="password" id="loginPassword" placeholder="••••••••" required autocomplete="current-password">
+                            <button type="button" id="togglePasswordBtn" class="toggle-password-btn" aria-label="Show password" title="Toggle password visibility">
+                                👁️
+                            </button>
                         </div>
                     </div>
 
                     <div class="role-selector-section" id="roleSelectorSection">
-                        <label>Role</label>
+                        <label>
+                            <span>Target Role / Portal</span>
+                            <span class="role-selector-hint" id="roleSelectorHint">Select target portal</span>
+                        </label>
                         <div class="role-cards" id="roleCardsContainer">
-                            <div class="role-card active" data-role="student">
+                            <div class="role-card active" data-role="student" tabIndex="0" role="button" aria-pressed="true">
                                 <span class="role-icon">🎓</span>
                                 <span class="role-name">Student</span>
                             </div>
-                            <div class="role-card" data-role="faculty">
+                            <div class="role-card" data-role="faculty" tabIndex="0" role="button" aria-pressed="false">
                                 <span class="role-icon">👨‍🏫</span>
                                 <span class="role-name">Teacher</span>
                             </div>
-                            <div class="role-card" data-role="alumni">
+                            <div class="role-card" data-role="alumni" tabIndex="0" role="button" aria-pressed="false">
                                 <span class="role-icon">📜</span>
                                 <span class="role-name">Alumni</span>
                             </div>
@@ -535,9 +691,9 @@
                     <div id="alumniFieldsContainer" class="hidden">
                         <!-- 1. Personal Information -->
                         <div class="input-group">
-                            <label>Date of Birth</label>
+                            <label for="loginDob">Date of Birth</label>
                             <div class="input-icon-wrapper">
-                                <span>📅</span>
+                                <span class="field-icon">📅</span>
                                 <input type="date" id="loginDob">
                             </div>
                         </div>
@@ -545,16 +701,16 @@
                         <div class="input-group">
                             <label>Blood Group & Aadhar</label>
                             <div style="display:grid; grid-template-columns: 1fr 1fr; gap:0.5rem;">
-                                <input type="text" id="loginBlood" placeholder="Blood Group (e.g. O+)" style="padding: 0.8rem 1rem; background: #f1f5f9; border: 1px solid transparent; border-radius: 12px; font-size: 0.95rem;">
-                                <input type="text" id="loginAadhar" placeholder="Aadhar No." style="padding: 0.8rem 1rem; background: #f1f5f9; border: 1px solid transparent; border-radius: 12px; font-size: 0.95rem;">
+                                <input type="text" id="loginBlood" placeholder="Blood Group (e.g. O+)" class="grid-field-input">
+                                <input type="text" id="loginAadhar" placeholder="Aadhar No." class="grid-field-input">
                             </div>
                         </div>
 
                         <!-- 2. Family & Residence -->
                         <div class="input-group">
-                            <label>Father's / Guardian Name</label>
+                            <label for="loginFatherName">Father's / Guardian Name</label>
                             <div class="input-icon-wrapper">
-                                <span>👨</span>
+                                <span class="field-icon">👨</span>
                                 <input type="text" id="loginFatherName" placeholder="Father's Full Name">
                             </div>
                         </div>
@@ -563,81 +719,81 @@
                             <label>Status Badges</label>
                             <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:0.5rem; font-size:0.85rem;">
                                 <div>
-                                    <span style="font-size:0.75rem; color:#64748b;">Sayyid?</span>
-                                    <select id="loginSayyid" style="width:100%; padding:0.6rem; background:#f1f5f9; border:none; border-radius:8px;"><option value="no">No</option><option value="yes">Yes</option></select>
+                                    <span style="font-size:0.75rem; color:#64748b; font-weight:600;">Sayyid?</span>
+                                    <select id="loginSayyid" class="grid-field-input" style="padding:0.6rem;"><option value="no">No</option><option value="yes">Yes</option></select>
                                 </div>
                                 <div>
-                                    <span style="font-size:0.75rem; color:#64748b;">Hafiz?</span>
-                                    <select id="loginHafiz" style="width:100%; padding:0.6rem; background:#f1f5f9; border:none; border-radius:8px;"><option value="no">No</option><option value="yes">Yes</option></select>
+                                    <span style="font-size:0.75rem; color:#64748b; font-weight:600;">Hafiz?</span>
+                                    <select id="loginHafiz" class="grid-field-input" style="padding:0.6rem;"><option value="no">No</option><option value="yes">Yes</option></select>
                                 </div>
                                 <div>
-                                    <span style="font-size:0.75rem; color:#64748b;">Special?</span>
-                                    <select id="loginOrphan" style="width:100%; padding:0.6rem; background:#f1f5f9; border:none; border-radius:8px;"><option value="no">None</option><option value="yes">Orphan</option></select>
+                                    <span style="font-size:0.75rem; color:#64748b; font-weight:600;">Special?</span>
+                                    <select id="loginOrphan" class="grid-field-input" style="padding:0.6rem;"><option value="no">None</option><option value="yes">Orphan</option></select>
                                 </div>
                             </div>
                         </div>
 
                         <div class="input-group">
-                            <label>Full Residential Address</label>
+                            <label for="loginAddress">Full Residential Address</label>
                             <div class="input-icon-wrapper">
-                                <span>🏠</span>
+                                <span class="field-icon">🏠</span>
                                 <input type="text" id="loginAddress" placeholder="Full house address & pincode">
                             </div>
                         </div>
 
                         <!-- 3. Academic & Professional Details -->
                         <div class="input-group">
-                            <label>Academic Title / Degree</label>
+                            <label for="loginTitle">Academic Title / Degree</label>
                             <div class="input-icon-wrapper">
-                                <span>📜</span>
+                                <span class="field-icon">📜</span>
                                 <input type="text" id="loginTitle" placeholder="e.g. Fazil Muhyissunnah / Hafiz">
                             </div>
                         </div>
 
                         <div class="input-group">
-                            <label>Graduation Batch / Year</label>
+                            <label for="loginBatch">Graduation Batch / Year</label>
                             <div class="input-icon-wrapper">
-                                <span>🎓</span>
+                                <span class="field-icon">🎓</span>
                                 <input type="text" id="loginBatch" placeholder="e.g. 2024-2025 or Fazil Graduates">
                             </div>
                         </div>
 
                         <div class="input-group">
-                            <label>Current Designation / Role</label>
+                            <label for="loginDesignation">Current Designation / Role</label>
                             <div class="input-icon-wrapper">
-                                <span>💼</span>
+                                <span class="field-icon">💼</span>
                                 <input type="text" id="loginDesignation" placeholder="e.g. Mudarris / Research Scholar">
                             </div>
                         </div>
 
                         <div class="input-group">
-                            <label>Institution / Organization</label>
+                            <label for="loginInstitution">Institution / Organization</label>
                             <div class="input-icon-wrapper">
-                                <span>🏛️</span>
+                                <span class="field-icon">🏛️</span>
                                 <input type="text" id="loginInstitution" placeholder="e.g. Calicut Dars / Jamia Markaz">
                             </div>
                         </div>
 
                         <div class="input-group">
-                            <label>City & Country Location</label>
+                            <label for="loginLocation">City & Country Location</label>
                             <div class="input-icon-wrapper">
-                                <span>📍</span>
+                                <span class="field-icon">📍</span>
                                 <input type="text" id="loginLocation" placeholder="e.g. Calicut, Kerala or Dubai, UAE">
                             </div>
                         </div>
 
                         <div class="input-group">
-                            <label>WhatsApp / Phone Number</label>
+                            <label for="loginPhone">WhatsApp / Phone Number</label>
                             <div class="input-icon-wrapper">
-                                <span>📞</span>
+                                <span class="field-icon">📞</span>
                                 <input type="tel" id="loginPhone" placeholder="+91 9876543210">
                             </div>
                         </div>
 
                         <div class="input-group">
-                            <label>Profile Photo</label>
+                            <label for="loginPhoto">Profile Photo</label>
                             <div class="input-icon-wrapper">
-                                <span style="top: 0.8rem;">🖼️</span>
+                                <span class="field-icon" style="top: 0.8rem;">🖼️</span>
                                 <input type="file" id="loginPhoto" accept="image/*" style="padding-top: 0.65rem;">
                             </div>
                             <div id="loginPhotoPreviewWrap" style="display:none; margin-top: 0.5rem; border-radius: 8px; overflow: hidden; height: 90px; width: 90px; border: 1px solid #cbd5e1;">
@@ -646,10 +802,10 @@
                         </div>
 
                         <div class="input-group">
-                            <label>Bio & Research Summary</label>
+                            <label for="loginBio">Bio & Research Summary</label>
                             <div class="input-icon-wrapper" style="align-items: flex-start;">
-                                <span style="top: 0.8rem;">📝</span>
-                                <textarea id="loginBio" placeholder="Write a detailed summary of your academic contributions, research work, publications, or current service..." rows="3" style="width: 100%; padding: 0.8rem 1rem 0.8rem 2.8rem; background: #f1f5f9; border: 1px solid transparent; border-radius: 12px; font-size: 0.95rem; font-family: 'Inter', sans-serif; color: #0f172a; resize: vertical; box-sizing: border-box;"></textarea>
+                                <span class="field-icon" style="top: 0.8rem;">📝</span>
+                                <textarea id="loginBio" placeholder="Write a detailed summary of your academic contributions, research work, publications, or current service..." rows="3"></textarea>
                             </div>
                         </div>
                     </div>

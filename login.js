@@ -30,6 +30,7 @@ const nameFieldContainer = $("#nameFieldContainer");
 const nameInput = $("#loginName");
 const emailInput = $("#loginEmail");
 const passwordInput = $("#loginPassword");
+const togglePasswordBtn = $("#togglePasswordBtn");
 const roleCards = $$(".role-card");
 const errorDisplay = $("#loginError");
 const submitBtn = $("#submitLoginBtn");
@@ -37,7 +38,10 @@ const toggleModeLink = $("#toggleModeLink");
 const toggleModeText = $("#toggleModeText");
 const formTitle = $("#formTitle");
 const formSubtitle = $("#formSubtitle");
+const tabSignIn = $("#tabSignIn");
+const tabSignUp = $("#tabSignUp");
 const roleSelectorSection = $("#roleSelectorSection");
+const roleSelectorHint = $("#roleSelectorHint");
 const alumniFieldsContainer = $("#alumniFieldsContainer");
 const titleInput = $("#loginTitle");
 const batchInput = $("#loginBatch");
@@ -67,6 +71,26 @@ if (photoInput) {
     });
 }
 
+// Password Visibility Toggle
+if (togglePasswordBtn && passwordInput) {
+    togglePasswordBtn.addEventListener("click", () => {
+        const isPassword = passwordInput.type === "password";
+        passwordInput.type = isPassword ? "text" : "password";
+        togglePasswordBtn.textContent = isPassword ? "🙈" : "👁️";
+        togglePasswordBtn.setAttribute("aria-label", isPassword ? "Hide password" : "Show password");
+        togglePasswordBtn.title = isPassword ? "Hide password" : "Show password";
+    });
+}
+
+// Clear errors dynamically on input change
+const formElements = $$("#unifiedLoginForm input, #unifiedLoginForm select, #unifiedLoginForm textarea");
+formElements.forEach(elem => {
+    elem.addEventListener("input", () => {
+        elem.classList.remove("input-error");
+        showError("");
+    });
+});
+
 // State
 let isSignUpMode = false;
 let selectedRole = "student"; // Default to student
@@ -77,23 +101,30 @@ const initialRole = urlParams.get("role");
 if (initialRole && ["student", "faculty", "alumni", "admin"].includes(initialRole)) {
     selectedRole = initialRole;
     roleCards.forEach(c => {
-        if (c.dataset.role === selectedRole) c.classList.add("active");
-        else c.classList.remove("active");
+        const active = c.dataset.role === selectedRole;
+        if (active) {
+            c.classList.add("active");
+            c.setAttribute("aria-pressed", "true");
+        } else {
+            c.classList.remove("active");
+            c.setAttribute("aria-pressed", "false");
+        }
     });
 }
 
 if (urlParams.get("signup") === "true") {
     isSignUpMode = true;
-    updateUIForMode();
 }
 
 // Role Selection Logic
 roleCards.forEach(card => {
-    card.addEventListener("click", () => {
-        // Remove active class from all
-        roleCards.forEach(c => c.classList.remove("active"));
-        // Add to clicked
+    const handleSelect = () => {
+        roleCards.forEach(c => {
+            c.classList.remove("active");
+            c.setAttribute("aria-pressed", "false");
+        });
         card.classList.add("active");
+        card.setAttribute("aria-pressed", "true");
         selectedRole = card.dataset.role;
 
         if (isSignUpMode && selectedRole === "alumni") {
@@ -101,55 +132,92 @@ roleCards.forEach(card => {
         } else {
             if (alumniFieldsContainer) alumniFieldsContainer.classList.add("hidden");
         }
+    };
+
+    card.addEventListener("click", handleSelect);
+    card.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            handleSelect();
+        }
     });
 });
 
-// Toggle Mode
+function setSignUpMode(signUp) {
+    showError("");
+    isSignUpMode = signUp;
+    updateUIForMode();
+}
+
+if (tabSignIn) tabSignIn.addEventListener("click", () => setSignUpMode(false));
+if (tabSignUp) tabSignUp.addEventListener("click", () => setSignUpMode(true));
+
+// Bottom Toggle Link
 toggleModeLink.addEventListener("click", (e) => {
     e.preventDefault();
-    isSignUpMode = !isSignUpMode;
-    updateUIForMode();
+    setSignUpMode(!isSignUpMode);
 });
 
-        function updateUIForMode() {
-            if (isSignUpMode) {
-                formTitle.textContent = "Create Account";
-                formSubtitle.textContent = "Sign up to begin your journey";
-                nameFieldContainer.classList.remove("hidden");
-                const campusFieldContainer = $("#campusFieldContainer");
-                if (campusFieldContainer) campusFieldContainer.classList.remove("hidden");
-                nameInput.required = true;
-                submitBtn.innerHTML = "Sign Up &rarr;";
-                toggleModeText.innerHTML = `Already have an account? <a href="#" id="toggleModeLink">Sign in</a>`;
-                
-                // Allow selecting role for sign up too, just default to student
-                roleSelectorSection.classList.remove("hidden");
-
-                if (selectedRole === "alumni") {
-                    if (alumniFieldsContainer) alumniFieldsContainer.classList.remove("hidden");
-                } else {
-                    if (alumniFieldsContainer) alumniFieldsContainer.classList.add("hidden");
-                }
-            } else {
-                formTitle.textContent = "Sign In";
-                formSubtitle.textContent = "Enter your credentials to continue";
-                nameFieldContainer.classList.add("hidden");
-                const campusFieldContainer = $("#campusFieldContainer");
-                if (campusFieldContainer) campusFieldContainer.classList.add("hidden");
-                nameInput.required = false;
-                if (alumniFieldsContainer) alumniFieldsContainer.classList.add("hidden");
-                submitBtn.innerHTML = "Sign In &rarr;";
-                toggleModeText.innerHTML = `Don't have an account? <a href="#" id="toggleModeLink">Sign up</a>`;
-                roleSelectorSection.classList.remove("hidden");
-            }
-            
-            // Reattach listener since innerHTML replaced it
-            $("#toggleModeLink").addEventListener("click", (e) => {
-                e.preventDefault();
-                isSignUpMode = !isSignUpMode;
-                updateUIForMode();
-            });
+function updateUIForMode() {
+    // Sync Top Tabs
+    if (tabSignIn && tabSignUp) {
+        if (isSignUpMode) {
+            tabSignIn.classList.remove("active");
+            tabSignIn.setAttribute("aria-selected", "false");
+            tabSignUp.classList.add("active");
+            tabSignUp.setAttribute("aria-selected", "true");
+        } else {
+            tabSignUp.classList.remove("active");
+            tabSignUp.setAttribute("aria-selected", "false");
+            tabSignIn.classList.add("active");
+            tabSignIn.setAttribute("aria-selected", "true");
         }
+    }
+
+    if (isSignUpMode) {
+        formTitle.textContent = "Create Account";
+        formSubtitle.textContent = "Sign up to begin your academic journey with MSA Ukkuda";
+        nameFieldContainer.classList.remove("hidden");
+        const campusFieldContainer = $("#campusFieldContainer");
+        if (campusFieldContainer) campusFieldContainer.classList.remove("hidden");
+        nameInput.required = true;
+        submitBtn.innerHTML = "Create Account &rarr;";
+        toggleModeText.innerHTML = `Already have an account? <a href="#" id="toggleModeLink">Sign in</a>`;
+        if (roleSelectorHint) roleSelectorHint.textContent = "Select registration role";
+        
+        roleSelectorSection.classList.remove("hidden");
+
+        if (selectedRole === "alumni") {
+            if (alumniFieldsContainer) alumniFieldsContainer.classList.remove("hidden");
+        } else {
+            if (alumniFieldsContainer) alumniFieldsContainer.classList.add("hidden");
+        }
+    } else {
+        formTitle.textContent = "Sign In";
+        formSubtitle.textContent = "Enter your credentials to continue to your dashboard";
+        nameFieldContainer.classList.add("hidden");
+        const campusFieldContainer = $("#campusFieldContainer");
+        if (campusFieldContainer) campusFieldContainer.classList.add("hidden");
+        nameInput.required = false;
+        if (alumniFieldsContainer) alumniFieldsContainer.classList.add("hidden");
+        submitBtn.innerHTML = "Sign In &rarr;";
+        toggleModeText.innerHTML = `Don't have an account? <a href="#" id="toggleModeLink">Sign up</a>`;
+        if (roleSelectorHint) roleSelectorHint.textContent = "Select target portal";
+        roleSelectorSection.classList.remove("hidden");
+    }
+    
+    // Reattach listener since innerHTML replaced bottom link
+    const newToggleLink = $("#toggleModeLink");
+    if (newToggleLink) {
+        newToggleLink.addEventListener("click", (e) => {
+            e.preventDefault();
+            setSignUpMode(!isSignUpMode);
+        });
+    }
+}
+
+// Initial UI call
+updateUIForMode();
 
 function showError(message) {
     if (!message) {
@@ -177,17 +245,31 @@ form.addEventListener("submit", async (e) => {
     e.preventDefault();
     showError("");
     
+    // Reset previous field error states
+    [nameInput, emailInput, passwordInput].forEach(inp => inp?.classList.remove("input-error"));
+
     const email = emailInput.value.trim();
     const password = passwordInput.value;
     const name = nameInput.value.trim();
     
     if (isSignUpMode && !name) {
+        nameInput.classList.add("input-error");
+        nameInput.focus();
         showError("Full Name is required for registration.");
         return;
     }
     
+    if (!email) {
+        emailInput.classList.add("input-error");
+        emailInput.focus();
+        showError("Please enter a valid email address.");
+        return;
+    }
+
     if (password.length < 6) {
-        showError("Password must be at least 6 characters.");
+        passwordInput.classList.add("input-error");
+        passwordInput.focus();
+        showError("Password must be at least 6 characters long.");
         return;
     }
 

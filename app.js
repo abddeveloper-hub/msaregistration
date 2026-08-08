@@ -591,54 +591,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    // 5. Prayer Times Active Highlight & Hijri Date
-    function updatePrayerHighlights() {
-        const now = new Date();
-        const currentMins = now.getHours() * 60 + now.getMinutes();
-        
-        const schedule = [
-            { name: 'fajr', mins: 5 * 60 + 5 },
-            { name: 'dhuhr', mins: 12 * 60 + 35 },
-            { name: 'asr', mins: 16 * 60 + 15 },
-            { name: 'maghrib', mins: 18 * 60 + 50 },
-            { name: 'isha', mins: 20 * 60 + 15 }
-        ];
-
-        let nextPrayer = schedule[0].name;
-        for (let i = 0; i < schedule.length; i++) {
-            if (currentMins < schedule[i].mins) {
-                nextPrayer = schedule[i].name;
-                break;
-            }
-        }
-
-        document.querySelectorAll('.prayer-card').forEach(card => {
-            const prayer = card.dataset.prayer;
-            if (prayer === nextPrayer) {
-                card.style.borderColor = 'var(--primary)';
-                card.style.boxShadow = '0 8px 24px var(--primary-glow)';
-                card.style.transform = 'translateY(-4px)';
-                const tag = card.querySelector('.prayer-status-tag');
-                if (tag) {
-                    tag.textContent = '⚡ Next Prayer';
-                    tag.style.color = 'var(--primary)';
-                }
-            }
-        });
-
-        // Format Hijri Date
-        try {
-            const hijriFormatter = new Intl.DateTimeFormat('en-TN-u-ca-islamic', {
-                day: 'numeric',
-                month: 'long',
-                year: 'numeric'
-            });
-            const hijriStr = hijriFormatter.format(now);
-            const el = document.getElementById('hijriDateDisplay');
-            if (el && hijriStr) el.textContent = hijriStr;
-        } catch(e) {}
-    }
-    updatePrayerHighlights();
 });
 
 
